@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tela — Sign in</title>
+<title>TutorsElevateLearningApp — Sign in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -126,22 +126,6 @@
   .switch button:hover { text-decoration: underline; }
 
   form[hidden] { display: none; }
-
-  .demo {
-    margin-top: 20px; padding: 12px 14px; border-radius: 10px;
-    background: var(--green-50); border: 1px dashed var(--green-600);
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    font-size: 13px; color: var(--muted);
-  }
-  .demo b { color: var(--ink); font-weight: 600; }
-  .demo code { font-family: ui-monospace, Consolas, monospace; color: var(--green-800); }
-  .demo button {
-    flex: none; border: 1.5px solid var(--green-600); background: var(--white);
-    color: var(--green-700); border-radius: 8px; padding: 6px 10px;
-    font-size: 13px; font-weight: 600;
-  }
-  .demo button:hover { background: var(--green-100); }
-
   @media (max-width: 860px) {
     body { grid-template-columns: 1fr; }
     .side { padding: 28px 16px; }
@@ -154,7 +138,7 @@
 <body>
 
 <aside class="side">
-  <div class="brand"><div class="logo">t</div> Tela</div>
+  <div class="brand"><div class="logo">T</div> TutorsElevateLearningApp</div>
   <div class="pitch">
     <h2>Your revision, organised.</h2>
     <p>Sign in to see your own subjects dashboard, with every topic and your progress saved to your account.</p>
@@ -197,10 +181,6 @@
       </div>
       <button type="submit" class="btn">Sign in</button>
       <p class="switch">New here? <button type="button" data-tab="signup">Create an account</button></p>
-      <div class="demo">
-        <div><b>Demo student</b><br>Username <code>demo</code> · Password <code>demo123</code></div>
-        <button type="button" id="demoBtn">Use demo</button>
-      </div>
     </form>
 
     <!-- Sign up -->
@@ -387,13 +367,6 @@
       return showError("That username and password don't match. Please try again.", ["liUser", "liPass"]);
     }
     startSession(username, $("remember").checked);
-  });
-
-  $("demoBtn").addEventListener("click", () => {
-    clearError();
-    $("liUser").value = DEMO.username;
-    $("liPass").value = DEMO.password;
-    $("signin").requestSubmit();
   });
 
   // ---------- Sign up ----------
