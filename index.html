@@ -191,8 +191,26 @@
   .card h3 { font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
   .card p.desc { font-size: 14px; color: var(--muted); flex: 1; }
 
+  .meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
   .tier { font-size: 12px; color: var(--muted); }
   .tier b { color: var(--ink); font-weight: 600; }
+  .boards { display: flex; gap: 4px; flex-wrap: wrap; }
+  .board {
+    font-size: 11px; font-weight: 600; color: var(--green-800);
+    border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px;
+  }
+
+  .board-checks { display: flex; gap: 8px; flex-wrap: wrap; }
+  .field .board-checks label {
+    display: flex; align-items: center; gap: 6px; margin: 0;
+    border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+  .field .board-checks input {
+    accent-color: var(--green-700); width: 16px; height: 16px;
+    padding: 0; border: none; box-shadow: none;
+  }
+  .field .board-checks label:has(input:checked) { border-color: var(--green-600); background: var(--green-50); }
 
   .card-foot {
     display: flex; justify-content: space-between; align-items: center;
@@ -315,6 +333,10 @@
         <div class="filter-label">Subject</div>
         <div class="chips" id="subjectChips"></div>
       </div>
+      <div class="filter-group">
+        <div class="filter-label">Exam board</div>
+        <div class="chips" id="boardChips"></div>
+      </div>
       <div class="filter-group" id="categoryGroup">
         <div class="filter-label">Category</div>
         <div class="chips" id="categoryChips"></div>
@@ -385,6 +407,14 @@
       </div>
     </div>
     <div class="field">
+      <label>Exam boards</label>
+      <div class="board-checks" id="fBoards">
+        <label><input type="checkbox" value="AQA"> AQA</label>
+        <label><input type="checkbox" value="Edexcel"> Edexcel</label>
+        <label><input type="checkbox" value="OCR"> OCR</label>
+      </div>
+    </div>
+    <div class="field">
       <label for="fDesc">Notes</label>
       <textarea id="fDesc" maxlength="400" placeholder="What does this topic cover?"></textarea>
     </div>
@@ -420,6 +450,7 @@
   // These subjects always get a filter button, even before they have topics.
   const SUBJECTS = ["Physics", "Chemistry", "Biology", "Maths"];
   const SCIENCES = ["Physics", "Chemistry", "Biology"];
+  const BOARDS = ["AQA", "Edexcel", "OCR"];
   const SCIENCE_FLAG = STORAGE_KEY + ".sciences";
 
   const SAMPLE_TOPICS = {
@@ -493,6 +524,7 @@
     return rows.map(([subject, title, category, tier, description, status], i) => ({
       id: subject.slice(0, 3).toLowerCase() + i + "-" + now.toString(36),
       title, subject, category, tier, description, status,
+      boards: [...BOARDS],
       created: now - (rows.length - i) * 1000
     }));
   }
@@ -514,7 +546,8 @@
       }
       localStorage.setItem(SCIENCE_FLAG, "1");
     } catch (e) {}
-    return list || buildSamples();
+    // Topics saved before exam boards existed count as being on every board.
+    return (list || buildSamples()).map(t => Array.isArray(t.boards) ? t : { ...t, boards: [...BOARDS] });
   }
 
   // The four core subjects first, then any custom ones the student has added.
@@ -528,7 +561,7 @@
   let topics = load();
   save();
 
-  const state = { query: "", subject: "All", category: "All", status: "All", sort: "category" };
+  const state = { query: "", subject: "All", board: "All", category: "All", status: "All", sort: "category" };
   let editingId = null;
 
   const $ = id => document.getElementById(id);
@@ -551,8 +584,15 @@
       chipHTML("All", "All subjects", state.subject === "All") +
       subjects.map(s => chipHTML(s, s, state.subject === s)).join("");
 
-    // Categories within the selected subject
-    const inSubject = state.subject === "All" ? topics : topics.filter(t => t.subject === state.subject);
+    // Exam boards
+    $("boardChips").innerHTML =
+      chipHTML("All", "All boards", state.board === "All") +
+      BOARDS.map(b => chipHTML(b, b, state.board === b)).join("");
+
+    // Categories within the selected subject and board
+    const inSubject = topics.filter(t =>
+      (state.subject === "All" || t.subject === state.subject) &&
+      (state.board === "All" || t.boards.includes(state.board)));
     const cats = uniq(inSubject.map(t => t.category));
     if (state.category !== "All" && !cats.includes(state.category)) state.category = "All";
     const catCounts = countBy(inSubject, "category");
@@ -575,6 +615,7 @@
     const q = state.query.trim().toLowerCase();
     const list = topics.filter(t =>
       (state.subject === "All" || t.subject === state.subject) &&
+      (state.board === "All" || t.boards.includes(state.board)) &&
       (state.category === "All" || t.category === state.category) &&
       (state.status === "All" || t.status === state.status) &&
       (!q || t.title.toLowerCase().includes(q) || t.category.toLowerCase().includes(q))
@@ -607,7 +648,10 @@
         </div>
         <h3>${esc(t.title)}</h3>
         <p class="desc">${esc(t.description) || "<em>No notes yet.</em>"}</p>
-        ${t.tier ? `<div class="tier">Tier: <b>${esc(t.tier)}</b></div>` : ""}
+        <div class="meta">
+          ${t.tier ? `<div class="tier">Tier: <b>${esc(t.tier)}</b></div>` : "<span></span>"}
+          <div class="boards">${t.boards.map(b => `<span class="board">${esc(b)}</span>`).join("")}</div>
+        </div>
         <div class="card-foot">
           <button class="status ${t.status}" data-action="status" title="Click to change status">${STATUS[t.status].label}</button>
           <div class="card-actions">
@@ -642,6 +686,9 @@
     $("fTier").value = topic?.tier ?? "";
     $("fStatus").value = topic?.status ?? "todo";
     $("fDesc").value = topic?.description ?? "";
+    // New topics default to the board being filtered on, or all boards.
+    const boards = topic ? topic.boards : (state.board !== "All" ? [state.board] : BOARDS);
+    document.querySelectorAll("#fBoards input").forEach(cb => { cb.checked = boards.includes(cb.value); });
     $("overlay").classList.add("open");
     setTimeout(() => $("fTitle").focus(), 50);
   }
@@ -655,9 +702,11 @@
       category: $("fCategory").value.trim(),
       tier: $("fTier").value,
       status: $("fStatus").value,
-      description: $("fDesc").value.trim()
+      description: $("fDesc").value.trim(),
+      boards: [...document.querySelectorAll("#fBoards input:checked")].map(cb => cb.value)
     };
     if (!data.title || !data.subject || !data.category) return;
+    if (!data.boards.length) return toast("Pick at least one exam board");
     if (editingId) {
       Object.assign(topics.find(t => t.id === editingId), data);
       toast("Topic updated");
@@ -710,6 +759,7 @@
     });
   }
   bindChips("subjectChips", "subject");
+  bindChips("boardChips", "board");
   bindChips("categoryChips", "category");
   bindChips("statusChips", "status");
 
@@ -719,7 +769,7 @@
   $("resetBtn").addEventListener("click", () => {
     if (confirm("Replace all topics with the sample GCSE Physics, Chemistry, Biology and Maths topics? Your current topics will be removed.")) {
       topics = buildSamples();
-      state.subject = state.category = state.status = "All";
+      state.subject = state.board = state.category = state.status = "All";
       save(); render(); toast("Sample topics restored");
     }
   });
