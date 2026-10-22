@@ -193,7 +193,8 @@
   }
   .subject-name { font-size: 12px; color: var(--muted); font-weight: 500; }
   .card h3 { font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
-  .card p.desc { font-size: 14px; color: var(--muted); flex: 1; }
+  .card.has-practice { cursor: pointer; }
+  .card.has-practice:focus-visible { outline: 3px solid var(--green-600); outline-offset: 2px; }
 
   .meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
   .tier { font-size: 12px; color: var(--muted); }
@@ -218,7 +219,7 @@
 
   .card-foot {
     display: flex; justify-content: space-between; align-items: center;
-    border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px;
+    border-top: 1px solid var(--line); padding-top: 12px; margin-top: auto;
   }
   .status {
     border: none; border-radius: 999px; padding: 5px 12px;
@@ -277,13 +278,6 @@
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
 
   /* ---------- Practice questions ---------- */
-  .practice-btn {
-    border: 1.5px solid var(--green-600); background: var(--green-50); color: var(--green-700);
-    border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; text-align: left;
-    transition: background .15s;
-  }
-  .practice-btn:hover { background: var(--green-100); }
-
   .practice-panel {
     background: var(--white); border-radius: 16px; width: 100%; max-width: 760px;
     max-height: calc(100vh - 32px); display: flex; flex-direction: column; overflow: hidden;
@@ -509,10 +503,6 @@
         <label><input type="checkbox" value="Edexcel"> Edexcel</label>
         <label><input type="checkbox" value="OCR"> OCR</label>
       </div>
-    </div>
-    <div class="field">
-      <label for="fDesc">Notes</label>
-      <textarea id="fDesc" maxlength="400" placeholder="What does this topic cover?"></textarea>
     </div>
     <div class="modal-actions">
       <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
@@ -847,18 +837,16 @@
     }
 
     $("grid").innerHTML = list.map(t => `
-      <article class="card" data-id="${esc(t.id)}">
+      <article class="card${PRACTICE[practiceKey(t)] ? ` has-practice" tabindex="0" title="Open practice questions` : ""}" data-id="${esc(t.id)}">
         <div class="card-top">
           <span class="tag">${esc(t.category)}</span>
           <span class="subject-name">${esc(t.subject)}${t.grade ? ` · ${esc(t.grade)}` : ""}</span>
         </div>
         <h3>${esc(t.title)}</h3>
-        <p class="desc">${esc(t.description)}</p>
         <div class="meta">
           ${t.tier ? `<div class="tier">Tier: <b>${esc(t.tier)}</b></div>` : "<span></span>"}
           <div class="boards">${t.boards.map(b => `<span class="board">${esc(b)}</span>`).join("")}</div>
         </div>
-        ${PRACTICE[practiceKey(t)] ? `<button class="practice-btn" data-action="practice">Practice exam questions →</button>` : ""}
         <div class="card-foot">
           <button class="status ${t.status}" data-action="status" title="Click to change status">${STATUS[t.status].label}</button>
           <div class="card-actions">
@@ -1144,7 +1132,6 @@
     $("fTier").value = topic?.tier ?? "";
     $("fGrade").value = topic?.grade ?? (state.grade !== "All" ? state.grade : "");
     $("fStatus").value = topic?.status ?? "todo";
-    $("fDesc").value = topic?.description ?? "";
     // New topics default to the board being filtered on, or all boards.
     const boards = topic ? topic.boards : (state.board !== "All" ? [state.board] : BOARDS);
     document.querySelectorAll("#fBoards input").forEach(cb => { cb.checked = boards.includes(cb.value); });
@@ -1162,7 +1149,6 @@
       tier: $("fTier").value,
       grade: $("fGrade").value,
       status: $("fStatus").value,
-      description: $("fDesc").value.trim(),
       boards: [...document.querySelectorAll("#fBoards input:checked")].map(cb => cb.value)
     };
     if (!data.title || !data.subject || !data.category) return;
@@ -1189,17 +1175,21 @@
 
   // ---------- Card actions ----------
   $("grid").addEventListener("click", e => {
-    const btn = e.target.closest("[data-action]");
-    if (!btn) return;
-    const id = btn.closest(".card").dataset.id;
+    const card = e.target.closest(".card");
+    if (!card) return;
+    const id = card.dataset.id;
     const topic = topics.find(t => t.id === id);
     if (!topic) return;
+    const btn = e.target.closest("[data-action]");
+    // Clicking anywhere else on a tile with practice questions opens them.
+    if (!btn) {
+      if (card.classList.contains("has-practice")) openPractice(topic);
+      return;
+    }
     const action = btn.dataset.action;
     if (action === "status") {
       topic.status = STATUS[topic.status].next;
       save(); render();
-    } else if (action === "practice") {
-      openPractice(topic);
     } else if (action === "edit") {
       openForm(topic);
     } else if (action === "delete") {
@@ -1207,6 +1197,13 @@
         topics = topics.filter(t => t.id !== id);
         save(); render(); toast("Topic deleted");
       }
+    }
+  });
+
+  $("grid").addEventListener("keydown", e => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches(".card.has-practice")) {
+      e.preventDefault();
+      openPractice(topics.find(t => t.id === e.target.dataset.id));
     }
   });
 
