@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tela — Subjects</title>
+<script>
+  // Bounce to the login page before anything renders if no one is signed in.
+  (function () {
+    try {
+      const user = sessionStorage.getItem("tela.session") || localStorage.getItem("tela.session");
+      const accounts = JSON.parse(localStorage.getItem("tela.accounts")) || {};
+      if (user && accounts[user]) return;
+    } catch (e) {}
+    location.replace("login.html");
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-900: #0a3d2c;
+    --green-800: #0f5132;
+    --green-700: #146c43;
+    --green-600: #198754;
+    --green-100: #e3f2ea;
+    --green-50:  #f2f8f5;
+    --ink: #13261e;
+    --muted: #5f7369;
+    --line: #dce7e1;
+    --white: #ffffff;
+    --amber: #b7791f;
+    --amber-bg: #fdf3e1;
+    --grey-bg: #eef1f0;
+    --danger: #b42318;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(10, 61, 44, .06), 0 4px 16px rgba(10, 61, 44, .06);
+    --shadow-hover: 0 2px 4px rgba(10, 61, 44, .08), 0 12px 28px rgba(10, 61, 44, .12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--green-50);
+    color: var(--ink);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  button { font: inherit; cursor: pointer; }
+
+  /* ---------- Header ---------- */
+  header {
+    background: linear-gradient(135deg, var(--green-900), var(--green-700));
+    color: var(--white);
+    padding: 40px 24px 88px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  .head-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .logo {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: rgba(255,255,255,.14);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 22px;
+  }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+  .subtitle { color: rgba(255,255,255,.75); font-size: 14px; }
+
+  .btn {
+    border: none; border-radius: 10px; padding: 10px 18px;
+    font-weight: 600; font-size: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .15s, background .15s, box-shadow .15s;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-light { background: var(--white); color: var(--green-800); }
+  .btn-light:hover { box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+  .btn-outline { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,.4); }
+  .btn-outline:hover { background: rgba(255,255,255,.1); }
+  .head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .user-pill {
+    display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;
+    color: rgba(255,255,255,.9); margin-right: 4px;
+  }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--white); color: var(--green-800);
+    display: grid; place-items: center; font-weight: 700; font-size: 14px;
+  }
+  .btn-primary { background: var(--green-700); color: var(--white); }
+  .btn-primary:hover { background: var(--green-800); }
+  .btn-ghost { background: transparent; color: var(--muted); }
+  .btn-ghost:hover { background: var(--grey-bg); }
+  .btn-danger { background: transparent; color: var(--danger); }
+  .btn-danger:hover { background: #fdecea; }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    margin-top: 28px;
+  }
+  .stat {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .stat-num { font-size: 26px; font-weight: 700; }
+  .stat-label { font-size: 13px; color: rgba(255,255,255,.75); }
+
+  /* ---------- Controls ---------- */
+  main { margin-top: -56px; padding: 0 24px 64px; }
+  .panel {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 20px;
+  }
+  .search {
+    position: relative;
+  }
+  .search svg {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    color: var(--muted);
+  }
+  .search input {
+    width: 100%; padding: 14px 16px 14px 46px;
+    border: 1.5px solid var(--line); border-radius: 12px;
+    font: inherit; font-size: 15px; color: var(--ink);
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .search input:focus {
+    border-color: var(--green-600);
+    box-shadow: 0 0 0 4px rgba(25,135,84,.12);
+  }
+
+  .filter-group { margin-top: 16px; }
+  .filter-label {
+    font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--muted); margin-bottom: 8px;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    border: 1.5px solid var(--line); background: var(--white);
+    color: var(--ink); border-radius: 999px; padding: 6px 14px;
+    font-size: 13px; font-weight: 500;
+    transition: all .15s;
+  }
+  .chip:hover { border-color: var(--green-600); color: var(--green-700); }
+  .chip.active {
+    background: var(--green-700); border-color: var(--green-700); color: var(--white);
+  }
+  .chip .count { opacity: .65; margin-left: 4px; font-weight: 400; }
+  .chip.small { padding: 4px 12px; font-size: 12px; }
+
+  .results-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin: 28px 2px 14px; gap: 12px; flex-wrap: wrap;
+  }
+  .results-row p { color: var(--muted); font-size: 14px; }
+  .sort select {
+    border: 1.5px solid var(--line); border-radius: 10px; padding: 7px 10px;
+    font: inherit; font-size: 13px; background: var(--white); color: var(--ink);
+  }
+
+  /* ---------- Cards ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 18px;
+  }
+  .card {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 20px;
+    display: flex; flex-direction: column; gap: 10px;
+    border-top: 4px solid var(--green-600);
+    transition: transform .18s, box-shadow .18s;
+    animation: pop .25s ease;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .tag {
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--green-700); background: var(--green-100);
+    padding: 3px 9px; border-radius: 6px;
+  }
+  .subject-name { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .card h3 { font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+  .card p.desc { font-size: 14px; color: var(--muted); flex: 1; }
+
+  .tier { font-size: 12px; color: var(--muted); }
+  .tier b { color: var(--ink); font-weight: 600; }
+
+  .card-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px;
+  }
+  .status {
+    border: none; border-radius: 999px; padding: 5px 12px;
+    font-size: 12px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .status.todo { background: var(--grey-bg); color: var(--muted); }
+  .status.doing { background: var(--amber-bg); color: var(--amber); }
+  .status.done { background: var(--green-100); color: var(--green-700); }
+  .status:hover { filter: brightness(.96); }
+
+  .card-actions { display: flex; gap: 2px; }
+  .icon-btn {
+    border: none; background: transparent; color: var(--muted);
+    width: 32px; height: 32px; border-radius: 8px;
+    display: grid; place-items: center;
+  }
+  .icon-btn:hover { background: var(--grey-bg); color: var(--ink); }
+  .icon-btn.del:hover { background: #fdecea; color: var(--danger); }
+
+  .empty {
+    grid-column: 1 / -1; text-align: center; padding: 56px 20px;
+    background: var(--white); border-radius: var(--radius);
+    border: 2px dashed var(--line); color: var(--muted);
+  }
+  .empty h3 { color: var(--ink); margin-bottom: 6px; }
+
+  /* ---------- Modal ---------- */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(10, 30, 22, .45);
+    display: none; align-items: center; justify-content: center;
+    padding: 16px; z-index: 50;
+    backdrop-filter: blur(2px);
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 16px; width: 100%; max-width: 480px;
+    padding: 24px; box-shadow: 0 24px 60px rgba(0,0,0,.25);
+    max-height: calc(100vh - 32px); overflow-y: auto;
+    animation: pop .2s ease;
+  }
+  .modal h2 { font-size: 20px; margin-bottom: 16px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .field input, .field textarea, .field select {
+    width: 100%; padding: 10px 12px; border: 1.5px solid var(--line);
+    border-radius: 10px; font: inherit; font-size: 14px; color: var(--ink);
+    outline: none; background: var(--white);
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--green-600); box-shadow: 0 0 0 4px rgba(25,135,84,.12);
+  }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--green-900); color: var(--white); padding: 10px 18px;
+    border-radius: 10px; font-size: 14px; box-shadow: var(--shadow-hover);
+    transition: transform .25s; z-index: 60;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 0 16px 32px; }
+  footer button { background: none; border: none; color: var(--green-700); text-decoration: underline; font-size: 13px; }
+
+  @media (max-width: 720px) {
+    header { padding: 28px 16px 80px; }
+    main { padding: 0 16px 48px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    h1 { font-size: 24px; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <div class="brand">
+        <div class="logo">t</div>
+        <div>
+          <h1 id="greeting">My Subjects</h1>
+          <div class="subtitle">Track every topic you're revising, all in one place.</div>
+        </div>
+      </div>
+      <div class="head-actions">
+        <div class="user-pill"><span class="avatar" id="avatar"></span><span id="userName"></span></div>
+        <button class="btn btn-light" id="addBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add topic
+        </button>
+        <button class="btn btn-outline" id="logoutBtn">Sign out</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total topics</div></div>
+      <div class="stat"><div class="stat-num" id="statDone">0</div><div class="stat-label">Confident</div></div>
+      <div class="stat"><div class="stat-num" id="statDoing">0</div><div class="stat-label">In progress</div></div>
+      <div class="stat"><div class="stat-num" id="statSubjects">0</div><div class="stat-label">Subjects</div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="panel">
+      <div class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="search" placeholder="Search topics by title or category…" autocomplete="off">
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Subject</div>
+        <div class="chips" id="subjectChips"></div>
+      </div>
+      <div class="filter-group" id="categoryGroup">
+        <div class="filter-label">Category</div>
+        <div class="chips" id="categoryChips"></div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Status</div>
+        <div class="chips" id="statusChips"></div>
+      </div>
+    </div>
+
+    <div class="results-row">
+      <p id="resultCount"></p>
+      <label class="sort">
+        <select id="sort" aria-label="Sort topics">
+          <option value="category">Sort: Category</option>
+          <option value="title">Sort: Title (A–Z)</option>
+          <option value="status">Sort: Status</option>
+          <option value="newest">Sort: Newest first</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+</main>
+
+<footer>
+  Saved automatically in this browser. · <button id="resetBtn">Load sample topics</button>
+</footer>
+
+<!-- Add / edit modal -->
+<div class="overlay" id="overlay">
+  <form class="modal" id="form">
+    <h2 id="formTitle">Add topic</h2>
+    <div class="field">
+      <label for="fTitle">Title</label>
+      <input id="fTitle" required maxlength="80" placeholder="e.g. Quadratic equations">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fSubject">Subject</label>
+        <input id="fSubject" required maxlength="40" list="subjectList" placeholder="e.g. Maths">
+        <datalist id="subjectList"></datalist>
+      </div>
+      <div class="field">
+        <label for="fCategory">Category</label>
+        <input id="fCategory" required maxlength="40" list="categoryList" placeholder="e.g. Algebra">
+        <datalist id="categoryList"></datalist>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fTier">Tier</label>
+        <select id="fTier">
+          <option value="">—</option>
+          <option>Foundation</option>
+          <option>Higher</option>
+          <option>Both</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fStatus">Status</label>
+        <select id="fStatus">
+          <option value="todo">Not started</option>
+          <option value="doing">In progress</option>
+          <option value="done">Confident</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="fDesc">Notes</label>
+      <textarea id="fDesc" maxlength="400" placeholder="What does this topic cover?"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save topic</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const SESSION_KEY = "tela.session";
+  let currentUser = null, account = null;
+  try {
+    currentUser = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+    account = currentUser && (JSON.parse(localStorage.getItem("tela.accounts")) || {})[currentUser];
+  } catch (e) {}
+  if (!account) {
+    location.replace("login.html");
+    throw new Error("Not signed in");
+  }
+
+  // Each student gets their own saved topics.
+  const STORAGE_KEY = "tela.topics." + currentUser;
+  const STATUS = {
+    todo:  { label: "Not started", next: "doing", rank: 0 },
+    doing: { label: "In progress", next: "done",  rank: 1 },
+    done:  { label: "Confident",   next: "todo",  rank: 2 }
+  };
+
+  // These subjects always get a filter button, even before they have topics.
+  const SUBJECTS = ["Physics", "Chemistry", "Biology", "Maths"];
+  const SCIENCES = ["Physics", "Chemistry", "Biology"];
+  const SCIENCE_FLAG = STORAGE_KEY + ".sciences";
+
+  const SAMPLE_TOPICS = {
+   Physics: [
+    ["Energy stores & transfers", "Energy", "Both", "Kinetic, gravitational and elastic energy stores; conservation of energy and efficiency.", "done"],
+    ["Specific heat capacity", "Energy", "Both", "Using ΔE = mcΔθ and the required practical.", "doing"],
+    ["Circuits & resistance", "Electricity", "Both", "Series and parallel circuits, V = IR, and I–V characteristics.", "doing"],
+    ["Mains electricity & power", "Electricity", "Both", "AC vs DC, the plug, P = IV and the National Grid.", "todo"],
+    ["Density & changes of state", "Particle Model", "Both", "ρ = m/V, specific latent heat and internal energy.", "todo"],
+    ["Radioactive decay", "Atomic Structure", "Both", "Alpha, beta and gamma radiation, half-life and nuclear equations.", "doing"],
+    ["Forces & Newton's laws", "Forces", "Both", "Resultant forces, F = ma, stopping distances and momentum.", "todo"],
+    ["Wave properties", "Waves", "Both", "Transverse and longitudinal waves, v = fλ and the EM spectrum.", "todo"],
+    ["Magnetism & electromagnetism", "Magnetism", "Both", "Magnetic fields, the motor effect and F = BIl.", "todo"]
+   ],
+   Chemistry: [
+    ["Atomic structure & isotopes", "Atomic Structure", "Both", "Protons, neutrons and electrons, relative atomic mass and the history of the atom.", "done"],
+    ["The periodic table", "Atomic Structure", "Both", "Groups 1, 7 and 0, and trends down a group.", "doing"],
+    ["Ionic, covalent & metallic bonding", "Bonding", "Both", "How each bond forms and the properties of the resulting structures.", "doing"],
+    ["Moles & reacting masses", "Quantitative Chemistry", "Higher", "Avogadro's constant, moles = mass ÷ Mr and limiting reactants.", "todo"],
+    ["Acids, alkalis & salts", "Chemical Changes", "Both", "Neutralisation, pH and making soluble salts.", "doing"],
+    ["Electrolysis", "Chemical Changes", "Both", "Electrolysis of molten and aqueous compounds and half equations.", "todo"],
+    ["Exothermic & endothermic reactions", "Energy Changes", "Both", "Reaction profiles and bond energy calculations.", "todo"],
+    ["Rates of reaction", "Rates of Reaction", "Both", "Collision theory, factors affecting rate, and catalysts.", "todo"],
+    ["Crude oil & alkanes", "Organic Chemistry", "Both", "Fractional distillation, cracking and hydrocarbons.", "todo"]
+   ],
+   Biology: [
+    ["Cell structure", "Cell Biology", "Both", "Animal, plant and bacterial cells, and microscopy.", "done"],
+    ["Mitosis & stem cells", "Cell Biology", "Both", "The cell cycle, differentiation and uses of stem cells.", "doing"],
+    ["Diffusion, osmosis & active transport", "Cell Biology", "Both", "Movement of substances into and out of cells.", "doing"],
+    ["Enzymes & digestion", "Organisation", "Both", "Lock and key model, digestive enzymes and the required practical.", "todo"],
+    ["The heart & circulation", "Organisation", "Both", "Blood vessels, blood, and coronary heart disease.", "todo"],
+    ["Communicable diseases", "Infection & Response", "Both", "Pathogens, the immune system and vaccination.", "todo"],
+    ["Photosynthesis & respiration", "Bioenergetics", "Both", "Limiting factors, aerobic and anaerobic respiration.", "doing"],
+    ["Hormones & homeostasis", "Homeostasis", "Both", "Blood glucose control, diabetes and the menstrual cycle.", "todo"],
+    ["DNA & inheritance", "Inheritance", "Both", "Genes, alleles, Punnett squares and genetic disorders.", "todo"],
+    ["Ecosystems", "Ecology", "Both", "Food chains, adaptations, biodiversity and the carbon cycle.", "todo"]
+   ],
+   Maths: [
+    ["Fractions, decimals & percentages", "Number", "Both", "Converting between forms, ordering, and finding percentages of amounts.", "done"],
+    ["Prime factors, HCF & LCM", "Number", "Both", "Product of prime factors, Venn diagrams for HCF and LCM.", "done"],
+    ["Indices & standard form", "Number", "Both", "Laws of indices, negative and fractional powers, calculating in standard form.", "doing"],
+    ["Surds", "Number", "Higher", "Simplifying surds, expanding brackets and rationalising the denominator.", "todo"],
+    ["Bounds & error intervals", "Number", "Both", "Upper and lower bounds, truncation and rounding errors.", "todo"],
+    ["Expanding & factorising", "Algebra", "Both", "Single and double brackets, factorising quadratics including difference of two squares.", "doing"],
+    ["Solving linear equations", "Algebra", "Both", "Equations with unknowns on both sides, brackets and fractions.", "done"],
+    ["Quadratic equations", "Algebra", "Higher", "Solving by factorising, the quadratic formula and completing the square.", "doing"],
+    ["Simultaneous equations", "Algebra", "Both", "Elimination and substitution, including one linear and one quadratic.", "todo"],
+    ["Straight line graphs", "Algebra", "Both", "y = mx + c, gradients, intercepts, parallel and perpendicular lines.", "done"],
+    ["Sequences & nth term", "Algebra", "Both", "Arithmetic, geometric and quadratic sequences; finding the nth term.", "doing"],
+    ["Functions", "Algebra", "Higher", "Composite and inverse functions, function notation.", "todo"],
+    ["Ratio & proportion", "Ratio & Proportion", "Both", "Sharing in a ratio, direct and inverse proportion.", "done"],
+    ["Compound interest & depreciation", "Ratio & Proportion", "Both", "Repeated percentage change and growth/decay multipliers.", "doing"],
+    ["Speed, density & pressure", "Ratio & Proportion", "Both", "Compound measures and converting units.", "todo"],
+    ["Pythagoras' theorem", "Geometry & Measures", "Both", "Finding missing sides in right-angled triangles, including in 3D.", "done"],
+    ["Trigonometry (SOH CAH TOA)", "Geometry & Measures", "Both", "Finding sides and angles in right-angled triangles; exact values.", "doing"],
+    ["Sine & cosine rules", "Geometry & Measures", "Higher", "Non right-angled triangles and area = ½ab sin C.", "todo"],
+    ["Circle theorems", "Geometry & Measures", "Higher", "Angles in circles, tangents and chords — with proofs.", "todo"],
+    ["Area & volume", "Geometry & Measures", "Both", "Area of 2D shapes, volume and surface area of prisms, cylinders, cones and spheres.", "doing"],
+    ["Vectors", "Geometry & Measures", "Both", "Column vectors, vector arithmetic and geometric proofs.", "todo"],
+    ["Probability trees", "Probability", "Both", "Independent and dependent events using tree diagrams.", "doing"],
+    ["Venn diagrams & set notation", "Probability", "Both", "Union, intersection and conditional probability from Venn diagrams.", "todo"],
+    ["Averages & range", "Statistics", "Both", "Mean, median, mode and range, including from frequency tables.", "done"],
+    ["Cumulative frequency & box plots", "Statistics", "Higher", "Drawing and interpreting cumulative frequency graphs and box plots.", "todo"],
+    ["Histograms", "Statistics", "Higher", "Frequency density and unequal class widths.", "todo"]
+   ]
+  };
+
+  function buildSamples(subjects = SUBJECTS) {
+    const now = Date.now();
+    const rows = subjects.flatMap(subject => SAMPLE_TOPICS[subject].map(row => [subject, ...row]));
+    return rows.map(([subject, title, category, tier, description, status], i) => ({
+      id: subject.slice(0, 3).toLowerCase() + i + "-" + now.toString(36),
+      title, subject, category, tier, description, status,
+      created: now - (rows.length - i) * 1000
+    }));
+  }
+
+  function load() {
+    let list = null;
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (Array.isArray(parsed)) list = parsed;
+    } catch (e) { /* storage unavailable or corrupt — fall back to samples */ }
+
+    try {
+      if (!list) {
+        list = buildSamples();
+      } else if (!localStorage.getItem(SCIENCE_FLAG)) {
+        // One-time top-up: dashboards made before the sciences existed get their sample topics.
+        const missing = SCIENCES.filter(s => !list.some(t => t.subject === s));
+        list = list.concat(buildSamples(missing));
+      }
+      localStorage.setItem(SCIENCE_FLAG, "1");
+    } catch (e) {}
+    return list || buildSamples();
+  }
+
+  // The four core subjects first, then any custom ones the student has added.
+  const allSubjects = () => [...SUBJECTS, ...uniq(topics.map(t => t.subject).filter(s => !SUBJECTS.includes(s)))];
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(topics)); }
+    catch (e) { toast("Couldn't save — browser storage is unavailable"); }
+  }
+
+  let topics = load();
+  save();
+
+  const state = { query: "", subject: "All", category: "All", status: "All", sort: "category" };
+  let editingId = null;
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const uniq = arr => [...new Set(arr)].sort((a, b) => a.localeCompare(b));
+
+  function countBy(list, key) {
+    return list.reduce((m, t) => (m[t[key]] = (m[t[key]] || 0) + 1, m), {});
+  }
+
+  function chipHTML(value, label, active, count, extra = "") {
+    return `<button class="chip ${extra} ${active ? "active" : ""}" data-value="${esc(value)}">${esc(label)}${count != null ? `<span class="count">${count}</span>` : ""}</button>`;
+  }
+
+  function renderFilters() {
+    // Subjects
+    const subjects = allSubjects();
+    if (state.subject !== "All" && !subjects.includes(state.subject)) state.subject = "All";
+    $("subjectChips").innerHTML =
+      chipHTML("All", "All subjects", state.subject === "All") +
+      subjects.map(s => chipHTML(s, s, state.subject === s)).join("");
+
+    // Categories within the selected subject
+    const inSubject = state.subject === "All" ? topics : topics.filter(t => t.subject === state.subject);
+    const cats = uniq(inSubject.map(t => t.category));
+    if (state.category !== "All" && !cats.includes(state.category)) state.category = "All";
+    const catCounts = countBy(inSubject, "category");
+    $("categoryChips").innerHTML =
+      chipHTML("All", "All", state.category === "All", inSubject.length, "small") +
+      cats.map(c => chipHTML(c, c, state.category === c, catCounts[c], "small")).join("");
+    $("categoryGroup").style.display = cats.length ? "" : "none";
+
+    // Status
+    $("statusChips").innerHTML =
+      chipHTML("All", "Any", state.status === "All", null, "small") +
+      Object.entries(STATUS).map(([k, v]) => chipHTML(k, v.label, state.status === k, null, "small")).join("");
+
+    // Datalists for the form
+    $("subjectList").innerHTML = subjects.map(s => `<option value="${esc(s)}">`).join("");
+    $("categoryList").innerHTML = uniq(topics.map(t => t.category)).map(c => `<option value="${esc(c)}">`).join("");
+  }
+
+  function filtered() {
+    const q = state.query.trim().toLowerCase();
+    const list = topics.filter(t =>
+      (state.subject === "All" || t.subject === state.subject) &&
+      (state.category === "All" || t.category === state.category) &&
+      (state.status === "All" || t.status === state.status) &&
+      (!q || t.title.toLowerCase().includes(q) || t.category.toLowerCase().includes(q))
+    );
+    const by = {
+      category: (a, b) => a.category.localeCompare(b.category) || a.created - b.created,
+      title:    (a, b) => a.title.localeCompare(b.title),
+      status:   (a, b) => STATUS[a.status].rank - STATUS[b.status].rank || a.title.localeCompare(b.title),
+      newest:   (a, b) => b.created - a.created
+    };
+    return list.sort(by[state.sort]);
+  }
+
+  function renderCards() {
+    const list = filtered();
+    $("resultCount").textContent = `Showing ${list.length} of ${topics.length} topic${topics.length === 1 ? "" : "s"}`;
+
+    if (!list.length) {
+      $("grid").innerHTML = topics.length
+        ? `<div class="empty"><h3>No topics match</h3><p>Try a different search or clear your filters.</p></div>`
+        : `<div class="empty"><h3>Your dashboard is empty</h3><p>Click “Add topic” to create your first one, or load the sample GCSE topics from the link at the bottom of the page.</p></div>`;
+      return;
+    }
+
+    $("grid").innerHTML = list.map(t => `
+      <article class="card" data-id="${esc(t.id)}">
+        <div class="card-top">
+          <span class="tag">${esc(t.category)}</span>
+          <span class="subject-name">${esc(t.subject)}</span>
+        </div>
+        <h3>${esc(t.title)}</h3>
+        <p class="desc">${esc(t.description) || "<em>No notes yet.</em>"}</p>
+        ${t.tier ? `<div class="tier">Tier: <b>${esc(t.tier)}</b></div>` : ""}
+        <div class="card-foot">
+          <button class="status ${t.status}" data-action="status" title="Click to change status">${STATUS[t.status].label}</button>
+          <div class="card-actions">
+            <button class="icon-btn" data-action="edit" aria-label="Edit topic">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </button>
+            <button class="icon-btn del" data-action="delete" aria-label="Delete topic">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </article>`).join("");
+  }
+
+  function renderStats() {
+    const s = countBy(topics, "status");
+    $("statTotal").textContent = topics.length;
+    $("statDone").textContent = s.done || 0;
+    $("statDoing").textContent = s.doing || 0;
+    $("statSubjects").textContent = allSubjects().length;
+  }
+
+  function render() { renderFilters(); renderCards(); renderStats(); }
+
+  // ---------- Modal ----------
+  function openForm(topic) {
+    editingId = topic ? topic.id : null;
+    $("formTitle").textContent = topic ? "Edit topic" : "Add topic";
+    $("fTitle").value = topic?.title ?? "";
+    $("fSubject").value = topic?.subject ?? (state.subject !== "All" ? state.subject : "");
+    $("fCategory").value = topic?.category ?? (state.category !== "All" ? state.category : "");
+    $("fTier").value = topic?.tier ?? "";
+    $("fStatus").value = topic?.status ?? "todo";
+    $("fDesc").value = topic?.description ?? "";
+    $("overlay").classList.add("open");
+    setTimeout(() => $("fTitle").focus(), 50);
+  }
+  function closeForm() { $("overlay").classList.remove("open"); editingId = null; }
+
+  $("form").addEventListener("submit", e => {
+    e.preventDefault();
+    const data = {
+      title: $("fTitle").value.trim(),
+      subject: $("fSubject").value.trim(),
+      category: $("fCategory").value.trim(),
+      tier: $("fTier").value,
+      status: $("fStatus").value,
+      description: $("fDesc").value.trim()
+    };
+    if (!data.title || !data.subject || !data.category) return;
+    if (editingId) {
+      Object.assign(topics.find(t => t.id === editingId), data);
+      toast("Topic updated");
+    } else {
+      topics.push({ id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36), created: Date.now(), ...data });
+      toast("Topic added");
+    }
+    save(); closeForm(); render();
+  });
+
+  $("addBtn").addEventListener("click", () => openForm());
+  $("cancelBtn").addEventListener("click", closeForm);
+  $("overlay").addEventListener("click", e => { if (e.target === $("overlay")) closeForm(); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeForm();
+    if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+      e.preventDefault(); $("search").focus();
+    }
+  });
+
+  // ---------- Card actions ----------
+  $("grid").addEventListener("click", e => {
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
+    const id = btn.closest(".card").dataset.id;
+    const topic = topics.find(t => t.id === id);
+    if (!topic) return;
+    const action = btn.dataset.action;
+    if (action === "status") {
+      topic.status = STATUS[topic.status].next;
+      save(); render();
+    } else if (action === "edit") {
+      openForm(topic);
+    } else if (action === "delete") {
+      if (confirm(`Delete “${topic.title}”?`)) {
+        topics = topics.filter(t => t.id !== id);
+        save(); render(); toast("Topic deleted");
+      }
+    }
+  });
+
+  // ---------- Filters ----------
+  function bindChips(containerId, key) {
+    $(containerId).addEventListener("click", e => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      state[key] = chip.dataset.value;
+      if (key === "subject") state.category = "All";
+      render();
+    });
+  }
+  bindChips("subjectChips", "subject");
+  bindChips("categoryChips", "category");
+  bindChips("statusChips", "status");
+
+  $("search").addEventListener("input", e => { state.query = e.target.value; renderCards(); });
+  $("sort").addEventListener("change", e => { state.sort = e.target.value; renderCards(); });
+
+  $("resetBtn").addEventListener("click", () => {
+    if (confirm("Replace all topics with the sample GCSE Physics, Chemistry, Biology and Maths topics? Your current topics will be removed.")) {
+      topics = buildSamples();
+      state.subject = state.category = state.status = "All";
+      save(); render(); toast("Sample topics restored");
+    }
+  });
+
+  $("greeting").textContent = `${account.displayName}'s Subjects`;
+  $("userName").textContent = currentUser;
+  $("avatar").textContent = account.displayName.charAt(0).toUpperCase();
+  // If this page is restored from cache via Forward after signing out (or switching
+  // student), reload so the sign-in check runs again.
+  window.addEventListener("pageshow", e => {
+    if (!e.persisted) return;
+    let user = null;
+    try { user = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY); } catch (err) {}
+    if (user !== currentUser) location.reload();
+  });
+
+  $("logoutBtn").addEventListener("click", () => {
+    try {
+      sessionStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(SESSION_KEY);
+    } catch (e) {}
+    location.href = "login.html";
+  });
+
+  let toastTimer;
+  function toast(msg) {
+    const el = $("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 2000);
+  }
+
+  render();
+</script>
+</body>
+</html>

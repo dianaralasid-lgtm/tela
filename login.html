@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tela — Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-900: #0a3d2c;
+    --green-800: #0f5132;
+    --green-700: #146c43;
+    --green-600: #198754;
+    --green-100: #e3f2ea;
+    --green-50:  #f2f8f5;
+    --ink: #13261e;
+    --muted: #5f7369;
+    --line: #dce7e1;
+    --white: #ffffff;
+    --danger: #b42318;
+    --danger-bg: #fdecea;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--green-50);
+    color: var(--ink);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  button { font: inherit; cursor: pointer; }
+
+  /* ---------- Brand panel ---------- */
+  .side {
+    background: linear-gradient(135deg, var(--green-900), var(--green-700));
+    color: var(--white);
+    padding: 48px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .side::after {
+    content: ""; position: absolute; width: 420px; height: 420px; border-radius: 50%;
+    border: 70px solid rgba(255,255,255,.06); right: -140px; bottom: -140px;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 20px; }
+  .logo {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: rgba(255,255,255,.14);
+    display: grid; place-items: center; font-size: 22px;
+  }
+  .pitch h2 { font-size: 34px; line-height: 1.2; letter-spacing: -.02em; max-width: 420px; }
+  .pitch p { color: rgba(255,255,255,.78); margin-top: 14px; max-width: 400px; }
+  .features { list-style: none; margin-top: 28px; display: grid; gap: 12px; }
+  .features li { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,.9); font-size: 15px; }
+  .features svg { flex: none; }
+  .side small { color: rgba(255,255,255,.6); position: relative; z-index: 1; }
+
+  /* ---------- Form panel ---------- */
+  .main { display: grid; place-items: center; padding: 48px 24px; }
+  .card {
+    width: 100%; max-width: 400px;
+    background: var(--white); border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(10,61,44,.06), 0 12px 32px rgba(10,61,44,.08);
+    padding: 32px;
+  }
+  .card h1 { font-size: 24px; letter-spacing: -.02em; }
+  .card .lead { color: var(--muted); font-size: 14px; margin-top: 4px; }
+
+  .tabs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+    background: var(--green-50); border-radius: 10px; padding: 4px; margin: 24px 0;
+  }
+  .tab {
+    border: none; background: transparent; border-radius: 8px; padding: 8px;
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    transition: background .15s, color .15s;
+  }
+  .tab.active { background: var(--white); color: var(--green-800); box-shadow: 0 1px 3px rgba(10,61,44,.12); }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .input-wrap { position: relative; }
+  .field input {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--line);
+    border-radius: 10px; font: inherit; font-size: 15px; color: var(--ink);
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .field input:focus { border-color: var(--green-600); box-shadow: 0 0 0 4px rgba(25,135,84,.12); }
+  .field input.invalid { border-color: var(--danger); }
+  .field .hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
+  .toggle-pw {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    border: none; background: transparent; color: var(--muted);
+    font-size: 12px; font-weight: 600; padding: 6px 8px; border-radius: 6px;
+  }
+  .toggle-pw:hover { background: var(--green-50); color: var(--green-700); }
+  .has-toggle input { padding-right: 60px; }
+
+  .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; font-size: 14px; }
+  .check { display: flex; align-items: center; gap: 8px; color: var(--muted); cursor: pointer; }
+  .check input { accent-color: var(--green-700); width: 16px; height: 16px; }
+
+  .error {
+    display: none; background: var(--danger-bg); color: var(--danger);
+    border-radius: 10px; padding: 10px 12px; font-size: 14px; margin-bottom: 16px;
+  }
+  .error.show { display: block; }
+
+  .btn {
+    width: 100%; border: none; border-radius: 10px; padding: 12px;
+    background: var(--green-700); color: var(--white);
+    font-weight: 600; font-size: 15px;
+    transition: background .15s, transform .1s;
+  }
+  .btn:hover { background: var(--green-800); }
+  .btn:active { transform: translateY(1px); }
+
+  .switch { text-align: center; margin-top: 18px; font-size: 14px; color: var(--muted); }
+  .switch button { border: none; background: none; color: var(--green-700); font-weight: 600; }
+  .switch button:hover { text-decoration: underline; }
+
+  form[hidden] { display: none; }
+
+  .demo {
+    margin-top: 20px; padding: 12px 14px; border-radius: 10px;
+    background: var(--green-50); border: 1px dashed var(--green-600);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    font-size: 13px; color: var(--muted);
+  }
+  .demo b { color: var(--ink); font-weight: 600; }
+  .demo code { font-family: ui-monospace, Consolas, monospace; color: var(--green-800); }
+  .demo button {
+    flex: none; border: 1.5px solid var(--green-600); background: var(--white);
+    color: var(--green-700); border-radius: 8px; padding: 6px 10px;
+    font-size: 13px; font-weight: 600;
+  }
+  .demo button:hover { background: var(--green-100); }
+
+  @media (max-width: 860px) {
+    body { grid-template-columns: 1fr; }
+    .side { padding: 28px 16px; }
+    .pitch, .side small { display: none; }
+    .main { padding: 24px 16px 40px; align-items: start; }
+    .card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="side">
+  <div class="brand"><div class="logo">t</div> Tela</div>
+  <div class="pitch">
+    <h2>Your revision, organised.</h2>
+    <p>Sign in to see your own subjects dashboard, with every topic and your progress saved to your account.</p>
+    <ul class="features">
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> A separate dashboard for each student</li>
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Track topics from Not started to Confident</li>
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Search and filter by subject or category</li>
+    </ul>
+  </div>
+  <small>Accounts are stored in this browser only.</small>
+</aside>
+
+<main class="main">
+  <div class="card">
+    <h1 id="heading">Welcome back</h1>
+    <p class="lead" id="lead">Sign in to open your dashboard.</p>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="signin" role="tab">Sign in</button>
+      <button class="tab" data-tab="signup" role="tab">Create account</button>
+    </div>
+
+    <div class="error" id="error" role="alert"></div>
+
+    <!-- Sign in -->
+    <form id="signin" novalidate>
+      <div class="field">
+        <label for="liUser">Username</label>
+        <input id="liUser" autocomplete="username" autocapitalize="none" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="liPass">Password</label>
+        <div class="input-wrap has-toggle">
+          <input id="liPass" type="password" autocomplete="current-password">
+          <button type="button" class="toggle-pw" data-for="liPass">Show</button>
+        </div>
+      </div>
+      <div class="row">
+        <label class="check"><input type="checkbox" id="remember"> Keep me signed in</label>
+      </div>
+      <button type="submit" class="btn">Sign in</button>
+      <p class="switch">New here? <button type="button" data-tab="signup">Create an account</button></p>
+      <div class="demo">
+        <div><b>Demo student</b><br>Username <code>demo</code> · Password <code>demo123</code></div>
+        <button type="button" id="demoBtn">Use demo</button>
+      </div>
+    </form>
+
+    <!-- Sign up -->
+    <form id="signup" novalidate hidden>
+      <div class="field">
+        <label for="suName">Your name</label>
+        <input id="suName" autocomplete="name" maxlength="40" placeholder="e.g. Sam">
+      </div>
+      <div class="field">
+        <label for="suUser">Username</label>
+        <input id="suUser" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="20">
+        <div class="hint">3–20 characters: letters, numbers, dots, dashes or underscores.</div>
+      </div>
+      <div class="field">
+        <label for="suPass">Password</label>
+        <div class="input-wrap has-toggle">
+          <input id="suPass" type="password" autocomplete="new-password">
+          <button type="button" class="toggle-pw" data-for="suPass">Show</button>
+        </div>
+        <div class="hint">At least 6 characters.</div>
+      </div>
+      <div class="field">
+        <label for="suConfirm">Confirm password</label>
+        <input id="suConfirm" type="password" autocomplete="new-password">
+      </div>
+      <button type="submit" class="btn">Create account</button>
+      <p class="switch">Already have an account? <button type="button" data-tab="signin">Sign in</button></p>
+    </form>
+  </div>
+</main>
+
+<script>
+  const ACCOUNTS_KEY = "tela.accounts";
+  const SESSION_KEY = "tela.session";
+  const USERNAME_RE = /^[a-z0-9._-]{3,20}$/;
+
+  const $ = id => document.getElementById(id);
+
+  // ---------- Storage ----------
+  function loadAccounts() {
+    try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  function saveAccounts(accounts) {
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+  }
+  function startSession(username, remember) {
+    try {
+      sessionStorage.setItem(SESSION_KEY, username);
+      if (remember) localStorage.setItem(SESSION_KEY, username);
+      else localStorage.removeItem(SESSION_KEY);
+    } catch (e) { /* storage blocked — dashboard will bounce back here */ }
+    location.href = "index.html";
+  }
+
+  function endSession() {
+    try {
+      sessionStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(SESSION_KEY);
+    } catch (e) {}
+  }
+
+  // Arriving here with the browser's back button signs the student out.
+  // Otherwise, if already signed in, go straight to the dashboard.
+  const navEntry = performance.getEntriesByType("navigation")[0];
+  if (navEntry && navEntry.type === "back_forward") {
+    endSession();
+  } else {
+    try {
+      const existing = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (existing && loadAccounts()[existing]) location.replace("index.html");
+    } catch (e) {}
+  }
+
+  // ---------- Password hashing (SHA-256, works offline and from file://) ----------
+  function sha256(str) {
+    const rotr = (x, n) => (x >>> n) | (x << (32 - n));
+    const K = [], H = [];
+    const frac = x => ((x - Math.floor(x)) * 4294967296) | 0;
+    for (let n = 2, c = 0; c < 64; n++) {
+      let prime = true;
+      for (let i = 2; i * i <= n; i++) if (n % i === 0) { prime = false; break; }
+      if (!prime) continue;
+      if (c < 8) H[c] = frac(Math.pow(n, 1 / 2));
+      K[c++] = frac(Math.pow(n, 1 / 3));
+    }
+
+    const bytes = new TextEncoder().encode(str);
+    const total = ((bytes.length + 9 + 63) >> 6) << 6;
+    const buf = new Uint8Array(total);
+    buf.set(bytes);
+    buf[bytes.length] = 0x80;
+    const view = new DataView(buf.buffer);
+    const bitLen = bytes.length * 8;
+    view.setUint32(total - 8, Math.floor(bitLen / 4294967296));
+    view.setUint32(total - 4, bitLen >>> 0);
+
+    const w = new Array(64);
+    for (let off = 0; off < total; off += 64) {
+      for (let i = 0; i < 16; i++) w[i] = view.getInt32(off + i * 4);
+      for (let i = 16; i < 64; i++) {
+        const s0 = rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+        const s1 = rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+        w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+      }
+      let [a, b, c, d, e, f, g, h] = H;
+      for (let i = 0; i < 64; i++) {
+        const t1 = (h + (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) | 0;
+        const t2 = ((rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0;
+        d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      [a, b, c, d, e, f, g, h].forEach((v, j) => { H[j] = (H[j] + v) | 0; });
+    }
+    return H.map(v => (v >>> 0).toString(16).padStart(8, "0")).join("");
+  }
+
+  function randomSalt() {
+    const arr = new Uint8Array(16);
+    crypto.getRandomValues(arr);
+    return Array.from(arr, b => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  const hashPassword = (password, salt) => sha256(salt + ":" + password);
+
+  // ---------- Demo account ----------
+  const DEMO = { username: "demo", password: "demo123", displayName: "Demo Student" };
+  try {
+    const accounts = loadAccounts();
+    if (!accounts[DEMO.username]) {
+      const salt = randomSalt();
+      accounts[DEMO.username] = { displayName: DEMO.displayName, salt, hash: hashPassword(DEMO.password, salt), created: Date.now() };
+      saveAccounts(accounts);
+    }
+  } catch (e) { /* storage unavailable — sign-in will report it */ }
+
+  // ---------- UI ----------
+  function showError(msg, fields = []) {
+    $("error").textContent = msg;
+    $("error").classList.add("show");
+    document.querySelectorAll(".invalid").forEach(el => el.classList.remove("invalid"));
+    fields.forEach(id => $(id).classList.add("invalid"));
+    if (fields[0]) $(fields[0]).focus();
+  }
+  function clearError() {
+    $("error").classList.remove("show");
+    document.querySelectorAll(".invalid").forEach(el => el.classList.remove("invalid"));
+  }
+
+  function switchTab(tab) {
+    clearError();
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+    $("signin").hidden = tab !== "signin";
+    $("signup").hidden = tab !== "signup";
+    $("heading").textContent = tab === "signin" ? "Welcome back" : "Create your account";
+    $("lead").textContent = tab === "signin" ? "Sign in to open your dashboard." : "Set up your own subjects dashboard in seconds.";
+    $(tab === "signin" ? "liUser" : "suName").focus();
+  }
+
+  document.querySelectorAll("[data-tab]").forEach(el =>
+    el.addEventListener("click", () => switchTab(el.dataset.tab)));
+
+  document.querySelectorAll(".toggle-pw").forEach(btn =>
+    btn.addEventListener("click", () => {
+      const input = $(btn.dataset.for);
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      btn.textContent = show ? "Hide" : "Show";
+    }));
+
+  document.querySelectorAll("input").forEach(el =>
+    el.addEventListener("input", () => el.classList.remove("invalid")));
+
+  // ---------- Sign in ----------
+  $("signin").addEventListener("submit", e => {
+    e.preventDefault();
+    const username = $("liUser").value.trim().toLowerCase();
+    const password = $("liPass").value;
+    if (!username || !password) return showError("Enter your username and password.", [!username ? "liUser" : "liPass"]);
+
+    const account = loadAccounts()[username];
+    if (!account || hashPassword(password, account.salt) !== account.hash) {
+      $("liPass").value = "";
+      return showError("That username and password don't match. Please try again.", ["liUser", "liPass"]);
+    }
+    startSession(username, $("remember").checked);
+  });
+
+  $("demoBtn").addEventListener("click", () => {
+    clearError();
+    $("liUser").value = DEMO.username;
+    $("liPass").value = DEMO.password;
+    $("signin").requestSubmit();
+  });
+
+  // ---------- Sign up ----------
+  $("signup").addEventListener("submit", e => {
+    e.preventDefault();
+    const name = $("suName").value.trim();
+    const username = $("suUser").value.trim().toLowerCase();
+    const password = $("suPass").value;
+    const confirm = $("suConfirm").value;
+
+    if (!name) return showError("Please enter your name.", ["suName"]);
+    if (!USERNAME_RE.test(username)) return showError("Usernames must be 3–20 characters: letters, numbers, dots, dashes or underscores.", ["suUser"]);
+    if (password.length < 6) return showError("Your password needs at least 6 characters.", ["suPass"]);
+    if (password !== confirm) return showError("Those passwords don't match.", ["suConfirm"]);
+
+    const accounts = loadAccounts();
+    if (accounts[username]) return showError("That username is already taken.", ["suUser"]);
+
+    const salt = randomSalt();
+    accounts[username] = { displayName: name, salt, hash: hashPassword(password, salt), created: Date.now() };
+
+    try {
+      saveAccounts(accounts);
+      // New students start with an empty dashboard: no sample topics, no science top-up.
+      const topicsKey = "tela.topics." + username;
+      localStorage.setItem(topicsKey, "[]");
+      localStorage.setItem(topicsKey + ".sciences", "1");
+    } catch (err) {
+      return showError("Couldn't save your account — browser storage is unavailable.");
+    }
+    startSession(username, false);
+  });
+
+  // Browsers may restore this page from cache on Back without re-running the script,
+  // so sign out and wipe the typed-in details here too.
+  window.addEventListener("pageshow", e => {
+    if (!e.persisted) return;
+    endSession();
+    $("signin").reset();
+    $("signup").reset();
+    clearError();
+  });
+</script>
+</body>
+</html>
