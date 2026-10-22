@@ -394,6 +394,7 @@
       const topicsKey = "tela.topics." + username;
       localStorage.setItem(topicsKey, "[]");
       localStorage.setItem(topicsKey + ".sciences", "1");
+      localStorage.setItem(topicsKey + ".grades", "1");
     } catch (err) {
       return showError("Couldn't save your account — browser storage is unavailable.");
     }
