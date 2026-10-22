@@ -982,6 +982,7 @@
   const practiceKey = t => t.title.trim().toLowerCase();
   // practiceSaved holds this session's answers; they're only written to storage when the student saves.
   let practiceOpen = null, practiceSaved = {}, practiceAnswers = {}, practiceDirty = false;
+  let practiceTopicId = null, practiceStatusAtOpen = null;
 
   // Reads an expression like "3a − 2b + a²" into like terms. Returns null if it can't be read.
   // "simplified" is false if a like term appears twice or a term is zero.
@@ -1077,6 +1078,18 @@
     $("practiceDone").textContent = correct === parts
       ? "All correct! Great work."
       : `You've answered ${answered} of ${parts}. Scroll up to retry any questions in red.`;
+    return { parts, correct, answered };
+  }
+
+  // Attempting any question marks the topic In progress; getting every one right marks it Confident.
+  function syncPracticeStatus({ parts, correct, answered }) {
+    const topic = topics.find(t => t.id === practiceTopicId);
+    const status = correct === parts ? "done" : answered ? "doing" : null;
+    if (!topic || !status || topic.status === status) return;
+    topic.status = status;
+    save();
+    render();
+    toast(`Topic marked ${STATUS[status].label}`);
   }
 
   function checkPart(partEl) {
@@ -1090,7 +1103,7 @@
     partEl.querySelector(".feedback").innerHTML = feedbackHTML(result);
     practiceSaved[id] = { value };
     practiceDirty = true;
-    updatePracticeScore();
+    syncPracticeStatus(updatePracticeScore());
 
     // Move on to the next question once this one has been answered.
     const parts = [...$("practiceBody").querySelectorAll(".part")];
@@ -1105,6 +1118,8 @@
     practiceOpen = practiceKey(topic);
     practiceSaved = loadPractice();
     practiceDirty = false;
+    practiceTopicId = topic.id;
+    practiceStatusAtOpen = topic.status;
     $("practiceTitle").textContent = PRACTICE[practiceOpen].title;
     renderPractice();
     $("practiceOverlay").classList.add("open");
@@ -1139,7 +1154,16 @@
 
   $("practiceSave").addEventListener("click", savePracticeProgress);
   $("saveConfirm").addEventListener("click", () => { savePracticeProgress(); hidePractice(); });
-  $("saveDiscard").addEventListener("click", hidePractice);
+  $("saveDiscard").addEventListener("click", () => {
+    // Throwing the answers away also undoes any status change they caused.
+    const topic = topics.find(t => t.id === practiceTopicId);
+    if (topic && topic.status !== practiceStatusAtOpen) {
+      topic.status = practiceStatusAtOpen;
+      save();
+      render();
+    }
+    hidePractice();
+  });
   $("saveCancel").addEventListener("click", () => $("saveOverlay").classList.remove("open"));
 
   // Closing the tab or navigating away can't show the custom pop-up, so use the browser's own warning.
