@@ -33,6 +33,10 @@
     --amber-bg: #fdf3e1;
     --grey-bg: #eef1f0;
     --danger: #b42318;
+    --ok-bg: #e6f6ec;
+    --ok-line: #9fd5b2;
+    --bad-bg: #fdeaea;
+    --bad-line: #f2b2b2;
     --radius: 14px;
     --shadow: 0 1px 2px rgba(10, 61, 44, .06), 0 4px 16px rgba(10, 61, 44, .06);
     --shadow-hover: 0 2px 4px rgba(10, 61, 44, .08), 0 12px 28px rgba(10, 61, 44, .12);
@@ -272,6 +276,78 @@
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
 
+  /* ---------- Practice questions ---------- */
+  .practice-btn {
+    border: 1.5px solid var(--green-600); background: var(--green-50); color: var(--green-700);
+    border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; text-align: left;
+    transition: background .15s;
+  }
+  .practice-btn:hover { background: var(--green-100); }
+
+  .practice-panel {
+    background: var(--white); border-radius: 16px; width: 100%; max-width: 760px;
+    max-height: calc(100vh - 32px); display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,.25); animation: pop .2s ease;
+  }
+  .practice-head {
+    padding: 20px 24px; border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+  }
+  .practice-head h2 { font-size: 20px; letter-spacing: -.01em; }
+  .practice-score { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .practice-head-btns { display: flex; align-items: center; gap: 4px; flex: none; }
+  .practice-body { overflow-y: auto; padding: 20px 24px 40px; }
+  .practice-tip {
+    font-size: 13px; color: var(--muted); background: var(--green-50);
+    border-radius: 10px; padding: 10px 12px; margin-bottom: 20px;
+  }
+
+  .q-block { margin-bottom: 24px; }
+  .q-head { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; font-size: 15px; }
+  .q-num {
+    width: 28px; height: 28px; border-radius: 8px; flex: none;
+    background: var(--green-700); color: var(--white);
+    display: grid; place-items: center; font-weight: 700; font-size: 14px;
+  }
+  .diagram { margin: 0 0 12px 40px; }
+  .diagram svg { display: block; max-width: 100%; height: auto; }
+  .diagram polygon, .diagram rect { fill: var(--green-50); stroke: var(--green-700); stroke-width: 2.5; stroke-linejoin: round; }
+  .diagram line { stroke: var(--green-700); stroke-width: 2; }
+  .diagram text { font: 600 14px "Inter", sans-serif; fill: var(--ink); }
+
+  .part {
+    border: 1.5px solid var(--line); border-radius: 12px; padding: 14px 16px;
+    margin: 0 0 10px 40px; transition: background .25s, border-color .25s;
+  }
+  .part.correct { background: var(--ok-bg); border-color: var(--ok-line); }
+  .part.incorrect { background: var(--bad-bg); border-color: var(--bad-line); }
+  .part-text { font-size: 15px; margin-bottom: 10px; }
+  .marks { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .answer-row { display: flex; gap: 8px; }
+  .answer-row input {
+    flex: 1; min-width: 0; padding: 10px 12px; border: 1.5px solid var(--line);
+    border-radius: 10px; font: inherit; font-size: 15px; color: var(--ink);
+    background: var(--white); outline: none;
+  }
+  .answer-row input:focus { border-color: var(--green-600); box-shadow: 0 0 0 4px rgba(25,135,84,.12); }
+  .sq-btn {
+    flex: none; border: 1.5px solid var(--line); background: var(--white); color: var(--ink);
+    border-radius: 10px; padding: 0 12px; font-weight: 600;
+  }
+  .sq-btn:hover { border-color: var(--green-600); }
+  .feedback { font-size: 13px; font-weight: 500; }
+  .feedback:not(:empty) { margin-top: 8px; }
+  .part.correct .feedback { color: var(--green-800); }
+  .part.incorrect .feedback { color: var(--danger); }
+  .show-answer {
+    border: none; background: none; color: inherit; font-size: 13px;
+    text-decoration: underline; margin-left: 6px; padding: 0;
+  }
+  .practice-done {
+    margin-left: 40px; padding: 20px; border-radius: 12px; text-align: center;
+    background: var(--green-50); color: var(--green-800); font-weight: 600;
+  }
+
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
     background: var(--green-900); color: var(--white); padding: 10px 18px;
@@ -289,6 +365,8 @@
     .stats { grid-template-columns: repeat(2, 1fr); }
     h1 { font-size: 24px; }
     .field-row { grid-template-columns: 1fr; }
+    .part, .diagram, .practice-done { margin-left: 0; }
+    .practice-head, .practice-body { padding-left: 16px; padding-right: 16px; }
   }
 </style>
 </head>
@@ -441,6 +519,25 @@
       <button type="submit" class="btn btn-primary">Save topic</button>
     </div>
   </form>
+</div>
+
+<!-- Practice questions -->
+<div class="overlay" id="practiceOverlay">
+  <div class="practice-panel" role="dialog" aria-modal="true" aria-labelledby="practiceTitle">
+    <div class="practice-head">
+      <div>
+        <h2 id="practiceTitle"></h2>
+        <div class="practice-score" id="practiceScore"></div>
+      </div>
+      <div class="practice-head-btns">
+        <button type="button" class="btn btn-ghost" id="practiceReset">Clear answers</button>
+        <button type="button" class="icon-btn" id="practiceClose" aria-label="Close practice questions">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="practice-body" id="practiceBody"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -761,6 +858,7 @@
           ${t.tier ? `<div class="tier">Tier: <b>${esc(t.tier)}</b></div>` : "<span></span>"}
           <div class="boards">${t.boards.map(b => `<span class="board">${esc(b)}</span>`).join("")}</div>
         </div>
+        ${PRACTICE[practiceKey(t)] ? `<button class="practice-btn" data-action="practice">Practice exam questions →</button>` : ""}
         <div class="card-foot">
           <button class="status ${t.status}" data-action="status" title="Click to change status">${STATUS[t.status].label}</button>
           <div class="card-actions">
@@ -784,6 +882,257 @@
   }
 
   function render() { renderFilters(); renderCards(); renderStats(); }
+
+  // ---------- Practice questions ----------
+  // Keyed by topic title (lower case). Each part is [label, question, marks, answer].
+  const PRACTICE = {
+    "algebra: collecting like terms": {
+      title: "Collecting Like Terms: Exam Style Questions",
+      questions: [
+        { parts: [
+          ["a", "Simplify a + a + a", 1, "3a"],
+          ["b", "Simplify 4a + 3a − a", 1, "6a"],
+          ["c", "Simplify 4ac + 5ac", 1, "9ac"],
+          ["d", "Simplify 4c − 6c", 1, "−2c"],
+          ["e", "Simplify a² + a²", 1, "2a²"]
+        ] },
+        { parts: [
+          ["a", "Simplify m + m + m + m", 1, "4m"],
+          ["b", "Simplify 8c + 2p − 2c + 4p", 2, "6c + 6p"]
+        ] },
+        { parts: [
+          ["", "Simplify 6a + 5w − 2a + w", 2, "4a + 6w"]
+        ] },
+        { parts: [
+          ["a", "Simplify 9y − 3y", 1, "6y"],
+          ["b", "Simplify 7y + 2w − 3y + 2w", 2, "4y + 4w"],
+          ["c", "Simplify 7y + 10 + 3y − 9", 2, "10y + 1"]
+        ] },
+        { parts: [
+          ["a", "Simplify s + s + s + s − s", 1, "4s"],
+          ["b", "Simplify 5c − 3s + 3c + 7s", 2, "8c + 4s"],
+          ["c", "Simplify 8a + 3c − 5c + 3a", 2, "11a − 2c"],
+          ["d", "Simplify 3a + 2w − 5a − 9w", 2, "−2a − 7w"],
+          ["e", "Simplify 3y² + 2w² + y² − w²", 2, "4y² + w²"]
+        ] },
+        { parts: [
+          ["a", "Simplify 2x + 2x", 1, "4x"],
+          ["b", "Simplify 7w − 2w", 1, "5w"],
+          ["c", "Simplify 3m − m", 1, "2m"],
+          ["d", "Simplify y² + y² + y²", 1, "3y²"],
+          ["e", "Simplify 7h + 5k + h − 3k", 2, "8h + 2k"]
+        ] },
+        { stem: "The diagram shows a pentagon.", diagram: "pentagon", parts: [
+          ["", "Find an expression, in terms of x and y, for the perimeter of the pentagon.", 2, "4x + 2y"]
+        ] },
+        { stem: "The diagram shows an equilateral triangle. The length of each side is 2x + y.", diagram: "triangle", parts: [
+          ["", "Find an expression, in terms of x and y, for the perimeter of the triangle.", 2, "6x + 3y"]
+        ] },
+        { stem: "The diagram shows a rectangle.", diagram: "rectangle", parts: [
+          ["", "Find an expression, in terms of x, for the perimeter of the rectangle.", 2, "6x + 20"]
+        ] },
+        { stem: "The diagram shows an L shape. The two inner edges are not labelled.", diagram: "lshape", parts: [
+          ["", "Find an expression, in terms of x, for the perimeter of this L shape.", 2, "12x + 8"]
+        ] }
+      ]
+    }
+  };
+
+  const DIAGRAMS = {
+    pentagon: `<svg viewBox="0 0 210 170" width="210" role="img" aria-label="Pentagon with sides y, y, x, x and 2x">
+      <polygon points="30,140 180,140 180,70 105,12 30,70"/>
+      <text x="105" y="162" text-anchor="middle">2x</text>
+      <text x="190" y="110">x</text>
+      <text x="20" y="110" text-anchor="end">x</text>
+      <text x="152" y="34">y</text>
+      <text x="58" y="34" text-anchor="end">y</text>
+    </svg>`,
+    triangle: `<svg viewBox="0 0 200 195" width="200" role="img" aria-label="Equilateral triangle with each side 2x + y">
+      <polygon points="100,10 190,165 10,165"/>
+      <line x1="47.2" y1="92" x2="62.8" y2="83"/>
+      <line x1="137.2" y1="83" x2="152.8" y2="92"/>
+      <line x1="100" y1="156" x2="100" y2="174"/>
+      <text x="100" y="188" text-anchor="middle">2x + y</text>
+    </svg>`,
+    rectangle: `<svg viewBox="0 0 290 130" width="290" role="img" aria-label="Rectangle with length 2x + 7 and width x + 3">
+      <rect x="20" y="28" width="200" height="90"/>
+      <text x="120" y="18" text-anchor="middle">2x + 7</text>
+      <text x="230" y="78">x + 3</text>
+    </svg>`,
+    lshape: `<svg viewBox="0 0 360 250" width="360" role="img" aria-label="L shape with top x, left 3x + 3, bottom 3x + 1 and right x + 2">
+      <polygon points="70,20 150,20 150,140 290,140 290,220 70,220"/>
+      <text x="110" y="12" text-anchor="middle">x</text>
+      <text x="62" y="124" text-anchor="end">3x + 3</text>
+      <text x="180" y="242" text-anchor="middle">3x + 1</text>
+      <text x="298" y="184">x + 2</text>
+    </svg>`
+  };
+
+  const practiceKey = t => t.title.trim().toLowerCase();
+  let practiceOpen = null, practiceSaved = {}, practiceAnswers = {};
+
+  // Reads an expression like "3a − 2b + a²" into like terms. Returns null if it can't be read.
+  // "simplified" is false if a like term appears twice or a term is zero.
+  function parseExpr(raw) {
+    let s = String(raw).toLowerCase()
+      .replace(/²/g, "^2").replace(/³/g, "^3")
+      .replace(/[−–—]/g, "-").replace(/[\s×*·]/g, "");
+    if (!s) return null;
+    if (!/^[+-]/.test(s)) s = "+" + s;
+    const termRe = /([+-])(\d+(?:\.\d+)?)?((?:[a-z](?:\^\d+)?)*)/y;
+    const totals = {};
+    let simplified = true;
+    while (termRe.lastIndex < s.length) {
+      const m = termRe.exec(s);
+      if (!m || (!m[2] && !m[3])) return null;
+      const powers = {};
+      for (const [, v, p] of m[3].matchAll(/([a-z])(?:\^(\d+))?/g)) {
+        if (powers[v]) simplified = false;
+        powers[v] = (powers[v] || 0) + (p ? parseInt(p, 10) : 1);
+      }
+      const key = Object.keys(powers).sort().map(v => powers[v] === 1 ? v : v + "^" + powers[v]).join("");
+      const coef = (m[1] === "-" ? -1 : 1) * (m[2] ? parseFloat(m[2]) : 1);
+      if (key in totals || coef === 0) simplified = false;
+      totals[key] = (totals[key] || 0) + coef;
+    }
+    const canon = Object.keys(totals).filter(k => Math.abs(totals[k]) > 1e-9).sort()
+      .map(k => totals[k] + "*" + k).join("|");
+    return { canon, simplified };
+  }
+
+  function markAnswer(value, answer) {
+    const got = parseExpr(value), want = parseExpr(answer);
+    if (!got) return { correct: false, message: "I couldn't read that. Use letters, numbers, + and −, e.g. 3a + 2b." };
+    if (got.canon !== want.canon) return { correct: false, message: "Not quite. Try again." };
+    if (!got.simplified) return { correct: false, message: "Right value, but it isn't fully simplified yet." };
+    return { correct: true, message: "Correct!" };
+  }
+
+  const practiceStoreKey = () => STORAGE_KEY + ".practice." + practiceOpen.replace(/[^a-z0-9]+/g, "-");
+  function loadPractice() {
+    try { return JSON.parse(localStorage.getItem(practiceStoreKey())) || {}; }
+    catch (e) { return {}; }
+  }
+  function savePractice() {
+    try { localStorage.setItem(practiceStoreKey(), JSON.stringify(practiceSaved)); } catch (e) {}
+  }
+
+  function feedbackHTML(result) {
+    return esc(result.message) + (result.correct ? "" : `<button type="button" class="show-answer">Show answer</button>`);
+  }
+
+  function renderPractice() {
+    const set = PRACTICE[practiceOpen];
+    practiceAnswers = {};
+    let html = `<div class="practice-tip">Type your answer and press <b>Enter</b> or <b>Check</b>. For powers, use the <b>x²</b> button or type ^2 (e.g. 2a^2).</div>`;
+    set.questions.forEach((q, qi) => {
+      const n = qi + 1;
+      html += `<section class="q-block"><div class="q-head"><span class="q-num">${n}</span>${q.stem ? `<span>${esc(q.stem)}</span>` : ""}</div>`;
+      if (q.diagram) html += `<div class="diagram">${DIAGRAMS[q.diagram]}</div>`;
+      q.parts.forEach(([label, text, marks, answer]) => {
+        const id = `q${n}${label}`;
+        practiceAnswers[id] = answer;
+        const saved = practiceSaved[id];
+        const result = saved ? markAnswer(saved.value, answer) : null;
+        html += `
+          <div class="part ${result ? (result.correct ? "correct" : "incorrect") : ""}" data-id="${id}">
+            <div class="part-text">${label ? `<b>(${label})</b> ` : ""}${esc(text)} <span class="marks">(${marks} mark${marks > 1 ? "s" : ""})</span></div>
+            <div class="answer-row">
+              <input type="text" value="${esc(saved ? saved.value : "")}" placeholder="Your answer" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Answer to question ${n}${label}">
+              <button type="button" class="sq-btn" title="Insert ²">x²</button>
+              <button type="button" class="btn btn-primary check-btn">Check</button>
+            </div>
+            <div class="feedback">${result ? feedbackHTML(result) : ""}</div>
+          </div>`;
+      });
+      html += `</section>`;
+    });
+    html += `<div class="practice-done" id="practiceDone"></div>`;
+    $("practiceBody").innerHTML = html;
+    updatePracticeScore();
+  }
+
+  function updatePracticeScore() {
+    const set = PRACTICE[practiceOpen];
+    let parts = 0, correct = 0, marks = 0, earned = 0, answered = 0;
+    set.questions.forEach((q, qi) => q.parts.forEach(([label, , m, answer]) => {
+      const saved = practiceSaved[`q${qi + 1}${label}`];
+      parts++; marks += m;
+      if (saved) answered++;
+      if (saved && markAnswer(saved.value, answer).correct) { correct++; earned += m; }
+    }));
+    $("practiceScore").textContent = `${correct} of ${parts} correct · ${earned} / ${marks} marks`;
+    $("practiceDone").textContent = correct === parts
+      ? "All correct! Great work."
+      : `You've answered ${answered} of ${parts}. Scroll up to retry any questions in red.`;
+  }
+
+  function checkPart(partEl) {
+    const id = partEl.dataset.id;
+    const input = partEl.querySelector("input");
+    const value = input.value.trim();
+    if (!value) { input.focus(); return; }
+    const result = markAnswer(value, practiceAnswers[id]);
+    partEl.classList.toggle("correct", result.correct);
+    partEl.classList.toggle("incorrect", !result.correct);
+    partEl.querySelector(".feedback").innerHTML = feedbackHTML(result);
+    practiceSaved[id] = { value };
+    savePractice();
+    updatePracticeScore();
+
+    // Move on to the next question once this one has been answered.
+    const parts = [...$("practiceBody").querySelectorAll(".part")];
+    const next = parts[parts.indexOf(partEl) + 1];
+    setTimeout(() => {
+      (next || $("practiceDone")).scrollIntoView({ behavior: "smooth", block: "center" });
+      if (next) next.querySelector("input").focus({ preventScroll: true });
+    }, 400);
+  }
+
+  function openPractice(topic) {
+    practiceOpen = practiceKey(topic);
+    practiceSaved = loadPractice();
+    $("practiceTitle").textContent = PRACTICE[practiceOpen].title;
+    renderPractice();
+    $("practiceOverlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+    $("practiceBody").scrollTop = 0;
+    const firstOpen = $("practiceBody").querySelector(".part:not(.correct) input");
+    if (firstOpen) setTimeout(() => firstOpen.focus({ preventScroll: true }), 50);
+  }
+  function closePractice() {
+    if (!practiceOpen) return;
+    $("practiceOverlay").classList.remove("open");
+    document.body.style.overflow = "";
+    practiceOpen = null;
+  }
+
+  $("practiceBody").addEventListener("click", e => {
+    const part = e.target.closest(".part");
+    if (!part) return;
+    if (e.target.closest(".check-btn")) checkPart(part);
+    else if (e.target.closest(".show-answer")) {
+      part.querySelector(".feedback").textContent = "Answer: " + practiceAnswers[part.dataset.id];
+    } else if (e.target.closest(".sq-btn")) {
+      const input = part.querySelector("input");
+      const start = input.selectionStart ?? input.value.length, end = input.selectionEnd ?? start;
+      input.value = input.value.slice(0, start) + "²" + input.value.slice(end);
+      input.focus();
+      input.setSelectionRange(start + 1, start + 1);
+    }
+  });
+  $("practiceBody").addEventListener("keydown", e => {
+    if (e.key === "Enter" && e.target.matches(".part input")) { e.preventDefault(); checkPart(e.target.closest(".part")); }
+  });
+  $("practiceClose").addEventListener("click", closePractice);
+  $("practiceOverlay").addEventListener("click", e => { if (e.target === $("practiceOverlay")) closePractice(); });
+  $("practiceReset").addEventListener("click", () => {
+    if (!confirm("Clear all your answers for these questions?")) return;
+    practiceSaved = {};
+    savePractice();
+    renderPractice();
+    $("practiceBody").scrollTop = 0;
+  });
 
   // ---------- Modal ----------
   function openForm(topic) {
@@ -832,7 +1181,7 @@
   $("cancelBtn").addEventListener("click", closeForm);
   $("overlay").addEventListener("click", e => { if (e.target === $("overlay")) closeForm(); });
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") closeForm();
+    if (e.key === "Escape") { closeForm(); closePractice(); }
     if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
       e.preventDefault(); $("search").focus();
     }
@@ -849,6 +1198,8 @@
     if (action === "status") {
       topic.status = STATUS[topic.status].next;
       save(); render();
+    } else if (action === "practice") {
+      openPractice(topic);
     } else if (action === "edit") {
       openForm(topic);
     } else if (action === "delete") {
