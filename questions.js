@@ -77,6 +77,10 @@
                 digit, shown as short division (e.g. "9.36 ÷ 3").
      "choice"   The student taps one of the "options"; the answer is the
                 right one.
+
+   ALWAYS INCLUDE: add  always: true  to a question to put it in every set
+   instead of leaving it to the random pick. It still appears in its place
+   in the list, so put these at the top to show them first.
                   { question: "Which is bigger?", type: "choice",
                     options: ["0.7", "0.65"], answer: "0.7" }
 
@@ -1869,24 +1873,24 @@ QUESTION_BANK.add({
   questionsPerSet: 10,
   tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. For short division questions, type one digit in each box above the bus stop, starting from the left. You can include £ or units, but you don't have to.",
   questions: [
-    { section: "Section A: Integers", question: "Work out 84 ÷ 4", marks: 1, answer: "21" },
-    { section: "Section A: Integers", question: "Work out 156 ÷ 6", marks: 1, answer: "26" },
-    { section: "Section A: Integers", question: "Work out 945 ÷ 5", marks: 1, answer: "189" },
-    { section: "Section A: Integers", question: "Work out 1272 ÷ 8", marks: 2, answer: "159" },
+    { section: "Section A: Short division", question: "Use short division to work out 852 ÷ 4.", type: "column", always: true, sum: "852 ÷ 4", marks: 2 },
+    { section: "Section A: Short division", question: "Use short division to work out 9.36 ÷ 3.", type: "column", always: true, sum: "9.36 ÷ 3", marks: 2 },
+    { section: "Section A: Short division", question: "Use short division to work out 7 ÷ 4. Use the zeros after the decimal point.", type: "column", always: true, sum: "7 ÷ 4", marks: 2 },
 
-    { section: "Section B: Decimals", question: "Work out 7.2 ÷ 3", marks: 1, answer: "2.4" },
-    { section: "Section B: Decimals", question: "Work out 8.4 ÷ 4", marks: 1, answer: "2.1" },
-    { section: "Section B: Decimals", question: "Work out 12.5 ÷ 5", marks: 1, answer: "2.5" },
-    { section: "Section B: Decimals", question: "Work out 0.36 ÷ 6", marks: 1, answer: "0.06" },
-    { section: "Section B: Decimals", question: "Work out 34.5 ÷ 10", marks: 1, answer: "3.45" },
-    { section: "Section B: Decimals", question: "Work out 47 ÷ 100", marks: 1, answer: "0.47" },
-    { section: "Section B: Decimals", question: "Work out 7 ÷ 4", marks: 2, answer: "1.75" },
-    { section: "Section B: Decimals", question: "Which calculation has the answer 0.4?", type: "choice", marks: 1,
+    { section: "Section B: Integers", question: "Work out 84 ÷ 4", marks: 1, answer: "21" },
+    { section: "Section B: Integers", question: "Work out 156 ÷ 6", marks: 1, answer: "26" },
+    { section: "Section B: Integers", question: "Work out 945 ÷ 5", marks: 1, answer: "189" },
+    { section: "Section B: Integers", question: "Work out 1272 ÷ 8", marks: 2, answer: "159" },
+
+    { section: "Section C: Decimals", question: "Work out 7.2 ÷ 3", marks: 1, answer: "2.4" },
+    { section: "Section C: Decimals", question: "Work out 8.4 ÷ 4", marks: 1, answer: "2.1" },
+    { section: "Section C: Decimals", question: "Work out 12.5 ÷ 5", marks: 1, answer: "2.5" },
+    { section: "Section C: Decimals", question: "Work out 0.36 ÷ 6", marks: 1, answer: "0.06" },
+    { section: "Section C: Decimals", question: "Work out 34.5 ÷ 10", marks: 1, answer: "3.45" },
+    { section: "Section C: Decimals", question: "Work out 47 ÷ 100", marks: 1, answer: "0.47" },
+    { section: "Section C: Decimals", question: "Work out 7 ÷ 4", marks: 2, answer: "1.75" },
+    { section: "Section C: Decimals", question: "Which calculation has the answer 0.4?", type: "choice", marks: 1,
       options: ["4 ÷ 100", "4 ÷ 10", "0.4 ÷ 10", "40 ÷ 1000"], answer: "4 ÷ 10" },
-
-    { section: "Section C: Short division", question: "Use short division to work out 852 ÷ 4.", type: "column", sum: "852 ÷ 4", marks: 2 },
-    { section: "Section C: Short division", question: "Use short division to work out 9.36 ÷ 3.", type: "column", sum: "9.36 ÷ 3", marks: 2 },
-    { section: "Section C: Short division", question: "Use short division to work out 7 ÷ 4. Use the zeros after the decimal point.", type: "column", sum: "7 ÷ 4", marks: 2 },
 
     { section: "Section D: Problem Solving", question: "£13.50 is shared equally between 3 friends. How much does each friend get?", marks: 2, answer: "£4.50" },
     { section: "Section D: Problem Solving", question: "A 2 m ribbon is cut into 8 equal pieces. How long is each piece, in metres?", marks: 2, answer: "0.25 m" },
@@ -1896,7 +1900,6 @@ QUESTION_BANK.add({
       answer: "3 ÷ 3 = 1 and 0.6 ÷ 3 = 0.2, so 3.6 ÷ 3 = 1.2. Lily has put an extra 0 in, giving 2 hundredths instead of 2 tenths." }
   ]
 });
-
 
 QUESTION_BANK.add({
   topic: "Rounding",
@@ -1972,21 +1975,21 @@ QUESTION_BANK.add({
   questionsPerSet: 10,
   tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. For column method questions, type one digit in each box of the answer row, starting from the right. You can include £ or units, but you don't have to.",
   questions: [
-    { section: "Section A: Integers", question: "Work out 58 − 23", marks: 1, answer: "35" },
-    { section: "Section A: Integers", question: "Work out 142 − 67", marks: 1, answer: "75" },
-    { section: "Section A: Integers", question: "Work out 503 − 278", marks: 1, answer: "225" },
-    { section: "Section A: Integers", question: "Work out 4000 − 1365", marks: 2, answer: "2635" },
+    { section: "Section A: Column method", question: "Use the column method to work out 726 − 348.", type: "column", always: true, sum: "726 − 348", marks: 2 },
+    { section: "Section A: Column method", question: "Use the column method to work out 8.42 − 3.67.", type: "column", always: true, sum: "8.42 − 3.67", marks: 2 },
+    { section: "Section A: Column method", question: "Use the column method to work out 20 − 6.85.", type: "column", always: true, sum: "20 − 6.85", marks: 2 },
 
-    { section: "Section B: Decimals", question: "Work out 8.7 − 3.2", marks: 1, answer: "5.5" },
-    { section: "Section B: Decimals", question: "Work out 6.4 − 2.9", marks: 1, answer: "3.5" },
-    { section: "Section B: Decimals", question: "Work out 15.35 − 7.42", marks: 1, answer: "7.93" },
-    { section: "Section B: Decimals", question: "Work out 9 − 3.6", marks: 1, answer: "5.4" },
-    { section: "Section B: Decimals", question: "Work out 12.5 − 4.75", marks: 2, answer: "7.75" },
-    { section: "Section B: Decimals", question: "Work out 1 − 0.35", marks: 2, answer: "0.65" },
+    { section: "Section B: Integers", question: "Work out 58 − 23", marks: 1, answer: "35" },
+    { section: "Section B: Integers", question: "Work out 142 − 67", marks: 1, answer: "75" },
+    { section: "Section B: Integers", question: "Work out 503 − 278", marks: 1, answer: "225" },
+    { section: "Section B: Integers", question: "Work out 4000 − 1365", marks: 2, answer: "2635" },
 
-    { section: "Section C: Column method", question: "Use the column method to work out 726 − 348.", type: "column", sum: "726 − 348", marks: 2 },
-    { section: "Section C: Column method", question: "Use the column method to work out 8.42 − 3.67.", type: "column", sum: "8.42 − 3.67", marks: 2 },
-    { section: "Section C: Column method", question: "Use the column method to work out 20 − 6.85.", type: "column", sum: "20 − 6.85", marks: 2 },
+    { section: "Section C: Decimals", question: "Work out 8.7 − 3.2", marks: 1, answer: "5.5" },
+    { section: "Section C: Decimals", question: "Work out 6.4 − 2.9", marks: 1, answer: "3.5" },
+    { section: "Section C: Decimals", question: "Work out 15.35 − 7.42", marks: 1, answer: "7.93" },
+    { section: "Section C: Decimals", question: "Work out 9 − 3.6", marks: 1, answer: "5.4" },
+    { section: "Section C: Decimals", question: "Work out 12.5 − 4.75", marks: 2, answer: "7.75" },
+    { section: "Section C: Decimals", question: "Work out 1 − 0.35", marks: 2, answer: "0.65" },
 
     { section: "Section D: Problem Solving", question: "Kim has £20. She spends £7.85. How much money does she have left?", marks: 2, answer: "£12.15" },
     { section: "Section D: Problem Solving", question: "A plank is 3.2 m long. A piece 1.45 m long is cut off. How long is the piece that is left?", marks: 2, answer: "1.75 m" },
@@ -1996,7 +1999,6 @@ QUESTION_BANK.add({
   ]
 });
 
-
 QUESTION_BANK.add({
   topic: "Multiplication of integers and decimals",
   title: "Multiplication of Integers and Decimals",
@@ -2004,23 +2006,23 @@ QUESTION_BANK.add({
   questionsPerSet: 10,
   tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. For column method questions, type one digit in each box of the answer row, starting from the right; the small boxes are for carrying. You can include £ or units, but you don't have to.",
   questions: [
-    { section: "Section A: Integers", question: "Work out 23 × 3", marks: 1, answer: "69" },
-    { section: "Section A: Integers", question: "Work out 47 × 6", marks: 1, answer: "282" },
-    { section: "Section A: Integers", question: "Work out 124 × 5", marks: 1, answer: "620" },
-    { section: "Section A: Integers", question: "Work out 36 × 24", marks: 2, answer: "864" },
+    { section: "Section A: Column method", question: "Use the column method to work out 256 × 7.", type: "column", always: true, sum: "256 × 7", marks: 2 },
+    { section: "Section A: Column method", question: "Use the column method to work out 3.48 × 6.", type: "column", always: true, sum: "3.48 × 6", marks: 2 },
+    { section: "Section A: Column method", question: "Use the column method to work out 47.5 × 4.", type: "column", always: true, sum: "47.5 × 4", marks: 2 },
 
-    { section: "Section B: Decimals", question: "Work out 0.4 × 3", marks: 1, answer: "1.2" },
-    { section: "Section B: Decimals", question: "Work out 2.5 × 4", marks: 1, answer: "10" },
-    { section: "Section B: Decimals", question: "Work out 1.6 × 7", marks: 1, answer: "11.2" },
-    { section: "Section B: Decimals", question: "Work out 0.3 × 0.2", marks: 2, answer: "0.06" },
-    { section: "Section B: Decimals", question: "Work out 3.45 × 10", marks: 1, answer: "34.5" },
-    { section: "Section B: Decimals", question: "Work out 0.07 × 100", marks: 1, answer: "7" },
-    { section: "Section B: Decimals", question: "Which is the same as 2.4 × 100?", type: "choice", marks: 1,
+    { section: "Section B: Integers", question: "Work out 23 × 3", marks: 1, answer: "69" },
+    { section: "Section B: Integers", question: "Work out 47 × 6", marks: 1, answer: "282" },
+    { section: "Section B: Integers", question: "Work out 124 × 5", marks: 1, answer: "620" },
+    { section: "Section B: Integers", question: "Work out 36 × 24", marks: 2, answer: "864" },
+
+    { section: "Section C: Decimals", question: "Work out 0.4 × 3", marks: 1, answer: "1.2" },
+    { section: "Section C: Decimals", question: "Work out 2.5 × 4", marks: 1, answer: "10" },
+    { section: "Section C: Decimals", question: "Work out 1.6 × 7", marks: 1, answer: "11.2" },
+    { section: "Section C: Decimals", question: "Work out 0.3 × 0.2", marks: 2, answer: "0.06" },
+    { section: "Section C: Decimals", question: "Work out 3.45 × 10", marks: 1, answer: "34.5" },
+    { section: "Section C: Decimals", question: "Work out 0.07 × 100", marks: 1, answer: "7" },
+    { section: "Section C: Decimals", question: "Which is the same as 2.4 × 100?", type: "choice", marks: 1,
       options: ["24", "240", "2400", "0.024"], answer: "240" },
-
-    { section: "Section C: Column method", question: "Use the column method to work out 256 × 7.", type: "column", sum: "256 × 7", marks: 2 },
-    { section: "Section C: Column method", question: "Use the column method to work out 3.48 × 6.", type: "column", sum: "3.48 × 6", marks: 2 },
-    { section: "Section C: Column method", question: "Use the column method to work out 47.5 × 4.", type: "column", sum: "47.5 × 4", marks: 2 },
 
     { section: "Section D: Problem Solving", question: "One cinema ticket costs £4.75. How much do 6 tickets cost?", marks: 2, answer: "£28.50" },
     { section: "Section D: Problem Solving", question: "A recipe uses 0.25 kg of flour for each cake. How much flour is needed for 8 cakes?", marks: 2, answer: "2 kg" },
@@ -2030,7 +2032,6 @@ QUESTION_BANK.add({
   ]
 });
 
-
 QUESTION_BANK.add({
   topic: "Addition of integers and decimals",
   title: "Addition of Integers and Decimals",
@@ -2038,25 +2039,25 @@ QUESTION_BANK.add({
   questionsPerSet: 10,
   tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. For column method questions, type one digit in each box of the answer row, starting from the right; the small boxes are for carrying. You can include £ or units (e.g. £4.74 or 6.35 km), but you don't have to.",
   questions: [
-    { section: "Section A: Integers", question: "Work out 34 + 25", marks: 1, answer: "59" },
-    { section: "Section A: Integers", question: "Work out 128 + 47", marks: 1, answer: "175" },
-    { section: "Section A: Integers", question: "Work out 356 + 289", marks: 1, answer: "645" },
-    { section: "Section A: Integers", question: "Work out 1407 + 2685", marks: 1, answer: "4092" },
+    { section: "Section A: Column method", question: "Use the column method to work out 2847 + 1596.", type: "column", always: true, sum: "2847 + 1596", marks: 2 },
+    { section: "Section A: Column method", question: "Use the column method to work out 36.8 + 7.45.", type: "column", always: true, sum: "36.8 + 7.45", marks: 2 },
+    { section: "Section A: Column method", question: "Use the column method to work out 125.6 + 9.75.", type: "column", always: true, sum: "125.6 + 9.75", marks: 2 },
 
-    { section: "Section B: Decimals", question: "Work out 4.5 + 3.2", marks: 1, answer: "7.7" },
-    { section: "Section B: Decimals", question: "Work out 6.8 + 2.7", marks: 1, answer: "9.5" },
-    { section: "Section B: Decimals", question: "Work out 12.35 + 4.21", marks: 1, answer: "16.56" },
-    { section: "Section B: Decimals", question: "Work out 7.6 + 3.45", marks: 1, answer: "11.05" },
-    { section: "Section B: Decimals", question: "Work out 15 + 2.8", marks: 1, answer: "17.8" },
-    { section: "Section B: Decimals", question: "Work out 0.9 + 0.35", marks: 1, answer: "1.25" },
-    { section: "Section B: Decimals", question: "Work out 23.47 + 18.86", marks: 1, answer: "42.33" },
-    { section: "Section B: Decimals", question: "Work out 3.2 + 4.65 + 0.8", marks: 2, answer: "8.65" },
-    { section: "Section B: Decimals", question: "Work out 105.6 + 39.48", marks: 2, answer: "145.08" },
-    { section: "Section B: Decimals", question: "Work out 0.007 + 0.25", marks: 2, answer: "0.257" },
+    { section: "Section B: Integers", question: "Work out 34 + 25", marks: 1, answer: "59" },
+    { section: "Section B: Integers", question: "Work out 128 + 47", marks: 1, answer: "175" },
+    { section: "Section B: Integers", question: "Work out 356 + 289", marks: 1, answer: "645" },
+    { section: "Section B: Integers", question: "Work out 1407 + 2685", marks: 1, answer: "4092" },
 
-    { section: "Section C: Column method", question: "Use the column method to work out 2847 + 1596.", type: "column", sum: "2847 + 1596", marks: 2 },
-    { section: "Section C: Column method", question: "Use the column method to work out 36.8 + 7.45.", type: "column", sum: "36.8 + 7.45", marks: 2 },
-    { section: "Section C: Column method", question: "Use the column method to work out 125.6 + 9.75.", type: "column", sum: "125.6 + 9.75", marks: 2 },
+    { section: "Section C: Decimals", question: "Work out 4.5 + 3.2", marks: 1, answer: "7.7" },
+    { section: "Section C: Decimals", question: "Work out 6.8 + 2.7", marks: 1, answer: "9.5" },
+    { section: "Section C: Decimals", question: "Work out 12.35 + 4.21", marks: 1, answer: "16.56" },
+    { section: "Section C: Decimals", question: "Work out 7.6 + 3.45", marks: 1, answer: "11.05" },
+    { section: "Section C: Decimals", question: "Work out 15 + 2.8", marks: 1, answer: "17.8" },
+    { section: "Section C: Decimals", question: "Work out 0.9 + 0.35", marks: 1, answer: "1.25" },
+    { section: "Section C: Decimals", question: "Work out 23.47 + 18.86", marks: 1, answer: "42.33" },
+    { section: "Section C: Decimals", question: "Work out 3.2 + 4.65 + 0.8", marks: 2, answer: "8.65" },
+    { section: "Section C: Decimals", question: "Work out 105.6 + 39.48", marks: 2, answer: "145.08" },
+    { section: "Section C: Decimals", question: "Work out 0.007 + 0.25", marks: 2, answer: "0.257" },
 
     { section: "Section D: Problem Solving", question: "Sam buys a sandwich for £3.45 and a drink for £1.29. How much does Sam spend altogether?", marks: 2, answer: "£4.74" },
     { section: "Section D: Problem Solving", question: "Priya runs 2.6 km on Monday and 3.75 km on Tuesday. How far does she run in total?", marks: 2, answer: "6.35 km" },
