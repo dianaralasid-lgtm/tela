@@ -78,8 +78,6 @@
     transition: transform .15s, background .15s, box-shadow .15s;
   }
   .btn:active { transform: translateY(1px); }
-  .btn-light { background: var(--white); color: var(--green-800); }
-  .btn-light:hover { box-shadow: 0 4px 14px rgba(0,0,0,.18); }
   .btn-outline { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,.4); }
   .btn-outline:hover { background: rgba(255,255,255,.1); }
   .head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -201,18 +199,6 @@
     border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px;
   }
 
-  .board-checks { display: flex; gap: 8px; flex-wrap: wrap; }
-  .field .board-checks label {
-    display: flex; align-items: center; gap: 6px; margin: 0;
-    border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px;
-    font-size: 14px; font-weight: 500; cursor: pointer;
-  }
-  .field .board-checks input {
-    accent-color: var(--green-700); width: 16px; height: 16px;
-    padding: 0; border: none; box-shadow: none;
-  }
-  .field .board-checks label:has(input:checked) { border-color: var(--green-600); background: var(--green-50); }
-
   .card-foot {
     display: flex; justify-content: space-between; align-items: center;
     border-top: 1px solid var(--line); padding-top: 12px; margin-top: auto;
@@ -250,26 +236,6 @@
     backdrop-filter: blur(2px);
   }
   .overlay.open { display: flex; }
-  .modal {
-    background: var(--white); border-radius: 16px; width: 100%; max-width: 480px;
-    padding: 24px; box-shadow: 0 24px 60px rgba(0,0,0,.25);
-    max-height: calc(100vh - 32px); overflow-y: auto;
-    animation: pop .2s ease;
-  }
-  .modal h2 { font-size: 20px; margin-bottom: 16px; }
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-  .field input, .field textarea, .field select {
-    width: 100%; padding: 10px 12px; border: 1.5px solid var(--line);
-    border-radius: 10px; font: inherit; font-size: 14px; color: var(--ink);
-    outline: none; background: var(--white);
-  }
-  .field textarea { resize: vertical; min-height: 80px; }
-  .field input:focus, .field textarea:focus, .field select:focus {
-    border-color: var(--green-600); box-shadow: 0 0 0 4px rgba(25,135,84,.12);
-  }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
 
   /* ---------- Practice questions ---------- */
   .practice-panel {
@@ -454,7 +420,6 @@
     main { padding: 0 16px 48px; }
     .stats { grid-template-columns: repeat(2, 1fr); }
     h1 { font-size: 24px; }
-    .field-row { grid-template-columns: 1fr; }
     .part, .diagram, .practice-done { margin-left: 0; }
     .practice-head, .practice-body { padding-left: 16px; padding-right: 16px; }
   }
@@ -474,10 +439,6 @@
       </div>
       <div class="head-actions">
         <div class="user-pill"><span class="avatar" id="avatar"></span><span id="userName"></span></div>
-        <button class="btn btn-light" id="addBtn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          Add topic
-        </button>
         <button class="btn btn-outline" id="logoutBtn">Sign out</button>
       </div>
     </div>
@@ -538,74 +499,6 @@
 <footer>
   Saved automatically in this browser. · <button id="resetBtn">Load sample topics</button>
 </footer>
-
-<!-- Add / edit modal -->
-<div class="overlay" id="overlay">
-  <form class="modal" id="form">
-    <h2 id="formTitle">Add topic</h2>
-    <div class="field">
-      <label for="fTitle">Title</label>
-      <input id="fTitle" required maxlength="80" placeholder="e.g. Quadratic equations">
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label for="fSubject">Subject</label>
-        <input id="fSubject" required maxlength="40" list="subjectList" placeholder="e.g. Maths">
-        <datalist id="subjectList"></datalist>
-      </div>
-      <div class="field">
-        <label for="fCategory">Category</label>
-        <input id="fCategory" required maxlength="40" list="categoryList" placeholder="e.g. Algebra">
-        <datalist id="categoryList"></datalist>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label for="fTier">Tier</label>
-        <select id="fTier">
-          <option value="">—</option>
-          <option>Foundation</option>
-          <option>Higher</option>
-          <option>Both</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="fStatus">Status</label>
-        <select id="fStatus">
-          <option value="todo">Not started</option>
-          <option value="doing">In progress</option>
-          <option value="done">Confident</option>
-        </select>
-      </div>
-    </div>
-    <div class="field">
-      <label for="fGrade">Grade</label>
-      <select id="fGrade">
-        <option value="">—</option>
-        <option>Grade 1</option>
-        <option>Grade 2</option>
-        <option>Grade 3</option>
-        <option>Grade 4</option>
-        <option>Grade 5</option>
-        <option>Grade 6</option>
-        <option>Grade 7</option>
-        <option>Grade 8/9</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Exam boards</label>
-      <div class="board-checks" id="fBoards">
-        <label><input type="checkbox" value="AQA"> AQA</label>
-        <label><input type="checkbox" value="Edexcel"> Edexcel</label>
-        <label><input type="checkbox" value="OCR"> OCR</label>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
-      <button type="submit" class="btn btn-primary">Save topic</button>
-    </div>
-  </form>
-</div>
 
 <!-- Practice questions -->
 <div class="overlay" id="practiceOverlay">
@@ -869,7 +762,6 @@
   save();
 
   const state = { query: "", subject: "All", board: "All", grade: "All", category: "All", status: "All", sort: "category" };
-  let editingId = null;
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -924,8 +816,6 @@
       Object.entries(STATUS).map(([k, v]) => chipHTML(k, v.label, state.status === k, null, "small")).join("");
 
     // Datalists for the form
-    $("subjectList").innerHTML = subjects.map(s => `<option value="${esc(s)}">`).join("");
-    $("categoryList").innerHTML = uniq(topics.map(t => t.category)).map(c => `<option value="${esc(c)}">`).join("");
   }
 
   function filtered() {
@@ -954,7 +844,7 @@
     if (!list.length) {
       $("grid").innerHTML = topics.length
         ? `<div class="empty"><h3>No topics match</h3><p>Try a different search or clear your filters.</p></div>`
-        : `<div class="empty"><h3>Your dashboard is empty</h3><p>Click “Add topic” to create your first one, or load the sample GCSE topics from the link at the bottom of the page.</p></div>`;
+        : `<div class="empty"><h3>Your dashboard is empty</h3><p>Click <b>Load sample topics</b> at the bottom of the page to add the GCSE topics.</p></div>`;
       return;
     }
 
@@ -1842,54 +1732,10 @@
     $("practiceBody").scrollTop = 0;
   });
 
-  // ---------- Modal ----------
-  function openForm(topic) {
-    editingId = topic ? topic.id : null;
-    $("formTitle").textContent = topic ? "Edit topic" : "Add topic";
-    $("fTitle").value = topic?.title ?? "";
-    $("fSubject").value = topic?.subject ?? (state.subject !== "All" ? state.subject : "");
-    $("fCategory").value = topic?.category ?? (state.category !== "All" ? state.category : "");
-    $("fTier").value = topic?.tier ?? "";
-    $("fGrade").value = topic?.grade ?? (state.grade !== "All" ? state.grade : "");
-    $("fStatus").value = topic?.status ?? "todo";
-    // New topics default to the board being filtered on, or all boards.
-    const boards = topic ? topic.boards : (state.board !== "All" ? [state.board] : BOARDS);
-    document.querySelectorAll("#fBoards input").forEach(cb => { cb.checked = boards.includes(cb.value); });
-    $("overlay").classList.add("open");
-    setTimeout(() => $("fTitle").focus(), 50);
-  }
-  function closeForm() { $("overlay").classList.remove("open"); editingId = null; }
-
-  $("form").addEventListener("submit", e => {
-    e.preventDefault();
-    const data = {
-      title: $("fTitle").value.trim(),
-      subject: $("fSubject").value.trim(),
-      category: $("fCategory").value.trim(),
-      tier: $("fTier").value,
-      grade: $("fGrade").value,
-      status: $("fStatus").value,
-      boards: [...document.querySelectorAll("#fBoards input:checked")].map(cb => cb.value)
-    };
-    if (!data.title || !data.subject || !data.category) return;
-    if (!data.boards.length) return toast("Pick at least one exam board");
-    if (editingId) {
-      Object.assign(topics.find(t => t.id === editingId), data);
-      toast("Topic updated");
-    } else {
-      topics.push({ id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36), created: Date.now(), ...data });
-      toast("Topic added");
-    }
-    save(); closeForm(); render();
-  });
-
-  $("addBtn").addEventListener("click", () => openForm());
-  $("cancelBtn").addEventListener("click", closeForm);
-  $("overlay").addEventListener("click", e => { if (e.target === $("overlay")) closeForm(); });
+  // ---------- Keyboard shortcuts ----------
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") {
       if ($("saveOverlay").classList.contains("open")) { $("saveOverlay").classList.remove("open"); return; }
-      closeForm();
       closePractice();
     }
     if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
