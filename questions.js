@@ -85,7 +85,9 @@
                 fraction, e.g. answer: "2/5" with
                 shape: { style: "bar", parts: 5 }.
      "select"   The student taps ALL the right options. Give the answer as
-                a list: answer: "1, 2, 3, 6". Use  range: [1, 30]  instead of
+                a list: answer: "1, 2, 3, 6". If the options contain commas
+                (like coordinates), separate the answer with semicolons:
+                answer: "(2, 0); (2, 3)". Use  range: [1, 30]  instead of
                 "options" for the numbers 1 to 30.
      "tally"    The student draws tally marks; the answer is the number.
      "pictogram"  The student builds a pictogram row from whole, half and
@@ -132,6 +134,29 @@
               extra: [{ from: [4, 0], to: [4, 6], label: "6 cm" }] adds a
               dashed line such as a height.
    graph extra: labels: [["A", -3, 2]] writes text at a grid position.
+
+   "interval" also takes one-sided inequalities such as "x > 4" or "x ≤ −2"
+              (≤ and ≥ buttons are shown).
+   "primes"   A product of primes such as "2^2 × 3 × 5" (any order; ² and ³
+              or ^2 and ^3 both work).
+   "factorise"  A factorised expression such as "3x(x + 2)" or
+              "(x + 3)(x − 4)". The student's answer is expanded to check it,
+              and must also be fully factorised.
+   "bearing"  The student drags a line on a compass to show a bearing; the
+              answer is the bearing, e.g. "135".
+   More pictures:
+     venn: { labels: ["24", "36"], left: ["2"], both: ["2", "2", "3"], right: ["3"] }
+     numline: { min: -5, max: 5, from: [-2, false], to: [3, true] }
+              (true = filled circle; leave out from or to for an arrow)
+     parallel: { angle: 65, labels: { atr: "65°", btr: "x" } }
+              (a = top crossing, b = bottom; tl, tr, bl, br = corner)
+     cuboid: { l: "5 cm", w: "3 cm", h: "4 cm" }
+     cylinder: { r: "3 cm", h: "10 cm" }
+     prism: { base: "6 cm", h: "8 cm", l: "12 cm" }   (triangular prism)
+     cubes: [[0,0,0], [1,0,0], [0,0,1]]   (x right, y back, z up)
+     tree: [60, [6, [2], [3]], [10, [2], [5]]]   (factor tree)
+     compass: { angle: 70, label: "70°", from: "A", to: "B" }
+     outline extra: rightAngle: [0] marks a right angle at that corner.
 
    "drawbar"  The student clicks a bar chart to draw the missing bar. Give
               the chart as  bars: {...}  with null for the missing value and
@@ -3414,5 +3439,645 @@ QUESTION_BANK.add({
       answer: "(2, 2); (4, 2); (4, 4)", graph: { lines: [[[1, 1], [2, 1], [2, 2], [1, 1]]] } },
     { section: "Section B: Drawing transformations", question: "After a reflection, what stays the same about the shape?", type: "explain", marks: 1,
       answer: "Its shape and size stay the same (the image is congruent): the side lengths and angles don't change. Only its position and which way it faces change." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Compound interest and depreciation",
+  title: "Compound Interest and Depreciation",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Use a multiplier for each year: 4% interest is × 1.04, 15% depreciation is × 0.85. For n years, multiply by the multiplier n times (for example × 1.04²). Give money to the nearest penny, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Compound interest", question: "£500 is invested at 4% compound interest per year. How much is it worth after 2 years?", tolerance: 0.01, marks: 2, answer: "£540.80" },
+    { section: "Section A: Compound interest", question: "£2000 is invested at 3% compound interest per year. How much is it worth after 3 years?", tolerance: 0.01, marks: 3, answer: "£2185.45" },
+    { section: "Section A: Compound interest", question: "£800 is invested at 5% compound interest per year. How much is it worth after 2 years?", tolerance: 0.01, marks: 2, answer: "£882" },
+    { section: "Section A: Compound interest", text: "£1000 is invested at 5% compound interest per year.",
+      table: { headings: ["Year", "0", "1", "2", "3"], rows: [["Value", "£1000", "£1050", "?", "?"]] }, parts: [
+      { question: "What is it worth after 2 years?", tolerance: 0.01, marks: 1, answer: "£1102.50" },
+      { question: "What is it worth after 3 years? Give your answer to the nearest penny.", tolerance: 0.01, marks: 1, answer: "£1157.63" }
+    ] },
+    { section: "Section A: Compound interest", question: "Which calculation gives the value of £1 after 3 years of 6% compound interest?", type: "choice", marks: 1,
+      options: ["1.06³", "1.18", "0.06³", "3 × 1.06"], answer: "1.06³" },
+
+    { section: "Section B: Depreciation and simple interest", question: "A car worth £12 000 depreciates by 15% each year. What is it worth after 2 years?", tolerance: 0.01, marks: 2, answer: "£8670" },
+    { section: "Section B: Depreciation and simple interest", question: "A phone worth £600 loses 20% of its value each year. What is it worth after 3 years?", tolerance: 0.01, marks: 2, answer: "£307.20" },
+    { section: "Section B: Depreciation and simple interest", question: "£1000 earns 4% simple interest per year. How much interest is earned in 3 years?", marks: 2, answer: "£120" },
+    { section: "Section B: Depreciation and simple interest", question: "£1000 is invested for 2 years at 5%. How much more interest does compound interest earn than simple interest?", tolerance: 0.01, marks: 3, answer: "£2.50" },
+    { section: "Section B: Depreciation and simple interest", question: "Explain why £1000 earns more with 5% compound interest than with 5% simple interest over several years.", type: "explain", marks: 1,
+      answer: "With compound interest, each year's interest is added on and then earns interest itself, so the amount grows faster. Simple interest is always 5% of the original £1000." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Indices: basics",
+  title: "Indices: Basics",
+  type: "algebra",
+  questionsPerSet: 10,
+  tip: "When multiplying, add the powers. When dividing, subtract them. For a power of a power, multiply them. Anything to the power 0 is 1. Type powers with ^ (for example a^7), then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Simplifying", question: "Simplify a³ × a⁴", marks: 1, answer: "a^7" },
+    { section: "Section A: Simplifying", question: "Simplify x⁸ ÷ x³", marks: 1, answer: "x^5" },
+    { section: "Section A: Simplifying", question: "Simplify (y²)³", marks: 1, answer: "y^6" },
+    { section: "Section A: Simplifying", question: "Simplify 2a³ × 5a²", marks: 2, answer: "10a^5" },
+    { section: "Section A: Simplifying", question: "Simplify 12x⁶ ÷ 4x²", marks: 2, answer: "3x^4" },
+    { section: "Section A: Simplifying", question: "Which is equal to 7⁶ ÷ 7²?", type: "choice", marks: 1, options: ["7⁴", "7³", "7⁸", "1³"], answer: "7⁴" },
+
+    { section: "Section B: Numbers", question: "2⁵ × 2³ = 2ⁿ. What is n?", type: "number", marks: 1, answer: "8" },
+    { section: "Section B: Numbers", question: "Work out 5⁰", type: "number", marks: 1, answer: "1" },
+    { section: "Section B: Numbers", question: "Work out 3⁴", type: "number", marks: 1, answer: "81" },
+    { section: "Section B: Numbers", question: "Work out 2³ × 5²", type: "number", marks: 2, answer: "200" },
+    { section: "Section B: Numbers", question: "Ali says a² × a³ = a⁶. Explain Ali's mistake.", type: "explain", marks: 1,
+      answer: "When multiplying powers of the same letter you add the powers, not multiply them: a² × a³ = a × a × a × a × a = a⁵." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "HCF and LCM",
+  title: "HCF and LCM",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "HCF: the highest common factor (the biggest number that divides into both). LCM: the lowest common multiple (the smallest number both divide into). In a Venn diagram, the HCF multiplies the middle; the LCM multiplies everything.",
+  questions: [
+    { section: "Section A: Finding the HCF and LCM", question: "Find the HCF of 12 and 18.", marks: 1, answer: "6" },
+    { section: "Section A: Finding the HCF and LCM", question: "Find the LCM of 4 and 6.", marks: 1, answer: "12" },
+    { section: "Section A: Finding the HCF and LCM", question: "Find the HCF of 45 and 60.", marks: 2, answer: "15" },
+    { section: "Section A: Finding the HCF and LCM", question: "Find the LCM of 8 and 12.", marks: 2, answer: "24" },
+    { section: "Section A: Finding the HCF and LCM", question: "Find the LCM of 6 and 15.", marks: 2, answer: "30" },
+
+    { section: "Section B: Using a Venn diagram", text: "The Venn diagram shows the prime factors of 24 and 36.", question: "Use it to find the HCF of 24 and 36.", marks: 2, answer: "12",
+      venn: { labels: ["24", "36"], left: ["2"], both: ["2", "2", "3"], right: ["3"] } },
+    { section: "Section B: Using a Venn diagram", text: "The Venn diagram shows the prime factors of 24 and 36.", question: "Use it to find the LCM of 24 and 36.", marks: 2, answer: "72",
+      venn: { labels: ["24", "36"], left: ["2"], both: ["2", "2", "3"], right: ["3"] } },
+
+    { section: "Section C: Problem solving", question: "One bus leaves every 12 minutes and another every 20 minutes. They both leave at 9:00. How many minutes is it until they next leave together?", marks: 2, answer: "60" },
+    { section: "Section C: Problem solving", question: "24 apples and 36 oranges are shared into identical bags with none left over. What is the greatest number of bags?", marks: 2, answer: "12" },
+    { section: "Section C: Problem solving", question: "Explain the difference between the HCF and the LCM of two numbers.", type: "explain", marks: 1,
+      answer: "The HCF is the biggest number that divides exactly into both numbers. The LCM is the smallest number that both numbers divide into exactly (the first number in both times tables)." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Prime factor trees",
+  title: "Prime Factor Trees",
+  type: "primes",
+  questionsPerSet: 10,
+  tip: "Keep splitting the number into factor pairs until every branch ends in a prime (circled). Write the answer as a product, using powers for repeats, e.g. 2³ × 3. Use the × button or type x, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Using factor trees", text: "Here is a factor tree for 60.", question: "Write 60 as a product of its prime factors.", marks: 2, answer: "2^2 × 3 × 5",
+      tree: [60, [6, [2], [3]], [10, [2], [5]]] },
+    { section: "Section A: Using factor trees", text: "Here is part of a factor tree for 36.", question: "What number should replace the ?", type: "number", marks: 1, answer: "2",
+      tree: [36, [4, [2], ["?"]], [9, [3], [3]]] },
+    { section: "Section A: Using factor trees", text: "Here is a factor tree for 72.", question: "Write 72 as a product of its prime factors.", marks: 2, answer: "2^3 × 3^2",
+      tree: [72, [8, [2], [4, [2], [2]]], [9, [3], [3]]] },
+
+    { section: "Section B: Products of primes", question: "Write 100 as a product of its prime factors.", marks: 2, answer: "2^2 × 5^2" },
+    { section: "Section B: Products of primes", question: "Write 84 as a product of its prime factors.", marks: 2, answer: "2^2 × 3 × 7" },
+    { section: "Section B: Products of primes", question: "Write 90 as a product of its prime factors.", marks: 2, answer: "2 × 3^2 × 5" },
+    { section: "Section B: Products of primes", question: "Write 48 as a product of its prime factors.", marks: 2, answer: "2^4 × 3" },
+    { section: "Section B: Products of primes", question: "Which shows 36 as a product of prime factors?", type: "choice", marks: 1,
+      options: ["2² × 3²", "4 × 9", "2 × 18", "6²"], answer: "2² × 3²" },
+    { section: "Section B: Products of primes", question: "Sam writes 40 = 4 × 10. Explain why this isn't a product of prime factors.", type: "explain", marks: 1,
+      answer: "4 and 10 aren't prime numbers. They split further: 4 = 2 × 2 and 10 = 2 × 5, so 40 = 2 × 2 × 2 × 5 = 2³ × 5." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Real life graphs",
+  title: "Real Life Graphs",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Read the labels on both axes first. To read a value, go from one axis to the line, then across to the other axis. The steepness (gradient) of a straight line is the rate, such as the cost per mile.",
+  questions: [
+    { section: "Section A: Taxi fares", text: "The graph shows the cost of a taxi journey.", question: "How much does a 4-mile journey cost?", marks: 1, answer: "£9",
+      graph: { x: [0, 10], y: [0, 20], xlabel: "Distance (miles)", ylabel: "Cost (£)", lines: [[[0, 3], [10, 18]]] } },
+    { section: "Section A: Taxi fares", text: "The graph shows the cost of a taxi journey.", question: "How far can you travel for £15?", marks: 1, answer: "8 miles",
+      graph: { x: [0, 10], y: [0, 20], xlabel: "Distance (miles)", ylabel: "Cost (£)", lines: [[[0, 3], [10, 18]]] } },
+    { section: "Section A: Taxi fares", text: "The graph shows the cost of a taxi journey.", question: "What is the fixed charge (the cost before any miles are travelled)?", marks: 1, answer: "£3",
+      graph: { x: [0, 10], y: [0, 20], xlabel: "Distance (miles)", ylabel: "Cost (£)", lines: [[[0, 3], [10, 18]]] } },
+    { section: "Section A: Taxi fares", text: "The graph shows the cost of a taxi journey.", question: "How much does each extra mile cost?", marks: 2, answer: "£1.50",
+      graph: { x: [0, 10], y: [0, 20], xlabel: "Distance (miles)", ylabel: "Cost (£)", lines: [[[0, 3], [10, 18]]] } },
+
+    { section: "Section B: A water tank", text: "The graph shows the water in a tank as it empties.", question: "How much water is in the tank after 4 minutes?", marks: 1, answer: "40 litres",
+      graph: { x: [0, 12], y: [0, 60], ystep: 5, xlabel: "Time (minutes)", ylabel: "Water (litres)", lines: [[[0, 60], [12, 0]]] } },
+    { section: "Section B: A water tank", text: "The graph shows the water in a tank as it empties.", question: "After how many minutes is the tank empty?", marks: 1, answer: "12",
+      graph: { x: [0, 12], y: [0, 60], ystep: 5, xlabel: "Time (minutes)", ylabel: "Water (litres)", lines: [[[0, 60], [12, 0]]] } },
+    { section: "Section B: A water tank", text: "The graph shows the water in a tank as it empties.", question: "How many litres flow out each minute?", marks: 2, answer: "5",
+      graph: { x: [0, 12], y: [0, 60], ystep: 5, xlabel: "Time (minutes)", ylabel: "Water (litres)", lines: [[[0, 60], [12, 0]]] } },
+    { section: "Section B: A water tank", question: "What does a straight-line graph tell you about the rate of change?", type: "choice", marks: 1,
+      options: ["The rate is constant", "The rate is speeding up", "Nothing is changing", "The rate is slowing down"], answer: "The rate is constant" },
+    { section: "Section B: A water tank", question: "On the taxi graph, the line meets the cost axis at £3. Explain what this means.", type: "explain", marks: 1,
+      answer: "It is the cost when the distance is 0 miles: a fixed £3 charge you pay just for taking the taxi, before the cost per mile is added." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Distance time graphs",
+  title: "Distance-Time Graphs",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Speed = distance ÷ time. On a distance-time graph, a steeper line means faster, and a flat (horizontal) line means stopped. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Reading the graph", text: "The graph shows Mia's bike ride from home and back.", question: "How far from home is Mia after 1 hour?", marks: 1, answer: "30 km",
+      graph: { x: [0, 3], xstep: 0.5, y: [0, 40], ystep: 5, xlabel: "Time (hours)", ylabel: "Distance from home (km)", lines: [[[0, 0], [1, 30], [1.5, 30], [3, 0]]] } },
+    { section: "Section A: Reading the graph", text: "The graph shows Mia's bike ride from home and back.", question: "For how many minutes did Mia stop?", marks: 1, answer: "30 minutes",
+      graph: { x: [0, 3], xstep: 0.5, y: [0, 40], ystep: 5, xlabel: "Time (hours)", ylabel: "Distance from home (km)", lines: [[[0, 0], [1, 30], [1.5, 30], [3, 0]]] } },
+    { section: "Section A: Reading the graph", text: "The graph shows Mia's bike ride from home and back.", question: "What was Mia's speed on the way out, in km/h?", marks: 2, answer: "30 km/h",
+      graph: { x: [0, 3], xstep: 0.5, y: [0, 40], ystep: 5, xlabel: "Time (hours)", ylabel: "Distance from home (km)", lines: [[[0, 0], [1, 30], [1.5, 30], [3, 0]]] } },
+    { section: "Section A: Reading the graph", text: "The graph shows Mia's bike ride from home and back.", question: "What was Mia's speed on the way home, in km/h?", marks: 2, answer: "20 km/h",
+      graph: { x: [0, 3], xstep: 0.5, y: [0, 40], ystep: 5, xlabel: "Time (hours)", ylabel: "Distance from home (km)", lines: [[[0, 0], [1, 30], [1.5, 30], [3, 0]]] } },
+    { section: "Section A: Reading the graph", text: "The graph shows Mia's bike ride from home and back.", question: "How far did Mia travel altogether?", marks: 1, answer: "60 km",
+      graph: { x: [0, 3], xstep: 0.5, y: [0, 40], ystep: 5, xlabel: "Time (hours)", ylabel: "Distance from home (km)", lines: [[[0, 0], [1, 30], [1.5, 30], [3, 0]]] } },
+    { section: "Section A: Reading the graph", question: "What does a horizontal line on a distance-time graph show?", type: "choice", marks: 1,
+      options: ["Not moving", "Moving at a steady speed", "Speeding up", "Going home"], answer: "Not moving" },
+
+    { section: "Section B: Speed, distance and time", question: "A car travels 150 km in 2.5 hours. What is its average speed, in km/h?", marks: 2, answer: "60 km/h" },
+    { section: "Section B: Speed, distance and time", question: "A train travels at 80 km/h for 1.5 hours. How far does it travel?", marks: 1, answer: "120 km" },
+    { section: "Section B: Speed, distance and time", question: "How many hours does it take to walk 12 km at 4 km/h?", marks: 1, answer: "3 hours" },
+    { section: "Section B: Speed, distance and time", question: "On a distance-time graph, one line is steeper than another. What does this tell you?", type: "explain", marks: 1,
+      answer: "The steeper line shows a greater speed: more distance is covered in the same time." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Inequalities: representing on a number line",
+  title: "Inequalities on a Number Line",
+  type: "interval",
+  questionsPerSet: 10,
+  tip: "A filled circle means the number is included (≤ or ≥); an empty circle means it isn't (< or >). An arrow means the values carry on. Type inequalities like −2 < x ≤ 3 using the buttons, or tap the integers, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Reading number lines", question: "Write down the inequality shown on the number line.", marks: 2, answer: "−2 < x ≤ 3",
+      numline: { min: -5, max: 5, from: [-2, false], to: [3, true] } },
+    { section: "Section A: Reading number lines", question: "Write down the inequality shown on the number line.", marks: 1, answer: "x ≥ 1",
+      numline: { min: -5, max: 5, from: [1, true] } },
+    { section: "Section A: Reading number lines", question: "Write down the inequality shown on the number line.", marks: 1, answer: "x < 4",
+      numline: { min: -5, max: 5, to: [4, false] } },
+    { section: "Section A: Reading number lines", question: "Write down the inequality shown on the number line.", marks: 2, answer: "−3 ≤ x ≤ 2",
+      numline: { min: -5, max: 5, from: [-3, true], to: [2, true] } },
+    { section: "Section A: Reading number lines", question: "On a number line, what does an empty (open) circle mean?", type: "choice", marks: 1,
+      options: ["The number is not included", "The number is included", "The number is zero", "The line carries on"], answer: "The number is not included" },
+
+    { section: "Section B: Integers", question: "Tap all the integers that satisfy −2 < x ≤ 3.", type: "select", marks: 2, range: [-4, 5], answer: "-1, 0, 1, 2, 3" },
+    { section: "Section B: Integers", question: "Tap all the integers n that satisfy 1 ≤ n < 5.", type: "select", marks: 2, range: [-1, 6], answer: "1, 2, 3, 4" },
+    { section: "Section B: Integers", question: "What is the largest integer that satisfies x < 7?", type: "number", marks: 1, answer: "6" },
+    { section: "Section B: Integers", question: "What is the smallest integer that satisfies x > −3.5?", type: "number", marks: 1, answer: "−3" },
+    { section: "Section B: Integers", question: "Explain the difference between showing x > 2 and x ≥ 2 on a number line.", type: "explain", marks: 1,
+      answer: "Both start at 2 with an arrow to the right. For x > 2 the circle at 2 is empty because 2 isn't included; for x ≥ 2 it is filled because 2 is included." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Inequalities: solving equations",
+  title: "Solving Inequalities",
+  type: "interval",
+  questionsPerSet: 10,
+  tip: "Solve an inequality like an equation, doing the same to every part, and keep the inequality sign. Use the ≤ and ≥ buttons (or type <= and >=), then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: One-sided inequalities", question: "Solve x + 5 > 9", marks: 1, answer: "x > 4" },
+    { section: "Section A: One-sided inequalities", question: "Solve 3x ≤ 12", marks: 1, answer: "x ≤ 4" },
+    { section: "Section A: One-sided inequalities", question: "Solve 2x − 1 < 9", marks: 2, answer: "x < 5" },
+    { section: "Section A: One-sided inequalities", question: "Solve 4x + 3 ≥ 15", marks: 2, answer: "x ≥ 3" },
+    { section: "Section A: One-sided inequalities", question: "Solve x/2 > 6", marks: 1, answer: "x > 12" },
+    { section: "Section A: One-sided inequalities", question: "Solve 3x + 2 > x + 10", marks: 2, answer: "x > 4" },
+
+    { section: "Section B: Two-sided inequalities", question: "Solve 5 < 2x + 1 ≤ 11", marks: 2, answer: "2 < x ≤ 5" },
+    { section: "Section B: Two-sided inequalities", question: "Solve −1 ≤ x − 3 < 2", marks: 2, answer: "2 ≤ x < 5" },
+    { section: "Section B: Two-sided inequalities", question: "n is an integer and 3 < 2n ≤ 10. Tap all the possible values of n.", type: "select", marks: 2, range: [0, 6], answer: "2, 3, 4, 5" },
+    { section: "Section B: Two-sided inequalities", question: "What is the smallest integer x for which 4x > 18?", type: "number", marks: 1, answer: "5" },
+    { section: "Section B: Two-sided inequalities", question: "Tom solves 2x + 3 > 11 and gets x > 7. Explain Tom's mistake.", type: "explain", marks: 1,
+      answer: "Tom added 3 instead of subtracting it. 2x + 3 > 11 gives 2x > 8, so x > 4." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Forming and solving equations",
+  title: "Forming and Solving Equations",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Use a letter for the unknown, write an equation from the facts (for example, the angles in a triangle add to 180°), then solve it. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Shapes and angles", question: "The angles in a triangle are x, 2x and 3x. Find x.", marks: 2, answer: "30" },
+    { section: "Section A: Shapes and angles", question: "Two angles on a straight line are 3x and 2x + 30. Find x.", marks: 2, answer: "30" },
+    { section: "Section A: Shapes and angles", question: "A rectangle is w cm wide and (w + 3) cm long. Its perimeter is 30 cm. Find w.", marks: 3, answer: "6" },
+    { section: "Section A: Shapes and angles", question: "An isosceles triangle has sides 2x + 1, 2x + 1 and x + 4. Its perimeter is 30. Find x.", marks: 3, answer: "4.8" },
+    { section: "Section A: Shapes and angles", question: "Write an expression for the perimeter of a rectangle with sides x and x + 3. Simplify your answer.", type: "algebra", marks: 2, answer: "4x + 6" },
+
+    { section: "Section B: Word problems", question: "Ali is x years old. His mum is 4 times as old as Ali. Their ages add up to 50. Find x.", marks: 2, answer: "10" },
+    { section: "Section B: Word problems", question: "Three consecutive whole numbers add up to 72. What is the smallest of them?", marks: 2, answer: "23" },
+    { section: "Section B: Word problems", question: "I think of a number, double it and subtract 7. The answer is 15. What was my number?", marks: 2, answer: "11" },
+    { section: "Section B: Word problems", question: "5 pens and a 60p ruler cost £2.35 altogether. How much does one pen cost, in pence?", marks: 3, answer: "35" },
+    { section: "Section B: Word problems", question: "Explain why it helps to write an equation when solving a word problem.", type: "explain", marks: 1,
+      answer: "An equation turns the words into maths you can solve step by step, by doing the same to both sides, and it shows clearly what the unknown stands for." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Sequences: generating",
+  title: "Generating Sequences",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Look at how the sequence changes from one term to the next (the term-to-term rule), or substitute n = 1, 2, 3, ... into an nth term rule. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Next terms", question: "Write down the next term: 3, 7, 11, 15, ...", marks: 1, answer: "19" },
+    { section: "Section A: Next terms", question: "Write down the next term: 2, 6, 18, 54, ...", marks: 1, answer: "162" },
+    { section: "Section A: Next terms", question: "Write down the next term: 50, 44, 38, 32, ...", marks: 1, answer: "26" },
+    { section: "Section A: Next terms", question: "Write down the next term: 1, 4, 9, 16, ...", marks: 1, answer: "25" },
+    { section: "Section A: Next terms", question: "Write down the next term: 1, 1, 2, 3, 5, 8, ...", marks: 1, answer: "13" },
+    { section: "Section A: Next terms", question: "Which sequence is geometric (multiplies by the same number each time)?", type: "choice", marks: 1,
+      options: ["2, 4, 8, 16", "2, 4, 6, 8", "1, 4, 9, 16", "1, 1, 2, 3"], answer: "2, 4, 8, 16" },
+
+    { section: "Section B: Rules", question: "The rule is: multiply by 2, then add 1. The first term is 3. What is the third term?", marks: 2, answer: "15" },
+    { section: "Section B: Rules", question: "The nth term of a sequence is 4n − 1. What is the 5th term?", marks: 1, answer: "19" },
+    { section: "Section B: Rules", question: "The nth term of a sequence is n² + 2. What is the 3rd term?", marks: 1, answer: "11" },
+    { section: "Section B: Rules", question: "Is 50 a term in the sequence 3, 7, 11, 15, ...?", type: "choice", marks: 2, options: ["Yes", "No"], answer: "No" },
+    { section: "Section B: Rules", question: "Explain how you know 50 is not in the sequence 3, 7, 11, 15, ...", type: "explain", marks: 1,
+      answer: "The terms go up in 4s from 3, so they are all 1 less than a multiple of 4 (the nth term is 4n − 1). 50 is 2 more than 48, not 1 less than a multiple of 4, so it isn't a term." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Sequences: nth term",
+  title: "The nth Term",
+  type: "algebra",
+  questionsPerSet: 10,
+  tip: "For a linear sequence, the number in front of n is the difference between terms. Then adjust: compare the sequence with that times table. Type answers like 3n + 2, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 5, 8, 11, 14, ...", marks: 2, answer: "3n + 2" },
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 7, 11, 15, 19, ...", marks: 2, answer: "4n + 3" },
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 2, 7, 12, 17, ...", marks: 2, answer: "5n − 3" },
+    { section: "Section A: Finding the nth term", question: "Find the nth term of −1, 1, 3, 5, ...", marks: 2, answer: "2n − 3" },
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 20, 17, 14, 11, ...", marks: 2, answer: "23 − 3n" },
+
+    { section: "Section B: Using the nth term", question: "Find the 20th term of the sequence with nth term 3n + 2.", type: "number", marks: 1, answer: "62" },
+    { section: "Section B: Using the nth term", question: "Which term of the sequence 4n + 3 is equal to 83?", type: "number", marks: 2, answer: "20" },
+    { section: "Section B: Using the nth term", question: "Is 100 a term in the sequence with nth term 4n + 1?", type: "choice", marks: 2, options: ["Yes", "No"], answer: "No" },
+    { section: "Section B: Using the nth term", question: "Kim says the nth term of 5, 8, 11, 14, ... is n + 3, because each term goes up by 3. Explain Kim's mistake.", type: "explain", marks: 1,
+      answer: "Going up by 3 each time means the nth term starts with 3n (the 3 times table). Comparing 3, 6, 9, 12 with 5, 8, 11, 14 shows you add 2, so it is 3n + 2." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Expanding single and double brackets",
+  title: "Expanding Brackets",
+  type: "algebra",
+  questionsPerSet: 10,
+  tip: "Multiply everything inside the bracket by the term outside. For double brackets, multiply every term in the first bracket by every term in the second, then collect like terms. Type x² with the x² button or x^2.",
+  questions: [
+    { section: "Section A: Single brackets", question: "Expand 3(x + 4)", marks: 1, answer: "3x + 12" },
+    { section: "Section A: Single brackets", question: "Expand 5(2y − 3)", marks: 1, answer: "10y − 15" },
+    { section: "Section A: Single brackets", question: "Expand x(x + 7)", marks: 1, answer: "x² + 7x" },
+    { section: "Section A: Single brackets", question: "Expand and simplify 2(x + 3) + 4(x − 1)", marks: 2, answer: "6x + 2" },
+
+    { section: "Section B: Double brackets", question: "Expand and simplify (x + 2)(x + 3)", marks: 2, answer: "x² + 5x + 6" },
+    { section: "Section B: Double brackets", question: "Expand and simplify (x + 5)(x − 2)", marks: 2, answer: "x² + 3x − 10" },
+    { section: "Section B: Double brackets", question: "Expand and simplify (x − 4)(x − 6)", marks: 2, answer: "x² − 10x + 24" },
+    { section: "Section B: Double brackets", question: "Expand and simplify (x + 3)²", marks: 2, answer: "x² + 6x + 9" },
+    { section: "Section B: Double brackets", question: "Expand and simplify (2x + 1)(x + 4)", marks: 2, answer: "2x² + 9x + 4" },
+    { section: "Section B: Double brackets", question: "Which is the expansion of (x + 1)²?", type: "choice", marks: 1,
+      options: ["x² + 1", "x² + 2x + 1", "2x + 2", "x² + x + 1"], answer: "x² + 2x + 1" },
+    { section: "Section B: Double brackets", question: "Jo says (x + 3)² = x² + 9. Explain Jo's mistake.", type: "explain", marks: 1,
+      answer: "(x + 3)² means (x + 3)(x + 3). Multiplying every term gives x² + 3x + 3x + 9 = x² + 6x + 9. Jo missed the two 3x terms." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Factorising",
+  title: "Factorising",
+  type: "factorise",
+  questionsPerSet: 10,
+  tip: "Factorising is the reverse of expanding. Take out the highest common factor of every term. For x² + bx + c, find two numbers that multiply to c and add to b. Type answers like 3(2x + 3) or (x + 3)(x + 4).",
+  questions: [
+    { section: "Section A: Common factors", question: "Factorise 6x + 9", marks: 1, answer: "3(2x + 3)" },
+    { section: "Section A: Common factors", question: "Factorise 10y − 15", marks: 1, answer: "5(2y − 3)" },
+    { section: "Section A: Common factors", question: "Factorise x² + 5x", marks: 1, answer: "x(x + 5)" },
+    { section: "Section A: Common factors", question: "Factorise fully 4x² + 8x", marks: 2, answer: "4x(x + 2)" },
+    { section: "Section A: Common factors", question: "Factorise fully 12ab + 18a", marks: 2, answer: "6a(2b + 3)" },
+    { section: "Section A: Common factors", question: "Which shows 8x + 12 fully factorised?", type: "choice", marks: 1,
+      options: ["2(4x + 6)", "4(2x + 3)", "8(x + 1.5)", "4(2x + 12)"], answer: "4(2x + 3)" },
+
+    { section: "Section B: Quadratics", question: "Factorise x² + 7x + 12", marks: 2, answer: "(x + 3)(x + 4)" },
+    { section: "Section B: Quadratics", question: "Factorise x² + 2x − 15", marks: 2, answer: "(x + 5)(x − 3)" },
+    { section: "Section B: Quadratics", question: "Factorise x² − 9x + 20", marks: 2, answer: "(x − 4)(x − 5)" },
+    { section: "Section B: Quadratics", question: "Factorise x² − 16", marks: 2, answer: "(x + 4)(x − 4)" },
+    { section: "Section B: Quadratics", question: "Jo factorises 12x + 18 as 2(6x + 9). Explain why this isn't fully factorised.", type: "explain", marks: 1,
+      answer: "6x + 9 still has a common factor of 3. The highest common factor of 12x and 18 is 6, so fully factorised it is 6(2x + 3)." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Angles in parallel lines",
+  title: "Angles in Parallel Lines",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Corresponding angles are equal (F shape), alternate angles are equal (Z shape), and co-interior angles add up to 180° (C shape). Angles on a straight line add to 180°, and vertically opposite angles are equal.",
+  questions: [
+    { section: "Section A: Finding angles", question: "Find the size of angle x.", marks: 1, answer: "65°", parallel: { angle: 65, labels: { atr: "65°", btr: "x" } } },
+    { section: "Section A: Finding angles", question: "Find the size of angle y.", marks: 1, answer: "70°", parallel: { angle: 70, labels: { atr: "70°", bbl: "y" } } },
+    { section: "Section A: Finding angles", question: "Find the size of angle a.", marks: 1, answer: "122°", parallel: { angle: 58, labels: { atr: "58°", atl: "a" } } },
+    { section: "Section A: Finding angles", question: "Find the size of angle b.", marks: 1, answer: "130°", parallel: { angle: 50, labels: { abr: "130°", btl: "b" } } },
+    { section: "Section A: Finding angles", question: "Find the size of angle c.", marks: 1, answer: "72°", parallel: { angle: 72, labels: { atr: "72°", abl: "c" } } },
+    { section: "Section A: Finding angles", question: "Find the size of angle d.", marks: 2, answer: "116°", parallel: { angle: 64, labels: { btr: "64°", abr: "d" } } },
+
+    { section: "Section B: Naming angle facts", question: "Angle x and the 65° angle are...", type: "choice", marks: 1,
+      options: ["corresponding angles", "alternate angles", "co-interior angles", "vertically opposite angles"], answer: "corresponding angles",
+      parallel: { angle: 65, labels: { atr: "65°", btr: "x" } } },
+    { section: "Section B: Naming angle facts", question: "Angle b and the 130° angle are...", type: "choice", marks: 1,
+      options: ["corresponding angles", "alternate angles", "co-interior angles", "vertically opposite angles"], answer: "alternate angles",
+      parallel: { angle: 50, labels: { abr: "130°", btl: "b" } } },
+    { section: "Section B: Naming angle facts", question: "Angle d and the 64° angle are...", type: "choice", marks: 1,
+      options: ["corresponding angles", "alternate angles", "co-interior angles", "vertically opposite angles"], answer: "co-interior angles",
+      parallel: { angle: 64, labels: { btr: "64°", abr: "d" } } },
+    { section: "Section B: Naming angle facts", question: "Explain why co-interior angles add up to 180°.", type: "explain", marks: 1,
+      answer: "One of the angles is equal to the angle next to the other one on its straight line (corresponding or alternate angles), and angles on a straight line add up to 180°." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Angles in polygons",
+  title: "Angles in Polygons",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Sum of interior angles = (n − 2) × 180°. The exterior angles of any polygon add up to 360°, so each exterior angle of a regular polygon is 360° ÷ n. Interior + exterior = 180°.",
+  questions: [
+    { section: "Section A: Interior angles", question: "Work out the sum of the interior angles of a pentagon.", marks: 1, answer: "540°", polygon: 5 },
+    { section: "Section A: Interior angles", question: "Work out the sum of the interior angles of a hexagon.", marks: 1, answer: "720°", polygon: 6 },
+    { section: "Section A: Interior angles", question: "Work out the sum of the interior angles of an octagon.", marks: 1, answer: "1080°" },
+    { section: "Section A: Interior angles", question: "Work out the size of each interior angle of a regular hexagon.", marks: 2, answer: "120°" },
+    { section: "Section A: Interior angles", question: "Work out the size of each interior angle of a regular octagon.", marks: 2, answer: "135°" },
+    { section: "Section A: Interior angles", question: "Three angles of a quadrilateral are 85°, 110° and 95°. Find the fourth angle.", marks: 2, answer: "70°" },
+    { section: "Section A: Interior angles", question: "Four angles of a pentagon are 100°, 120°, 95° and 115°. Find the fifth angle.", marks: 2, answer: "110°" },
+
+    { section: "Section B: Exterior angles", question: "Work out the size of each exterior angle of a regular pentagon.", marks: 1, answer: "72°" },
+    { section: "Section B: Exterior angles", question: "Each exterior angle of a regular polygon is 30°. How many sides does it have?", marks: 2, answer: "12" },
+    { section: "Section B: Exterior angles", question: "Each interior angle of a regular polygon is 160°. How many sides does it have?", marks: 3, answer: "18" },
+    { section: "Section B: Exterior angles", question: "The exterior angles of any polygon add up to...", type: "choice", marks: 1, options: ["180°", "360°", "540°", "it depends on the polygon"], answer: "360°" },
+    { section: "Section B: Exterior angles", question: "Explain why the interior angles of a pentagon add up to 540°.", type: "explain", marks: 1,
+      answer: "From one corner, a pentagon can be split into 3 triangles. Each triangle's angles add up to 180°, so the total is 3 × 180° = 540°." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Surface area (prisms and cylinders)",
+  title: "Surface Area",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Surface area is the total area of all the faces. For a cylinder: 2πr² (the two circles) + 2πrh (the curved surface). Answers using π or 3.14 are both accepted.",
+  questions: [
+    { section: "Section A: Cuboids", question: "Work out the surface area of the cuboid, in cm².", marks: 2, answer: "94 cm²", cuboid: { l: "5 cm", w: "3 cm", h: "4 cm" } },
+    { section: "Section A: Cuboids", question: "Work out the surface area of the cuboid, in cm².", marks: 2, answer: "112 cm²", cuboid: { l: "10 cm", w: "2 cm", h: "3 cm" } },
+    { section: "Section A: Cuboids", question: "A cube has sides of 6 cm. Work out its surface area, in cm².", marks: 2, answer: "216 cm²" },
+    { section: "Section A: Cuboids", question: "How many faces does a cuboid have?", type: "choice", marks: 1, options: ["4", "6", "8", "12"], answer: "6" },
+
+    { section: "Section B: Prisms and cylinders", text: "The cross-section is a right-angled triangle. The sloping face is 10 cm wide.", question: "Work out the surface area of the prism, in cm².", marks: 3, answer: "336 cm²",
+      prism: { base: "6 cm", h: "8 cm", l: "12 cm" } },
+    { section: "Section B: Prisms and cylinders", question: "Work out the total surface area of the cylinder, in cm², to 1 decimal place.", tolerance: 0.5, marks: 3, answer: "245.0 cm²",
+      cylinder: { r: "3 cm", h: "10 cm" } },
+    { section: "Section B: Prisms and cylinders", question: "Work out the total surface area of the cylinder, in cm², to 1 decimal place.", tolerance: 0.5, marks: 3, answer: "408.4 cm²",
+      cylinder: { r: "5 cm", h: "8 cm" } },
+    { section: "Section B: Prisms and cylinders", question: "Work out the curved surface area of the cylinder (not including the ends), in cm², to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "251.3 cm²",
+      cylinder: { r: "4 cm", h: "10 cm" } },
+    { section: "Section B: Prisms and cylinders", question: "Ben finds the surface area of a 5 cm × 3 cm × 4 cm cuboid as 5 × 3 × 4 = 60 cm². Explain Ben's mistake.", type: "explain", marks: 1,
+      answer: "5 × 3 × 4 is the volume. Surface area adds the areas of the 6 faces: 2 × (5 × 3 + 5 × 4 + 3 × 4) = 94 cm²." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Volume (prisms and cylinders)",
+  title: "Volume",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Volume of a prism = area of cross-section × length. Cuboid = length × width × height. Cylinder = πr²h. Volume is in cubic units, such as cm³. Answers using π or 3.14 are both accepted.",
+  questions: [
+    { section: "Section A: Cuboids and prisms", question: "Work out the volume of the cuboid, in cm³.", marks: 1, answer: "60 cm³", cuboid: { l: "5 cm", w: "3 cm", h: "4 cm" } },
+    { section: "Section A: Cuboids and prisms", question: "A cube has sides of 6 cm. Work out its volume, in cm³.", marks: 1, answer: "216 cm³" },
+    { section: "Section A: Cuboids and prisms", question: "Work out the volume of the triangular prism, in cm³.", marks: 2, answer: "288 cm³", prism: { base: "6 cm", h: "8 cm", l: "12 cm" } },
+    { section: "Section A: Cuboids and prisms", question: "A prism has a cross-section area of 15 cm² and a length of 9 cm. Work out its volume, in cm³.", marks: 1, answer: "135 cm³" },
+    { section: "Section A: Cuboids and prisms", question: "A cuboid has a volume of 120 cm³, a length of 6 cm and a width of 4 cm. What is its height?", marks: 2, answer: "5 cm" },
+    { section: "Section A: Cuboids and prisms", question: "A tank measures 50 cm by 40 cm by 30 cm. How many litres does it hold? (1 litre = 1000 cm³)", marks: 2, answer: "60 litres" },
+
+    { section: "Section B: Cylinders", question: "Work out the volume of the cylinder, in cm³, to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "282.7 cm³", cylinder: { r: "3 cm", h: "10 cm" } },
+    { section: "Section B: Cylinders", question: "Work out the volume of the cylinder, in cm³, to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "628.3 cm³", cylinder: { r: "5 cm", h: "8 cm" } },
+    { section: "Section B: Cylinders", question: "Which is the formula for the volume of a cylinder?", type: "choice", marks: 1, options: ["πr²h", "2πrh", "πr²", "2πr²h"], answer: "πr²h" },
+    { section: "Section B: Cylinders", question: "Explain why volume is measured in cm³ but area is measured in cm².", type: "explain", marks: 1,
+      answer: "Area multiplies two lengths (cm × cm = cm²), counting squares. Volume multiplies three lengths (cm × cm × cm = cm³), counting cubes." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Loci and construction",
+  title: "Loci and Constructions",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "A locus is the set of all points that follow a rule. Points a fixed distance from a point make a circle; points the same distance from two points lie on the perpendicular bisector; points the same distance from two lines lie on the angle bisector.",
+  questions: [
+    { section: "Section A: Describing loci", question: "What is the locus of points exactly 3 cm from a point A?", marks: 1,
+      options: ["A circle with centre A and radius 3 cm", "A straight line 3 cm long", "A square with sides of 3 cm", "A circle with diameter 3 cm"], answer: "A circle with centre A and radius 3 cm" },
+    { section: "Section A: Describing loci", question: "What is the locus of points the same distance from two points A and B?", marks: 1,
+      options: ["The perpendicular bisector of AB", "The line AB", "A circle through A and B", "The angle bisector"], answer: "The perpendicular bisector of AB" },
+    { section: "Section A: Describing loci", question: "What is the locus of points the same distance from two lines that cross?", marks: 1,
+      options: ["The angle bisector", "The perpendicular bisector", "A circle", "A parallel line"], answer: "The angle bisector" },
+    { section: "Section A: Describing loci", question: "A goat is tied to a post with a 5 m rope. Which describes the region it can reach?", marks: 1,
+      options: ["A circle of radius 5 m and everything inside it", "A line 5 m long", "A circle of diameter 5 m only", "A square of side 5 m"], answer: "A circle of radius 5 m and everything inside it" },
+    { section: "Section A: Describing loci", question: "The points less than 4 cm from A are inside a circle. What is the diameter of the circle?", type: "number", marks: 1, answer: "8 cm" },
+
+    { section: "Section B: Loci on a grid", text: "A is at (−2, 0) and B is at (2, 0).", question: "Which line is the perpendicular bisector of AB?", marks: 1,
+      options: ["the y-axis", "the x-axis", "y = x", "x = 2"], answer: "the y-axis",
+      graph: { points: { A: [-2, 0], B: [2, 0] } } },
+    { section: "Section B: Loci on a grid", question: "Tap all the points that lie on the perpendicular bisector of A(0, 0) and B(4, 0).", type: "select", marks: 2,
+      options: ["(2, 0)", "(2, 3)", "(2, −5)", "(4, 2)", "(0, 2)"], answer: "(2, 0); (2, 3); (2, −5)" },
+    { section: "Section B: Loci on a grid", question: "Plot the four grid points that are exactly 3 units from P(1, 1) straight across or straight up and down.", type: "plot", marks: 2,
+      answer: "(4, 1); (−2, 1); (1, 4); (1, −2)", graph: { points: { P: [1, 1] } } },
+    { section: "Section B: Loci on a grid", question: "Which equipment do you need to construct a perpendicular bisector?", marks: 1,
+      options: ["Compasses and a ruler", "A protractor only", "A calculator", "A ruler only"], answer: "Compasses and a ruler" },
+    { section: "Section B: Loci on a grid", question: "When constructing a perpendicular bisector of AB, why must the compasses stay at the same width for both arcs?", type: "explain", marks: 1,
+      answer: "The arcs cross at points the same distance from A as from B. Keeping the width the same makes those distances equal, so the line through the crossings is the perpendicular bisector." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Bearings",
+  title: "Bearings",
+  type: "bearing",
+  questionsPerSet: 10,
+  tip: "Bearings are measured from north, clockwise, and written with three figures (e.g. 045°). The bearing back the other way differs by 180°. To draw a bearing, drag the orange line round the compass, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Drawing bearings", question: "Drag the line to show a bearing of 135°.", marks: 1, answer: "135" },
+    { section: "Section A: Drawing bearings", question: "Drag the line to show a bearing of 240°.", marks: 1, answer: "240" },
+    { section: "Section A: Drawing bearings", question: "Drag the line to show a bearing of 060°.", marks: 1, answer: "60" },
+    { section: "Section A: Drawing bearings", question: "A ship sails due west. Drag the line to show its bearing.", marks: 1, answer: "270" },
+
+    { section: "Section B: Working with bearings", question: "Write down the bearing of B from A, as a three-figure bearing.", type: "number", marks: 1, answer: "045",
+      compass: { angle: 45, label: "45°", from: "A", to: "B" } },
+    { section: "Section B: Working with bearings", question: "The bearing of B from A is 070°. Work out the bearing of A from B.", type: "number", marks: 2, answer: "250",
+      compass: { angle: 70, label: "70°", from: "A", to: "B" } },
+    { section: "Section B: Working with bearings", question: "The bearing of B from A is 300°. Work out the bearing of A from B.", type: "number", marks: 2, answer: "120" },
+    { section: "Section B: Working with bearings", question: "What is the bearing of due south?", type: "number", marks: 1, answer: "180" },
+    { section: "Section B: Working with bearings", question: "What is the bearing of south-east?", type: "number", marks: 1, answer: "135" },
+    { section: "Section B: Working with bearings", question: "Bearings are measured...", type: "choice", marks: 1,
+      options: ["from north, clockwise", "from north, anticlockwise", "from east, clockwise", "from south, clockwise"], answer: "from north, clockwise" },
+    { section: "Section B: Working with bearings", question: "Explain why the bearing of A from B is 180° more than the bearing of B from A (when it is less than 180°).", type: "explain", marks: 1,
+      answer: "Going from B back to A is facing the exact opposite direction, which is a half turn (180°) round from the first direction." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Plans and elevations",
+  title: "Plans and Elevations",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "The plan is the view from above. The front elevation is the view from the front, and the side elevation is the view from the side. Count the squares each view would show, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Counting cubes", text: "The shape is made of centimetre cubes.", question: "How many cubes make the shape?", marks: 1, answer: "4", cubes: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [0, 0, 1]] },
+    { section: "Section A: Counting cubes", text: "The shape is made of centimetre cubes.", question: "How many cubes make the shape?", marks: 1, answer: "5", cubes: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1]] },
+    { section: "Section A: Counting cubes", text: "The shape is made of centimetre cubes.", question: "What is the volume of the shape, in cm³?", marks: 1, answer: "5 cm³", cubes: [[0, 0, 0], [0, 0, 1], [0, 0, 2], [1, 0, 0], [0, 1, 0]] },
+
+    { section: "Section B: Plans and elevations", text: "The shape is made of centimetre cubes.", question: "How many squares does the plan view (from above) show?", marks: 1, answer: "3", cubes: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [0, 0, 1]] },
+    { section: "Section B: Plans and elevations", text: "The shape is made of centimetre cubes.", question: "How many squares does the plan view (from above) show?", marks: 1, answer: "4", cubes: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1]] },
+    { section: "Section B: Plans and elevations", text: "The shape is made of centimetre cubes.", question: "How many squares does the plan view (from above) show?", marks: 1, answer: "3", cubes: [[0, 0, 0], [0, 0, 1], [0, 0, 2], [1, 0, 0], [0, 1, 0]] },
+    { section: "Section B: Plans and elevations", text: "The shape is made of centimetre cubes. The front is the face on the left of the drawing.", question: "How many squares does the front elevation show?", marks: 1, answer: "4", cubes: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [0, 0, 1]] },
+    { section: "Section B: Plans and elevations", text: "The shape is made of centimetre cubes. The front is the face on the left of the drawing.", question: "How many squares does the front elevation show?", marks: 1, answer: "3", cubes: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1]] },
+    { section: "Section B: Plans and elevations", question: "What is a plan view?", type: "choice", marks: 1,
+      options: ["The view from above", "The view from the front", "The view from the side", "The view from below"], answer: "The view from above" },
+    { section: "Section B: Plans and elevations", question: "Explain the difference between a front elevation and a side elevation.", type: "explain", marks: 1,
+      answer: "A front elevation is what you see looking straight at the front of the shape; a side elevation is what you see looking straight at one side. Both show heights, but across different widths." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Averages: frequency tables (mean and median)",
+  title: "Averages from Frequency Tables",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Mean = total of (value × frequency) ÷ total frequency. For grouped data, use the midpoint of each class to estimate the mean. For the median, find the position (n + 1) ÷ 2 using the running total.",
+  questions: [
+    { section: "Section A: Ungrouped data", text: "The table shows the goals scored by a team in 20 matches.", question: "Work out the mean number of goals.", marks: 3, answer: "1.5",
+      table: { headings: ["Goals", "Frequency"], rows: [["0", "4"], ["1", "7"], ["2", "5"], ["3", "3"], ["4", "1"]] } },
+    { section: "Section A: Ungrouped data", text: "The table shows the goals scored by a team in 20 matches.", question: "Work out the median number of goals.", marks: 2, answer: "1",
+      table: { headings: ["Goals", "Frequency"], rows: [["0", "4"], ["1", "7"], ["2", "5"], ["3", "3"], ["4", "1"]] } },
+    { section: "Section A: Ungrouped data", text: "The table shows the goals scored by a team in 20 matches.", question: "What is the mode?", marks: 1, answer: "1",
+      table: { headings: ["Goals", "Frequency"], rows: [["0", "4"], ["1", "7"], ["2", "5"], ["3", "3"], ["4", "1"]] } },
+    { section: "Section A: Ungrouped data", text: "The table shows the goals scored by a team in 20 matches.", question: "How many goals were scored altogether?", marks: 2, answer: "30",
+      table: { headings: ["Goals", "Frequency"], rows: [["0", "4"], ["1", "7"], ["2", "5"], ["3", "3"], ["4", "1"]] } },
+
+    { section: "Section B: Grouped data", text: "The table shows the heights of 30 pupils.", question: "Work out an estimate of the mean height, to 1 decimal place.", tolerance: 0.1, marks: 4, answer: "160.7 cm",
+      table: { headings: ["Height, h (cm)", "Frequency"], rows: [["140 < h ≤ 150", "5"], ["150 < h ≤ 160", "8"], ["160 < h ≤ 170", "12"], ["170 < h ≤ 180", "5"]] } },
+    { section: "Section B: Grouped data", text: "The table shows the heights of 30 pupils.", question: "Which class is the modal class?", type: "choice", marks: 1,
+      options: ["140 < h ≤ 150", "150 < h ≤ 160", "160 < h ≤ 170", "170 < h ≤ 180"], answer: "160 < h ≤ 170",
+      table: { headings: ["Height, h (cm)", "Frequency"], rows: [["140 < h ≤ 150", "5"], ["150 < h ≤ 160", "8"], ["160 < h ≤ 170", "12"], ["170 < h ≤ 180", "5"]] } },
+    { section: "Section B: Grouped data", text: "The table shows the heights of 30 pupils.", question: "Which class contains the median?", type: "choice", marks: 2,
+      options: ["140 < h ≤ 150", "150 < h ≤ 160", "160 < h ≤ 170", "170 < h ≤ 180"], answer: "160 < h ≤ 170",
+      table: { headings: ["Height, h (cm)", "Frequency"], rows: [["140 < h ≤ 150", "5"], ["150 < h ≤ 160", "8"], ["160 < h ≤ 170", "12"], ["170 < h ≤ 180", "5"]] } },
+    { section: "Section B: Grouped data", question: "To find the mean from a frequency table, which totals do you need?", type: "choice", marks: 1,
+      options: ["The total of value × frequency, and the total frequency", "The biggest and smallest values", "The total of the values column only", "The highest frequency"],
+      answer: "The total of value × frequency, and the total frequency" },
+    { section: "Section B: Grouped data", question: "Explain why the mean from a grouped frequency table is only an estimate.", type: "explain", marks: 1,
+      answer: "We don't know the exact values in each class, so we use the midpoint as if every value were in the middle of its class." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Probability basics",
+  title: "Probability Basics",
+  type: "fraction",
+  questionsPerSet: 10,
+  tip: "Probability = number of ways it can happen ÷ total number of outcomes. All the probabilities add up to 1, so P(not A) = 1 − P(A). Expected number = probability × number of trials.",
+  questions: [
+    { section: "Section A: Finding probabilities", question: "An ordinary dice is rolled. What is the probability of rolling an even number?", marks: 1, answer: "1/2" },
+    { section: "Section A: Finding probabilities", text: "The spinner has 5 equal sections.", question: "What is the probability of NOT landing on red?", marks: 1, answer: "3/5",
+      spinner: ["red", "blue", "green", "red", "yellow"] },
+    { section: "Section A: Finding probabilities", text: "A bag holds these counters.", question: "A counter is taken at random. What is the probability it is blue?", marks: 1, answer: "5/10",
+      counters: { red: 3, blue: 5, green: 2 } },
+    { section: "Section A: Finding probabilities", text: "A bag holds these counters.", question: "What is the probability that a counter taken at random is red or green?", marks: 2, answer: "5/10",
+      counters: { red: 3, blue: 5, green: 2 } },
+    { section: "Section A: Finding probabilities", question: "Two fair coins are flipped. What is the probability of getting two heads?", marks: 2, answer: "1/4" },
+    { section: "Section A: Finding probabilities", question: "Which of these can NOT be a probability?", type: "choice", marks: 1, options: ["0", "0.5", "1", "1.2"], answer: "1.2" },
+
+    { section: "Section B: Using probabilities", question: "P(A) = 0.35. What is P(not A)?", type: "number", marks: 1, answer: "0.65" },
+    { section: "Section B: Using probabilities", text: "The table shows the probabilities for a biased spinner.", question: "What is the probability of green?", type: "number", marks: 2, answer: "0.3",
+      table: { headings: ["Colour", "Red", "Blue", "Green", "Yellow"], rows: [["Probability", "0.2", "0.35", "?", "0.15"]] } },
+    { section: "Section B: Using probabilities", question: "A fair coin is flipped 60 times. How many heads would you expect?", type: "number", marks: 1, answer: "30" },
+    { section: "Section B: Using probabilities", question: "The probability of winning a game is 0.15. The game is played 200 times. How many wins would you expect?", type: "number", marks: 2, answer: "30" },
+    { section: "Section B: Using probabilities", question: "Sam rolls a dice 6 times and gets no sixes. He says the dice must be biased. Explain why Sam could be wrong.", type: "explain", marks: 1,
+      answer: "6 rolls is far too few to judge. Even with a fair dice, getting no sixes in 6 rolls happens quite often (about a third of the time). He'd need many more rolls." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Scatter graphs",
+  title: "Scatter Graphs",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Positive correlation: as one goes up, so does the other. Negative: as one goes up, the other goes down. An outlier doesn't fit the pattern. Use a line of best fit to estimate, but only within the range of the data.",
+  questions: [
+    { section: "Section A: Correlation", text: "The scatter graph shows hours of revision and test scores.", question: "What type of correlation does the graph show?", marks: 1,
+      options: ["positive", "negative", "no correlation"], answer: "positive",
+      graph: { x: [0, 10], y: [0, 100], ystep: 10, xlabel: "Hours of revision", ylabel: "Test score (%)", dots: [[1, 30], [2, 38], [3, 45], [4, 50], [5, 58], [6, 62], [7, 70], [8, 75], [3, 80]] } },
+    { section: "Section A: Correlation", text: "The scatter graph shows hours of revision and test scores.", question: "Which point is an outlier?", marks: 1,
+      options: ["(3, 80)", "(5, 58)", "(8, 75)", "(1, 30)"], answer: "(3, 80)",
+      graph: { x: [0, 10], y: [0, 100], ystep: 10, xlabel: "Hours of revision", ylabel: "Test score (%)", dots: [[1, 30], [2, 38], [3, 45], [4, 50], [5, 58], [6, 62], [7, 70], [8, 75], [3, 80]] } },
+    { section: "Section A: Correlation", text: "The scatter graph shows the temperature and the number of hot drinks sold.", question: "What type of correlation does the graph show?", marks: 1,
+      options: ["positive", "negative", "no correlation"], answer: "negative",
+      graph: { x: [0, 30], xstep: 5, y: [0, 60], ystep: 5, xlabel: "Temperature (°C)", ylabel: "Hot drinks sold", dots: [[2, 55], [5, 50], [8, 46], [12, 40], [15, 33], [18, 30], [22, 22], [25, 18], [28, 12]] } },
+    { section: "Section A: Correlation", question: "Which pair is most likely to show no correlation?", marks: 1,
+      options: ["Shoe size and test score", "Height and arm length", "Temperature and ice creams sold", "Age of a car and its value"], answer: "Shoe size and test score" },
+
+    { section: "Section B: Lines of best fit", text: "The scatter graph has a line of best fit drawn on it.", question: "Use the line of best fit to estimate the score for 4.5 hours of revision.", type: "number", tolerance: 3, marks: 2, answer: "52.5",
+      graph: { x: [0, 10], y: [0, 100], ystep: 10, xlabel: "Hours of revision", ylabel: "Test score (%)", dots: [[1, 30], [2, 38], [3, 45], [4, 50], [5, 58], [6, 62], [7, 70], [8, 75]], lines: [[[0, 25], [9, 80]]] } },
+    { section: "Section B: Lines of best fit", question: "Why would using the line of best fit to estimate the score for 20 hours of revision be unreliable?", marks: 1,
+      options: ["It is outside the range of the data", "The line is too steep", "There are too many points", "Scores can't be estimated"], answer: "It is outside the range of the data" },
+    { section: "Section B: Lines of best fit", question: "A scatter graph shows strong positive correlation between ice cream sales and sunburn cases. Does eating ice cream cause sunburn? Explain.", type: "explain", marks: 1,
+      answer: "No. Correlation doesn't prove one thing causes the other. Both go up in hot, sunny weather, which is the real cause of both." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Pythagoras",
+  title: "Pythagoras' Theorem",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "In a right-angled triangle, a² + b² = c², where c is the hypotenuse (the longest side, opposite the right angle). To find the hypotenuse, add the squares; to find a shorter side, subtract. Give answers to 1 decimal place where needed.",
+  questions: [
+    { section: "Section A: Finding the hypotenuse", question: "Find the length of the side marked ?", marks: 2, answer: "10 cm",
+      outline: { points: [[0, 0], [6, 0], [0, 8]], unit: "cm", hide: [1], rightAngle: [0] } },
+    { section: "Section A: Finding the hypotenuse", question: "Find the length of the side marked ?", marks: 2, answer: "13 cm",
+      outline: { points: [[0, 0], [5, 0], [0, 12]], unit: "cm", hide: [1], rightAngle: [0] } },
+    { section: "Section A: Finding the hypotenuse", question: "Find the length of the side marked ?, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "8.1 cm",
+      outline: { points: [[0, 0], [7, 0], [0, 4]], unit: "cm", hide: [1], rightAngle: [0] } },
+    { section: "Section A: Finding the hypotenuse", question: "Find the distance between the points (1, 2) and (4, 6).", marks: 2, answer: "5" },
+
+    { section: "Section B: Finding a shorter side", question: "Find the length of the side marked ?", marks: 2, answer: "12 cm",
+      outline: { points: [[0, 0], [9, 0], [0, 12]], unit: "cm", hide: [2], rightAngle: [0] } },
+    { section: "Section B: Finding a shorter side", question: "Find the length of the side marked ?", marks: 2, answer: "8 cm",
+      outline: { points: [[0, 0], [8, 0], [0, 6]], unit: "cm", hide: [0], rightAngle: [0] } },
+    { section: "Section B: Finding a shorter side", question: "A 5 m ladder leans against a wall. Its foot is 1.5 m from the wall. How high up the wall does it reach, to 1 decimal place?", tolerance: 0.1, marks: 3, answer: "4.8 m" },
+    { section: "Section B: Finding a shorter side", question: "Which side of a right-angled triangle is the hypotenuse?", type: "choice", marks: 1,
+      options: ["The longest side, opposite the right angle", "The shortest side", "Any side next to the right angle", "The bottom side"], answer: "The longest side, opposite the right angle" },
+    { section: "Section B: Finding a shorter side", question: "Is a triangle with sides 7 cm, 24 cm and 25 cm right-angled?", type: "choice", marks: 2, options: ["Yes", "No"], answer: "Yes" },
+    { section: "Section B: Finding a shorter side", question: "To find a shorter side when the hypotenuse is 13 cm and another side is 5 cm, Mo works out √(13² + 5²). Explain Mo's mistake.", type: "explain", marks: 1,
+      answer: "When finding a shorter side you subtract the squares: √(13² − 5²) = √144 = 12 cm. Adding gives a side longer than the hypotenuse, which is impossible." }
   ]
 });

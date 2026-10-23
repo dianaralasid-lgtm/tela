@@ -372,6 +372,42 @@
   .bars.set { cursor: pointer; background: var(--white); border-radius: 8px; }
   .graph .axis-title, .bars .axis-title { font-size: 12px; font-weight: 600; fill: var(--muted); }
   .scale .scale-word { font-size: 11px; font-weight: 600; fill: var(--muted); }
+  .venn, .numline, .parallel, .solid, .compass { display: block; max-width: 100%; height: auto; }
+  .venn text, .numline text, .parallel text, .solid text, .compass text { font-family: "Inter", sans-serif; }
+  .venn .venn-c { fill: rgba(25, 135, 84, .1); stroke: var(--green-700); stroke-width: 2; }
+  .venn .venn-item { font-size: 16px; font-weight: 700; fill: var(--ink); }
+  .venn .venn-title { font-size: 14px; font-weight: 700; fill: var(--muted); }
+  .numline .nl-axis, .numline .nl-tick { stroke: var(--ink); stroke-width: 1.6; }
+  .numline .tick { font-size: 12px; fill: var(--muted); }
+  .numline .nl-range { stroke: var(--green-700); stroke-width: 4; }
+  .numline .nl-head { fill: var(--green-700); }
+  .numline .nl-end { fill: var(--white); stroke: var(--green-700); stroke-width: 2.5; }
+  .numline .nl-end.in { fill: var(--green-700); }
+  .parallel .pl-line { stroke: var(--ink); stroke-width: 2.5; }
+  .parallel .pl-arrow { fill: var(--ink); }
+  .parallel .pl-trans { stroke: var(--green-700); stroke-width: 2.5; }
+  .parallel .pl-label, .compass .pl-label { font-size: 15px; font-weight: 700; fill: var(--ink); }
+  .solid .sf-front { fill: #d8eee2; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+  .solid .sf-top { fill: #eaf6ef; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+  .solid .sf-side { fill: #bfe0cd; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+  .solid .sf-hidden { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .solid .sf-edge { fill: none; stroke: var(--ink); stroke-width: 2; }
+  .solid .ra, .outline-fig .ra { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+  .solid .cube-top { fill: #eaf6ef; stroke: var(--ink); stroke-width: 1.5; }
+  .solid .cube-left { fill: #bfe0cd; stroke: var(--ink); stroke-width: 1.5; }
+  .solid .cube-right { fill: #8fc7a7; stroke: var(--ink); stroke-width: 1.5; }
+  .solid .tree-line { stroke: var(--ink); stroke-width: 1.8; }
+  .solid .tree-leaf { fill: var(--green-50); stroke: var(--green-700); stroke-width: 2; }
+  .solid .tree-num { font-size: 16px; font-weight: 700; fill: var(--ink); }
+  .compass .cp-north { stroke: var(--ink); stroke-width: 2; }
+  .compass .cp-head { fill: var(--ink); }
+  .compass .cp-n { font-size: 15px; font-weight: 800; fill: var(--ink); }
+  .compass .cp-line { stroke: #c2410c; stroke-width: 3; stroke-linecap: round; }
+  .compass .cp-arc { fill: none; stroke: var(--green-700); stroke-width: 2; }
+  .compass .cp-tick { stroke: var(--muted); stroke-width: 1.2; }
+  .compass .cp-num { font-size: 10px; font-weight: 600; fill: var(--muted); }
+  .compass.set { touch-action: none; cursor: pointer; background: var(--white); border-radius: 50%; }
+  .compass .arm-handle { fill: #c2410c; stroke: var(--white); stroke-width: 3; }
   .ratio-bar, .circle-fig { display: block; max-width: 100%; height: auto; }
   .ratio-bar text, .circle-fig text { font-family: "Inter", sans-serif; }
   .ratio-bar .rb-box { fill: var(--green-50); stroke: var(--green-700); stroke-width: 2; }
@@ -980,7 +1016,7 @@
     algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords", mark: "num",
     order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle", column: "column",
     fraction: "fraction", shade: "shade", tally: "tally", pictogram: "pictogram", select: "select", drawbar: "drawbar",
-    interval: "interval", ratio: "ratio"
+    interval: "interval", ratio: "ratio", primes: "primes", factorise: "factorise", bearing: "bearing"
   };
   const ANGLE_NAMES = ["acute", "right", "obtuse", "straight", "reflex"];
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
@@ -1062,8 +1098,11 @@
         (p.kind === "drawbar" && !(Number.isInteger(p.bars.ask) && Array.isArray(p.bars.labels))) ||
         (p.kind === "interval" && !readInterval(p.answer)) ||
         (p.kind === "ratio" && !readRatio(p.answer)) ||
+        (p.kind === "primes" && !readPrimes(p.answer)) ||
+        (p.kind === "factorise" && !readFactorised(p.answer)) ||
+        (p.kind === "bearing" && readNumber(p.answer) === null) ||
         (p.kind === "pictogram" && !(Number(p.pictogram.key) > 0)) ||
-        (p.kind === "select" && (!p.options || !p.answer.split(",").every(a => p.options.some(o => normText(o) === normText(a))))));
+        (p.kind === "select" && (!p.options || !answerList(p.answer).every(a => p.options.some(o => normText(o) === normText(a))))));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
       let id = hashText([q.text || "", ...parts.map(p => p.text)].join("|"));
       while (items.some(it => it.id === id)) id += "x";
@@ -1085,6 +1124,9 @@
         bars: grouped || parts[0].kind !== "drawbar" ? q.bars || null : null,
         stemleaf: q.stemleaf || null, pie: q.pie || null,
         ratioBar: q.ratioBar || null, circle: q.circle || null,
+        venn: q.venn || null, numline: q.numline || null, parallel: q.parallel || null, cuboid: q.cuboid || null,
+        cylinder: q.cylinder || null, prism: q.prism || null, cubes: Array.isArray(q.cubes) ? q.cubes : null,
+        tree: Array.isArray(q.tree) ? q.tree : null, compass: q.compass || null,
         parts
       });
     }
@@ -1185,7 +1227,7 @@
   function readNumber(raw) {
     // "x = 4" counts as 4, so equation answers can be written either way.
     const m = String(raw).replace(/,/g, "").replace(/[−–]/g, "-").trim().replace(/^[a-z]\s*=\s*/i, "")
-      .match(/^£?\s*(-?\d*\.?\d+)\s*(p|pence|pounds?|km|kg|cm²|cm2|m²|m2|cm|mm|ml|m|g|l|°\s*c|c|°|degrees?|%|per\s*cent|kilometres?|kilograms?|metres?|grams?|litres?|millilitres?|minutes?|mins?|hours?|seconds?|miles?)?\.?$/i);
+      .match(/^£?\s*(-?\d*\.?\d+)\s*(p|pence|pounds?|km\/h|mph|m\/s|km|kg|cm²|cm2|m²|m2|cm³|cm3|m³|m3|cm|mm|ml|m|g|l|°\s*c|c|°|degrees?|%|per\s*cent|kilometres?|kilograms?|metres?|grams?|litres?|millilitres?|minutes?|mins?|hours?|seconds?|miles?)?\.?$/i);
     if (!m) return null;
     const n = parseFloat(m[1]);
     return /^p(ence)?$/i.test(m[2] || "") ? n / 100 : n;
@@ -1716,21 +1758,100 @@
     return { n: Number(m[1]), d: m[2] ? Number(m[2]) : 1 };
   }
 
-  // Error intervals such as "6.5 ≤ x < 7.5" (<= is accepted for ≤).
+  // Inequalities and error intervals: "6.5 ≤ x < 7.5", "x > 4", "x ≤ −2" or "3 < x".
+  // Each side is stored as a bound and whether it is included (≤/≥) or not (</>); a missing side is null.
   function readInterval(raw) {
-    const s = String(raw ?? "").replace(/<=|=</g, "≤").replace(/[−–]/g, "-").replace(/\s+/g, "");
-    const m = s.match(/^(-?\d*\.?\d+)(≤|<)([a-z])(≤|<)(-?\d*\.?\d+)$/i);
-    return m ? { lo: Number(m[1]), loSign: m[2], hiSign: m[4], hi: Number(m[5]) } : null;
+    const s = String(raw ?? "").replace(/<=|=</g, "≤").replace(/>=|=>/g, "≥").replace(/[−–]/g, "-").replace(/\s+/g, "");
+    const num = "(-?\\d*\\.?\\d+)";
+    let m = s.match(new RegExp(`^${num}(≤|<)[a-z](≤|<)${num}$`, "i"));
+    if (m) return { lo: Number(m[1]), loIn: m[2] === "≤", hi: Number(m[4]), hiIn: m[3] === "≤" };
+    m = s.match(new RegExp(`^[a-z](<|≤|>|≥)${num}$`, "i"));
+    if (m) return /[<≤]/.test(m[1]) ? { lo: null, hi: Number(m[2]), hiIn: m[1] === "≤" } : { lo: Number(m[2]), loIn: m[1] === "≥", hi: null };
+    m = s.match(new RegExp(`^${num}(<|≤|>|≥)[a-z]$`, "i"));
+    if (m) return /[<≤]/.test(m[2]) ? { lo: Number(m[1]), loIn: m[2] === "≤", hi: null } : { lo: null, hi: Number(m[1]), hiIn: m[2] === "≥" };
+    return null;
   }
   function markInterval(value, answer) {
     const got = readInterval(value), want = readInterval(answer);
-    if (!got) return { correct: false, message: "Write it like 6.5 ≤ x < 7.5. Use the ≤ button, or type <=." };
-    const loOk = Math.abs(got.lo - want.lo) < 1e-9, hiOk = Math.abs(got.hi - want.hi) < 1e-9;
-    if (!loOk && !hiOk) return { correct: false, message: "Not quite. Check both bounds." };
-    if (!loOk) return { correct: false, message: "The upper bound is right. Check the lower bound." };
-    if (!hiOk) return { correct: false, message: "The lower bound is right. Check the upper bound." };
-    if (got.loSign !== want.loSign || got.hiSign !== want.hiSign) {
-      return { correct: false, message: "The bounds are right. Check the signs: the lower bound is included (≤) but the upper bound isn't (<)." };
+    if (!got) return { correct: false, message: "Write it like x > 4 or 6.5 ≤ x < 7.5. Use the ≤ and ≥ buttons, or type <= and >=." };
+    const sameSide = (a, b) => (a === null) === (b === null);
+    if (!sameSide(got.lo, want.lo) || !sameSide(got.hi, want.hi)) return { correct: false, message: "Not quite. Check which way the inequality goes." };
+    const loOk = want.lo === null || Math.abs(got.lo - want.lo) < 1e-9, hiOk = want.hi === null || Math.abs(got.hi - want.hi) < 1e-9;
+    if (!loOk && !hiOk) return { correct: false, message: "Not quite. Check the numbers." };
+    if (!loOk) return { correct: false, message: want.hi === null ? "Not quite. Check the number." : "The upper bound is right. Check the lower bound." };
+    if (!hiOk) return { correct: false, message: want.lo === null ? "Not quite. Check the number." : "The lower bound is right. Check the upper bound." };
+    if ((want.lo !== null && got.loIn !== want.loIn) || (want.hi !== null && got.hiIn !== want.hiIn)) {
+      return { correct: false, message: want.lo !== null && want.hi !== null && want.loIn && !want.hiIn
+        ? "The bounds are right. Check the signs: the lower bound is included (≤) but the upper bound isn't (<)."
+        : "The numbers are right. Check whether each one is included (≤ or ≥) or not (< or >)." };
+    }
+    return { correct: true, message: "Correct!" };
+  }
+
+  // Products of primes such as "2³ × 3 × 5", "2^3 x 3 x 5" or "2 × 2 × 2 × 3 × 5", in any order.
+  function readPrimes(raw) {
+    const s = String(raw ?? "").replace(/²/g, "^2").replace(/³/g, "^3").replace(/⁴/g, "^4").replace(/⁵/g, "^5").replace(/\s+/g, "");
+    const factors = s.split(/[×x*·]/i);
+    const counts = {};
+    for (const f of factors) {
+      const m = f.match(/^(\d+)(?:\^(\d+))?$/);
+      if (!m) return null;
+      counts[m[1]] = (counts[m[1]] || 0) + (m[2] ? Number(m[2]) : 1);
+    }
+    return counts;
+  }
+  function markPrimes(value, answer) {
+    const got = readPrimes(value), want = readPrimes(answer);
+    if (!got) return { correct: false, message: "Write it like 2³ × 3 (or 2^3 x 3)." };
+    const product = c => Object.entries(c).reduce((p, [b, k]) => p * Number(b) ** k, 1);
+    const isPrime = n => n > 1 && Array.from({ length: Math.floor(Math.sqrt(n)) - 1 }, (_, i) => i + 2).every(d => n % d);
+    const key = c => Object.keys(c).sort((a, b) => a - b).map(b => `${b}^${c[b]}`).join("*");
+    if (key(got) === key(want)) return { correct: true, message: "Correct!" };
+    if (product(got) === product(want)) return { correct: false, message: Object.keys(got).every(b => isPrime(Number(b)))
+      ? "Not quite. Try again." : "That multiplies to the right number, but every factor must be prime. Keep going." };
+    return { correct: false, message: "Not quite. Check that your primes multiply to the number." };
+  }
+
+  // Factorised expressions such as "3x(x + 2)" or "(x + 2)(x − 5)": checked by expanding, then for being fully factorised.
+  function polyMap(expr) {
+    const p = parseExpr(expr);
+    return p ? Object.fromEntries(p.canon.split("|").filter(Boolean).map(t => { const [c, k] = t.split("*"); return [k, Number(c)]; })) : null;
+  }
+  function polyMul(a, b) {
+    const out = {};
+    const powers = k => { const pw = {}; for (const [, v, n] of k.matchAll(/([a-z])(?:\^(\d+))?/g)) pw[v] = (pw[v] || 0) + (n ? Number(n) : 1); return pw; };
+    for (const [ka, ca] of Object.entries(a)) for (const [kb, cb] of Object.entries(b)) {
+      const pw = powers(ka), pb = powers(kb);
+      Object.entries(pb).forEach(([v, n]) => { pw[v] = (pw[v] || 0) + n; });
+      const key = Object.keys(pw).sort().map(v => (pw[v] === 1 ? v : `${v}^${pw[v]}`)).join("");
+      out[key] = (out[key] || 0) + ca * cb;
+    }
+    return out;
+  }
+  // A function declaration (not a const) because the question loader uses it before this line runs.
+  function polyKey(m) { return Object.entries(m).filter(([, c]) => Math.abs(c) > 1e-9).sort().map(([k, c]) => `${c}*${k}`).join("|"); }
+  function readFactorised(raw) {
+    const s = String(raw ?? "").replace(/[−–]/g, "-").replace(/²/g, "^2").replace(/\s+/g, "").toLowerCase();
+    const m = s.match(/^(-?[0-9a-z^]*)((?:\([^()]+\))+)(\^2)?$/);
+    if (!m) return null;
+    const prefix = m[1] === "" ? { "": 1 } : m[1] === "-" ? { "": -1 } : polyMap(m[1]);
+    let brackets = [...m[2].matchAll(/\(([^()]+)\)/g)].map(b => polyMap(b[1]));
+    if (m[3]) brackets = brackets.concat(brackets);
+    if (!prefix || brackets.some(b => !b)) return null;
+    return { prefix: polyKey(prefix), brackets: brackets.map(polyKey).sort(), expanded: polyKey(brackets.reduce(polyMul, prefix)) };
+  }
+  function markFactorised(value, answer) {
+    const want = readFactorised(answer);
+    const got = readFactorised(value);
+    if (!got) {
+      const flat = polyMap(value);
+      return flat && polyKey(flat) === want.expanded
+        ? { correct: false, message: "That's the expanded form. Write it with brackets." }
+        : { correct: false, message: "Write it with brackets, like 3(x + 2) or (x + 1)(x + 4)." };
+    }
+    if (got.expanded !== want.expanded) return { correct: false, message: "Not quite. Expand your answer to check it." };
+    if (got.prefix !== want.prefix || got.brackets.join() !== want.brackets.join()) {
+      return { correct: false, message: "That expands correctly, but it isn't fully factorised yet." };
     }
     return { correct: true, message: "Correct!" };
   }
@@ -1944,6 +2065,13 @@
       for (let y = minY; y <= maxY; y++) s += `<line class="o-grid" x1="${sx(minX)}" y1="${sy(y)}" x2="${sx(maxX)}" y2="${sy(y)}"/>`;
     }
     s += `<polygon class="o-shape" points="${pts.map(([x, y]) => sx(x) + "," + sy(y)).join(" ")}"/>`;
+    // rightAngle: [0] draws a right-angle mark at those corners (counting from the first point).
+    (o.rightAngle || []).forEach(i => {
+      const [cx, cy] = pts[i], prev = pts[(i - 1 + pts.length) % pts.length], next = pts[(i + 1) % pts.length];
+      const unit = ([x, y]) => { const dx = sx(x) - sx(cx), dy = sy(y) - sy(cy), l = Math.hypot(dx, dy); return [dx / l * 14, dy / l * 14]; };
+      const [ax, ay] = unit(prev), [bx, by] = unit(next), X = sx(cx), Y = sy(cy);
+      s += `<polyline class="ra" points="${X + ax},${Y + ay} ${X + ax + bx},${Y + ay + by} ${X + bx},${Y + by}"/>`;
+    });
     // extra: dashed lines such as a height, e.g. [{ from: [4, 0], to: [4, 6], label: "6 cm" }].
     (o.extra || []).forEach(x => {
       s += `<line class="o-dashed" x1="${sx(x.from[0])}" y1="${sy(x.from[1])}" x2="${sx(x.to[0])}" y2="${sy(x.to[1])}"/>`;
@@ -2044,15 +2172,169 @@
     return `<svg class="pie" viewBox="0 0 260 240" width="260" role="img" aria-label="Pie chart">${s}</svg>`;
   }
 
+  // Venn diagram of prime factors: { labels: ["24", "36"], left: ["2"], both: ["2", "2", "3"], right: ["3"] }.
+  function vennSVG(v) {
+    const col = (items, x) => (items || []).map((t, i, a) => `<text class="venn-item" x="${x}" y="${112 + (i - (a.length - 1) / 2) * 22}" text-anchor="middle">${esc(t)}</text>`).join("");
+    return `<svg class="venn" viewBox="0 0 300 210" width="300" role="img" aria-label="Venn diagram">
+      <circle class="venn-c" cx="115" cy="110" r="82"/><circle class="venn-c" cx="185" cy="110" r="82"/>
+      <text class="venn-title" x="70" y="18" text-anchor="middle">${esc((v.labels || [])[0] || "")}</text>
+      <text class="venn-title" x="230" y="18" text-anchor="middle">${esc((v.labels || [])[1] || "")}</text>
+      ${col(v.left, 75)}${col(v.both, 150)}${col(v.right, 225)}</svg>`;
+  }
+
+  // Number line showing an inequality: { min: -5, max: 5, from: [-2, false], to: [3, true] };
+  // the second value says whether the end is included (filled circle). A missing end gets an arrow.
+  function numberLineSVG(n) {
+    const min = n.min ?? -5, max = n.max ?? 5, x = v => 30 + (v - min) / (max - min) * 440;
+    let s = `<line class="nl-axis" x1="20" y1="50" x2="480" y2="50"/>`;
+    for (let v = min; v <= max; v++) s += `<line class="nl-tick" x1="${x(v)}" y1="44" x2="${x(v)}" y2="56"/><text class="tick" x="${x(v)}" y="76" text-anchor="middle">${v}</text>`;
+    const a = n.from ? x(n.from[0]) : 22, b = n.to ? x(n.to[0]) : 478;
+    s += `<line class="nl-range" x1="${a}" y1="30" x2="${b}" y2="30"/>`;
+    if (!n.from) s += `<polygon class="nl-head" points="14,30 26,24 26,36"/>`;
+    if (!n.to) s += `<polygon class="nl-head" points="486,30 474,24 474,36"/>`;
+    if (n.from) s += `<circle class="nl-end${n.from[1] ? " in" : ""}" cx="${a}" cy="30" r="7"/>`;
+    if (n.to) s += `<circle class="nl-end${n.to[1] ? " in" : ""}" cx="${b}" cy="30" r="7"/>`;
+    return `<svg class="numline" viewBox="0 0 500 86" width="500" role="img" aria-label="Number line showing an inequality">${s}</svg>`;
+  }
+
+  // Parallel lines crossed by a transversal at an acute angle (degrees). labels name the eight angles:
+  // a = top crossing, b = bottom crossing; tl, tr, bl, br = the corner, e.g. { angle: 65, labels: { atr: "65°", bbl: "x" } }.
+  function parallelSVG(p) {
+    const th = (p.angle || 60) * Math.PI / 180, top = 60, bot = 170, ax = 210, bx = ax - (bot - top) / Math.tan(th);
+    const dir = { tr: th / 2, tl: (th + Math.PI) / 2, bl: Math.PI + th / 2, br: (3 * Math.PI + th) / 2 };
+    let s = `<line class="pl-line" x1="10" y1="${top}" x2="330" y2="${top}"/><line class="pl-line" x1="10" y1="${bot}" x2="330" y2="${bot}"/>`;
+    s += `<polygon class="pl-arrow" points="290,${top - 5} 300,${top} 290,${top + 5}"/><polygon class="pl-arrow" points="290,${bot - 5} 300,${bot} 290,${bot + 5}"/>`;
+    const ext = 50;
+    s += `<line class="pl-trans" x1="${ax + ext * Math.cos(th)}" y1="${top - ext * Math.sin(th)}" x2="${bx - ext * Math.cos(th)}" y2="${bot + ext * Math.sin(th)}"/>`;
+    Object.entries(p.labels || {}).forEach(([k, text]) => {
+      const cx = k[0] === "a" ? ax : bx, cy = k[0] === "a" ? top : bot, d = dir[k.slice(1)];
+      s += `<text class="pl-label" x="${cx + 30 * Math.cos(d)}" y="${cy - 30 * Math.sin(d) + 5}" text-anchor="middle">${esc(text)}</text>`;
+    });
+    return `<svg class="parallel" viewBox="0 0 340 230" width="340" role="img" aria-label="Parallel lines crossed by a transversal">${s}</svg>`;
+  }
+
+  // 3D solids, drawn (not to scale) with their measurements labelled.
+  function cuboidSVG(c) {
+    return `<svg class="solid" viewBox="-50 0 330 200" width="330" role="img" aria-label="Cuboid">
+      <polygon class="sf-front" points="30,70 190,70 190,170 30,170"/><polygon class="sf-top" points="30,70 90,25 250,25 190,70"/>
+      <polygon class="sf-side" points="190,70 250,25 250,125 190,170"/>
+      <text class="o-label" x="110" y="190" text-anchor="middle">${esc(c.l || "")}</text>
+      <text class="o-label" x="22" y="124" text-anchor="end">${esc(c.h || "")}</text>
+      <text class="o-label" x="226" y="160" text-anchor="start">${esc(c.w || "")}</text></svg>`;
+  }
+  function cylinderSVG(c) {
+    return `<svg class="solid" viewBox="0 0 290 230" width="290" role="img" aria-label="Cylinder">
+      <path class="sf-front" d="M40 40 L40 180 A80 24 0 0 0 200 180 L200 40"/>
+      <path class="sf-hidden" d="M40 180 A80 24 0 0 1 200 180"/>
+      <ellipse class="sf-top" cx="120" cy="40" rx="80" ry="24"/>
+      <line class="c-line" x1="120" y1="40" x2="200" y2="40"/><circle class="clock-hub" cx="120" cy="40" r="3"/>
+      <text class="o-label" x="160" y="33" text-anchor="middle">${esc(c.r || "")}</text>
+      <text class="o-label" x="208" y="115">${esc(c.h || "")}</text></svg>`;
+  }
+  function prismSVG(c) {
+    // Seen from the front right: the triangular end and the sloping face show; the back edges are dashed.
+    return `<svg class="solid" viewBox="-50 0 350 210" width="350" role="img" aria-label="Triangular prism">
+      <polyline class="sf-hidden" points="30,170 120,110 240,110"/><line class="sf-hidden" x1="120" y1="110" x2="120" y2="10"/>
+      <polygon class="sf-top" points="30,70 150,170 240,110 120,10"/>
+      <polygon class="sf-front" points="30,170 30,70 150,170"/>
+      <polyline class="ra" points="30,156 44,156 44,170"/>
+      <text class="o-label" x="90" y="190" text-anchor="middle">${esc(c.base || "")}</text>
+      <text class="o-label" x="22" y="124" text-anchor="end">${esc(c.h || "")}</text>
+      <text class="o-label" x="205" y="160">${esc(c.l || "")}</text></svg>`;
+  }
+
+  // Isometric cubes: positions [x, y, z] with x to the right, y to the back and z up.
+  function cubesSVG(cubes) {
+    const sz = 30, c30 = Math.cos(Math.PI / 6) * sz, s30 = sz / 2;
+    const pt = (x, y, z) => [150 + (x - y) * c30, 150 - z * sz + (x + y) * s30];
+    const poly = (cls, ps) => `<polygon class="${cls}" points="${ps.map(p => p.join(",")).join(" ")}"/>`;
+    const sorted = cubes.slice().sort((a, b) => (a[0] + a[1]) - (b[0] + b[1]) || a[2] - b[2]);
+    const s = sorted.map(([x, y, z]) =>
+      poly("cube-top", [pt(x, y, z + 1), pt(x + 1, y, z + 1), pt(x + 1, y + 1, z + 1), pt(x, y + 1, z + 1)]) +
+      poly("cube-left", [pt(x, y + 1, z), pt(x + 1, y + 1, z), pt(x + 1, y + 1, z + 1), pt(x, y + 1, z + 1)]) +
+      poly("cube-right", [pt(x + 1, y, z), pt(x + 1, y + 1, z), pt(x + 1, y + 1, z + 1), pt(x + 1, y, z + 1)])).join("");
+    return `<svg class="solid" viewBox="0 0 300 260" width="300" role="img" aria-label="Shape made of cubes">${s}</svg>`;
+  }
+
+  // Factor tree from nested arrays: [60, [6, [2], [3]], [10, [2], [5]]]; leaves are circled. "?" can be used for blanks.
+  function treeSVG(tree) {
+    const leaves = n => (n.length > 1 ? n.slice(1).reduce((s, c) => s + leaves(c), 0) : 1);
+    const total = leaves(tree), W = Math.max(220, total * 56), depthOf = n => (n.length > 1 ? 1 + Math.max(...n.slice(1).map(depthOf)) : 1);
+    const H = depthOf(tree) * 64 + 10;
+    let s = "";
+    const draw = (n, x0, x1, y) => {
+      const x = (x0 + x1) / 2;
+      if (n.length > 1) {
+        let at = x0;
+        n.slice(1).forEach(c => {
+          const w = (x1 - x0) * leaves(c) / leaves(n), cx = at + w / 2;
+          s += `<line class="tree-line" x1="${x}" y1="${y + 12}" x2="${cx}" y2="${y + 52}"/>`;
+          draw(c, at, at + w, y + 64);
+          at += w;
+        });
+      }
+      if (n.length === 1) s += `<circle class="tree-leaf" cx="${x}" cy="${y}" r="16"/>`;
+      s += `<text class="tree-num" x="${x}" y="${y + 6}" text-anchor="middle">${esc(n[0])}</text>`;
+    };
+    draw(tree, 0, W, 24);
+    return `<svg class="solid" viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Factor tree">${s}</svg>`;
+  }
+
+  // Compass bearing: a north line and a line at the bearing (clockwise from north).
+  // Static: { angle: 120, label: "120°", from: "A", to: "B" }. On a "bearing" question the line is dragged.
+  function compassSVG(c, interactive, deg) {
+    const a = interactive ? deg : c.angle, cx = 130, cy = 130, L = 100;
+    const at = (d, r) => [cx + r * Math.sin(d * Math.PI / 180), cy - r * Math.cos(d * Math.PI / 180)];
+    let s = "";
+    if (interactive) {
+      for (let d = 0; d < 360; d += 5) {
+        const [x1, y1] = at(d, 112), [x2, y2] = at(d, d % 30 === 0 ? 100 : d % 10 === 0 ? 104 : 108);
+        s += `<line class="cp-tick" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+        if (d % 30 === 0) { const [tx, ty] = at(d, 88); s += `<text class="cp-num" x="${tx}" y="${ty + 4}" text-anchor="middle">${String(d).padStart(3, "0")}</text>`; }
+      }
+    }
+    s += `<line class="cp-north" x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - 118}"/><polygon class="cp-head" points="${cx - 6},${cy - 108} ${cx},${cy - 122} ${cx + 6},${cy - 108}"/>`;
+    s += `<text class="cp-n" x="${cx - 20}" y="${cy - 112}">N</text>`;
+    if (a !== null && a !== undefined && a % 360 !== 0) {
+      const [ex, ey] = at(a, 34), [lx, ly] = at(a / 2, 50);
+      s += `<path class="cp-arc" d="M${cx} ${cy - 34} A34 34 0 ${a > 180 ? 1 : 0} 1 ${ex} ${ey}"/>`;
+      if (!interactive && c.label) s += `<text class="pl-label" x="${lx}" y="${ly + 5}" text-anchor="middle">${esc(c.label)}</text>`;
+    }
+    if (a !== null && a !== undefined) {
+      const [x, y] = at(a, L);
+      s += `<line class="cp-line" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`;
+      if (interactive) s += `<circle class="arm-handle" cx="${x}" cy="${y}" r="10"/>`;
+      else if (c.to) s += `<circle class="clock-hub" cx="${x}" cy="${y}" r="4"/><text class="pl-label" x="${x + 10}" y="${y - 6}">${esc(c.to)}</text>`;
+    }
+    s += `<circle class="clock-hub" cx="${cx}" cy="${cy}" r="4"/>`;
+    if (!interactive && c.from) s += `<text class="pl-label" x="${cx - 16}" y="${cy + 18}">${esc(c.from)}</text>`;
+    return `<svg class="compass${interactive ? " set" : ""}" viewBox="0 0 260 260" width="260" role="img" aria-label="${interactive ? "Compass. Drag the line to set the bearing." : "Bearing diagram"}">${s}</svg>`;
+  }
+  let bearingDrag = null;
+  function moveBearing(e) {
+    const { svg, part } = bearingDrag;
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    let deg = Math.atan2(p.x - 130, 130 - p.y) * 180 / Math.PI;
+    deg = (Math.round(((deg + 360) % 360) / 5) * 5) % 360;
+    svg.outerHTML = compassSVG({}, true, deg);
+    bearingDrag.svg = part.querySelector("svg.compass.set");
+    part.querySelector("input.answer-value").value = String(deg).padStart(3, "0");
+    clearResult(part);
+  }
+
   // Select: tap every right answer. The answer box holds the chosen options separated by |.
   function selectHTML(spec, value) {
     const chosen = new Set((value || "").split("|").filter(Boolean).map(normText));
     return `<div class="choice-row">${spec.options.map(o =>
       `<button type="button" class="choice-btn select-btn${chosen.has(normText(o)) ? " selected" : ""}" data-value="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
   }
+  // A select answer is a list separated by commas, or by semicolons when the options themselves contain commas.
+  function answerList(answer) { return String(answer).split(String(answer).includes(";") ? ";" : ","); }
   function markSelect(value, answer) {
     const got = new Set((value || "").split("|").filter(Boolean).map(normText));
-    const want = new Set(answer.split(",").map(normText));
+    const want = new Set(answerList(answer).map(normText));
     const missing = [...want].filter(w => !got.has(w)).length, extra = [...got].filter(g => !want.has(g)).length;
     if (!missing && !extra) return { correct: true, message: "Correct!" };
     if (!extra) return { correct: false, message: `Nearly! You've missed ${missing === 1 ? "one" : "some"}.` };
@@ -2152,6 +2434,12 @@
     }
     if (spec.kind === "interval") return markInterval(saved.value, spec.answer);
     if (spec.kind === "ratio") return markRatio(saved.value, spec.answer, spec.simplest);
+    if (spec.kind === "primes") return markPrimes(saved.value, spec.answer);
+    if (spec.kind === "factorise") return markFactorised(saved.value, spec.answer);
+    if (spec.kind === "bearing") {
+      return Number(saved.value) === readNumber(spec.answer) ? { correct: true, message: "Correct!" }
+        : { correct: false, message: `Your line is on a bearing of ${String(saved.value).padStart(3, "0")}°. Try again.` };
+    }
     return spec.kind === "num" ? markNumber(saved.value, spec.answer, spec.tolerance) : markAnswer(saved.value, spec.answer);
   }
 
@@ -2207,6 +2495,15 @@
       if (item.pie) html += `<div class="graph-wrap">${pieSVG(item.pie)}</div>`;
       if (item.ratioBar) html += `<div class="graph-wrap">${ratioBarSVG(item.ratioBar)}</div>`;
       if (item.circle) html += `<div class="graph-wrap">${circleSVG(item.circle)}</div>`;
+      if (item.venn) html += `<div class="graph-wrap">${vennSVG(item.venn)}</div>`;
+      if (item.numline) html += `<div class="graph-wrap">${numberLineSVG(item.numline)}</div>`;
+      if (item.parallel) html += `<div class="graph-wrap">${parallelSVG(item.parallel)}</div>`;
+      if (item.cuboid) html += `<div class="graph-wrap">${cuboidSVG(item.cuboid)}</div>`;
+      if (item.cylinder) html += `<div class="graph-wrap">${cylinderSVG(item.cylinder)}</div>`;
+      if (item.prism) html += `<div class="graph-wrap">${prismSVG(item.prism)}</div>`;
+      if (item.cubes) html += `<div class="graph-wrap">${cubesSVG(item.cubes)}</div>`;
+      if (item.tree) html += `<div class="graph-wrap col-wrap">${treeSVG(item.tree)}</div>`;
+      if (item.compass) html += `<div class="graph-wrap">${compassSVG(item.compass, false)}</div>`;
       item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance }) => {
         const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance };
         const saved = practiceSaved[id];
@@ -2214,7 +2511,7 @@
         const value = esc(saved ? saved.value : "");
         const aria = `aria-label="Answer to question ${n}${label}"`;
         // Plot, mark, order and choice questions are answered by tapping only; the hidden box just holds the answer.
-        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column", "shade", "tally", "pictogram", "select", "drawbar"].includes(kind)
+        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column", "shade", "tally", "pictogram", "select", "drawbar", "bearing"].includes(kind)
           ? `<input type="hidden" class="answer-value" value="${value}">`
           : kind === "explain"
           ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
@@ -2234,10 +2531,12 @@
             ${kind === "pictogram" ? `<div class="graph-wrap in-part picto-wrap">${pictogramHTML(pictogram, pictoBuild(saved ? saved.value : ""))}</div>` : ""}
             ${kind === "select" ? selectHTML(spec, saved ? saved.value : "") : ""}
             ${kind === "drawbar" ? `<div class="graph-wrap in-part bars-wrap">${barsSVG(bars, bars.ask, saved ? Number(saved.value) : null)}</div>` : ""}
+            ${kind === "bearing" ? `<div class="graph-wrap in-part">${compassSVG({}, true, saved ? Number(saved.value) : null)}</div>` : ""}
             <div class="answer-row">
               ${field}
               ${kind === "expr" ? `<button type="button" class="sq-btn" data-insert="²" title="Insert ²">x²</button>` : ""}
-              ${kind === "interval" ? `<button type="button" class="sq-btn" data-insert="≤" title="Insert ≤">≤</button>` : ""}
+              ${kind === "interval" ? `<button type="button" class="sq-btn" data-insert="≤" title="Insert ≤">≤</button><button type="button" class="sq-btn" data-insert="≥" title="Insert ≥">≥</button>` : ""}
+              ${kind === "primes" ? `<button type="button" class="sq-btn" data-insert="×" title="Insert ×">×</button>` : ""}
               <button type="button" class="btn btn-primary check-btn">Check</button>
             </div>
             <div class="feedback">${feedbackHTML(spec, result, saved)}</div>
@@ -2322,6 +2621,7 @@
         spec.kind === "pictogram" ? "Add some symbols first." :
         spec.kind === "select" ? "Tap at least one answer first." :
         spec.kind === "drawbar" ? "Click on the chart to draw the bar first." :
+        spec.kind === "bearing" ? "Drag the line to set the bearing first." :
         partEl.querySelector("svg.scale") ? "Click on the scale to give your answer first." :
         "Click on the grid to plot your answer first.";
       return;
@@ -2466,6 +2766,13 @@
   });
   // Clock hands are dragged with the mouse or a finger.
   $("practiceBody").addEventListener("pointerdown", e => {
+    const compass = e.target.closest("svg.compass.set");
+    if (compass) {
+      e.preventDefault();
+      bearingDrag = { svg: compass, part: compass.closest(".part") };
+      moveBearing(e);
+      return;
+    }
     const angleFig = e.target.closest("svg.angle-fig.set");
     if (angleFig) {
       e.preventDefault();
@@ -2486,11 +2793,13 @@
   $("practiceBody").addEventListener("pointermove", e => {
     if (clockDrag) moveClockHand(e);
     if (angleDrag) moveAngleArm(e);
+    if (bearingDrag) moveBearing(e);
   });
   const endClockDrag = () => {
     if (clockDrag) clockDrag.svg.classList.remove("dragging");
     clockDrag = null;
     angleDrag = null;
+    bearingDrag = null;
   };
   $("practiceBody").addEventListener("pointerup", endClockDrag);
   $("practiceBody").addEventListener("pointercancel", endClockDrag);
