@@ -347,6 +347,14 @@
   .clock .hand-hit { stroke: transparent; stroke-width: 28; stroke-linecap: round; cursor: grab; pointer-events: stroke; }
   .clock.dragging .hand-hit { cursor: grabbing; }
 
+  .angle-fig { display: block; max-width: 100%; height: auto; user-select: none; }
+  .angle-fig .arm { stroke: var(--ink); stroke-width: 4; stroke-linecap: round; }
+  .angle-fig .angle-mark { fill: rgba(25, 135, 84, .18); stroke: var(--green-700); stroke-width: 2; }
+  .angle-fig .vertex { fill: var(--ink); }
+  .angle-fig.set { touch-action: none; cursor: pointer; background: var(--white); border-radius: 8px; }
+  .angle-fig.set .arm.moving { stroke: #c2410c; }
+  .angle-fig .arm-handle { fill: #c2410c; stroke: var(--white); stroke-width: 3; }
+
   .order-widget { margin-bottom: 12px; }
   .order-caption { font-size: 12px; font-weight: 600; color: var(--muted); margin: 0 0 6px; }
   .order-caption b { color: var(--ink); }
@@ -884,8 +892,9 @@
   // "order" parts are answered by tapping tiles into order; "choice" parts by tapping one option.
   const KIND_FOR_TYPE = {
     algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords", mark: "num",
-    order: "order", choice: "choice", time: "time", clock: "clock"
+    order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle"
   };
+  const ANGLE_NAMES = ["acute", "right", "obtuse", "straight", "reflex"];
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
   function normText(s) {
     return String(s ?? "").replace(/[−–—]/g, "-").replace(/\s+/g, "").toLowerCase();
@@ -932,7 +941,8 @@
         (p.kind === "coords" && !readPoints(p.answer)) ||
         (p.kind === "order" && (!p.items || p.answer.split(",").length !== p.items.length)) ||
         (p.kind === "choice" && (!p.options || !p.options.some(o => normText(o) === normText(p.answer)))) ||
-        ((p.kind === "time" || p.kind === "clock") && !readTime(p.answer)));
+        ((p.kind === "time" || p.kind === "clock") && !readTime(p.answer)) ||
+        (p.kind === "drawangle" && !ANGLE_NAMES.includes(normText(p.answer))));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
       let id = hashText([q.text || "", ...parts.map(p => p.text)].join("|"));
       while (items.some(it => it.id === id)) id += "x";
@@ -942,7 +952,8 @@
       const itemScale = grouped || !parts[0].mark ? q.scale || null : null;
       items.push({
         id, section: q.section || "", stem: q.text || "", diagram: q.diagram || "",
-        graph: itemGraph, scale: itemScale, clock: q.clock ? String(q.clock) : "", parts
+        graph: itemGraph, scale: itemScale, clock: q.clock ? String(q.clock) : "",
+        angle: q.angle !== undefined && Number.isFinite(Number(q.angle)) ? Number(q.angle) : null, parts
       });
     });
     if (!items.length) return;
@@ -1346,6 +1357,60 @@
     clearResult(part);
   }
 
+  // Angles: drawn from a fixed arm pointing right, opening anticlockwise by the given number of degrees.
+  function angleName(deg) {
+    const a = ((deg % 360) + 360) % 360;
+    if (a === 0) return "";
+    return a < 90 ? "acute" : a === 90 ? "right" : a < 180 ? "obtuse" : a === 180 ? "straight" : "reflex";
+  }
+  const armEnd = (deg, len) => [130 + len * Math.cos(deg * Math.PI / 180), 130 - len * Math.sin(deg * Math.PI / 180)];
+
+  // The shaded corner: a small square for a right angle, otherwise a wedge.
+  function angleMarker(deg) {
+    const a = ((deg % 360) + 360) % 360;
+    if (a === 0) return "";
+    if (a === 90) return `<path class="angle-mark" d="M150 130 L150 110 L130 110"/>`;
+    const r = a > 180 ? 30 : 36, [ex, ey] = armEnd(a, r);
+    return `<path class="angle-mark" d="M130 130 L${130 + r} 130 A${r} ${r} 0 ${a > 180 ? 1 : 0} 0 ${ex} ${ey} Z"/>`;
+  }
+
+  function angleSVG(deg, interactive) {
+    const [x, y] = armEnd(deg, 110);
+    return `<svg class="angle-fig${interactive ? " set" : ""}" viewBox="0 0 260 260" width="260"
+      role="img" aria-label="${interactive ? "Angle. Drag the arm to change it." : "An angle"}">
+      <g class="angle-marker">${angleMarker(deg)}</g>
+      <line class="arm" x1="130" y1="130" x2="240" y2="130"/>
+      <line class="arm moving" x1="130" y1="130" x2="${x}" y2="${y}"/>
+      ${interactive ? `<circle class="arm-handle" cx="${x}" cy="${y}" r="11"/>` : ""}
+      <circle class="vertex" cx="130" cy="130" r="4"/>
+    </svg>`;
+  }
+
+  // Dragging anywhere on an angle turns the moving arm towards the pointer, in 5° steps.
+  let angleDrag = null;
+  function moveAngleArm(e) {
+    const { svg, part } = angleDrag;
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    let deg = Math.atan2(130 - p.y, p.x - 130) * 180 / Math.PI;
+    deg = (Math.round(((deg + 360) % 360) / 5) * 5) % 360;
+    const [x, y] = armEnd(deg, 110);
+    const arm = svg.querySelector(".arm.moving"), handle = svg.querySelector(".arm-handle");
+    arm.setAttribute("x2", x); arm.setAttribute("y2", y);
+    handle.setAttribute("cx", x); handle.setAttribute("cy", y);
+    svg.querySelector(".angle-marker").innerHTML = angleMarker(deg);
+    part.querySelector("input").value = deg;
+    clearResult(part);
+  }
+
+  function markDrawnAngle(value, answer) {
+    const made = angleName(Number(value)), want = normText(answer);
+    if (made === want) return { correct: true, message: "Correct!" };
+    if (!made) return { correct: false, message: "Drag the arm to open up an angle." };
+    return { correct: false, message: `That's ${made === "acute" || made === "obtuse" ? "an" : "a"} ${made} angle. Try again.` };
+  }
+
   // Changing a tapped answer (grid, scale, tiles or options) clears the old result until it's checked again.
   function clearResult(part) {
     part.classList.remove("correct", "incorrect");
@@ -1376,7 +1441,7 @@
     const tile = (label, attrs) => `<button type="button" class="order-tile" ${attrs}>${esc(label)}</button>`;
     const slots = `<span class="order-slot"></span>`.repeat(Math.max(0, spec.items.length - placed.length));
     return `<div class="order-widget">
-      <div class="order-caption">Tap the numbers in order</div>
+      <div class="order-caption">Tap them in order</div>
       <div class="order-pool">${pool.map(l => tile(l, `data-pool="${esc(l)}"`)).join("") || `<span class="order-empty">All placed</span>`}</div>
       <div class="order-caption">Your order: <b>${esc(from)}</b> → <b>${esc(to)}</b></div>
       <div class="order-answer">${placed.map((l, i) => tile(l, `data-placed="${i}"`)).join("")}${slots}</div>
@@ -1417,6 +1482,7 @@
     if (spec.kind === "order") return markOrder(saved.value, spec.answer);
     if (spec.kind === "time") return markTime(saved.value, spec.answer);
     if (spec.kind === "clock") return markClock(saved.value, spec.answer);
+    if (spec.kind === "drawangle") return markDrawnAngle(saved.value, spec.answer);
     if (spec.kind === "choice") {
       return normText(saved.value) === normText(spec.answer)
         ? { correct: true, message: "Correct!" }
@@ -1462,6 +1528,7 @@
       if (item.graph) html += `<div class="graph-wrap">${graphSVG(item.graph, false)}</div>`;
       if (item.scale) html += `<div class="graph-wrap">${scaleSVG(item.scale, false)}</div>`;
       if (item.clock) html += `<div class="graph-wrap">${clockSVG(item.clock, false)}</div>`;
+      if (item.angle !== null) html += `<div class="graph-wrap">${angleSVG(item.angle, false)}</div>`;
       item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels }) => {
         const spec = practiceSpecs[id] = { answer, kind, items, options, labels };
         const saved = practiceSaved[id];
@@ -1469,7 +1536,7 @@
         const value = esc(saved ? saved.value : "");
         const aria = `aria-label="Answer to question ${n}${label}"`;
         // Plot, mark, order and choice questions are answered by tapping only; the hidden box just holds the answer.
-        const field = plot || mark || kind === "order" || kind === "choice" || kind === "clock"
+        const field = plot || mark || ["order", "choice", "clock", "drawangle"].includes(kind)
           ? `<input type="hidden" value="${value}">`
           : kind === "explain"
           ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
@@ -1482,6 +1549,7 @@
             ${kind === "order" ? orderWidgetHTML(spec, saved ? saved.value : "") : ""}
             ${kind === "choice" ? choiceHTML(spec, saved ? saved.value : "") : ""}
             ${kind === "clock" ? `<div class="graph-wrap in-part">${clockSVG(null, true, saved ? saved.value.split(",").map(Number) : null)}</div>` : ""}
+            ${kind === "drawangle" ? `<div class="graph-wrap in-part">${angleSVG(saved ? Number(saved.value) : 30, true)}</div>` : ""}
             <div class="answer-row">
               ${field}
               ${kind === "expr" ? `<button type="button" class="sq-btn" title="Insert ²">x²</button>` : ""}
@@ -1555,6 +1623,7 @@
       partEl.querySelector(".feedback").textContent =
         spec.kind === "choice" ? "Choose an answer first." :
         spec.kind === "clock" ? "Drag the clock hands to set the time first." :
+        spec.kind === "drawangle" ? "Drag the arm to make your angle first." :
         partEl.querySelector("svg.scale") ? "Click on the scale to give your answer first." :
         "Click on the grid to plot your answer first.";
       return;
@@ -1668,6 +1737,14 @@
   });
   // Clock hands are dragged with the mouse or a finger.
   $("practiceBody").addEventListener("pointerdown", e => {
+    const angleFig = e.target.closest("svg.angle-fig.set");
+    if (angleFig) {
+      e.preventDefault();
+      angleDrag = { svg: angleFig, part: angleFig.closest(".part") };
+      try { angleFig.setPointerCapture(e.pointerId); } catch (err) { /* dragging still works within the figure */ }
+      moveAngleArm(e);
+      return;
+    }
     const hit = e.target.closest("svg.clock.set .hand-hit");
     if (!hit) return;
     e.preventDefault();
@@ -1677,10 +1754,14 @@
     svg.classList.add("dragging");
     moveClockHand(e);
   });
-  $("practiceBody").addEventListener("pointermove", e => { if (clockDrag) moveClockHand(e); });
+  $("practiceBody").addEventListener("pointermove", e => {
+    if (clockDrag) moveClockHand(e);
+    if (angleDrag) moveAngleArm(e);
+  });
   const endClockDrag = () => {
     if (clockDrag) clockDrag.svg.classList.remove("dragging");
     clockDrag = null;
+    angleDrag = null;
   };
   $("practiceBody").addEventListener("pointerup", endClockDrag);
   $("practiceBody").addEventListener("pointercancel", endClockDrag);

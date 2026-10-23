@@ -53,6 +53,9 @@
                   { question: "Write these in order.", type: "order",
                     items: ["0.5", "0.25", "0.7"], answer: "0.25, 0.5, 0.7",
                     labels: ["smallest", "largest"] }
+     ANGLE PICTURES: add  angle: 130  to any question to show an angle of
+                that many degrees (drawn opening anticlockwise from a
+                horizontal arm).
      "time"     A time such as "3:45", "7:15 pm" or "19:15". If the answer
                 has no am/pm (e.g. "3:45"), any matching time is accepted. If
                 it has am/pm or is a 24-hour time (e.g. "19:15" or "09:40"),
@@ -61,6 +64,9 @@
      "clock"    The student drags the hands of a clock to show the answer,
                 e.g. answer: "3:45". The minute hand must be exact; the hour
                 hand can be anywhere between the hour and the next one.
+     "drawangle"  The student drags the arm of an angle to make the type of
+                angle asked for. The answer is "acute", "right", "obtuse",
+                "straight" or "reflex".
      "choice"   The student taps one of the "options"; the answer is the
                 right one.
                   { question: "Which is bigger?", type: "choice",
@@ -1800,6 +1806,149 @@ QUESTION_BANK.add({
     { section: "Problem solving", question: "How many minutes are there in 2½ hours?", type: "number", marks: 1, answer: "150" },
     { section: "Problem solving", question: "Mia says 2.5 hours is the same as 2 hours 50 minutes. Explain why Mia is wrong.", type: "explain", marks: 1,
       answer: "0.5 of an hour is half an hour, which is 30 minutes, not 50. So 2.5 hours is 2 hours 30 minutes. There are 60 minutes in an hour, not 100." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Names of angles",
+  title: "Names of Angles",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Acute: less than 90°. Right: exactly 90°. Obtuse: between 90° and 180°. Straight: exactly 180°. Reflex: more than 180°. Tap your answer, or drag the orange arm to make an angle, then press <b>Check</b>.",
+  questions: [
+    { section: "Naming angles", question: "What type of angle is this?", angle: 40, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "acute" },
+    { section: "Naming angles", question: "What type of angle is this?", angle: 90, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "right" },
+    { section: "Naming angles", question: "What type of angle is this?", angle: 125, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "obtuse" },
+    { section: "Naming angles", question: "What type of angle is this?", angle: 180, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "straight" },
+    { section: "Naming angles", question: "What type of angle is this?", angle: 250, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "reflex" },
+    { section: "Naming angles", question: "What type of angle is this?", angle: 75, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "acute" },
+    { section: "Naming angles", question: "What type of angle is this?", angle: 160, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "obtuse" },
+    { section: "Naming angles", question: "What type of angle is this?", angle: 300, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "reflex" },
+
+    { section: "Angle sizes", question: "An angle measures 95°. What type of angle is it?", marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "obtuse" },
+    { section: "Angle sizes", question: "An angle measures 89°. What type of angle is it?", marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "acute" },
+    { section: "Angle sizes", question: "Which of these angles is reflex?", marks: 1,
+      options: ["170°", "90°", "200°", "45°"], answer: "200°" },
+    { section: "Angle sizes", question: "Which of these angles is acute?", marks: 1,
+      options: ["120°", "90°", "35°", "185°"], answer: "35°" },
+
+    { section: "Making angles", question: "Drag the orange arm to make an acute angle.", type: "drawangle", marks: 1, answer: "acute" },
+    { section: "Making angles", question: "Drag the orange arm to make a right angle.", type: "drawangle", marks: 1, answer: "right" },
+    { section: "Making angles", question: "Drag the orange arm to make an obtuse angle.", type: "drawangle", marks: 1, answer: "obtuse" },
+    { section: "Making angles", question: "Drag the orange arm to make a reflex angle.", type: "drawangle", marks: 1, answer: "reflex" },
+
+    { section: "Making angles", question: "Sam says an angle of 180° is obtuse. Explain why Sam is wrong.", type: "explain", marks: 1,
+      answer: "Obtuse angles are bigger than 90° but less than 180°. An angle of exactly 180° makes a straight line, so it is a straight angle." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Division of integers and decimals",
+  title: "Division of Integers and Decimals",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. You can include £ or units, but you don't have to.",
+  questions: [
+    { section: "Section A: Integers", question: "Work out 84 ÷ 4", marks: 1, answer: "21" },
+    { section: "Section A: Integers", question: "Work out 156 ÷ 6", marks: 1, answer: "26" },
+    { section: "Section A: Integers", question: "Work out 945 ÷ 5", marks: 1, answer: "189" },
+    { section: "Section A: Integers", question: "Work out 1272 ÷ 8", marks: 2, answer: "159" },
+
+    { section: "Section B: Decimals", question: "Work out 7.2 ÷ 3", marks: 1, answer: "2.4" },
+    { section: "Section B: Decimals", question: "Work out 8.4 ÷ 4", marks: 1, answer: "2.1" },
+    { section: "Section B: Decimals", question: "Work out 12.5 ÷ 5", marks: 1, answer: "2.5" },
+    { section: "Section B: Decimals", question: "Work out 0.36 ÷ 6", marks: 1, answer: "0.06" },
+    { section: "Section B: Decimals", question: "Work out 34.5 ÷ 10", marks: 1, answer: "3.45" },
+    { section: "Section B: Decimals", question: "Work out 47 ÷ 100", marks: 1, answer: "0.47" },
+    { section: "Section B: Decimals", question: "Work out 7 ÷ 4", marks: 2, answer: "1.75" },
+    { section: "Section B: Decimals", question: "Which calculation has the answer 0.4?", type: "choice", marks: 1,
+      options: ["4 ÷ 100", "4 ÷ 10", "0.4 ÷ 10", "40 ÷ 1000"], answer: "4 ÷ 10" },
+
+    { section: "Section C: Problem Solving", question: "£13.50 is shared equally between 3 friends. How much does each friend get?", marks: 2, answer: "£4.50" },
+    { section: "Section C: Problem Solving", question: "A 2 m ribbon is cut into 8 equal pieces. How long is each piece, in metres?", marks: 2, answer: "0.25 m" },
+    { section: "Section C: Problem Solving", question: "A pack of 6 pens costs £4.20. How much does one pen cost?", marks: 2, answer: "£0.70" },
+    { section: "Section C: Problem Solving", question: "100 people are going on a trip. Each minibus holds 15 people. How many minibuses are needed?", marks: 2, answer: "7" },
+    { section: "Section C: Problem Solving", question: "Lily says 3.6 ÷ 3 = 1.02. Explain Lily's mistake and give the correct answer.", type: "explain", marks: 2,
+      answer: "3 ÷ 3 = 1 and 0.6 ÷ 3 = 0.2, so 3.6 ÷ 3 = 1.2. Lily has put an extra 0 in, giving 2 hundredths instead of 2 tenths." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Rounding",
+  title: "Rounding",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Look at the digit just after the place you're rounding to: 5 or more rounds up, 4 or less rounds down. Type your answer and press <b>Enter</b> or <b>Check</b>.",
+  questions: [
+    { section: "Rounding whole numbers", question: "Round 47 to the nearest 10.", marks: 1, answer: "50" },
+    { section: "Rounding whole numbers", question: "Round 65 to the nearest 10.", marks: 1, answer: "70" },
+    { section: "Rounding whole numbers", question: "Round 3642 to the nearest 100.", marks: 1, answer: "3600" },
+    { section: "Rounding whole numbers", question: "Round 8519 to the nearest 1000.", marks: 1, answer: "9000" },
+    { section: "Rounding whole numbers", question: "Round 2995 to the nearest 10.", marks: 1, answer: "3000" },
+
+    { section: "Rounding decimals", question: "Round 6.7 to the nearest whole number.", marks: 1, answer: "7" },
+    { section: "Rounding decimals", question: "Round 19.5 to the nearest whole number.", marks: 1, answer: "20" },
+    { section: "Rounding decimals", question: "Round 12.35 to 1 decimal place.", marks: 1, answer: "12.4" },
+    { section: "Rounding decimals", question: "Round 0.68 to 1 decimal place.", marks: 1, answer: "0.7" },
+    { section: "Rounding decimals", question: "Round 3.142 to 2 decimal places.", marks: 1, answer: "3.14" },
+
+    { section: "Using a number line", question: "The arrow points to a number. Round it to the nearest 10.", marks: 1, answer: "40",
+      scale: { style: "line", min: 30, max: 40, major: 1, value: 36 } },
+    { section: "Using a number line", question: "The arrow points to a number. Round it to the nearest 100.", marks: 1, answer: "100",
+      scale: { style: "line", min: 100, max: 200, major: 10, minor: 5, value: 145 } },
+    { section: "Using a number line", question: "Is 2.46 closer to 2.4 or to 2.5?", type: "choice", marks: 1,
+      options: ["2.4", "2.5"], answer: "2.5" },
+
+    { section: "Problem solving", question: "A football crowd is 23 481 people. Write this number to the nearest thousand.", marks: 1, answer: "23000" },
+    { section: "Problem solving", question: "A bag of sweets weighs 247 g. Write this to the nearest 10 g.", marks: 1, answer: "250 g" },
+    { section: "Problem solving", question: "Kai rounds 3.45 to 1 decimal place and gets 3.4. Explain Kai's mistake.", type: "explain", marks: 1,
+      answer: "The digit after the first decimal place is 5, so you round up. 3.45 rounded to 1 decimal place is 3.5." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "BIDMAS",
+  title: "BIDMAS",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "BIDMAS: <b>B</b>rackets, <b>I</b>ndices (powers), then <b>D</b>ivision and <b>M</b>ultiplication (left to right), then <b>A</b>ddition and <b>S</b>ubtraction (left to right). Type your answer or tap your choice, then press <b>Check</b>.",
+  questions: [
+    { section: "Order of operations", question: "Work out 3 + 4 × 2", marks: 1, answer: "11" },
+    { section: "Order of operations", question: "Work out (3 + 4) × 2", marks: 1, answer: "14" },
+    { section: "Order of operations", question: "Work out 20 − 12 ÷ 4", marks: 1, answer: "17" },
+    { section: "Order of operations", question: "Work out 10 − 2 × 3 + 1", marks: 1, answer: "5" },
+    { section: "Order of operations", question: "Work out 4 + 6 ÷ 2 − 1", marks: 1, answer: "6" },
+    { section: "Order of operations", question: "Work out 5² − 3 × 4", marks: 2, answer: "13" },
+    { section: "Order of operations", question: "Work out 2 × 3²", marks: 1, answer: "18" },
+    { section: "Order of operations", question: "Work out 18 ÷ (2 + 4) × 3", marks: 2, answer: "9" },
+    { section: "Order of operations", question: "Work out (8 − 2)² ÷ 4", marks: 2, answer: "9" },
+
+    { section: "Brackets and choices", question: "Which operation should you do first in 6 + 8 ÷ 2?", type: "choice", marks: 1,
+      options: ["+", "÷"], answer: "÷" },
+    { section: "Brackets and choices", question: "Where should the brackets go to make 2 + 3 × 4 = 20?", type: "choice", marks: 1,
+      options: ["(2 + 3) × 4", "2 + (3 × 4)"], answer: "(2 + 3) × 4" },
+    { section: "Brackets and choices", question: "Which calculation has the answer 16?", type: "choice", marks: 1,
+      options: ["2 + 2 × 4", "(2 + 2) × 4", "2 × 2 + 4", "2 + 2 + 4"], answer: "(2 + 2) × 4" },
+    { section: "Brackets and choices", question: "Put these calculations in order of their answers, smallest first.", type: "order", marks: 2,
+      items: ["2 + 3 × 4", "(2 + 3) × 4", "2 × 3 + 4", "2 + 3 + 4"],
+      answer: "2 + 3 + 4, 2 × 3 + 4, 2 + 3 × 4, (2 + 3) × 4", labels: ["smallest answer", "largest answer"] },
+
+    { section: "Brackets and choices", question: "Ali works out 3 + 5 × 2 and gets 16. Explain Ali's mistake.", type: "explain", marks: 1,
+      answer: "Ali added first. In BIDMAS, multiplication comes before addition, so work out 5 × 2 = 10 first, then 3 + 10 = 13." }
   ]
 });
 
