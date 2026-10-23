@@ -41,6 +41,20 @@
                 accepted, and 7.70 counts the same as 7.7.
      "explain"  A written answer. The student sees your answer as a model
                 and marks themselves right or wrong.
+     "coordinates"  One or more points, e.g. "(3, 2)" or "(1, 4); (-2, 3)".
+                Points can be in any order.
+     "plot"     Like "coordinates", but the student gets a grid they can
+                click on to place the points (they can also type them).
+
+   GRAPHS (for "coordinates" and "plot" questions)
+     graph: { x: [-5, 5], y: [-5, 5], points: { A: [3, 4] }, lines: [ [[1, 1], [1, 4], [5, 4]] ] }
+       x, y     The range of each axis (include 0). Leave out for -5 to 5.
+       points   Labelled points to show, e.g. { A: [3, 4], B: [-2, 1] }.
+       lines    Lines joining points, e.g. two sides of a shape. Repeat the
+                first point at the end to close a shape.
+     On a "plot" question the grid is clickable; on a "coordinates" question
+     it's just there to read from. A plot question with no graph gets an
+     empty -5 to 5 grid.
 
    EDITING TIPS
    - Every question needs a comma after its closing } except the last.
@@ -51,6 +65,900 @@
      missing comma, quote or bracket near the part you changed.
    ===================================================================== */
 
+QUESTION_BANK.add({
+  topic: "Coordinates",
+  title: "Coordinates: Exam Style Questions",
+  type: "explain",
+  questionsPerSet: 10,
+  tip: "Write coordinates as (x, y), with the x-coordinate first. Non-calculator unless the question says otherwise. Check your answer against the model answer and mark yourself.",
+  questions: [
+    {
+      text: "The grid shows the points A and B.",
+      diagram: `<svg viewBox="0 0 244 244" width="244" role="img" aria-label="Grid with points A and B">
+        <line x1="26" y1="26" x2="26" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="218" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="218" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="218" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="218" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="218" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="218" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="218" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="218" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="218" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="228" y2="122" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="122" y1="218" x2="122" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="26" y="135" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="50" y="135" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="74" y="135" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="98" y="135" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="146" y="135" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="170" y="135" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="194" y="135" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="218" y="135" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="117" y="221.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="117" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="117" y="173.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="117" y="149.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="117" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="117" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="117" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="117" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="117" y="135" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="232" y="126" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="122" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="166" y1="46" x2="174" y2="54" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="166" y1="54" x2="174" y2="46" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="176" y="44" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">A</text>
+        <line x1="46" y1="166" x2="54" y2="174" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="46" y1="174" x2="54" y2="166" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="43" y="164" text-anchor="end" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">B</text>
+        </svg>`,
+      parts: [
+        { question: "Write down the coordinates of the point A.", marks: 1, answer: "(2, 3)" },
+        { question: "Write down the coordinates of the point B.", marks: 1, answer: "(−3, −2)" },
+        { question: "Point C is at (0, −3). Describe how to plot it, starting from O.", marks: 1, answer: "Go 0 across and 3 down. C is on the y-axis." },
+        { question: "Point D is at (−1, 4). Describe how to plot it, starting from O.", marks: 1, answer: "Go 1 left, then 4 up." }
+      ]
+    },
+    {
+      text: "The grid shows the point P.",
+      diagram: `<svg viewBox="0 0 340 340" width="340" role="img" aria-label="Grid with point P">
+        <line x1="26" y1="26" x2="26" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="242" y1="26" x2="242" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="266" y1="26" x2="266" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="290" y1="26" x2="290" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="314" y1="26" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="314" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="290" x2="314" y2="290" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="266" x2="314" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="242" x2="314" y2="242" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="314" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="314" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="314" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="314" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="314" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="314" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="314" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="314" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="314" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="324" y2="170" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="170" y1="314" x2="170" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="26" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="50" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="74" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="98" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="122" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="146" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="194" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="218" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="242" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="266" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="290" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="314" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="317.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="165" y="293.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="165" y="269.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="165" y="245.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="165" y="221.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="165" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="165" y="149.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="165" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="165" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="165" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="165" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="165" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="183" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="328" y="174" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="170" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="70" y1="142" x2="78" y2="150" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="70" y1="150" x2="78" y2="142" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="80" y="140" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">P</text>
+        </svg>`,
+      parts: [
+        { question: "Write down the coordinates of the point P.", marks: 1, answer: "(−4, 1)" },
+        { question: "Describe how to plot the point (3, −2), starting from O.", marks: 1, answer: "Go 3 right, then 2 down." }
+      ]
+    },
+    {
+      text: "Amy was asked to plot the point A that has coordinates (6, 2). Her answer is shown on the grid.",
+      diagram: `<svg viewBox="0 0 244 244" width="244" role="img" aria-label="Grid with Amy's point A">
+        <line x1="26" y1="26" x2="26" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="218" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="218" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="218" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="218" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="218" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="218" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="218" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="218" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="218" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="228" y2="218" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="26" y1="218" x2="26" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="50" y="231" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="74" y="231" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="98" y="231" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="122" y="231" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="146" y="231" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="170" y="231" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="194" y="231" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">7</text>
+        <text x="218" y="231" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">8</text>
+        <text x="21" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="21" y="173.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="21" y="149.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="21" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="21" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="21" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="21" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">7</text>
+        <text x="21" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">8</text>
+        <text x="21" y="231" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="232" y="222" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="26" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="70" y1="70" x2="78" y2="78" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="70" y1="78" x2="78" y2="70" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="80" y="68" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">A</text>
+        </svg>`,
+      question: "Is Amy correct? Explain your answer.",
+      marks: 1,
+      answer: "No. Amy went 2 across and 6 up. The x-coordinate comes first, so she should have gone 6 across and 2 up."
+    },
+    {
+      text: "The grid shows the points A, B and C. ABCD is a square.",
+      diagram: `<svg viewBox="0 0 196 196" width="196" role="img" aria-label="Grid with points A, B and C">
+        <line x1="26" y1="26" x2="26" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="170" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="170" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="170" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="170" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="170" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="170" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="170" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="180" y2="170" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="26" y1="170" x2="26" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="50" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="74" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="98" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="122" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="146" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="170" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="21" y="149.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="21" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="21" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="21" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="21" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="21" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="21" y="183" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="184" y="174" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="26" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="46" y1="118" x2="54" y2="126" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="46" y1="126" x2="54" y2="118" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="43" y="138" text-anchor="end" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">A</text>
+        <line x1="118" y1="118" x2="126" y2="126" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="118" y1="126" x2="126" y2="118" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="128" y="138" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">B</text>
+        <line x1="118" y1="46" x2="126" y2="54" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="118" y1="54" x2="126" y2="46" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="128" y="44" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">C</text>
+        </svg>`,
+      parts: [
+        { question: "Write down the coordinates of C.", marks: 1, answer: "(4, 5)" },
+        { question: "Write down the coordinates of D.", marks: 2, answer: "(1, 5)" }
+      ]
+    },
+    {
+      text: "The grid shows the points A, B and C. M is the midpoint of the line from A to B.",
+      diagram: `<svg viewBox="0 0 340 340" width="340" role="img" aria-label="Grid with points A, B and C">
+        <line x1="26" y1="26" x2="26" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="242" y1="26" x2="242" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="266" y1="26" x2="266" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="290" y1="26" x2="290" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="314" y1="26" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="314" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="290" x2="314" y2="290" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="266" x2="314" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="242" x2="314" y2="242" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="314" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="314" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="314" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="314" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="314" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="314" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="314" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="314" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="314" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="324" y2="170" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="170" y1="314" x2="170" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="26" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="50" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="74" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="98" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="122" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="146" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="194" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="218" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="242" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="266" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="290" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="314" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="317.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="165" y="293.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="165" y="269.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="165" y="245.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="165" y="221.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="165" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="165" y="149.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="165" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="165" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="165" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="165" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="165" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="183" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="328" y="174" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="170" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="214" y1="70" x2="222" y2="78" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="214" y1="78" x2="222" y2="70" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="224" y="68" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">A</text>
+        <line x1="310" y1="70" x2="318" y2="78" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="310" y1="78" x2="318" y2="70" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="307" y="68" text-anchor="end" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">B</text>
+        <line x1="94" y1="286" x2="102" y2="294" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="94" y1="294" x2="102" y2="286" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="104" y="284" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">C</text>
+        </svg>`,
+      parts: [
+        { question: "Write down the coordinates of A.", marks: 1, answer: "(2, 4)" },
+        { question: "Write down the coordinates of C.", marks: 1, answer: "(−3, −5)" },
+        { question: "Write down the coordinates of M.", marks: 1, answer: "(4, 4)" }
+      ]
+    },
+    {
+      text: "The grid shows the points L and M.",
+      diagram: `<svg viewBox="0 0 292 292" width="292" role="img" aria-label="Grid with points L and M">
+        <line x1="26" y1="26" x2="26" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="242" y1="26" x2="242" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="266" y1="26" x2="266" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="266" x2="266" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="242" x2="266" y2="242" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="266" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="266" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="266" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="266" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="266" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="266" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="266" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="266" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="266" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="276" y2="146" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="146" y1="266" x2="146" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="26" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="50" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="74" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="98" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="122" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="170" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="194" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="218" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="242" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="266" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="141" y="269.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="141" y="245.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="141" y="221.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="141" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="141" y="173.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="141" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="141" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="141" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="141" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="141" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="141" y="159" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="280" y="150" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="146" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="94" y1="70" x2="102" y2="78" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="94" y1="78" x2="102" y2="70" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="104" y="68" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">L</text>
+        <line x1="238" y1="166" x2="246" y2="174" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="238" y1="174" x2="246" y2="166" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="248" y="186" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">M</text>
+        </svg>`,
+      parts: [
+        { question: "Write down the coordinates of L.", marks: 1, answer: "(−2, 3)" },
+        { question: "Write down the coordinates of M.", marks: 1, answer: "(4, −1)" },
+        { question: "Find the coordinates of the midpoint of LM.", marks: 2, answer: "(1, 1)" }
+      ]
+    },
+    {
+      text: "The grid shows six points.",
+      diagram: `<svg viewBox="0 0 340 340" width="340" role="img" aria-label="Grid with points A to F">
+        <line x1="26" y1="26" x2="26" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="242" y1="26" x2="242" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="266" y1="26" x2="266" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="290" y1="26" x2="290" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="314" y1="26" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="314" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="290" x2="314" y2="290" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="266" x2="314" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="242" x2="314" y2="242" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="314" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="314" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="314" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="314" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="314" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="314" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="314" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="314" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="314" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="324" y2="170" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="170" y1="314" x2="170" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="26" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="50" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="74" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="98" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="122" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="146" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="194" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="218" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="242" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="266" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="290" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="314" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="317.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="165" y="293.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="165" y="269.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="165" y="245.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="165" y="221.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="165" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="165" y="149.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="165" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="165" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="165" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="165" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="165" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="183" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="328" y="174" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="170" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="166" y1="70" x2="174" y2="78" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="166" y1="78" x2="174" y2="70" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="176" y="68" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">A</text>
+        <line x1="286" y1="166" x2="294" y2="174" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="286" y1="174" x2="294" y2="166" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="296" y="163" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">B</text>
+        <line x1="94" y1="190" x2="102" y2="198" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="94" y1="198" x2="102" y2="190" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="104" y="188" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">C</text>
+        <line x1="46" y1="94" x2="54" y2="102" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="46" y1="102" x2="54" y2="94" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="56" y="92" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">D</text>
+        <line x1="262" y1="262" x2="270" y2="270" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="262" y1="270" x2="270" y2="262" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="272" y="260" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">E</text>
+        <line x1="118" y1="286" x2="126" y2="294" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="118" y1="294" x2="126" y2="286" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="128" y="284" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">F</text>
+        </svg>`,
+      parts: [
+        { question: "Which point has coordinates (5, 0)?", marks: 1, answer: "B" },
+        { question: "Which point has coordinates (−5, 3)?", marks: 1, answer: "D" },
+        { question: "Describe how to plot the point (1, −2), starting from O.", marks: 1, answer: "Go 1 right, then 2 down." }
+      ]
+    },
+    {
+      text: "The points D (−3, 2), E (3, 2), F (3, −4) and G (−3, −4) are plotted on the grid.",
+      diagram: `<svg viewBox="0 0 340 340" width="340" role="img" aria-label="Grid with points D, E, F and G">
+        <line x1="26" y1="26" x2="26" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="242" y1="26" x2="242" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="266" y1="26" x2="266" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="290" y1="26" x2="290" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="314" y1="26" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="314" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="290" x2="314" y2="290" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="266" x2="314" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="242" x2="314" y2="242" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="314" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="314" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="314" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="314" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="314" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="314" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="314" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="314" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="314" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="324" y2="170" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="170" y1="314" x2="170" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="26" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="50" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="74" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="98" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="122" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="146" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="194" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="218" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="242" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="266" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="290" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="314" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="317.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="165" y="293.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="165" y="269.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="165" y="245.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="165" y="221.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="165" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="165" y="149.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="165" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="165" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="165" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="165" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="165" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="183" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="328" y="174" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="170" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="94" y1="118" x2="102" y2="126" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="94" y1="126" x2="102" y2="118" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="91" y="116" text-anchor="end" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">D</text>
+        <line x1="238" y1="118" x2="246" y2="126" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="238" y1="126" x2="246" y2="118" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="248" y="116" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">E</text>
+        <line x1="238" y1="262" x2="246" y2="270" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="238" y1="270" x2="246" y2="262" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="248" y="282" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">F</text>
+        <line x1="94" y1="262" x2="102" y2="270" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="94" y1="270" x2="102" y2="262" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="91" y="282" text-anchor="end" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">G</text>
+        </svg>`,
+      parts: [
+        { question: "How many units long is the side DE?", marks: 1, type: "number", answer: "6" },
+        { question: "Write down the name of shape DEFG.", marks: 1, answer: "Square. All four sides are 6 units long and the corners are right angles." }
+      ]
+    },
+    {
+      text: "The grid shows the points A, B and C. ABCD is a parallelogram.",
+      diagram: `<svg viewBox="0 0 196 196" width="196" role="img" aria-label="Grid with points A, B and C">
+        <line x1="26" y1="26" x2="26" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="170" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="170" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="170" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="170" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="170" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="170" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="170" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="180" y2="170" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="26" y1="170" x2="26" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="50" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="74" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="98" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="122" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="146" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="170" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="21" y="149.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="21" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="21" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="21" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="21" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="21" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="21" y="183" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="184" y="174" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="26" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="50" y1="146" x2="122" y2="146" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <line x1="122" y1="146" x2="146" y2="74" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <line x1="46" y1="142" x2="54" y2="150" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="46" y1="150" x2="54" y2="142" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="43" y="140" text-anchor="end" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">A</text>
+        <line x1="118" y1="142" x2="126" y2="150" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="118" y1="150" x2="126" y2="142" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="128" y="162" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">B</text>
+        <line x1="142" y1="70" x2="150" y2="78" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="142" y1="78" x2="150" y2="70" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="152" y="68" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">C</text>
+        </svg>`,
+      question: "Complete the parallelogram and write down the coordinates of D.",
+      marks: 2,
+      answer: "(2, 4)"
+    },
+    {
+      text: "The points A (−1, 4), B (3, 2) and C (2, −3) are shown. ABCD is a parallelogram.",
+      diagram: `<svg viewBox="0 0 292 292" width="292" role="img" aria-label="Grid with points A, B and C">
+        <line x1="26" y1="26" x2="26" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="242" y1="26" x2="242" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="266" y1="26" x2="266" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="266" x2="266" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="242" x2="266" y2="242" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="266" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="266" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="266" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="266" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="266" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="266" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="266" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="266" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="266" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="276" y2="146" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="146" y1="266" x2="146" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="26" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="50" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="74" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="98" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="122" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="170" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="194" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="218" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="242" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="266" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="141" y="269.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="141" y="245.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="141" y="221.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="141" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="141" y="173.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="141" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="141" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="141" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="141" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="141" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="141" y="159" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="280" y="150" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="146" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="122" y1="50" x2="218" y2="98" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <line x1="218" y1="98" x2="194" y2="218" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <line x1="118" y1="46" x2="126" y2="54" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="118" y1="54" x2="126" y2="46" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="115" y="44" text-anchor="end" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">A</text>
+        <line x1="214" y1="94" x2="222" y2="102" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="214" y1="102" x2="222" y2="94" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="224" y="92" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">B</text>
+        <line x1="190" y1="214" x2="198" y2="222" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="190" y1="222" x2="198" y2="214" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="200" y="234" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">C</text>
+        </svg>`,
+      question: "Complete the parallelogram and write down the coordinates of D.",
+      marks: 2,
+      answer: "(−2, −1)"
+    },
+    {
+      text: "The points A (−2, 1), B (1, 5) and D (1, −2) are shown. ABCD is a kite.",
+      diagram: `<svg viewBox="0 0 340 340" width="340" role="img" aria-label="Grid with points A, B and D">
+        <line x1="26" y1="26" x2="26" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="242" y1="26" x2="242" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="266" y1="26" x2="266" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="290" y1="26" x2="290" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="314" y1="26" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="314" x2="314" y2="314" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="290" x2="314" y2="290" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="266" x2="314" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="242" x2="314" y2="242" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="314" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="314" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="314" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="314" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="314" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="314" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="314" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="314" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="314" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="324" y2="170" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="170" y1="314" x2="170" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="26" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="50" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="74" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="98" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="122" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="146" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="194" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="218" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="242" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="266" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="290" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="314" y="183" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="317.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−6</text>
+        <text x="165" y="293.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="165" y="269.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="165" y="245.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="165" y="221.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="165" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="165" y="149.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="165" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="165" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="165" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="165" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="165" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">6</text>
+        <text x="165" y="183" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="328" y="174" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="170" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="122" y1="146" x2="194" y2="50" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <line x1="122" y1="146" x2="194" y2="218" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <line x1="118" y1="142" x2="126" y2="150" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="118" y1="150" x2="126" y2="142" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="115" y="140" text-anchor="end" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">A</text>
+        <line x1="190" y1="46" x2="198" y2="54" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="190" y1="54" x2="198" y2="46" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="200" y="44" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">B</text>
+        <line x1="190" y1="214" x2="198" y2="222" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="190" y1="222" x2="198" y2="214" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="200" y="234" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">D</text>
+        </svg>`,
+      question: "Complete the kite and write down the coordinates of C.",
+      marks: 2,
+      answer: "(4, 1)"
+    },
+    {
+      text: "The points A and C are shown on the grid. ABC is an isosceles triangle.",
+      diagram: `<svg viewBox="0 0 292 292" width="292" role="img" aria-label="Grid with points A and C">
+        <line x1="26" y1="26" x2="26" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="50" y1="26" x2="50" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="74" y1="26" x2="74" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="98" y1="26" x2="98" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="122" y1="26" x2="122" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="146" y1="26" x2="146" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="170" y1="26" x2="170" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="194" y1="26" x2="194" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="218" y1="26" x2="218" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="242" y1="26" x2="242" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="266" y1="26" x2="266" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="266" x2="266" y2="266" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="242" x2="266" y2="242" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="218" x2="266" y2="218" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="194" x2="266" y2="194" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="170" x2="266" y2="170" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="266" y2="146" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="122" x2="266" y2="122" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="98" x2="266" y2="98" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="74" x2="266" y2="74" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="50" x2="266" y2="50" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="26" x2="266" y2="26" style="stroke:currentColor;stroke-width:1;opacity:0.18;fill:none"/>
+        <line x1="26" y1="146" x2="276" y2="146" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <line x1="146" y1="266" x2="146" y2="16" style="stroke:currentColor;stroke-width:1.6;fill:none"/>
+        <text x="26" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="50" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="74" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="98" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="122" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="170" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="194" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="218" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="242" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="266" y="159" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="141" y="269.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−5</text>
+        <text x="141" y="245.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−4</text>
+        <text x="141" y="221.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−3</text>
+        <text x="141" y="197.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−2</text>
+        <text x="141" y="173.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">−1</text>
+        <text x="141" y="125.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">1</text>
+        <text x="141" y="101.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">2</text>
+        <text x="141" y="77.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">3</text>
+        <text x="141" y="53.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">4</text>
+        <text x="141" y="29.5" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px">5</text>
+        <text x="141" y="159" text-anchor="end" style="fill:currentColor;stroke:none;font-size:10px;font-style:italic">O</text>
+        <text x="280" y="150" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">x</text>
+        <text x="146" y="12" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:12px;font-style:italic">y</text>
+        <line x1="190" y1="46" x2="198" y2="54" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="190" y1="54" x2="198" y2="46" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="200" y="44" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">A</text>
+        <line x1="190" y1="190" x2="198" y2="198" style="stroke:#2563eb;stroke-width:2;fill:none"/><line x1="190" y1="198" x2="198" y2="190" style="stroke:#2563eb;stroke-width:2;fill:none"/>
+        <text x="200" y="188" text-anchor="start" style="fill:#2563eb;stroke:none;font-size:14px;font-weight:bold">C</text>
+        </svg>`,
+      question: "Work out possible coordinates for the point B.",
+      marks: 2,
+      answer: "Any point on the line y = 1 except (2, 1), for example (5, 1) or (−1, 1). Points that make AB = AC or CB = CA also work, such as (8, −2)."
+    },
+    {
+      text: "A is the point with coordinates (3, 8). B is the point with coordinates (11, 2).",
+      question: "Work out the coordinates of the midpoint of the line AB.",
+      marks: 2,
+      answer: "(7, 5)"
+    },
+    {
+      text: "Calculator allowed. C is (4, 13) and D is (10, 5).",
+      question: "Which of these is the midpoint of CD? (6, 8), (7, 9), (7, 8) or (14, 18)",
+      marks: 1,
+      answer: "(7, 9)"
+    },
+    {
+      text: "The diagram shows two identical right-angled triangles. The right angle of each triangle is at its bottom-left corner.",
+      diagram: `<svg viewBox="0 0 340 260" width="340" role="img" aria-label="Two identical right-angled triangles">
+        <line x1="120" y1="255" x2="120" y2="8" style="stroke:currentColor;stroke-width:1.6;fill:none"/><line x1="5" y1="120" x2="332" y2="120" style="stroke:currentColor;stroke-width:1.6;fill:none"/><text x="112" y="136" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">O</text><text x="334" y="136" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">x</text><text x="128" y="16" style="fill:currentColor;stroke:none;font-size:13px">y</text>
+        <polygon points="50,30 50,80 175,80" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <polyline points="50,72 58,72 58,80" style="stroke:currentColor;stroke-width:1;fill:none"/>
+        <circle cx="50" cy="30" r="3" style="fill:currentColor;stroke:none"/><circle cx="175" cy="80" r="3" style="fill:currentColor;stroke:none"/>
+        <text x="42" y="30" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">A</text>
+        <text x="182" y="84" style="fill:currentColor;stroke:none;font-size:13px">(3, 6)</text>
+        <polygon points="160,150 160,200 285,200" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <polyline points="160,192 168,192 168,200" style="stroke:currentColor;stroke-width:1;fill:none"/>
+        <circle cx="160" cy="150" r="3" style="fill:currentColor;stroke:none"/><circle cx="160" cy="200" r="3" style="fill:currentColor;stroke:none"/><circle cx="285" cy="200" r="3" style="fill:currentColor;stroke:none"/>
+        <text x="168" y="150" style="fill:currentColor;stroke:none;font-size:13px">(5, −2)</text>
+        <text x="160" y="220" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">(5, −7)</text>
+        <text x="285" y="220" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">(12, −7)</text>
+      </svg>`,
+      question: "Work out the coordinates of the point A.",
+      marks: 3,
+      answer: "(−4, 11). The triangle is 7 wide and 5 tall, so the right angle is at (3 − 7, 6) = (−4, 6), and A is 5 above it."
+    },
+    {
+      text: "Calculator allowed.",
+      question: "Work out the midpoint of the line AB joining A (−6, 5) and B (−2, 17).",
+      marks: 2,
+      answer: "(−4, 11)"
+    },
+    {
+      text: "Four identical squares are shown. The sides of the squares are parallel to the axes. A is (5, 2) and C is (53, 38).",
+      diagram: `<svg viewBox="0 0 300 260" width="300" role="img" aria-label="Four identical squares in a staircase from A to C">
+        <line x1="25" y1="255" x2="25" y2="8" style="stroke:currentColor;stroke-width:1.6;fill:none"/><line x1="5" y1="235" x2="292" y2="235" style="stroke:currentColor;stroke-width:1.6;fill:none"/><text x="17" y="251" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">O</text><text x="294" y="251" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">x</text><text x="33" y="16" style="fill:currentColor;stroke:none;font-size:13px">y</text>
+        <rect x="50" y="170" width="45" height="45" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <rect x="95" y="170" width="45" height="45" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <rect x="140" y="125" width="45" height="45" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <rect x="185" y="80" width="45" height="45" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <circle cx="50" cy="215" r="3" style="fill:currentColor;stroke:none"/><circle cx="140" cy="170" r="3" style="fill:currentColor;stroke:none"/><circle cx="230" cy="80" r="3" style="fill:currentColor;stroke:none"/>
+        <text x="54" y="230" style="fill:currentColor;stroke:none;font-size:13px">A (5, 2)</text>
+        <text x="146" y="186" style="fill:currentColor;stroke:none;font-size:13px">B</text>
+        <text x="236" y="76" style="fill:currentColor;stroke:none;font-size:13px">C (53, 38)</text>
+      </svg>`,
+      question: "Work out the coordinates of point B.",
+      marks: 4,
+      answer: "(29, 14). From A to C is 4 sides across (48 ÷ 4 = 12) and 3 sides up (36 ÷ 3 = 12), so each side is 12. B is 2 sides across and 1 side up from A."
+    },
+    {
+      text: "M is the midpoint of AB.",
+      diagram: `<svg viewBox="0 0 300 200" width="300" role="img" aria-label="Line AB with midpoint M">
+        <line x1="30" y1="195" x2="30" y2="8" style="stroke:currentColor;stroke-width:1.6;fill:none"/><line x1="5" y1="170" x2="292" y2="170" style="stroke:currentColor;stroke-width:1.6;fill:none"/><text x="22" y="186" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">O</text><text x="294" y="186" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">x</text><text x="38" y="16" style="fill:currentColor;stroke:none;font-size:13px">y</text>
+        <line x1="65" y1="135" x2="255" y2="55" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <circle cx="65" cy="135" r="3" style="fill:currentColor;stroke:none"/><circle cx="160" cy="95" r="3" style="fill:currentColor;stroke:none"/><circle cx="255" cy="55" r="3" style="fill:currentColor;stroke:none"/>
+        <text x="65" y="155" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">A (3, 5)</text>
+        <text x="160" y="83" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">M (8, 9.5)</text>
+        <text x="262" y="60" style="fill:currentColor;stroke:none;font-size:13px">B</text>
+      </svg>`,
+      question: "Work out the coordinates of B.",
+      marks: 3,
+      answer: "(13, 14). From A to M is 5 across and 4.5 up, so B is another 5 across and 4.5 up from M."
+    },
+    {
+      question: "The point (−3, 7) is in which quadrant: first, second, third or fourth?",
+      marks: 1,
+      answer: "Second"
+    },
+    {
+      question: "Write down the coordinates of the origin.",
+      marks: 1,
+      answer: "(0, 0)"
+    },
+    {
+      text: "Point P lies on the x-axis, 5 units to the left of the origin.",
+      question: "Write down the coordinates of P.",
+      marks: 1,
+      answer: "(−5, 0)"
+    },
+    {
+      text: "ABCD is a rectangle. A is (−4, 3), B is (2, 3) and C is (2, −1).",
+      question: "Write down the coordinates of D.",
+      marks: 2,
+      answer: "(−4, −1)"
+    },
+    {
+      question: "Work out the midpoint of the line joining (−7, −3) and (5, −9).",
+      marks: 2,
+      answer: "(−1, −6)"
+    },
+    {
+      text: "M (−2, 4) is the midpoint of AB. A is the point (−5, 1).",
+      question: "Work out the coordinates of B.",
+      marks: 3,
+      answer: "(1, 7)"
+    },
+    {
+      text: "Three corners of a square are at (1, 1), (1, 5) and (5, 5).",
+      parts: [
+        { question: "Write down the coordinates of the fourth corner.", marks: 1, answer: "(5, 1)" },
+        { question: "Write down the coordinates of the centre of the square.", marks: 2, answer: "(3, 3)" }
+      ]
+    },
+    {
+      text: "Tom says the points (3, −4) and (−4, 3) are the same point.",
+      question: "Is Tom correct? Explain your answer.",
+      marks: 1,
+      answer: "No. (3, −4) is 3 right and 4 down, but (−4, 3) is 4 left and 3 up, so they are different points."
+    },
+    {
+      text: "A is (2, 1), B is (6, 1) and C is (6, 7).",
+      question: "Work out the coordinates of the midpoint of AC.",
+      marks: 2,
+      answer: "(4, 4)"
+    },
+    {
+      text: "A straight line joins the points (−3, 2) and (5, 2).",
+      question: "Write down the coordinates of two other points on this line.",
+      marks: 2,
+      answer: "Any two points with y = 2 and x between −3 and 5, for example (0, 2) and (1, 2)."
+    },
+    {
+      text: "ABC is an isosceles triangle with AC = BC. A is (−4, −1) and B is (2, −1). C has a y-coordinate of 5.",
+      question: "Work out the coordinates of C.",
+      marks: 2,
+      answer: "(−1, 5)"
+    },
+    {
+      text: "Three identical squares are placed side by side in a row. The sides of the squares are parallel to the axes. P is (7, 4) and Q is (34, 13).",
+      diagram: `<svg viewBox="0 0 310 170" width="310" role="img" aria-label="Three identical squares in a row with corners P, R and Q">
+        <line x1="25" y1="165" x2="25" y2="8" style="stroke:currentColor;stroke-width:1.6;fill:none"/><line x1="5" y1="145" x2="302" y2="145" style="stroke:currentColor;stroke-width:1.6;fill:none"/><text x="17" y="161" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">O</text><text x="304" y="161" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">x</text><text x="33" y="16" style="fill:currentColor;stroke:none;font-size:13px">y</text>
+        <rect x="55" y="55" width="55" height="55" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <rect x="110" y="55" width="55" height="55" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <rect x="165" y="55" width="55" height="55" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <circle cx="55" cy="110" r="3" style="fill:currentColor;stroke:none"/><circle cx="220" cy="55" r="3" style="fill:currentColor;stroke:none"/><circle cx="110" cy="55" r="3" style="fill:currentColor;stroke:none"/>
+        <text x="55" y="128" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">P (7, 4)</text>
+        <text x="226" y="50" style="fill:currentColor;stroke:none;font-size:13px">Q (34, 13)</text>
+        <text x="110" y="47" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">R</text>
+      </svg>`,
+      question: "Work out the coordinates of R.",
+      marks: 3,
+      answer: "(16, 13). Each square has side 27 ÷ 3 = 9, so R is 9 right of P and 9 up."
+    }
+  ]
+});
 
 QUESTION_BANK.add({
   topic: "Algebra: collecting like terms",
@@ -131,6 +1039,57 @@ QUESTION_BANK.add({
       marks: 2,
       answer: "12x + 8"
     }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Coordinates",
+  title: "Coordinates",
+  type: "coordinates",
+  questionsPerSet: 10,
+  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. Write coordinates as (x, y), e.g. (1, 6). On a grid you can plot, click to place a point and click it again to remove it.",
+  questions: [
+    { section: "Reading coordinates", question: "Write down the coordinates of point A.", marks: 1, answer: "(3, 4)",
+      graph: { x: [0, 6], y: [0, 6], points: { A: [3, 4] } } },
+    { section: "Reading coordinates", question: "Write down the coordinates of point B.", marks: 1, answer: "(5, 1)",
+      graph: { x: [0, 6], y: [0, 6], points: { B: [5, 1] } } },
+    { section: "Reading coordinates", text: "The grid shows the points P, Q and R.",
+      graph: { points: { P: [-3, 2], Q: [4, -1], R: [-2, -4] } },
+      parts: [
+        { question: "Write down the coordinates of P.", marks: 1, answer: "(−3, 2)" },
+        { question: "Write down the coordinates of Q.", marks: 1, answer: "(4, −1)" },
+        { question: "Write down the coordinates of R.", marks: 1, answer: "(−2, −4)" }
+      ] },
+    { section: "Reading coordinates", question: "Write down the coordinates of point S.", marks: 1, answer: "(0, 3)",
+      graph: { points: { S: [0, 3] } } },
+    { section: "Reading coordinates", question: "Write down the coordinates of point T.", marks: 1, answer: "(−4, 0)",
+      graph: { points: { T: [-4, 0] } } },
+    { section: "Reading coordinates", text: "ABC is a triangle.", question: "Write down the coordinates of C.", marks: 1, answer: "(0, 3)",
+      graph: { points: { A: [-3, -2], B: [3, -2], C: [0, 3] }, lines: [[[-3, -2], [3, -2], [0, 3], [-3, -2]]] } },
+    { section: "Reading coordinates", text: "M is halfway between A and B.", question: "Write down the coordinates of M.", marks: 1, answer: "(3, 2)",
+      graph: { x: [0, 6], y: [0, 6], points: { A: [1, 2], B: [5, 2] }, lines: [[[1, 2], [5, 2]]] } },
+
+    { section: "Plotting points", question: "Plot the point (2, 5).", type: "plot", marks: 1, answer: "(2, 5)",
+      graph: { x: [0, 6], y: [0, 6] } },
+    { section: "Plotting points", question: "Plot the point (4, 0).", type: "plot", marks: 1, answer: "(4, 0)",
+      graph: { x: [0, 6], y: [0, 6] } },
+    { section: "Plotting points", question: "Plot the point (−3, 4).", type: "plot", marks: 1, answer: "(−3, 4)" },
+    { section: "Plotting points", question: "Plot the point (2, −5).", type: "plot", marks: 1, answer: "(2, −5)" },
+    { section: "Plotting points", question: "Plot the points (−1, −2) and (3, −4).", type: "plot", marks: 2, answer: "(−1, −2); (3, −4)" },
+    { section: "Plotting points", question: "Plot a point that lies on the y-axis, 3 units below the origin.", type: "plot", marks: 1, answer: "(0, −3)" },
+
+    { section: "Shapes on a grid",
+      text: "The points (1, 1), (1, 4) and (5, 4) are three corners of a rectangle.",
+      question: "Plot the fourth corner of the rectangle.", type: "plot", marks: 2, answer: "(5, 1)",
+      graph: { x: [0, 6], y: [0, 6], lines: [[[1, 1], [1, 4], [5, 4]]] } },
+    { section: "Shapes on a grid",
+      text: "The points (−2, 1), (2, 1) and (2, −3) are three corners of a square.",
+      question: "Plot the fourth corner of the square.", type: "plot", marks: 2, answer: "(−2, −3)",
+      graph: { lines: [[[-2, 1], [2, 1], [2, -3]]] } },
+    { section: "Shapes on a grid",
+      question: "Ali says the point (2, 5) is 5 across and 2 up. Is Ali correct? Explain your answer.", type: "explain", marks: 1,
+      answer: "No. The first number is the x-coordinate (across) and the second is the y-coordinate (up), so (2, 5) is 2 across and 5 up." }
   ]
 });
 

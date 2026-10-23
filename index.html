@@ -333,6 +333,22 @@
     border: none; background: none; color: inherit; font-size: 13px;
     text-decoration: underline; margin-left: 6px; padding: 0;
   }
+  .graph-wrap { margin: 0 0 12px 40px; }
+  .graph-wrap.in-part { margin: 0 0 12px; }
+  .graph { display: block; max-width: 100%; height: auto; touch-action: manipulation; user-select: none; }
+  .graph .grid { stroke: var(--line); stroke-width: 1; }
+  .graph .axis { stroke: var(--ink); stroke-width: 1.6; }
+  .graph text { font-family: "Inter", sans-serif; }
+  .graph .tick { font-size: 11px; font-weight: 500; fill: var(--muted); }
+  .graph .axis-name { font-size: 13px; font-weight: 700; font-style: italic; fill: var(--ink); }
+  .graph .shape { fill: none; stroke: var(--green-700); stroke-width: 2.5; stroke-linejoin: round; }
+  .graph .pt { fill: var(--ink); }
+  .graph .pt-label { font-size: 14px; font-weight: 700; fill: var(--ink); }
+  .graph.plot { cursor: crosshair; background: var(--white); border-radius: 8px; }
+  .graph .plotted circle { fill: var(--green-700); stroke: var(--white); stroke-width: 2; }
+  .part.incorrect .graph .plotted circle { fill: var(--danger); }
+  .graph .ghost { fill: none; stroke: var(--green-600); stroke-width: 2; pointer-events: none; }
+
   .q-section {
     font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
     color: var(--green-700); margin: 28px 0 14px; padding-bottom: 6px; border-bottom: 2px solid var(--green-100);
@@ -926,7 +942,8 @@
   // The questions themselves live in questions.js (QUESTION_BANK). Here each topic is turned into a list
   // of items; an item is one question, or a group of parts that always appear together.
   // Each part is marked as "expr" (algebra), "num" (a number) or "explain" (self-marked against a model answer).
-  const KIND_FOR_TYPE = { algebra: "expr", number: "num", explain: "explain" };
+  // "coords" parts take coordinates; "plot" ones also get a grid the student can click on.
+  const KIND_FOR_TYPE = { algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords" };
 
   // A short id made from a question's wording, so saved answers stay with the question if the list is reordered.
   function hashText(s) {
@@ -944,20 +961,29 @@
     const items = [];
     t.questions.forEach((q, i) => {
       const grouped = Array.isArray(q.parts);
-      const parts = (grouped ? q.parts : [q]).map((p, pi) => ({
-        label: grouped ? String.fromCharCode(97 + pi) : "",
-        text: String(p.question || ""),
-        marks: Number(p.marks) || 1,
-        answer: String(p.answer ?? ""),
-        kind: KIND_FOR_TYPE[p.type] || topicKind
-      }));
+      const parts = (grouped ? q.parts : [q]).map((p, pi) => {
+        const plot = (p.type || t.type) === "plot";
+        return {
+          label: grouped ? String.fromCharCode(97 + pi) : "",
+          text: String(p.question || ""),
+          marks: Number(p.marks) || 1,
+          answer: String(p.answer ?? ""),
+          kind: KIND_FOR_TYPE[p.type] || topicKind,
+          plot,
+          // A plot question always gets a grid; it sits inside the part so it can be clicked.
+          graph: plot ? (p.graph || {}) : (grouped ? p.graph || null : null)
+        };
+      });
       const unreadable = parts.some(p => !p.text || !p.answer ||
-        (p.kind === "expr" && !parseExpr(p.answer)) || (p.kind === "num" && readNumber(p.answer) === null));
+        (p.kind === "expr" && !parseExpr(p.answer)) || (p.kind === "num" && readNumber(p.answer) === null) ||
+        (p.kind === "coords" && !readPoints(p.answer)));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
       let id = hashText([q.text || "", ...parts.map(p => p.text)].join("|"));
       while (items.some(it => it.id === id)) id += "x";
       parts.forEach((p, pi) => { p.id = id + "-" + pi; });
-      items.push({ id, section: q.section || "", stem: q.text || "", diagram: q.diagram || "", parts });
+      // A graph on a grouped question, or on a non-plot question, is shown above the parts for reading from.
+      const itemGraph = grouped || !parts[0].plot ? q.graph || null : null;
+      items.push({ id, section: q.section || "", stem: q.text || "", diagram: q.diagram || "", graph: itemGraph, parts });
     });
     if (!items.length) return;
     PRACTICE[key] = {
@@ -1063,6 +1089,94 @@
     return { correct: true, message: "Correct!" };
   }
 
+  // Coordinates: reads points such as "(3, 2)" or "(3, 2); (-1, 4)". Returns null if it can't be read.
+  function readPoints(raw) {
+    const s = String(raw).replace(/[−–—]/g, "-");
+    const re = /\(?\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)?/g;
+    const pts = [];
+    for (const m of s.matchAll(re)) pts.push([parseFloat(m[1]), parseFloat(m[2])]);
+    const leftover = s.replace(re, "").replace(/[;,]|\band\b/gi, "").trim();
+    return pts.length && !leftover ? pts : null;
+  }
+  const formatPoints = pts => pts.map(([x, y]) => `(${x}, ${y})`).join("; ");
+
+  // Points can be given in any order; swapping x and y gets its own hint.
+  function markCoords(value, answer) {
+    const got = readPoints(value), want = readPoints(answer);
+    if (!got) return { correct: false, message: "Write coordinates as (x, y), with a comma between them." };
+    const key = pts => [...new Set(pts.map(p => p.join(",")))].sort().join(" ");
+    if (key(got) === key(want)) return { correct: true, message: "Correct!" };
+    if (got.length !== want.length) return { correct: false, message: `You need ${want.length} point${want.length > 1 ? "s" : ""}. Try again.` };
+    if (key(got.map(([x, y]) => [y, x])) === key(want)) {
+      return { correct: false, message: "Check the order: the x-coordinate (across) comes first, then y (up)." };
+    }
+    return { correct: false, message: "Not quite. Try again." };
+  }
+
+  // Draws a coordinate grid from a question's graph settings: x and y ranges, labelled points and lines.
+  function graphSVG(g, plot) {
+    const [x0, x1] = g.x || [-5, 5], [y0, y1] = g.y || [-5, 5];
+    const u = 30, m = 28;
+    const W = (x1 - x0) * u + 2 * m, H = (y1 - y0) * u + 2 * m;
+    const px = x => m + (x - x0) * u, py = y => m + (y1 - y) * u;
+    // The axes sit at 0, or at the edge if 0 is outside the range.
+    const ax = Math.min(Math.max(0, x0), x1), ay = Math.min(Math.max(0, y0), y1);
+    let s = `<svg class="graph${plot ? " plot" : ""}" viewBox="0 0 ${W} ${H}" width="${W}"
+      data-x0="${x0}" data-x1="${x1}" data-y0="${y0}" data-y1="${y1}" data-u="${u}" data-m="${m}"
+      role="img" aria-label="Coordinate grid${plot ? ". Click to plot a point." : ""}">`;
+    for (let x = x0; x <= x1; x++) s += `<line class="grid" x1="${px(x)}" y1="${py(y1)}" x2="${px(x)}" y2="${py(y0)}"/>`;
+    for (let y = y0; y <= y1; y++) s += `<line class="grid" x1="${px(x0)}" y1="${py(y)}" x2="${px(x1)}" y2="${py(y)}"/>`;
+    s += `<line class="axis" x1="${px(x0)}" y1="${py(ay)}" x2="${px(x1)}" y2="${py(ay)}"/>`;
+    s += `<line class="axis" x1="${px(ax)}" y1="${py(y0)}" x2="${px(ax)}" y2="${py(y1)}"/>`;
+    for (let x = x0; x <= x1; x++) if (x !== ax) s += `<text class="tick" x="${px(x)}" y="${py(ay) + 15}" text-anchor="middle">${x}</text>`;
+    for (let y = y0; y <= y1; y++) if (y !== ay) s += `<text class="tick" x="${px(ax) - 6}" y="${py(y) + 4}" text-anchor="end">${y}</text>`;
+    s += `<text class="tick" x="${px(ax) - 6}" y="${py(ay) + 15}" text-anchor="end">0</text>`;
+    s += `<text class="axis-name" x="${px(x1) + 10}" y="${py(ay) + 5}">x</text>`;
+    s += `<text class="axis-name" x="${px(ax)}" y="${py(y1) - 10}" text-anchor="middle">y</text>`;
+    (g.lines || []).forEach(line => {
+      s += `<polyline class="shape" points="${line.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`;
+    });
+    Object.entries(g.points || {}).forEach(([name, [x, y]]) => {
+      s += `<circle class="pt" cx="${px(x)}" cy="${py(y)}" r="4.5"/>`;
+      s += `<text class="pt-label" x="${px(x) + 7}" y="${py(y) - 7}">${esc(name)}</text>`;
+    });
+    if (plot) s += `<g class="plotted"></g><circle class="ghost" r="7" style="display:none"/>`;
+    return s + `</svg>`;
+  }
+
+  // Shows the points currently in a plot question's answer box on its grid.
+  function drawPlotted(svg, pts) {
+    const d = svg.dataset, u = +d.u, m = +d.m;
+    svg.querySelector(".plotted").innerHTML = pts
+      .filter(([x, y]) => x >= +d.x0 && x <= +d.x1 && y >= +d.y0 && y <= +d.y1)
+      .map(([x, y]) => `<circle cx="${m + (x - d.x0) * u}" cy="${m + (d.y1 - y) * u}" r="6"/>`)
+      .join("");
+  }
+
+  // Turns a mouse or touch position on a grid into the nearest grid point, or null if it's off the grid.
+  function gridPointAt(svg, e) {
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const d = svg.dataset, u = +d.u, m = +d.m;
+    const x = Math.round((p.x - m) / u + +d.x0), y = Math.round(+d.y1 - (p.y - m) / u);
+    return x < +d.x0 || x > +d.x1 || y < +d.y0 || y > +d.y1 ? null : [x, y];
+  }
+
+  // Clicking adds a point, or removes it if it's already there. With a single-point answer, the point just moves.
+  function plotClick(part, svg, e) {
+    const at = gridPointAt(svg, e);
+    if (!at) return;
+    const input = part.querySelector("input");
+    let pts = readPoints(input.value) || [];
+    const i = pts.findIndex(p => p[0] === at[0] && p[1] === at[1]);
+    if (i >= 0) pts.splice(i, 1);
+    else if (readPoints(practiceSpecs[part.dataset.id].answer).length === 1) pts = [at];
+    else pts.push(at);
+    input.value = formatPoints(pts);
+    drawPlotted(svg, pts);
+  }
+
   // Explanations can't be marked automatically, so the student compares with a model answer and marks themselves.
   function markPart(spec, saved) {
     if (!saved) return null;
@@ -1070,6 +1184,7 @@
       if (saved.self === undefined) return null;
       return { correct: saved.self, message: saved.self ? "You marked this as right." : "You marked this as not quite right. Edit your answer and check again." };
     }
+    if (spec.kind === "coords") return markCoords(saved.value, spec.answer);
     return spec.kind === "num" ? markNumber(saved.value, spec.answer) : markAnswer(saved.value, spec.answer);
   }
 
@@ -1107,7 +1222,8 @@
       html += `<section class="q-block"><div class="q-head"><span class="q-num">${n}</span>${item.stem ? `<span>${esc(item.stem)}</span>` : ""}</div>`;
       // Diagrams are SVG written in questions.js, so they're inserted as-is.
       if (item.diagram) html += `<div class="diagram">${item.diagram}</div>`;
-      item.parts.forEach(({ id, label, text, marks, answer, kind }) => {
+      if (item.graph) html += `<div class="graph-wrap">${graphSVG(item.graph, false)}</div>`;
+      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot }) => {
         const spec = practiceSpecs[id] = { answer, kind };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
@@ -1115,10 +1231,11 @@
         const aria = `aria-label="Answer to question ${n}${label}"`;
         const field = kind === "explain"
           ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
-          : `<input type="text" value="${value}" placeholder="Your answer" autocomplete="off" autocapitalize="none" spellcheck="false" ${kind === "num" ? `inputmode="decimal"` : ""} ${aria}>`;
+          : `<input type="text" value="${value}" placeholder="${kind === "coords" ? (plot ? "Click the grid, or type (x, y)" : "Type (x, y)") : "Your answer"}" autocomplete="off" autocapitalize="none" spellcheck="false" ${kind === "num" ? `inputmode="decimal"` : ""} ${aria}>`;
         html += `
           <div class="part ${partClass(result)}" data-id="${id}">
             <div class="part-text">${label ? `<b>(${label})</b> ` : ""}${esc(text)} <span class="marks">(${marks} mark${marks > 1 ? "s" : ""})</span></div>
+            ${graph ? `<div class="graph-wrap in-part">${graphSVG(graph, plot)}</div>` : ""}
             <div class="answer-row">
               ${field}
               ${kind === "expr" ? `<button type="button" class="sq-btn" title="Insert ²">x²</button>` : ""}
@@ -1131,6 +1248,9 @@
     });
     html += `<div class="practice-done" id="practiceDone"></div>`;
     $("practiceBody").innerHTML = html;
+    $("practiceBody").querySelectorAll("svg.graph.plot").forEach(svg => {
+      drawPlotted(svg, readPoints(svg.closest(".part").querySelector("input").value) || []);
+    });
     updatePracticeScore();
   }
 
@@ -1261,7 +1381,9 @@
   $("practiceBody").addEventListener("click", e => {
     const part = e.target.closest(".part");
     if (!part) return;
-    if (e.target.closest(".check-btn")) checkPart(part);
+    const plotGraph = e.target.closest("svg.graph.plot");
+    if (plotGraph) plotClick(part, plotGraph, e);
+    else if (e.target.closest(".check-btn")) checkPart(part);
     else if (e.target.closest(".show-answer")) {
       part.querySelector(".feedback").textContent = "Answer: " + practiceSpecs[part.dataset.id].answer;
     } else if (e.target.closest(".self-mark")) {
@@ -1274,6 +1396,26 @@
       input.focus();
       input.setSelectionRange(start + 1, start + 1);
     }
+  });
+  // A ring follows the pointer on plot grids to show which point a click would place.
+  $("practiceBody").addEventListener("pointermove", e => {
+    const svg = e.target.closest("svg.graph.plot");
+    $("practiceBody").querySelectorAll("svg.graph.plot .ghost").forEach(c => {
+      if (!svg || !svg.contains(c)) c.style.display = "none";
+    });
+    if (!svg) return;
+    const at = gridPointAt(svg, e), ghost = svg.querySelector(".ghost"), d = svg.dataset;
+    if (!at) { ghost.style.display = "none"; return; }
+    ghost.setAttribute("cx", +d.m + (at[0] - d.x0) * d.u);
+    ghost.setAttribute("cy", +d.m + (d.y1 - at[1]) * d.u);
+    ghost.style.display = "";
+  });
+  // Typing coordinates into a plot question's box updates its grid too.
+  $("practiceBody").addEventListener("input", e => {
+    const part = e.target.closest(".part");
+    const svg = part && part.querySelector("svg.graph.plot");
+    const pts = svg && readPoints(e.target.value);
+    if (svg) drawPlotted(svg, pts || []);
   });
   $("practiceBody").addEventListener("keydown", e => {
     if (e.key === "Enter" && e.target.matches(".part input")) { e.preventDefault(); checkPart(e.target.closest(".part")); }
