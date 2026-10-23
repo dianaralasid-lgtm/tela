@@ -399,6 +399,14 @@
   .solid .tree-line { stroke: var(--ink); stroke-width: 1.8; }
   .solid .tree-leaf { fill: var(--green-50); stroke: var(--green-700); stroke-width: 2; }
   .solid .tree-num { font-size: 16px; font-weight: 700; fill: var(--ink); }
+  .fill-tree .tree-in {
+    width: 44px; height: 32px; box-sizing: border-box; text-align: center; font: 700 16px "Inter", sans-serif; color: var(--ink);
+    border: 1.5px solid var(--green-600); border-radius: 6px; background: var(--white); outline: none; padding: 0;
+  }
+  .fill-tree .tree-in.leaf { width: 42px; height: 42px; border-radius: 50%; border-width: 2px; }
+  .fill-tree .tree-in:focus { box-shadow: 0 0 0 3px rgba(25,135,84,.2); }
+  .fill-tree .tree-in.bad { border-color: var(--danger); background: var(--bad-bg); }
+  .part.correct .fill-tree .tree-in { border-color: var(--ok-line); background: var(--ok-bg); }
   .compass .cp-north { stroke: var(--ink); stroke-width: 2; }
   .compass .cp-head { fill: var(--ink); }
   .compass .cp-n { font-size: 15px; font-weight: 800; fill: var(--ink); }
@@ -1016,7 +1024,7 @@
     algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords", mark: "num",
     order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle", column: "column",
     fraction: "fraction", shade: "shade", tally: "tally", pictogram: "pictogram", select: "select", drawbar: "drawbar",
-    interval: "interval", ratio: "ratio", primes: "primes", factorise: "factorise", bearing: "bearing"
+    interval: "interval", ratio: "ratio", primes: "primes", factorise: "factorise", bearing: "bearing", filltree: "filltree"
   };
   const ANGLE_NAMES = ["acute", "right", "obtuse", "straight", "reflex"];
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
@@ -1058,11 +1066,14 @@
         const kind = KIND_FOR_TYPE[p.type] || topicKind;
         // Column-method questions work their answer out from the sum.
         const layout = kind === "column" ? columnLayout(p.sum) : null;
+        // Fill-in factor trees carry their answers in the tree itself ("?2" is a blank whose answer is 2).
+        const trees = kind === "filltree" && Array.isArray(p.trees) ? p.trees : null;
         return {
           label: grouped ? String.fromCharCode(97 + pi) : "",
           text: String(p.question || ""),
           marks: Number(p.marks) || 1,
-          answer: String(p.answer ?? (layout ? layout.ans : "")),
+          answer: String(p.answer ?? (layout ? layout.ans : trees ? treeBlanks(trees).join(", ") : "")),
+          trees,
           kind,
           layout,
           plot,
@@ -1101,6 +1112,7 @@
         (p.kind === "primes" && !readPrimes(p.answer)) ||
         (p.kind === "factorise" && !readFactorised(p.answer)) ||
         (p.kind === "bearing" && readNumber(p.answer) === null) ||
+        (p.kind === "filltree" && (!p.trees || !treeBlanks(p.trees).length)) ||
         (p.kind === "pictogram" && !(Number(p.pictogram.key) > 0)) ||
         (p.kind === "select" && (!p.options || !answerList(p.answer).every(a => p.options.some(o => normText(o) === normText(a))))));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
@@ -2280,6 +2292,73 @@
     return `<svg class="solid" viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Factor tree">${s}</svg>`;
   }
 
+  // Fill-in factor trees. Nodes are written like the factor tree picture, but a value such as "?2" is a
+  // blank box whose answer is 2. Several trees can sit side by side. Blanks are numbered left to right, depth first.
+  function isBlankNode(n) { return typeof n[0] === "string" && n[0].startsWith("?"); }
+  function treeBlanks(trees) {
+    const out = [];
+    const walk = n => { if (isBlankNode(n)) out.push(n[0].slice(1)); n.slice(1).forEach(walk); };
+    trees.forEach(walk);
+    return out;
+  }
+
+  function fillTreeSVG(trees, value, wrong) {
+    const given = (value || "").split("|");
+    const leaves = n => (n.length > 1 ? n.slice(1).reduce((s, c) => s + leaves(c), 0) : 1);
+    const depthOf = n => (n.length > 1 ? 1 + Math.max(...n.slice(1).map(depthOf)) : 1);
+    const widths = trees.map(t => Math.max(170, leaves(t) * 62)), W = widths.reduce((a, b) => a + b, 0) + (trees.length - 1) * 24;
+    const H = Math.max(...trees.map(depthOf)) * 70 + 16;
+    let lines = "", nodes = "", blank = 0;
+    const draw = (n, x0, x1, y) => {
+      const x = (x0 + x1) / 2;
+      // Number this box before its branches, so boxes are numbered in the same order the marking uses.
+      const i = isBlankNode(n) ? blank++ : null;
+      if (n.length > 1) {
+        let at = x0;
+        n.slice(1).forEach(c => {
+          const w = (x1 - x0) * leaves(c) / leaves(n);
+          lines += `<line class="tree-line" x1="${x}" y1="${y + 16}" x2="${at + w / 2}" y2="${y + 54}"/>`;
+          draw(c, at, at + w, y + 70);
+          at += w;
+        });
+      }
+      // Primes at the ends of branches are circled; a blank one is a round box instead.
+      if (n.length === 1 && !isBlankNode(n)) nodes += `<circle class="tree-leaf" cx="${x}" cy="${y}" r="21"/>`;
+      if (isBlankNode(n)) {
+        const v = given[i] && given[i] !== "_" ? given[i] : "", leaf = n.length === 1, size = leaf ? 42 : 44;
+        nodes += `<foreignObject x="${x - size / 2}" y="${y - (leaf ? 21 : 16)}" width="${size}" height="${leaf ? 42 : 32}">
+          <input xmlns="http://www.w3.org/1999/xhtml" class="tree-in${leaf ? " leaf" : ""}${wrong && wrong.has(i) ? " bad" : ""}" data-i="${i}" value="${esc(v)}" inputmode="numeric" autocomplete="off" aria-label="Factor tree box ${i + 1}"/>
+        </foreignObject>`;
+      } else {
+        nodes += `<text class="tree-num" x="${x}" y="${y + 6}" text-anchor="middle">${esc(n[0])}</text>`;
+      }
+    };
+    let left = 0;
+    trees.forEach((t, k) => { draw(t, left, left + widths[k], 26); left += widths[k] + 24; });
+    return `<svg class="solid fill-tree" viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Factor trees to complete">${lines}${nodes}</svg>`;
+  }
+
+  // Each branch's pair of numbers can be in either order; a blank that splits further must be its exact value.
+  function markFillTree(value, trees) {
+    const given = (value || "").split("|").map(v => (v === "_" ? "" : v.trim()));
+    const wrong = new Set();
+    let blank = 0;
+    const walk = n => {
+      const isBlank = isBlankNode(n), expect = isBlank ? n[0].slice(1) : String(n[0]);
+      const idx = isBlank ? blank++ : null;
+      const kids = n.slice(1).map(walk);
+      if (kids.length) {
+        const got = kids.map(k => k.got).sort(), want = kids.map(k => k.expect).sort();
+        if (got.join("|") !== want.join("|")) kids.forEach(k => { if (k.idx !== null) wrong.add(k.idx); });
+        if (isBlank && given[idx] !== expect) wrong.add(idx);
+      }
+      return { got: isBlank ? given[idx] : expect, expect, idx };
+    };
+    trees.forEach(walk);
+    if (!wrong.size) return { correct: true, message: "Correct!" };
+    return { correct: false, wrong: [...wrong], message: `${wrong.size === 1 ? "One box isn't" : "Some boxes aren't"} right yet. Check the box${wrong.size === 1 ? "" : "es"} in red: each pair must multiply to the number above it.` };
+  }
+
   // Compass bearing: a north line and a line at the bearing (clockwise from north).
   // Static: { angle: 120, label: "120°", from: "A", to: "B" }. On a "bearing" question the line is dragged.
   function compassSVG(c, interactive, deg) {
@@ -2435,6 +2514,7 @@
     if (spec.kind === "interval") return markInterval(saved.value, spec.answer);
     if (spec.kind === "ratio") return markRatio(saved.value, spec.answer, spec.simplest);
     if (spec.kind === "primes") return markPrimes(saved.value, spec.answer);
+    if (spec.kind === "filltree") return markFillTree(saved.value, spec.trees);
     if (spec.kind === "factorise") return markFactorised(saved.value, spec.answer);
     if (spec.kind === "bearing") {
       return Number(saved.value) === readNumber(spec.answer) ? { correct: true, message: "Correct!" }
@@ -2504,14 +2584,14 @@
       if (item.cubes) html += `<div class="graph-wrap">${cubesSVG(item.cubes)}</div>`;
       if (item.tree) html += `<div class="graph-wrap col-wrap">${treeSVG(item.tree)}</div>`;
       if (item.compass) html += `<div class="graph-wrap">${compassSVG(item.compass, false)}</div>`;
-      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance }) => {
-        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance };
+      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees }) => {
+        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
         const value = esc(saved ? saved.value : "");
         const aria = `aria-label="Answer to question ${n}${label}"`;
         // Plot, mark, order and choice questions are answered by tapping only; the hidden box just holds the answer.
-        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column", "shade", "tally", "pictogram", "select", "drawbar", "bearing"].includes(kind)
+        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column", "shade", "tally", "pictogram", "select", "drawbar", "bearing", "filltree"].includes(kind)
           ? `<input type="hidden" class="answer-value" value="${value}">`
           : kind === "explain"
           ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
@@ -2532,6 +2612,7 @@
             ${kind === "select" ? selectHTML(spec, saved ? saved.value : "") : ""}
             ${kind === "drawbar" ? `<div class="graph-wrap in-part bars-wrap">${barsSVG(bars, bars.ask, saved ? Number(saved.value) : null)}</div>` : ""}
             ${kind === "bearing" ? `<div class="graph-wrap in-part">${compassSVG({}, true, saved ? Number(saved.value) : null)}</div>` : ""}
+            ${kind === "filltree" ? `<div class="graph-wrap in-part col-wrap">${fillTreeSVG(trees, saved ? saved.value : "", new Set(result && result.wrong || []))}</div>` : ""}
             <div class="answer-row">
               ${field}
               ${kind === "expr" ? `<button type="button" class="sq-btn" data-insert="²" title="Insert ²">x²</button>` : ""}
@@ -2591,9 +2672,9 @@
     partEl.classList.toggle("correct", !!result && result.correct);
     partEl.classList.toggle("incorrect", !!result && !result.correct);
     partEl.querySelector(".feedback").innerHTML = feedbackHTML(spec, result, saved);
-    if (spec.kind === "column") {
+    if (spec.kind === "column" || spec.kind === "filltree") {
       const wrong = new Set(result && result.wrong || []);
-      partEl.querySelectorAll(".col-cell").forEach(c => c.classList.toggle("bad", wrong.has(Number(c.dataset.i))));
+      partEl.querySelectorAll(".col-cell, .tree-in").forEach(c => c.classList.toggle("bad", wrong.has(Number(c.dataset.i))));
     }
     syncPracticeStatus(updatePracticeScore());
     if (result) moveToNext(partEl);
@@ -2605,6 +2686,10 @@
     const spec = practiceSpecs[partEl.dataset.id];
     if (spec.kind === "column" && !columnComplete(value, spec.layout)) {
       partEl.querySelector(".feedback").textContent = "Fill in every box in the answer row first.";
+      return;
+    }
+    if (spec.kind === "filltree" && value.split("|").filter(v => v && v !== "_").length < treeBlanks(spec.trees).length) {
+      partEl.querySelector(".feedback").textContent = "Fill in every box in the factor tree first.";
       return;
     }
     if (spec.kind === "order" && placedTiles(value).length < spec.items.length) {
@@ -2825,6 +2910,17 @@
   });
   // Column method boxes: keep the answer in step, and move to the next column after each digit
   // (leftwards for + − ×, rightwards for short division).
+  // Factor tree boxes: keep the hidden answer in step (box values in order, separated by |).
+  $("practiceBody").addEventListener("input", e => {
+    const box = e.target.closest(".tree-in");
+    if (!box) return;
+    box.value = box.value.replace(/\D/g, "");
+    const part = box.closest(".part");
+    const boxes = [...part.querySelectorAll(".tree-in")].sort((a, b) => a.dataset.i - b.dataset.i);
+    part.querySelector("input.answer-value").value = boxes.map(b => b.value || "_").join("|");
+    box.classList.remove("bad");
+    clearResult(part);
+  });
   $("practiceBody").addEventListener("input", e => {
     const cell = e.target.closest(".col-cell, .col-carry");
     if (!cell) return;

@@ -144,6 +144,13 @@
               and must also be fully factorised.
    "bearing"  The student drags a line on a compass to show a bearing; the
               answer is the bearing, e.g. "135".
+   "filltree" Factor trees with boxes to fill in. Write the trees like the
+              tree picture, but put "?" before any number the student must
+              fill in; no separate answer is needed. Give one tree or
+              several side by side:
+                { question: "Fill in the missing numbers.", type: "filltree",
+                  trees: [[24, [4, ["?2"], ["?2"]], [6, ["?2"], ["?3"]]]] }
+              The two numbers under a branch can be filled in either order.
    More pictures:
      venn: { labels: ["24", "36"], left: ["2"], both: ["2", "2", "3"], right: ["3"] }
      numline: { min: -5, max: 5, from: [-2, false], to: [3, true] }
@@ -3500,22 +3507,41 @@ QUESTION_BANK.add({
   title: "HCF and LCM",
   type: "number",
   questionsPerSet: 10,
-  tip: "HCF: the highest common factor (the biggest number that divides into both). LCM: the lowest common multiple (the smallest number both divide into). In a Venn diagram, the HCF multiplies the middle; the LCM multiplies everything.",
+  tip: "Fill in a factor tree by splitting each number into a pair that multiplies to it, until every branch ends in a prime. HCF: the highest common factor (the biggest number that divides into both). LCM: the lowest common multiple (the smallest number both divide into). In a Venn diagram, the HCF multiplies the middle; the LCM multiplies everything.",
   questions: [
-    { section: "Section A: Finding the HCF and LCM", question: "Find the HCF of 12 and 18.", marks: 1, answer: "6" },
-    { section: "Section A: Finding the HCF and LCM", question: "Find the LCM of 4 and 6.", marks: 1, answer: "12" },
-    { section: "Section A: Finding the HCF and LCM", question: "Find the HCF of 45 and 60.", marks: 2, answer: "15" },
-    { section: "Section A: Finding the HCF and LCM", question: "Find the LCM of 8 and 12.", marks: 2, answer: "24" },
-    { section: "Section A: Finding the HCF and LCM", question: "Find the LCM of 6 and 15.", marks: 2, answer: "30" },
+    { section: "Section A: Factor trees", always: true, text: "Complete the factor trees for 24 and 36, then use them to find the HCF and LCM.", parts: [
+      { question: "Fill in the missing numbers in both factor trees.", type: "filltree", marks: 2,
+        trees: [[24, [4, ["?2"], ["?2"]], [6, ["?2"], ["?3"]]], [36, [4, ["?2"], ["?2"]], [9, ["?3"], ["?3"]]]] },
+      { question: "What is the HCF of 24 and 36?", type: "number", marks: 1, answer: "12" },
+      { question: "What is the LCM of 24 and 36?", type: "number", marks: 1, answer: "72" }
+    ] },
+    { section: "Section A: Factor trees", always: true, text: "Complete the factor trees for 18 and 30, then use them to find the HCF and LCM.", parts: [
+      { question: "Fill in the missing numbers in both factor trees.", type: "filltree", marks: 2,
+        trees: [[18, [2], ["?9", ["?3"], ["?3"]]], [30, [5], ["?6", ["?2"], ["?3"]]]] },
+      { question: "What is the HCF of 18 and 30?", type: "number", marks: 1, answer: "6" },
+      { question: "What is the LCM of 18 and 30?", type: "number", marks: 1, answer: "90" }
+    ] },
+    { section: "Section A: Factor trees", always: true, text: "Complete the factor trees for 40 and 60, then use them to find the HCF and LCM.", parts: [
+      { question: "Fill in the missing numbers in both factor trees.", type: "filltree", marks: 2,
+        trees: [[40, ["?4", ["?2"], ["?2"]], [10, ["?2"], ["?5"]]], [60, [6, ["?2"], ["?3"]], ["?10", ["?2"], ["?5"]]]] },
+      { question: "What is the HCF of 40 and 60?", type: "number", marks: 1, answer: "20" },
+      { question: "What is the LCM of 40 and 60?", type: "number", marks: 1, answer: "120" }
+    ] },
 
-    { section: "Section B: Using a Venn diagram", text: "The Venn diagram shows the prime factors of 24 and 36.", question: "Use it to find the HCF of 24 and 36.", marks: 2, answer: "12",
+    { section: "Section B: Finding the HCF and LCM", question: "Find the HCF of 12 and 18.", marks: 1, answer: "6" },
+    { section: "Section B: Finding the HCF and LCM", question: "Find the LCM of 4 and 6.", marks: 1, answer: "12" },
+    { section: "Section B: Finding the HCF and LCM", question: "Find the HCF of 45 and 60.", marks: 2, answer: "15" },
+    { section: "Section B: Finding the HCF and LCM", question: "Find the LCM of 8 and 12.", marks: 2, answer: "24" },
+    { section: "Section B: Finding the HCF and LCM", question: "Find the LCM of 6 and 15.", marks: 2, answer: "30" },
+
+    { section: "Section C: Using a Venn diagram", text: "The Venn diagram shows the prime factors of 24 and 36.", question: "Use it to find the HCF of 24 and 36.", marks: 2, answer: "12",
       venn: { labels: ["24", "36"], left: ["2"], both: ["2", "2", "3"], right: ["3"] } },
-    { section: "Section B: Using a Venn diagram", text: "The Venn diagram shows the prime factors of 24 and 36.", question: "Use it to find the LCM of 24 and 36.", marks: 2, answer: "72",
+    { section: "Section C: Using a Venn diagram", text: "The Venn diagram shows the prime factors of 24 and 36.", question: "Use it to find the LCM of 24 and 36.", marks: 2, answer: "72",
       venn: { labels: ["24", "36"], left: ["2"], both: ["2", "2", "3"], right: ["3"] } },
 
-    { section: "Section C: Problem solving", question: "One bus leaves every 12 minutes and another every 20 minutes. They both leave at 9:00. How many minutes is it until they next leave together?", marks: 2, answer: "60" },
-    { section: "Section C: Problem solving", question: "24 apples and 36 oranges are shared into identical bags with none left over. What is the greatest number of bags?", marks: 2, answer: "12" },
-    { section: "Section C: Problem solving", question: "Explain the difference between the HCF and the LCM of two numbers.", type: "explain", marks: 1,
+    { section: "Section D: Problem solving", question: "One bus leaves every 12 minutes and another every 20 minutes. They both leave at 9:00. How many minutes is it until they next leave together?", marks: 2, answer: "60" },
+    { section: "Section D: Problem solving", question: "24 apples and 36 oranges are shared into identical bags with none left over. What is the greatest number of bags?", marks: 2, answer: "12" },
+    { section: "Section D: Problem solving", question: "Explain the difference between the HCF and the LCM of two numbers.", type: "explain", marks: 1,
       answer: "The HCF is the biggest number that divides exactly into both numbers. The LCM is the smallest number that both numbers divide into exactly (the first number in both times tables)." }
   ]
 });
