@@ -572,7 +572,11 @@
   // questions.js adds each topic's practice questions here with QUESTION_BANK.add({...}).
   window.QUESTION_BANK = {
     topics: {},
-    add(topic) { this.topics[String(topic && topic.topic).trim().toLowerCase()] = topic; }
+    // Blocks for the same topic are kept together, in file order, and combined by the dashboard.
+    add(topic) {
+      const key = String(topic && topic.topic).trim().toLowerCase();
+      (this.topics[key] = this.topics[key] || []).push(topic);
+    }
   };
   window.addEventListener("error", e => {
     if (/questions\.js/.test(e.filename || "")) window.QUESTION_BANK.loadError = e.message;
@@ -933,11 +937,18 @@
 
   const PRACTICE = {};
   const bankProblems = [];
-  Object.values((window.QUESTION_BANK && QUESTION_BANK.topics) || {}).forEach(t => {
-    const key = String(t.topic || "").trim().toLowerCase();
+  // A topic can have more than one block in questions.js: their questions are combined, the title, tip and
+  // set size come from the first block, and each block's questions are marked using that block's type.
+  Object.values((window.QUESTION_BANK && QUESTION_BANK.topics) || {}).forEach(blocks => {
+    const first = blocks[0];
+    const key = String(first.topic || "").trim().toLowerCase();
+    const items = [];
+    blocks.forEach((t, blockIndex) => {
     if (!key || !Array.isArray(t.questions)) { bankProblems.push("a topic is missing its name or its questions list"); return; }
     const topicKind = KIND_FOR_TYPE[t.type] || "expr";
-    const items = [];
+    // Later blocks' questions go under "Exam style" headings so their section letters don't clash with the first block's.
+    const sectionFor = q => blockIndex === 0 ? q.section || ""
+      : "Exam style" + (q.section ? ": " + String(q.section).replace(/^Section [A-Z]:\s*/i, "") : " questions");
     t.questions.forEach((q, i) => {
       // A question that can't be read is skipped rather than stopping the whole dashboard.
       try { addQuestion(q, i); }
@@ -985,16 +996,17 @@
       const itemGraph = grouped || !parts[0].plot ? q.graph || null : null;
       const itemScale = grouped || !parts[0].mark ? q.scale || null : null;
       items.push({
-        id, section: q.section || "", stem: q.text || "", diagram: q.diagram || "", always: q.always === true,
+        id, section: sectionFor(q), stem: q.text || "", diagram: q.diagram || "", always: q.always === true,
         graph: itemGraph, scale: itemScale, clock: q.clock ? String(q.clock) : "",
         angle: q.angle !== undefined && Number.isFinite(Number(q.angle)) ? Number(q.angle) : null, parts
       });
     }
+    });
     if (!items.length) return;
     PRACTICE[key] = {
-      title: t.title || t.topic,
-      tip: t.tip || "",
-      perSet: Number(t.questionsPerSet) > 0 ? Math.floor(t.questionsPerSet) : items.length,
+      title: first.title || first.topic,
+      tip: first.tip || "",
+      perSet: Number(first.questionsPerSet) > 0 ? Math.floor(first.questionsPerSet) : items.length,
       items
     };
   });

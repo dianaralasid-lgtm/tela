@@ -78,6 +78,12 @@
      "choice"   The student taps one of the "options"; the answer is the
                 right one.
 
+   SAME TOPIC TWICE: if a topic has more than one QUESTION_BANK.add block,
+   the questions are combined into one list. The title, tip and
+   questionsPerSet come from the first block; each block's questions are
+   marked using that block's own "type". Sections from the second and later
+   blocks are shown as "Exam style: ..." so their letters don't clash.
+
    ALWAYS INCLUDE: add  always: true  to a question to put it in every set
    instead of leaving it to the random pick. It still appears in its place
    in the list, so put these at the top to show them first.
@@ -118,6 +124,58 @@
      missing comma, quote or bracket near the part you changed.
    ===================================================================== */
 
+QUESTION_BANK.add({
+  topic: "Coordinates",
+  title: "Coordinates",
+  type: "coordinates",
+  questionsPerSet: 10,
+  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. Write coordinates as (x, y), e.g. (1, 6). On a grid you can plot, click to place a point and click it again to remove it.",
+  questions: [
+    { section: "Reading coordinates", question: "Write down the coordinates of point A.", marks: 1, answer: "(3, 4)",
+      graph: { x: [0, 6], y: [0, 6], points: { A: [3, 4] } } },
+    { section: "Reading coordinates", question: "Write down the coordinates of point B.", marks: 1, answer: "(5, 1)",
+      graph: { x: [0, 6], y: [0, 6], points: { B: [5, 1] } } },
+    { section: "Reading coordinates", text: "The grid shows the points P, Q and R.",
+      graph: { points: { P: [-3, 2], Q: [4, -1], R: [-2, -4] } },
+      parts: [
+        { question: "Write down the coordinates of P.", marks: 1, answer: "(−3, 2)" },
+        { question: "Write down the coordinates of Q.", marks: 1, answer: "(4, −1)" },
+        { question: "Write down the coordinates of R.", marks: 1, answer: "(−2, −4)" }
+      ] },
+    { section: "Reading coordinates", question: "Write down the coordinates of point S.", marks: 1, answer: "(0, 3)",
+      graph: { points: { S: [0, 3] } } },
+    { section: "Reading coordinates", question: "Write down the coordinates of point T.", marks: 1, answer: "(−4, 0)",
+      graph: { points: { T: [-4, 0] } } },
+    { section: "Reading coordinates", text: "ABC is a triangle.", question: "Write down the coordinates of C.", marks: 1, answer: "(0, 3)",
+      graph: { points: { A: [-3, -2], B: [3, -2], C: [0, 3] }, lines: [[[-3, -2], [3, -2], [0, 3], [-3, -2]]] } },
+    { section: "Reading coordinates", text: "M is halfway between A and B.", question: "Write down the coordinates of M.", marks: 1, answer: "(3, 2)",
+      graph: { x: [0, 6], y: [0, 6], points: { A: [1, 2], B: [5, 2] }, lines: [[[1, 2], [5, 2]]] } },
+
+    { section: "Plotting points", question: "Plot the point (2, 5).", type: "plot", marks: 1, answer: "(2, 5)",
+      graph: { x: [0, 6], y: [0, 6] } },
+    { section: "Plotting points", question: "Plot the point (4, 0).", type: "plot", marks: 1, answer: "(4, 0)",
+      graph: { x: [0, 6], y: [0, 6] } },
+    { section: "Plotting points", question: "Plot the point (−3, 4).", type: "plot", marks: 1, answer: "(−3, 4)" },
+    { section: "Plotting points", question: "Plot the point (2, −5).", type: "plot", marks: 1, answer: "(2, −5)" },
+    { section: "Plotting points", question: "Plot the points (−1, −2) and (3, −4).", type: "plot", marks: 2, answer: "(−1, −2); (3, −4)" },
+    { section: "Plotting points", question: "Plot a point that lies on the y-axis, 3 units below the origin.", type: "plot", marks: 1, answer: "(0, −3)" },
+
+    { section: "Shapes on a grid",
+      text: "The points (1, 1), (1, 4) and (5, 4) are three corners of a rectangle.",
+      question: "Plot the fourth corner of the rectangle.", type: "plot", marks: 2, answer: "(5, 1)",
+      graph: { x: [0, 6], y: [0, 6], lines: [[[1, 1], [1, 4], [5, 4]]] } },
+    { section: "Shapes on a grid",
+      text: "The points (−2, 1), (2, 1) and (2, −3) are three corners of a square.",
+      question: "Plot the fourth corner of the square.", type: "plot", marks: 2, answer: "(−2, −3)",
+      graph: { lines: [[[-2, 1], [2, 1], [2, -3]]] } },
+    { section: "Shapes on a grid",
+      question: "Ali says the point (2, 5) is 5 across and 2 up. Is Ali correct? Explain your answer.", type: "explain", marks: 1,
+      answer: "No. The first number is the x-coordinate (across) and the second is the y-coordinate (up), so (2, 5) is 2 across and 5 up." }
+  ]
+});
+
+
+// Exam-style questions for this topic, combined with the block above.
 QUESTION_BANK.add({
   topic: "Coordinates",
   title: "Coordinates: Exam Style Questions",
@@ -1013,6 +1071,54 @@ QUESTION_BANK.add({
   ]
 });
 
+
+QUESTION_BANK.add({
+  topic: "Reading scales",
+  title: "Reading Scales",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Work out what each small mark is worth before you answer. Type your answer and press <b>Enter</b> or <b>Check</b>. Where you're asked to show a value, click or tap the scale to set it, then press <b>Check</b>.",
+  questions: [
+    { section: "Reading scales", question: "What length does the arrow point to?", marks: 1, answer: "6.5 cm",
+      scale: { style: "line", min: 0, max: 10, major: 1, minor: 0.5, unit: "cm", value: 6.5 } },
+    { section: "Reading scales", question: "What number is the arrow pointing to?", marks: 1, answer: "46",
+      scale: { style: "line", min: 0, max: 100, major: 10, minor: 2, value: 46 } },
+    { section: "Reading scales", question: "What number is the arrow pointing to?", marks: 1, answer: "2.7",
+      scale: { style: "line", min: 2, max: 3, major: 0.5, minor: 0.1, value: 2.7 } },
+    { section: "Reading scales", question: "What temperature does the thermometer show?", marks: 1, answer: "18 °C",
+      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: 18 } },
+    { section: "Reading scales", question: "What temperature does the thermometer show?", marks: 1, answer: "−4 °C",
+      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: -4 } },
+    { section: "Reading scales", question: "How much water is in the jug?", marks: 1, answer: "340 ml",
+      scale: { style: "jug", min: 0, max: 500, major: 100, minor: 20, unit: "ml", value: 340 } },
+    { section: "Reading scales", question: "How much water is in the jug?", marks: 1, answer: "650 ml",
+      scale: { style: "jug", min: 0, max: 1000, major: 200, minor: 50, unit: "ml", value: 650 } },
+    { section: "Reading scales", question: "What mass do the scales show?", marks: 1, answer: "2.6 kg",
+      scale: { style: "dial", min: 0, max: 5, major: 1, minor: 0.2, unit: "kg", value: 2.6 } },
+    { section: "Reading scales", question: "What mass do the scales show?", marks: 1, answer: "375 g",
+      scale: { style: "dial", min: 0, max: 1000, major: 100, minor: 25, unit: "g", value: 375 } },
+
+    { section: "Showing values on a scale", question: "Click on the ruler to point the arrow at 7.5 cm.", type: "mark", marks: 1, answer: "7.5",
+      scale: { style: "line", min: 0, max: 10, major: 1, minor: 0.5, unit: "cm" } },
+    { section: "Showing values on a scale", question: "Click on the number line to point the arrow at 64.", type: "mark", marks: 1, answer: "64",
+      scale: { style: "line", min: 0, max: 100, major: 10, minor: 2 } },
+    { section: "Showing values on a scale", question: "Click on the thermometer to show −6 °C.", type: "mark", marks: 1, answer: "-6",
+      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C" } },
+    { section: "Showing values on a scale", question: "Click on the jug to fill it to 275 ml.", type: "mark", marks: 1, answer: "275",
+      scale: { style: "jug", min: 0, max: 500, major: 100, minor: 25, unit: "ml" } },
+    { section: "Showing values on a scale", question: "Click on the scales to set the needle to 3.4 kg.", type: "mark", marks: 1, answer: "3.4",
+      scale: { style: "dial", min: 0, max: 5, major: 1, minor: 0.2, unit: "kg" } },
+    { section: "Showing values on a scale", question: "Click on the scales to set the needle to 750 g.", type: "mark", marks: 1, answer: "750",
+      scale: { style: "dial", min: 0, max: 1000, major: 200, minor: 50, unit: "g" } },
+
+    { section: "Problem solving", text: "The thermometer shows the temperature at 6 am.",
+      question: "By midday the temperature has risen by 7 °C. What is the temperature at midday?", marks: 2, answer: "5 °C",
+      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: -2 } }
+  ]
+});
+
+
+// Exam-style questions for this topic, combined with the block above.
 QUESTION_BANK.add({
   topic: "Reading scales",
   title: "Reading Scales",
@@ -1489,6 +1595,57 @@ QUESTION_BANK.add({
   ]
 });
 
+
+QUESTION_BANK.add({
+  topic: "Ordering integers and decimals",
+  title: "Ordering Integers and Decimals",
+  type: "order",
+  questionsPerSet: 10,
+  tip: "Tap the numbers in the order you want them; tap a number in your order to send it back. For the symbol questions, tap the symbol that goes in the box. Then press <b>Check</b>.",
+  questions: [
+    { section: "Putting numbers in order", question: "Write these numbers in order, starting with the smallest.", marks: 1,
+      items: ["34", "7", "102", "58", "19"], answer: "7, 19, 34, 58, 102" },
+    { section: "Putting numbers in order", question: "Write these numbers in order, starting with the smallest.", marks: 1,
+      items: ["−4", "3", "0", "−9", "6"], answer: "−9, −4, 0, 3, 6" },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the smallest.", marks: 1,
+      items: ["0.5", "0.25", "0.7", "0.05"], answer: "0.05, 0.25, 0.5, 0.7" },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the smallest.", marks: 1,
+      items: ["3.2", "3.15", "3.05", "3.5"], answer: "3.05, 3.15, 3.2, 3.5" },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the smallest.", marks: 2,
+      items: ["1.08", "1.8", "1.18", "1.081"], answer: "1.08, 1.081, 1.18, 1.8" },
+    { section: "Putting numbers in order", question: "Write these numbers in order, starting with the smallest.", marks: 2,
+      items: ["−2.5", "−0.5", "1.5", "−1"], answer: "−2.5, −1, −0.5, 1.5" },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the largest.", marks: 1,
+      items: ["0.6", "0.65", "0.06", "0.605"], answer: "0.65, 0.605, 0.6, 0.06", labels: ["largest", "smallest"] },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the largest.", marks: 2,
+      items: ["4.09", "4.9", "4.19", "4.091"], answer: "4.9, 4.19, 4.091, 4.09", labels: ["largest", "smallest"] },
+
+    { section: "Comparing numbers", question: "Which symbol goes in the box?  0.7 ☐ 0.65", type: "choice", marks: 1,
+      options: ["<", ">", "="], answer: ">" },
+    { section: "Comparing numbers", question: "Which symbol goes in the box?  −5 ☐ −2", type: "choice", marks: 1,
+      options: ["<", ">", "="], answer: "<" },
+    { section: "Comparing numbers", question: "Which symbol goes in the box?  2.50 ☐ 2.5", type: "choice", marks: 1,
+      options: ["<", ">", "="], answer: "=" },
+    { section: "Comparing numbers", question: "Which symbol goes in the box?  0.09 ☐ 0.1", type: "choice", marks: 1,
+      options: ["<", ">", "="], answer: "<" },
+    { section: "Comparing numbers", question: "Which number is the largest?", type: "choice", marks: 1,
+      options: ["0.8", "0.75", "0.799", "0.08"], answer: "0.8" },
+    { section: "Comparing numbers", question: "Which number is the smallest?", type: "choice", marks: 1,
+      options: ["−3.5", "−3", "−0.5", "−4"], answer: "−4" },
+
+    { section: "Problem solving", text: "The temperatures in four cities are −3 °C, 5 °C, −8 °C and 0 °C.",
+      question: "Put the temperatures in order, from coldest to warmest.", marks: 2,
+      items: ["−3", "5", "−8", "0"], answer: "−8, −3, 0, 5", labels: ["coldest", "warmest"] },
+    { section: "Problem solving", text: "Four runners' times, in seconds, are 12.4, 12.04, 12.44 and 12.14. The lowest time is the fastest.",
+      question: "Put the times in order, from fastest to slowest.", marks: 2,
+      items: ["12.4", "12.04", "12.44", "12.14"], answer: "12.04, 12.14, 12.4, 12.44", labels: ["fastest", "slowest"] },
+    { section: "Problem solving", question: "Tom says 0.45 is bigger than 0.5, because 45 is bigger than 5. Explain why Tom is wrong.", type: "explain", marks: 1,
+      answer: "0.5 is the same as 0.50, which is 50 hundredths, and 0.45 is only 45 hundredths. Comparing the tenths first, 0.5 has 5 tenths but 0.45 has only 4, so 0.5 is bigger." }
+  ]
+});
+
+
+// Exam-style questions for this topic, combined with the block above.
 QUESTION_BANK.add({
   topic: "Ordering integers and decimals",
   title: "Ordering Integers and Decimals",
@@ -1641,152 +1798,6 @@ QUESTION_BANK.add({
 
 
 QUESTION_BANK.add({
-  topic: "Coordinates",
-  title: "Coordinates",
-  type: "coordinates",
-  questionsPerSet: 10,
-  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. Write coordinates as (x, y), e.g. (1, 6). On a grid you can plot, click to place a point and click it again to remove it.",
-  questions: [
-    { section: "Reading coordinates", question: "Write down the coordinates of point A.", marks: 1, answer: "(3, 4)",
-      graph: { x: [0, 6], y: [0, 6], points: { A: [3, 4] } } },
-    { section: "Reading coordinates", question: "Write down the coordinates of point B.", marks: 1, answer: "(5, 1)",
-      graph: { x: [0, 6], y: [0, 6], points: { B: [5, 1] } } },
-    { section: "Reading coordinates", text: "The grid shows the points P, Q and R.",
-      graph: { points: { P: [-3, 2], Q: [4, -1], R: [-2, -4] } },
-      parts: [
-        { question: "Write down the coordinates of P.", marks: 1, answer: "(−3, 2)" },
-        { question: "Write down the coordinates of Q.", marks: 1, answer: "(4, −1)" },
-        { question: "Write down the coordinates of R.", marks: 1, answer: "(−2, −4)" }
-      ] },
-    { section: "Reading coordinates", question: "Write down the coordinates of point S.", marks: 1, answer: "(0, 3)",
-      graph: { points: { S: [0, 3] } } },
-    { section: "Reading coordinates", question: "Write down the coordinates of point T.", marks: 1, answer: "(−4, 0)",
-      graph: { points: { T: [-4, 0] } } },
-    { section: "Reading coordinates", text: "ABC is a triangle.", question: "Write down the coordinates of C.", marks: 1, answer: "(0, 3)",
-      graph: { points: { A: [-3, -2], B: [3, -2], C: [0, 3] }, lines: [[[-3, -2], [3, -2], [0, 3], [-3, -2]]] } },
-    { section: "Reading coordinates", text: "M is halfway between A and B.", question: "Write down the coordinates of M.", marks: 1, answer: "(3, 2)",
-      graph: { x: [0, 6], y: [0, 6], points: { A: [1, 2], B: [5, 2] }, lines: [[[1, 2], [5, 2]]] } },
-
-    { section: "Plotting points", question: "Plot the point (2, 5).", type: "plot", marks: 1, answer: "(2, 5)",
-      graph: { x: [0, 6], y: [0, 6] } },
-    { section: "Plotting points", question: "Plot the point (4, 0).", type: "plot", marks: 1, answer: "(4, 0)",
-      graph: { x: [0, 6], y: [0, 6] } },
-    { section: "Plotting points", question: "Plot the point (−3, 4).", type: "plot", marks: 1, answer: "(−3, 4)" },
-    { section: "Plotting points", question: "Plot the point (2, −5).", type: "plot", marks: 1, answer: "(2, −5)" },
-    { section: "Plotting points", question: "Plot the points (−1, −2) and (3, −4).", type: "plot", marks: 2, answer: "(−1, −2); (3, −4)" },
-    { section: "Plotting points", question: "Plot a point that lies on the y-axis, 3 units below the origin.", type: "plot", marks: 1, answer: "(0, −3)" },
-
-    { section: "Shapes on a grid",
-      text: "The points (1, 1), (1, 4) and (5, 4) are three corners of a rectangle.",
-      question: "Plot the fourth corner of the rectangle.", type: "plot", marks: 2, answer: "(5, 1)",
-      graph: { x: [0, 6], y: [0, 6], lines: [[[1, 1], [1, 4], [5, 4]]] } },
-    { section: "Shapes on a grid",
-      text: "The points (−2, 1), (2, 1) and (2, −3) are three corners of a square.",
-      question: "Plot the fourth corner of the square.", type: "plot", marks: 2, answer: "(−2, −3)",
-      graph: { lines: [[[-2, 1], [2, 1], [2, -3]]] } },
-    { section: "Shapes on a grid",
-      question: "Ali says the point (2, 5) is 5 across and 2 up. Is Ali correct? Explain your answer.", type: "explain", marks: 1,
-      answer: "No. The first number is the x-coordinate (across) and the second is the y-coordinate (up), so (2, 5) is 2 across and 5 up." }
-  ]
-});
-
-
-QUESTION_BANK.add({
-  topic: "Reading scales",
-  title: "Reading Scales",
-  type: "number",
-  questionsPerSet: 10,
-  tip: "Work out what each small mark is worth before you answer. Type your answer and press <b>Enter</b> or <b>Check</b>. Where you're asked to show a value, click or tap the scale to set it, then press <b>Check</b>.",
-  questions: [
-    { section: "Reading scales", question: "What length does the arrow point to?", marks: 1, answer: "6.5 cm",
-      scale: { style: "line", min: 0, max: 10, major: 1, minor: 0.5, unit: "cm", value: 6.5 } },
-    { section: "Reading scales", question: "What number is the arrow pointing to?", marks: 1, answer: "46",
-      scale: { style: "line", min: 0, max: 100, major: 10, minor: 2, value: 46 } },
-    { section: "Reading scales", question: "What number is the arrow pointing to?", marks: 1, answer: "2.7",
-      scale: { style: "line", min: 2, max: 3, major: 0.5, minor: 0.1, value: 2.7 } },
-    { section: "Reading scales", question: "What temperature does the thermometer show?", marks: 1, answer: "18 °C",
-      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: 18 } },
-    { section: "Reading scales", question: "What temperature does the thermometer show?", marks: 1, answer: "−4 °C",
-      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: -4 } },
-    { section: "Reading scales", question: "How much water is in the jug?", marks: 1, answer: "340 ml",
-      scale: { style: "jug", min: 0, max: 500, major: 100, minor: 20, unit: "ml", value: 340 } },
-    { section: "Reading scales", question: "How much water is in the jug?", marks: 1, answer: "650 ml",
-      scale: { style: "jug", min: 0, max: 1000, major: 200, minor: 50, unit: "ml", value: 650 } },
-    { section: "Reading scales", question: "What mass do the scales show?", marks: 1, answer: "2.6 kg",
-      scale: { style: "dial", min: 0, max: 5, major: 1, minor: 0.2, unit: "kg", value: 2.6 } },
-    { section: "Reading scales", question: "What mass do the scales show?", marks: 1, answer: "375 g",
-      scale: { style: "dial", min: 0, max: 1000, major: 100, minor: 25, unit: "g", value: 375 } },
-
-    { section: "Showing values on a scale", question: "Click on the ruler to point the arrow at 7.5 cm.", type: "mark", marks: 1, answer: "7.5",
-      scale: { style: "line", min: 0, max: 10, major: 1, minor: 0.5, unit: "cm" } },
-    { section: "Showing values on a scale", question: "Click on the number line to point the arrow at 64.", type: "mark", marks: 1, answer: "64",
-      scale: { style: "line", min: 0, max: 100, major: 10, minor: 2 } },
-    { section: "Showing values on a scale", question: "Click on the thermometer to show −6 °C.", type: "mark", marks: 1, answer: "-6",
-      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C" } },
-    { section: "Showing values on a scale", question: "Click on the jug to fill it to 275 ml.", type: "mark", marks: 1, answer: "275",
-      scale: { style: "jug", min: 0, max: 500, major: 100, minor: 25, unit: "ml" } },
-    { section: "Showing values on a scale", question: "Click on the scales to set the needle to 3.4 kg.", type: "mark", marks: 1, answer: "3.4",
-      scale: { style: "dial", min: 0, max: 5, major: 1, minor: 0.2, unit: "kg" } },
-    { section: "Showing values on a scale", question: "Click on the scales to set the needle to 750 g.", type: "mark", marks: 1, answer: "750",
-      scale: { style: "dial", min: 0, max: 1000, major: 200, minor: 50, unit: "g" } },
-
-    { section: "Problem solving", text: "The thermometer shows the temperature at 6 am.",
-      question: "By midday the temperature has risen by 7 °C. What is the temperature at midday?", marks: 2, answer: "5 °C",
-      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: -2 } }
-  ]
-});
-
-
-QUESTION_BANK.add({
-  topic: "Ordering integers and decimals",
-  title: "Ordering Integers and Decimals",
-  type: "order",
-  questionsPerSet: 10,
-  tip: "Tap the numbers in the order you want them; tap a number in your order to send it back. For the symbol questions, tap the symbol that goes in the box. Then press <b>Check</b>.",
-  questions: [
-    { section: "Putting numbers in order", question: "Write these numbers in order, starting with the smallest.", marks: 1,
-      items: ["34", "7", "102", "58", "19"], answer: "7, 19, 34, 58, 102" },
-    { section: "Putting numbers in order", question: "Write these numbers in order, starting with the smallest.", marks: 1,
-      items: ["−4", "3", "0", "−9", "6"], answer: "−9, −4, 0, 3, 6" },
-    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the smallest.", marks: 1,
-      items: ["0.5", "0.25", "0.7", "0.05"], answer: "0.05, 0.25, 0.5, 0.7" },
-    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the smallest.", marks: 1,
-      items: ["3.2", "3.15", "3.05", "3.5"], answer: "3.05, 3.15, 3.2, 3.5" },
-    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the smallest.", marks: 2,
-      items: ["1.08", "1.8", "1.18", "1.081"], answer: "1.08, 1.081, 1.18, 1.8" },
-    { section: "Putting numbers in order", question: "Write these numbers in order, starting with the smallest.", marks: 2,
-      items: ["−2.5", "−0.5", "1.5", "−1"], answer: "−2.5, −1, −0.5, 1.5" },
-    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the largest.", marks: 1,
-      items: ["0.6", "0.65", "0.06", "0.605"], answer: "0.65, 0.605, 0.6, 0.06", labels: ["largest", "smallest"] },
-    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the largest.", marks: 2,
-      items: ["4.09", "4.9", "4.19", "4.091"], answer: "4.9, 4.19, 4.091, 4.09", labels: ["largest", "smallest"] },
-
-    { section: "Comparing numbers", question: "Which symbol goes in the box?  0.7 ☐ 0.65", type: "choice", marks: 1,
-      options: ["<", ">", "="], answer: ">" },
-    { section: "Comparing numbers", question: "Which symbol goes in the box?  −5 ☐ −2", type: "choice", marks: 1,
-      options: ["<", ">", "="], answer: "<" },
-    { section: "Comparing numbers", question: "Which symbol goes in the box?  2.50 ☐ 2.5", type: "choice", marks: 1,
-      options: ["<", ">", "="], answer: "=" },
-    { section: "Comparing numbers", question: "Which symbol goes in the box?  0.09 ☐ 0.1", type: "choice", marks: 1,
-      options: ["<", ">", "="], answer: "<" },
-    { section: "Comparing numbers", question: "Which number is the largest?", type: "choice", marks: 1,
-      options: ["0.8", "0.75", "0.799", "0.08"], answer: "0.8" },
-    { section: "Comparing numbers", question: "Which number is the smallest?", type: "choice", marks: 1,
-      options: ["−3.5", "−3", "−0.5", "−4"], answer: "−4" },
-
-    { section: "Problem solving", text: "The temperatures in four cities are −3 °C, 5 °C, −8 °C and 0 °C.",
-      question: "Put the temperatures in order, from coldest to warmest.", marks: 2,
-      items: ["−3", "5", "−8", "0"], answer: "−8, −3, 0, 5", labels: ["coldest", "warmest"] },
-    { section: "Problem solving", text: "Four runners' times, in seconds, are 12.4, 12.04, 12.44 and 12.14. The lowest time is the fastest.",
-      question: "Put the times in order, from fastest to slowest.", marks: 2,
-      items: ["12.4", "12.04", "12.44", "12.14"], answer: "12.04, 12.14, 12.4, 12.44", labels: ["fastest", "slowest"] },
-    { section: "Problem solving", question: "Tom says 0.45 is bigger than 0.5, because 45 is bigger than 5. Explain why Tom is wrong.", type: "explain", marks: 1,
-      answer: "0.5 is the same as 0.50, which is 50 hundredths, and 0.45 is only 45 hundredths. Comparing the tenths first, 0.5 has 5 tenths but 0.45 has only 4, so 0.5 is bigger." }
-  ]
-});
-
-
-QUESTION_BANK.add({
   topic: "Time",
   title: "Time",
   type: "time",
@@ -1901,6 +1912,7 @@ QUESTION_BANK.add({
   ]
 });
 
+
 QUESTION_BANK.add({
   topic: "Rounding",
   title: "Rounding",
@@ -1999,6 +2011,7 @@ QUESTION_BANK.add({
   ]
 });
 
+
 QUESTION_BANK.add({
   topic: "Multiplication of integers and decimals",
   title: "Multiplication of Integers and Decimals",
@@ -2031,6 +2044,7 @@ QUESTION_BANK.add({
       answer: "3 × 2 = 6, but tenths × tenths make hundredths, so 0.3 × 0.2 has two decimal places in total. The answer is 0.06." }
   ]
 });
+
 
 QUESTION_BANK.add({
   topic: "Addition of integers and decimals",
