@@ -337,6 +337,26 @@
     border: none; background: none; color: inherit; font-size: 13px;
     text-decoration: underline; margin-left: 6px; padding: 0;
   }
+  .q-section {
+    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--green-700); margin: 28px 0 14px; padding-bottom: 6px; border-bottom: 2px solid var(--green-100);
+  }
+  .q-section:first-of-type { margin-top: 4px; }
+  .answer-row textarea {
+    flex: 1; min-width: 0; padding: 10px 12px; border: 1.5px solid var(--line);
+    border-radius: 10px; font: inherit; font-size: 15px; color: var(--ink);
+    background: var(--white); outline: none; resize: vertical;
+  }
+  .answer-row textarea:focus { border-color: var(--green-600); box-shadow: 0 0 0 4px rgba(25,135,84,.12); }
+  .answer-row:has(textarea) { align-items: flex-start; }
+  .feedback b { color: var(--ink); }
+  .self-mark {
+    border: 1.5px solid var(--green-600); background: var(--white); color: var(--green-700);
+    border-radius: 8px; padding: 4px 10px; font-size: 13px; font-weight: 600; margin: 6px 6px 0 0;
+  }
+  .self-mark[data-self="no"] { border-color: var(--bad-line); color: var(--danger); }
+  .self-mark:hover { filter: brightness(.95); }
+
   .practice-done {
     margin-left: 40px; padding: 20px; border-radius: 12px; text-align: center;
     background: var(--green-50); color: var(--green-800); font-weight: 600;
@@ -895,8 +915,44 @@
   function render() { renderFilters(); renderCards(); renderStats(); }
 
   // ---------- Practice questions ----------
-  // Keyed by topic title (lower case). Each part is [label, question, marks, answer].
+  // Keyed by topic title (lower case). Each part is [label, question, marks, answer, kind?].
+  // kind is "expr" (algebra, the default), "num" (a number) or "explain" (self-marked against a model answer);
+  // a set's "kind" applies to all its parts unless a part gives its own.
   const PRACTICE = {
+    "addition of integers and decimals": {
+      title: "Addition of Integers and Decimals",
+      kind: "num",
+      tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. You can include £ or units (e.g. £4.74 or 6.35 km), but you don't have to.",
+      questions: [
+        { section: "Section A: Integers", parts: [["", "Work out 34 + 25", 1, "59"]] },
+        { parts: [["", "Work out 128 + 47", 1, "175"]] },
+        { parts: [["", "Work out 356 + 289", 1, "645"]] },
+        { parts: [["", "Work out 1407 + 2685", 1, "4092"]] },
+        { section: "Section B: Decimals", parts: [["", "Work out 4.5 + 3.2", 1, "7.7"]] },
+        { parts: [["", "Work out 6.8 + 2.7", 1, "9.5"]] },
+        { parts: [["", "Work out 12.35 + 4.21", 1, "16.56"]] },
+        { parts: [["", "Work out 7.6 + 3.45", 1, "11.05"]] },
+        { parts: [["", "Work out 15 + 2.8", 1, "17.8"]] },
+        { parts: [["", "Work out 0.9 + 0.35", 1, "1.25"]] },
+        { parts: [["", "Work out 23.47 + 18.86", 1, "42.33"]] },
+        { parts: [["", "Work out 3.2 + 4.65 + 0.8", 2, "8.65"]] },
+        { parts: [["", "Work out 105.6 + 39.48", 2, "145.08"]] },
+        { parts: [["", "Work out 0.007 + 0.25", 2, "0.257"]] },
+        { section: "Section C: Problem Solving", parts: [
+          ["", "Sam buys a sandwich for £3.45 and a drink for £1.29. How much does Sam spend altogether?", 2, "£4.74"]
+        ] },
+        { parts: [["", "Priya runs 2.6 km on Monday and 3.75 km on Tuesday. How far does she run in total?", 2, "6.35 km"]] },
+        { parts: [["", "Three bags weigh 1.25 kg, 0.8 kg and 2.4 kg. What is their total weight?", 2, "4.45 kg"]] },
+        { parts: [["", "Find the missing number: 4.7 + ____ = 10", 2, "5.3"]] },
+        { parts: [["", "A carpenter joins two pieces of wood. One is 1.35 m long and the other is 0.92 m long. How long is the joined piece?", 2, "2.27 m"]] },
+        { stem: "Jo says 3.4 + 2.15 = 5.19.", parts: [
+          ["a", "Explain Jo's mistake.", 1,
+            "Jo didn't line up the decimal points. She added the 4 tenths to the 15 hundredths as if they were 4 + 15. Writing 3.4 as 3.40 lines the digits up correctly.", "explain"],
+          ["b", "Give the correct answer.", 1, "5.55"]
+        ] }
+      ]
+    },
+
     "algebra: collecting like terms": {
       title: "Collecting Like Terms: Exam Style Questions",
       questions: [
@@ -981,7 +1037,7 @@
 
   const practiceKey = t => t.title.trim().toLowerCase();
   // practiceSaved holds this session's answers; they're only written to storage when the student saves.
-  let practiceOpen = null, practiceSaved = {}, practiceAnswers = {}, practiceDirty = false;
+  let practiceOpen = null, practiceSaved = {}, practiceSpecs = {}, practiceDirty = false;
   let practiceTopicId = null, practiceStatusAtOpen = null;
 
   // Reads an expression like "3a − 2b + a²" into like terms. Returns null if it can't be read.
@@ -1030,32 +1086,77 @@
     try { localStorage.setItem(practiceStoreKey(), JSON.stringify(practiceSaved)); } catch (e) {}
   }
 
-  function feedbackHTML(result) {
+  // Number answers: ignores £, units and trailing zeros; "p" means pence.
+  function readNumber(raw) {
+    const m = String(raw).replace(/,/g, "").replace(/[−–]/g, "-").trim()
+      .match(/^£?\s*(-?\d*\.?\d+)\s*(p|pence|pounds?|km|kg|cm|mm|m|g|kilometres?|kilograms?|metres?|grams?)?\.?$/i);
+    if (!m) return null;
+    const n = parseFloat(m[1]);
+    return /^p(ence)?$/i.test(m[2] || "") ? n / 100 : n;
+  }
+  function markNumber(value, answer) {
+    const got = readNumber(value);
+    if (got === null) return { correct: false, message: "I couldn't read that. Type a number, e.g. 12.5." };
+    if (Math.abs(got - readNumber(answer)) > 1e-9) return { correct: false, message: "Not quite. Try again." };
+    return { correct: true, message: "Correct!" };
+  }
+
+  // Explanations can't be marked automatically, so the student compares with a model answer and marks themselves.
+  function markPart(spec, saved) {
+    if (!saved) return null;
+    if (spec.kind === "explain") {
+      if (saved.self === undefined) return null;
+      return { correct: saved.self, message: saved.self ? "You marked this as right." : "You marked this as not quite right. Edit your answer and check again." };
+    }
+    return spec.kind === "num" ? markNumber(saved.value, spec.answer) : markAnswer(saved.value, spec.answer);
+  }
+
+  function feedbackHTML(spec, result, saved) {
+    if (spec.kind === "explain") {
+      if (!saved) return "";
+      const model = `<b>Model answer:</b> ${esc(spec.answer)}<br>`;
+      return result
+        ? model + esc(result.message)
+        : model + `Did you get it right?
+          <button type="button" class="self-mark" data-self="yes">Yes, I got it</button>
+          <button type="button" class="self-mark" data-self="no">Not quite</button>`;
+    }
+    if (!result) return "";
     return esc(result.message) + (result.correct ? "" : `<button type="button" class="show-answer">Show answer</button>`);
+  }
+
+  function partClass(result) {
+    return result ? (result.correct ? "correct" : "incorrect") : "";
   }
 
   function renderPractice() {
     const set = PRACTICE[practiceOpen];
-    practiceAnswers = {};
-    let html = `<div class="practice-tip">Type your answer and press <b>Enter</b> or <b>Check</b>. For powers, use the <b>x²</b> button or type ^2 (e.g. 2a^2).</div>`;
+    practiceSpecs = {};
+    let html = `<div class="practice-tip">${set.tip || "Type your answer and press <b>Enter</b> or <b>Check</b>. For powers, use the <b>x²</b> button or type ^2 (e.g. 2a^2)."}</div>`;
     set.questions.forEach((q, qi) => {
       const n = qi + 1;
+      if (q.section) html += `<h3 class="q-section">${esc(q.section)}</h3>`;
       html += `<section class="q-block"><div class="q-head"><span class="q-num">${n}</span>${q.stem ? `<span>${esc(q.stem)}</span>` : ""}</div>`;
       if (q.diagram) html += `<div class="diagram">${DIAGRAMS[q.diagram]}</div>`;
-      q.parts.forEach(([label, text, marks, answer]) => {
+      q.parts.forEach(([label, text, marks, answer, kind = set.kind || "expr"]) => {
         const id = `q${n}${label}`;
-        practiceAnswers[id] = answer;
+        const spec = practiceSpecs[id] = { answer, kind };
         const saved = practiceSaved[id];
-        const result = saved ? markAnswer(saved.value, answer) : null;
+        const result = markPart(spec, saved);
+        const value = esc(saved ? saved.value : "");
+        const aria = `aria-label="Answer to question ${n}${label}"`;
+        const field = kind === "explain"
+          ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
+          : `<input type="text" value="${value}" placeholder="Your answer" autocomplete="off" autocapitalize="none" spellcheck="false" ${kind === "num" ? `inputmode="decimal"` : ""} ${aria}>`;
         html += `
-          <div class="part ${result ? (result.correct ? "correct" : "incorrect") : ""}" data-id="${id}">
+          <div class="part ${partClass(result)}" data-id="${id}">
             <div class="part-text">${label ? `<b>(${label})</b> ` : ""}${esc(text)} <span class="marks">(${marks} mark${marks > 1 ? "s" : ""})</span></div>
             <div class="answer-row">
-              <input type="text" value="${esc(saved ? saved.value : "")}" placeholder="Your answer" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Answer to question ${n}${label}">
-              <button type="button" class="sq-btn" title="Insert ²">x²</button>
+              ${field}
+              ${kind === "expr" ? `<button type="button" class="sq-btn" title="Insert ²">x²</button>` : ""}
               <button type="button" class="btn btn-primary check-btn">Check</button>
             </div>
-            <div class="feedback">${result ? feedbackHTML(result) : ""}</div>
+            <div class="feedback">${feedbackHTML(spec, result, saved)}</div>
           </div>`;
       });
       html += `</section>`;
@@ -1068,11 +1169,12 @@
   function updatePracticeScore() {
     const set = PRACTICE[practiceOpen];
     let parts = 0, correct = 0, marks = 0, earned = 0, answered = 0;
-    set.questions.forEach((q, qi) => q.parts.forEach(([label, , m, answer]) => {
-      const saved = practiceSaved[`q${qi + 1}${label}`];
+    set.questions.forEach((q, qi) => q.parts.forEach(([label, , m]) => {
+      const id = `q${qi + 1}${label}`;
+      const result = markPart(practiceSpecs[id], practiceSaved[id]);
       parts++; marks += m;
-      if (saved) answered++;
-      if (saved && markAnswer(saved.value, answer).correct) { correct++; earned += m; }
+      if (result) answered++;
+      if (result && result.correct) { correct++; earned += m; }
     }));
     $("practiceScore").textContent = `${correct} of ${parts} correct · ${earned} / ${marks} marks` + (practiceDirty ? " · Not saved yet" : "");
     $("practiceDone").textContent = correct === parts
@@ -1092,25 +1194,34 @@
     toast(`Topic marked ${STATUS[status].label}`);
   }
 
-  function checkPart(partEl) {
+  // Records an answer (and, for explanations, the student's own mark) and updates the part.
+  function recordPart(partEl, saved) {
     const id = partEl.dataset.id;
-    const input = partEl.querySelector("input");
-    const value = input.value.trim();
-    if (!value) { input.focus(); return; }
-    const result = markAnswer(value, practiceAnswers[id]);
-    partEl.classList.toggle("correct", result.correct);
-    partEl.classList.toggle("incorrect", !result.correct);
-    partEl.querySelector(".feedback").innerHTML = feedbackHTML(result);
-    practiceSaved[id] = { value };
+    const spec = practiceSpecs[id];
+    practiceSaved[id] = saved;
     practiceDirty = true;
+    const result = markPart(spec, saved);
+    partEl.classList.toggle("correct", !!result && result.correct);
+    partEl.classList.toggle("incorrect", !!result && !result.correct);
+    partEl.querySelector(".feedback").innerHTML = feedbackHTML(spec, result, saved);
     syncPracticeStatus(updatePracticeScore());
+    if (result) moveToNext(partEl);
+  }
 
-    // Move on to the next question once this one has been answered.
+  function checkPart(partEl) {
+    const field = partEl.querySelector("input, textarea");
+    const value = field.value.trim();
+    if (!value) { field.focus(); return; }
+    recordPart(partEl, { value });
+  }
+
+  // Move on to the next question once this one has been answered.
+  function moveToNext(partEl) {
     const parts = [...$("practiceBody").querySelectorAll(".part")];
     const next = parts[parts.indexOf(partEl) + 1];
     setTimeout(() => {
       (next || $("practiceDone")).scrollIntoView({ behavior: "smooth", block: "center" });
-      if (next) next.querySelector("input").focus({ preventScroll: true });
+      if (next) next.querySelector("input, textarea").focus({ preventScroll: true });
     }, 400);
   }
 
@@ -1125,7 +1236,7 @@
     $("practiceOverlay").classList.add("open");
     document.body.style.overflow = "hidden";
     $("practiceBody").scrollTop = 0;
-    const firstOpen = $("practiceBody").querySelector(".part:not(.correct) input");
+    const firstOpen = $("practiceBody").querySelector(".part:not(.correct) :is(input, textarea)");
     if (firstOpen) setTimeout(() => firstOpen.focus({ preventScroll: true }), 50);
   }
   // Leaving with unsaved answers asks first; otherwise it just closes.
@@ -1176,7 +1287,10 @@
     if (!part) return;
     if (e.target.closest(".check-btn")) checkPart(part);
     else if (e.target.closest(".show-answer")) {
-      part.querySelector(".feedback").textContent = "Answer: " + practiceAnswers[part.dataset.id];
+      part.querySelector(".feedback").textContent = "Answer: " + practiceSpecs[part.dataset.id].answer;
+    } else if (e.target.closest(".self-mark")) {
+      const value = part.querySelector("textarea").value.trim();
+      recordPart(part, { value, self: e.target.closest(".self-mark").dataset.self === "yes" });
     } else if (e.target.closest(".sq-btn")) {
       const input = part.querySelector("input");
       const start = input.selectionStart ?? input.value.length, end = input.selectionEnd ?? start;
