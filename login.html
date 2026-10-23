@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TutorsElevateLearningApp — Sign in</title>
+<link rel="icon" href="logo.png.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -49,11 +50,7 @@
     border: 70px solid rgba(255,255,255,.06); right: -140px; bottom: -140px;
   }
   .brand { display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 20px; }
-  .logo {
-    width: 46px; height: 46px; border-radius: 12px;
-    background: rgba(255,255,255,.14);
-    display: grid; place-items: center; font-size: 22px;
-  }
+  .logo { width: 46px; height: 46px; border-radius: 50%; display: block; flex: none; }
   .pitch h2 { font-size: 34px; line-height: 1.2; letter-spacing: -.02em; max-width: 420px; }
   .pitch p { color: rgba(255,255,255,.78); margin-top: 14px; max-width: 400px; }
   .features { list-style: none; margin-top: 28px; display: grid; gap: 12px; }
@@ -138,7 +135,7 @@
 <body>
 
 <aside class="side">
-  <div class="brand"><div class="logo">T</div> TutorsElevateLearningApp</div>
+  <div class="brand"><img class="logo" src="logo.png.svg" alt=""> TutorsElevateLearningApp</div>
   <div class="pitch">
     <h2>Your revision, organised.</h2>
     <p>Sign in to see your own subjects dashboard, with every topic and your progress saved to your account.</p>
