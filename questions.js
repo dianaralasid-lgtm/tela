@@ -44,7 +44,19 @@
      "coordinates"  One or more points, e.g. "(3, 2)" or "(1, 4); (-2, 3)".
                 Points can be in any order.
      "plot"     Like "coordinates", but the student gets a grid they can
-                click on to place the points (they can also type them).
+                click on to place the points.
+     "order"    The student taps numbers to put them in order. List the
+                numbers in "items" (in the jumbled order to show them), and
+                give the correct order as the answer, separated by commas.
+                "labels" names the two ends of the order (leave out for
+                smallest → largest). Don't put commas inside the numbers.
+                  { question: "Write these in order.", type: "order",
+                    items: ["0.5", "0.25", "0.7"], answer: "0.25, 0.5, 0.7",
+                    labels: ["smallest", "largest"] }
+     "choice"   The student taps one of the "options"; the answer is the
+                right one.
+                  { question: "Which is bigger?", type: "choice",
+                    options: ["0.7", "0.65"], answer: "0.7" }
 
    GRAPHS (for "coordinates" and "plot" questions)
      graph: { x: [-5, 5], y: [-5, 5], points: { A: [3, 4] }, lines: [ [[1, 1], [1, 4], [5, 4]] ] }
@@ -1451,6 +1463,73 @@ QUESTION_BANK.add({
   ]
 });
 
+QUESTION_BANK.add({
+  topic: "Ordering integers and decimals",
+  title: "Ordering Integers and Decimals",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "For decimals, line up the decimal points and fill gaps with zeros (0.3 = 0.30). For negative numbers, the further from zero, the smaller the number.",
+  questions: [
+    { section: "Section A: Integers", question: "Write these numbers in order of size, starting with the smallest: 52, 25, 205, 502, 250", marks: 1, type: "explain", answer: "25, 52, 205, 250, 502" },
+    { section: "Section A: Integers", question: "Write these numbers in order of size, starting with the largest: 1089, 1809, 1098, 1908", marks: 1, type: "explain", answer: "1908, 1809, 1098, 1089" },
+    { section: "Section A: Integers", question: "Write these numbers in order of size, starting with the smallest: −3, 5, −8, 0, 2", marks: 1, type: "explain", answer: "−8, −3, 0, 2, 5" },
+    { section: "Section A: Integers", question: "Which of these numbers is the smallest? −12, −2, −20, −7", marks: 1, answer: "−20" },
+    { section: "Section A: Integers", question: "Which is larger, −15 or −51?", marks: 1, answer: "−15" },
+    { section: "Section B: Decimals", question: "Which is larger, 0.7 or 0.65?", marks: 1, answer: "0.7" },
+    { section: "Section B: Decimals", question: "Which of these numbers is the smallest? 0.31, 0.301, 0.13, 0.3", marks: 1, answer: "0.13" },
+    { section: "Section B: Decimals", question: "Which of these numbers is the largest? 4.08, 4.8, 4.008, 4.78", marks: 1, answer: "4.8" },
+    { section: "Section B: Decimals", question: "Write these numbers in order of size, starting with the smallest: 0.5, 0.45, 0.054, 0.405", marks: 1, type: "explain", answer: "0.054, 0.405, 0.45, 0.5" },
+    { section: "Section B: Decimals", question: "Write these numbers in order of size, starting with the largest: 3.2, 3.02, 3.22, 3.202", marks: 1, type: "explain", answer: "3.22, 3.202, 3.2, 3.02" },
+    { section: "Section B: Decimals", question: "Write these numbers in order of size, starting with the smallest: −1.5, −0.5, −2.1, 0.2", marks: 2, type: "explain", answer: "−2.1, −1.5, −0.5, 0.2" },
+    { section: "Section B: Decimals", question: "Write down a number that is between 2.4 and 2.5", marks: 1, type: "explain", answer: "Any number greater than 2.4 and less than 2.5, for example 2.45 or 2.41" },
+    {
+      section: "Section B: Decimals",
+      text: "Write < or > in each box to make the statement true.",
+      parts: [
+        { question: "0.6 ☐ 0.58", marks: 1, type: "explain", answer: "> (0.60 is bigger than 0.58)" },
+        { question: "−4 ☐ −9", marks: 1, type: "explain", answer: "> (−4 is closer to zero, so it is bigger)" },
+        { question: "1.09 ☐ 1.1", marks: 1, type: "explain", answer: "< (1.09 is smaller than 1.10)" }
+      ]
+    },
+    {
+      section: "Section C: Problem solving",
+      text: "Five runners race 100 m. Their times are: Ali 12.4 s, Ben 12.04 s, Cara 12.39 s, Dev 12.41 s, Ella 12.14 s. The fastest time wins.",
+      parts: [
+        { question: "Who won the race?", marks: 1, type: "explain", answer: "Ben" },
+        { question: "Write the runners in the order they finished, starting with the winner.", marks: 2, type: "explain", answer: "Ben, Ella, Cara, Ali, Dev" }
+      ]
+    },
+    {
+      section: "Section C: Problem solving",
+      text: "The temperatures in five cities at midnight were: London 4°C, Oslo −6°C, Moscow −11°C, Madrid 9°C, Berlin −1°C.",
+      parts: [
+        { question: "Which city was the coldest?", marks: 1, type: "explain", answer: "Moscow" },
+        { question: "Write the cities in order of temperature, starting with the coldest.", marks: 1, type: "explain", answer: "Moscow, Oslo, Berlin, London, Madrid" },
+        { question: "Work out the difference between the highest and lowest temperatures, in °C.", marks: 1, answer: "20" }
+      ]
+    },
+    {
+      section: "Section C: Problem solving",
+      text: "Tom says 0.25 is bigger than 0.3 because 25 is bigger than 3.",
+      question: "Explain why Tom is wrong.",
+      marks: 1,
+      type: "explain",
+      answer: "0.3 is the same as 0.30. 30 hundredths is more than 25 hundredths, so 0.3 is bigger than 0.25."
+    },
+    {
+      section: "Section C: Problem solving",
+      text: "Use each of the digits 4, 9 and 2 once to make a number with one decimal place, such as 49.2",
+      parts: [
+        { question: "Write down the largest number you can make.", marks: 1, answer: "94.2" },
+        { question: "Write down the smallest number you can make.", marks: 1, answer: "24.9" }
+      ]
+    },
+    { section: "Section C: Problem solving", text: "Four parcels weigh 1.2 kg, 1.25 kg, 1.05 kg and 1.52 kg.", question: "Work out the difference between the heaviest and the lightest parcel.", marks: 2, answer: "0.47 kg" },
+    { section: "Section C: Problem solving", question: "Write these numbers in order of size, starting with the smallest: 0.6, 0.66, 0.606, 0.066, 6", marks: 2, type: "explain", answer: "0.066, 0.6, 0.606, 0.66, 6" },
+    { section: "Section C: Problem solving", question: "Write down the integer that is halfway between −8 and 4", marks: 2, answer: "−2" }
+  ]
+});
+
 
 QUESTION_BANK.add({
   topic: "Algebra: collecting like terms",
@@ -1628,6 +1707,55 @@ QUESTION_BANK.add({
     { section: "Problem solving", text: "The thermometer shows the temperature at 6 am.",
       question: "By midday the temperature has risen by 7 °C. What is the temperature at midday?", marks: 2, answer: "5 °C",
       scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: -2 } }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Ordering integers and decimals",
+  title: "Ordering Integers and Decimals",
+  type: "order",
+  questionsPerSet: 10,
+  tip: "Tap the numbers in the order you want them; tap a number in your order to send it back. For the symbol questions, tap the symbol that goes in the box. Then press <b>Check</b>.",
+  questions: [
+    { section: "Putting numbers in order", question: "Write these numbers in order, starting with the smallest.", marks: 1,
+      items: ["34", "7", "102", "58", "19"], answer: "7, 19, 34, 58, 102" },
+    { section: "Putting numbers in order", question: "Write these numbers in order, starting with the smallest.", marks: 1,
+      items: ["−4", "3", "0", "−9", "6"], answer: "−9, −4, 0, 3, 6" },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the smallest.", marks: 1,
+      items: ["0.5", "0.25", "0.7", "0.05"], answer: "0.05, 0.25, 0.5, 0.7" },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the smallest.", marks: 1,
+      items: ["3.2", "3.15", "3.05", "3.5"], answer: "3.05, 3.15, 3.2, 3.5" },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the smallest.", marks: 2,
+      items: ["1.08", "1.8", "1.18", "1.081"], answer: "1.08, 1.081, 1.18, 1.8" },
+    { section: "Putting numbers in order", question: "Write these numbers in order, starting with the smallest.", marks: 2,
+      items: ["−2.5", "−0.5", "1.5", "−1"], answer: "−2.5, −1, −0.5, 1.5" },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the largest.", marks: 1,
+      items: ["0.6", "0.65", "0.06", "0.605"], answer: "0.65, 0.605, 0.6, 0.06", labels: ["largest", "smallest"] },
+    { section: "Putting numbers in order", question: "Write these decimals in order, starting with the largest.", marks: 2,
+      items: ["4.09", "4.9", "4.19", "4.091"], answer: "4.9, 4.19, 4.091, 4.09", labels: ["largest", "smallest"] },
+
+    { section: "Comparing numbers", question: "Which symbol goes in the box?  0.7 ☐ 0.65", type: "choice", marks: 1,
+      options: ["<", ">", "="], answer: ">" },
+    { section: "Comparing numbers", question: "Which symbol goes in the box?  −5 ☐ −2", type: "choice", marks: 1,
+      options: ["<", ">", "="], answer: "<" },
+    { section: "Comparing numbers", question: "Which symbol goes in the box?  2.50 ☐ 2.5", type: "choice", marks: 1,
+      options: ["<", ">", "="], answer: "=" },
+    { section: "Comparing numbers", question: "Which symbol goes in the box?  0.09 ☐ 0.1", type: "choice", marks: 1,
+      options: ["<", ">", "="], answer: "<" },
+    { section: "Comparing numbers", question: "Which number is the largest?", type: "choice", marks: 1,
+      options: ["0.8", "0.75", "0.799", "0.08"], answer: "0.8" },
+    { section: "Comparing numbers", question: "Which number is the smallest?", type: "choice", marks: 1,
+      options: ["−3.5", "−3", "−0.5", "−4"], answer: "−4" },
+
+    { section: "Problem solving", text: "The temperatures in four cities are −3 °C, 5 °C, −8 °C and 0 °C.",
+      question: "Put the temperatures in order, from coldest to warmest.", marks: 2,
+      items: ["−3", "5", "−8", "0"], answer: "−8, −3, 0, 5", labels: ["coldest", "warmest"] },
+    { section: "Problem solving", text: "Four runners' times, in seconds, are 12.4, 12.04, 12.44 and 12.14. The lowest time is the fastest.",
+      question: "Put the times in order, from fastest to slowest.", marks: 2,
+      items: ["12.4", "12.04", "12.44", "12.14"], answer: "12.04, 12.14, 12.4, 12.44", labels: ["fastest", "slowest"] },
+    { section: "Problem solving", question: "Tom says 0.45 is bigger than 0.5, because 45 is bigger than 5. Explain why Tom is wrong.", type: "explain", marks: 1,
+      answer: "0.5 is the same as 0.50, which is 50 hundredths, and 0.45 is only 45 hundredths. Comparing the tenths first, 0.5 has 5 tenths but 0.45 has only 4, so 0.5 is bigger." }
   ]
 });
 
