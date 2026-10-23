@@ -100,6 +100,27 @@
      tally: { rows: [["Red", 7], ["Blue", 12]], headings: ["Colour", "Tally", "Frequency"], show: "tally" }
                 show is "tally", "frequency" or "both".
      pictogram: { key: 4, item: "books", rows: [["Mon", 3], ["Tue", 2.5]] }
+     table: { headings: ["Item", "Price"], rows: [["Tea", "£1.60"], ["Cake", "£2.40"]] }
+     machine: { input: "4", steps: ["× 3", "+ 2"], output: "?" }   (function machine)
+     outline: { points: [[0,0],[8,0],[8,5],[0,5]], unit: "cm" }
+                A straight-sided shape from its corners (x across, y up).
+                Each side is labelled with its length; hide: [1, 3] shows "?"
+                on those sides (counting from the first side), labels: false
+                hides all labels, and grid: true draws squared paper.
+     spinner: ["red", "blue", "red", "green"]   (equal sections)
+     counters: { red: 3, blue: 7 }              (a bag of counters)
+     bars: { labels: ["A", "B"], values: [12, 5], ystep: 2, ymax: 14, ylabel: "Frequency" }
+     stemleaf: { rows: [[1, "2 5 8"], [2, "1 3 3 7"]], key: "2 | 3 means 23" }
+     pie: { sectors: [["Walk", 120], ["Bus", 90]], showAngles: true }   (angles)
+     graph extras: xstep / ystep (what each square is worth), xlabel /
+                ylabel (axis titles), and dots: [[5, 4], [15, 9]] for
+                unlabelled points, e.g. on a frequency polygon.
+     scale extra: words: [[0, "Impossible"], [1, "Certain"]] puts words
+                under a number line, e.g. for a probability scale.
+
+   "drawbar"  The student clicks a bar chart to draw the missing bar. Give
+              the chart as  bars: {...}  with null for the missing value and
+              ask: its position (counting from 0); the answer is its height.
 
    SAME TOPIC TWICE: if a topic has more than one QUESTION_BANK.add block,
    the questions are combined into one list. The title, tip and
@@ -2389,5 +2410,420 @@ QUESTION_BANK.add({
     { section: "Section C: Prime numbers", question: "Is 1 a prime number?", type: "choice", marks: 1, options: ["Yes", "No"], answer: "No" },
     { section: "Section C: Prime numbers", question: "Ella says 2 is not a prime number because it is even. Explain why Ella is wrong.", type: "explain", marks: 1,
       answer: "A prime number has exactly two factors, 1 and itself. 2 has exactly two factors, 1 and 2, so it is prime. It is the only even prime number." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Calculation money problems",
+  title: "Money Problems",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Line up the decimal points and keep two decimal places for pence (£2.50, not £2.5). You can type £ and p, but you don't have to. Then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Money calculations", question: "Work out £3.45 + £2.80", marks: 1, answer: "£6.25" },
+    { section: "Section A: Money calculations", question: "Work out £10 − £6.35", marks: 1, answer: "£3.65" },
+    { section: "Section A: Money calculations", question: "Work out £1.25 × 4", marks: 1, answer: "£5" },
+    { section: "Section A: Money calculations", question: "Work out £7.20 ÷ 3", marks: 1, answer: "£2.40" },
+    { section: "Section A: Money calculations", question: "Write 365p in pounds.", marks: 1, answer: "£3.65" },
+
+    { section: "Section B: Café prices", text: "Here is the price list in a café.", question: "How much does a tea and a sandwich cost altogether?", marks: 2, answer: "£5.35",
+      table: { headings: ["Item", "Price"], rows: [["Tea", "£1.60"], ["Coffee", "£2.15"], ["Sandwich", "£3.75"], ["Cake", "£2.40"]] } },
+    { section: "Section B: Café prices", text: "Here is the price list in a café.", question: "How much do two coffees and a cake cost?", marks: 2, answer: "£6.70",
+      table: { headings: ["Item", "Price"], rows: [["Tea", "£1.60"], ["Coffee", "£2.15"], ["Sandwich", "£3.75"], ["Cake", "£2.40"]] } },
+    { section: "Section B: Café prices", text: "Here is the price list in a café.", question: "Mia pays for a sandwich with a £5 note. How much change does she get?", marks: 2, answer: "£1.25",
+      table: { headings: ["Item", "Price"], rows: [["Tea", "£1.60"], ["Coffee", "£2.15"], ["Sandwich", "£3.75"], ["Cake", "£2.40"]] } },
+    { section: "Section B: Café prices", text: "Here is the price list in a café.", question: "Max has £10. What is the greatest number of cakes he can buy?", marks: 2, answer: "4",
+      table: { headings: ["Item", "Price"], rows: [["Tea", "£1.60"], ["Coffee", "£2.15"], ["Sandwich", "£3.75"], ["Cake", "£2.40"]] } },
+    { section: "Section B: Café prices", text: "Here is the price list in a café.", question: "Ali buys a coffee and a cake and pays with £10. How much change does he get?", marks: 2, answer: "£5.45",
+      table: { headings: ["Item", "Price"], rows: [["Tea", "£1.60"], ["Coffee", "£2.15"], ["Sandwich", "£3.75"], ["Cake", "£2.40"]] } },
+
+    { section: "Section C: Problem solving", question: "Pens cost 45p each. How much do 6 pens cost, in pounds?", marks: 2, answer: "£2.70" },
+    { section: "Section C: Problem solving", question: "A bus ticket costs £2.30 each way. How much does a return journey cost every day for 5 days?", marks: 2, answer: "£23" },
+    { section: "Section C: Problem solving", question: "Which pack of rolls is better value?", type: "choice", marks: 2,
+      options: ["3 rolls for £1.20", "5 rolls for £1.80"], answer: "5 rolls for £1.80" },
+    { section: "Section C: Problem solving", question: "Sam says £2.5 and £2.05 are the same amount. Explain why Sam is wrong.", type: "explain", marks: 1,
+      answer: "£2.5 means £2.50, which is 2 pounds and 50 pence. £2.05 is 2 pounds and 5 pence. So £2.5 is 45p more." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Fractions of an amount",
+  title: "Fractions of an Amount",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "To find a fraction of an amount, divide by the bottom number, then multiply by the top number. The bar shows the amount split into equal parts. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Using a bar", text: "The bar is split into 4 equal parts.", question: "Work out 1/4 of 20", marks: 1, answer: "5",
+      shape: { style: "bar", parts: 4, shaded: 1 } },
+    { section: "Section A: Using a bar", text: "The bar is split into 3 equal parts.", question: "Work out 1/3 of 18", marks: 1, answer: "6",
+      shape: { style: "bar", parts: 3, shaded: 1 } },
+    { section: "Section A: Using a bar", text: "The bar is split into 5 equal parts.", question: "Work out 3/5 of 40", marks: 1, answer: "24",
+      shape: { style: "bar", parts: 5, shaded: 3 } },
+    { section: "Section A: Using a bar", text: "The bar is split into 7 equal parts.", question: "Work out 2/7 of 35", marks: 1, answer: "10",
+      shape: { style: "bar", parts: 7, shaded: 2 } },
+
+    { section: "Section B: Amounts with units", question: "Work out 3/4 of £12", marks: 1, answer: "£9" },
+    { section: "Section B: Amounts with units", question: "Work out 5/8 of 64 kg", marks: 1, answer: "40 kg" },
+    { section: "Section B: Amounts with units", question: "Work out 2/3 of 90 minutes", marks: 1, answer: "60 minutes" },
+    { section: "Section B: Amounts with units", question: "Which is bigger?", type: "choice", marks: 2,
+      options: ["1/2 of 30", "1/3 of 48", "They are equal"], answer: "1/3 of 48" },
+
+    { section: "Section C: Problem solving", question: "A class has 30 pupils. 2/5 of them walk to school. How many pupils walk to school?", marks: 2, answer: "12" },
+    { section: "Section C: Problem solving", question: "A class has 30 pupils. 2/5 of them walk to school. How many pupils do NOT walk to school?", marks: 2, answer: "18" },
+    { section: "Section C: Problem solving", question: "Jo has £40. She spends 1/4 of it on a book and 1/2 of it on a game. How much money does she have left?", marks: 2, answer: "£10" },
+    { section: "Section C: Problem solving", question: "1/3 of a number is 7. What is the number?", marks: 1, answer: "21" },
+    { section: "Section C: Problem solving", question: "Tom says 3/4 of 20 is 5. Explain Tom's mistake.", type: "explain", marks: 1,
+      answer: "Tom has only found 1/4 of 20 (20 ÷ 4 = 5). For 3/4 you multiply by 3: 5 × 3 = 15." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Fractions, decimals and percentages",
+  title: "Fractions, Decimals and Percentages",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Percent means out of 100: 35% = 35/100 = 0.35. Type fractions like 3/5 and percentages like 40% (the % sign is optional). Then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Converting", question: "Write 0.7 as a percentage.", marks: 1, answer: "70%" },
+    { section: "Section A: Converting", question: "Write 25% as a decimal.", marks: 1, answer: "0.25" },
+    { section: "Section A: Converting", question: "Write 3/4 as a percentage.", marks: 1, answer: "75%" },
+    { section: "Section A: Converting", question: "Write 1/5 as a decimal.", marks: 1, answer: "0.2" },
+    { section: "Section A: Converting", question: "Write 0.4 as a fraction in its simplest form.", type: "fraction", simplest: true, marks: 1, answer: "2/5" },
+    { section: "Section A: Converting", question: "Write 35% as a fraction in its simplest form.", type: "fraction", simplest: true, marks: 2, answer: "7/20" },
+
+    { section: "Section B: Using grids", text: "The grid is made of 100 squares.", question: "What percentage of the grid is shaded?", marks: 1, answer: "37%",
+      shape: { style: "grid", rows: 10, cols: 10, shaded: 37 } },
+    { section: "Section B: Using grids", text: "The grid is made of 100 squares.", question: "What fraction of the grid is shaded? Give your answer in its simplest form.", type: "fraction", simplest: true, marks: 2, answer: "3/5",
+      shape: { style: "grid", rows: 10, cols: 10, shaded: 60 } },
+    { section: "Section B: Using grids", question: "Shade 40% of the grid.", type: "shade", marks: 1, answer: "2/5",
+      shape: { style: "grid", rows: 2, cols: 5 } },
+
+    { section: "Section C: Comparing", question: "Put these in order, starting with the smallest.", type: "order", marks: 2,
+      items: ["0.35", "40%", "3/10", "0.5"], answer: "3/10, 0.35, 40%, 0.5" },
+    { section: "Section C: Comparing", question: "Which is the biggest?", type: "choice", marks: 1,
+      options: ["0.62", "65%", "3/5", "0.6"], answer: "65%" },
+    { section: "Section C: Comparing", question: "Which of these is NOT equal to one half?", type: "choice", marks: 1,
+      options: ["0.5", "50%", "2/4", "0.05"], answer: "0.05" },
+    { section: "Section C: Comparing", question: "Ali says 0.5 is the same as 5%. Explain why Ali is wrong.", type: "explain", marks: 1,
+      answer: "0.5 is 5 tenths, which is 50 hundredths, so 0.5 = 50%. 5% is 0.05." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Estimation",
+  title: "Estimation",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "To estimate, round each number first (usually to 1 significant figure: the first digit, followed by zeros), then do the easier calculation. Type your estimate and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Rounding to estimate", question: "Estimate 48 × 21 by rounding each number to 1 significant figure.", marks: 1, answer: "1000" },
+    { section: "Section A: Rounding to estimate", question: "Estimate 312 + 589 by rounding each number to the nearest hundred.", marks: 1, answer: "900" },
+    { section: "Section A: Rounding to estimate", question: "Estimate 6.8 × 4.2 by rounding each number to the nearest whole number.", marks: 1, answer: "28" },
+    { section: "Section A: Rounding to estimate", question: "Estimate 798 ÷ 41 by rounding each number to 1 significant figure.", marks: 1, answer: "20" },
+    { section: "Section A: Rounding to estimate", question: "Estimate 19.7 × 3.1 by rounding each number to 1 significant figure.", marks: 1, answer: "60" },
+    { section: "Section A: Rounding to estimate", question: "Estimate (61 × 9.8) ÷ 2.1 by rounding each number to 1 significant figure.", marks: 2, answer: "300" },
+    { section: "Section A: Rounding to estimate", question: "Which is the best estimate for 49 × 52?", type: "choice", marks: 1,
+      options: ["2000", "2500", "3000", "250"], answer: "2500" },
+
+    { section: "Section B: Problem solving", question: "A concert ticket costs £9.95. Estimate the cost of 31 tickets.", marks: 2, answer: "£300" },
+    { section: "Section B: Problem solving", question: "A car travels 58 miles every day for 19 days. Estimate the total distance it travels.", marks: 2, answer: "1200 miles" },
+    { section: "Section B: Problem solving", question: "Using 5 × 6 = 30 to estimate 4.9 × 6.1: is 30 an overestimate or an underestimate?", type: "choice", marks: 1,
+      options: ["Overestimate", "Underestimate"], answer: "Overestimate" },
+    { section: "Section B: Problem solving", question: "Kai estimates 52 × 38 as 50 × 30 = 1500. Explain what Kai should have done.", type: "explain", marks: 1,
+      answer: "38 rounds to 40, not 30, because the units digit is 8 (5 or more rounds up). The estimate should be 50 × 40 = 2000." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Function machines",
+  title: "Function Machines",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Follow the machine from left to right. To find the input, work backwards from the output and do the inverse of each step (× becomes ÷, + becomes −). Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Finding the output", question: "What is the output?", marks: 1, answer: "14", machine: { input: "4", steps: ["× 3", "+ 2"], output: "?" } },
+    { section: "Section A: Finding the output", question: "What is the output?", marks: 1, answer: "30", machine: { input: "10", steps: ["− 4", "× 5"], output: "?" } },
+    { section: "Section A: Finding the output", question: "What is the output?", marks: 1, answer: "13", machine: { input: "7", steps: ["× 2", "− 1"], output: "?" } },
+    { section: "Section A: Finding the output", question: "What is the output?", marks: 1, answer: "11", machine: { input: "20", steps: ["÷ 4", "+ 6"], output: "?" } },
+
+    { section: "Section B: Finding the input", question: "What is the input?", marks: 2, answer: "7", machine: { input: "?", steps: ["× 3", "+ 5"], output: "26" } },
+    { section: "Section B: Finding the input", question: "What is the input?", marks: 2, answer: "5", machine: { input: "?", steps: ["+ 4", "× 2"], output: "18" } },
+    { section: "Section B: Finding the input", question: "What is the input?", marks: 2, answer: "20", machine: { input: "?", steps: ["÷ 2", "− 3"], output: "7" } },
+
+    { section: "Section C: Algebra and reasoning", question: "Write an expression for the output. Write it without brackets.", type: "algebra", marks: 1, answer: "4x + 1",
+      machine: { input: "x", steps: ["× 4", "+ 1"], output: "?" } },
+    { section: "Section C: Algebra and reasoning", question: "Write an expression for the output. Write it without brackets.", type: "algebra", marks: 2, answer: "2n + 6",
+      machine: { input: "n", steps: ["+ 3", "× 2"], output: "?" } },
+    { section: "Section C: Algebra and reasoning", question: "Which function machine turns 5 into 17?", type: "choice", marks: 1,
+      options: ["× 3 then + 2", "+ 3 then × 2", "× 4 then − 2", "× 2 then + 5"], answer: "× 3 then + 2" },
+    { section: "Section C: Algebra and reasoning", question: "Ella puts 6 into this machine and gets 18. Explain her mistake.", type: "explain", marks: 1,
+      machine: { input: "6", steps: ["× 2", "+ 3"], output: "?" },
+      answer: "Ella added 3 first: (6 + 3) × 2 = 18. The machine multiplies by 2 first: 6 × 2 = 12, then 12 + 3 = 15." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Perimeter and area",
+  title: "Perimeter and Area",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Perimeter is the distance all the way around (add every side). Area is the space inside (for a rectangle, length × width), measured in square units such as cm². Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Rectangles and squares", question: "Work out the perimeter of the rectangle.", marks: 1, answer: "26 cm",
+      outline: { points: [[0, 0], [8, 0], [8, 5], [0, 5]], unit: "cm" } },
+    { section: "Section A: Rectangles and squares", question: "Work out the area of the rectangle, in cm².", marks: 1, answer: "40 cm²",
+      outline: { points: [[0, 0], [8, 0], [8, 5], [0, 5]], unit: "cm" } },
+    { section: "Section A: Rectangles and squares", question: "Work out the perimeter of the square.", marks: 1, answer: "24 m",
+      outline: { points: [[0, 0], [6, 0], [6, 6], [0, 6]], unit: "m" } },
+    { section: "Section A: Rectangles and squares", question: "A rectangle is 7 cm long and 4 cm wide. Work out its area, in cm².", marks: 1, answer: "28 cm²" },
+    { section: "Section A: Rectangles and squares", text: "The perimeter of this rectangle is 30 cm.", question: "Work out the missing length.", marks: 2, answer: "6 cm",
+      outline: { points: [[0, 0], [9, 0], [9, 6], [0, 6]], unit: "cm", hide: [1, 3] } },
+
+    { section: "Section B: Compound shapes", question: "Work out the perimeter of this shape.", marks: 2, answer: "28 cm",
+      outline: { points: [[0, 0], [8, 0], [8, 3], [5, 3], [5, 6], [0, 6]], unit: "cm" } },
+    { section: "Section B: Compound shapes", question: "Work out the area of this shape, in cm².", marks: 2, answer: "39 cm²",
+      outline: { points: [[0, 0], [8, 0], [8, 3], [5, 3], [5, 6], [0, 6]], unit: "cm" } },
+    { section: "Section B: Compound shapes", text: "The shape is drawn on centimetre squared paper.", question: "Work out the area of the shape, in cm².", marks: 1, answer: "20",
+      outline: { points: [[0, 0], [4, 0], [4, 2], [6, 2], [6, 4], [0, 4]], grid: true, labels: false } },
+    { section: "Section B: Compound shapes", text: "The shape is drawn on centimetre squared paper.", question: "Work out the perimeter of the shape, in cm.", marks: 1, answer: "20",
+      outline: { points: [[0, 0], [4, 0], [4, 2], [6, 2], [6, 4], [0, 4]], grid: true, labels: false } },
+
+    { section: "Section C: Units and reasoning", question: "Which of these is a unit of area?", type: "choice", marks: 1,
+      options: ["cm", "cm²", "cm³", "km"], answer: "cm²" },
+    { section: "Section C: Units and reasoning", question: "Lily says a rectangle 3 cm by 4 cm has an area of 14 cm². Explain Lily's mistake.", type: "explain", marks: 1,
+      answer: "Lily has found the perimeter (3 + 4 + 3 + 4 = 14 cm). The area is length × width: 3 × 4 = 12 cm²." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Probability: scales",
+  title: "Probability Scales",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Probabilities go from 0 (impossible) to 1 (certain); an even chance is 0.5. Tap a word, type a fraction, or click the probability scale, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Probability words", question: "How likely is it that the sun will rise tomorrow?", marks: 1,
+      options: ["impossible", "unlikely", "even chance", "likely", "certain"], answer: "certain" },
+    { section: "Section A: Probability words", question: "How likely is it to roll a 7 on an ordinary six-sided dice?", marks: 1,
+      options: ["impossible", "unlikely", "even chance", "likely", "certain"], answer: "impossible" },
+    { section: "Section A: Probability words", question: "How likely is it to get heads when a fair coin is flipped?", marks: 1,
+      options: ["impossible", "unlikely", "even chance", "likely", "certain"], answer: "even chance" },
+    { section: "Section A: Probability words", text: "A bag holds these counters.", question: "How likely is it to pick a red counter?", marks: 1,
+      counters: { red: 9, blue: 1 }, options: ["impossible", "unlikely", "even chance", "likely", "certain"], answer: "likely" },
+    { section: "Section A: Probability words", question: "How likely is it to snow in London in July?", marks: 1,
+      options: ["impossible", "unlikely", "even chance", "likely", "certain"], answer: "unlikely" },
+
+    { section: "Section B: The probability scale", question: "Click on the probability scale to show the probability of getting heads with a fair coin.", type: "mark", marks: 1, answer: "0.5",
+      scale: { style: "line", min: 0, max: 1, major: 0.5, minor: 0.1, words: [[0, "Impossible"], [0.5, "Even chance"], [1, "Certain"]] } },
+    { section: "Section B: The probability scale", question: "Click on the probability scale to show the probability of rolling a number less than 7 on an ordinary dice.", type: "mark", marks: 1, answer: "1",
+      scale: { style: "line", min: 0, max: 1, major: 0.5, minor: 0.1, words: [[0, "Impossible"], [0.5, "Even chance"], [1, "Certain"]] } },
+    { section: "Section B: The probability scale", text: "A bag holds 10 counters: 3 red and 7 blue.", question: "Click on the scale to show the probability of picking a red counter.", type: "mark", marks: 1, answer: "0.3",
+      counters: { red: 3, blue: 7 },
+      scale: { style: "line", min: 0, max: 1, major: 0.5, minor: 0.1, words: [[0, "Impossible"], [0.5, "Even chance"], [1, "Certain"]] } },
+
+    { section: "Section C: Probabilities as numbers", text: "The spinner has 5 equal sections.", question: "What is the probability of landing on blue? Give your answer as a fraction.", type: "fraction", marks: 1, answer: "2/5",
+      spinner: ["blue", "red", "blue", "yellow", "red"] },
+    { section: "Section C: Probabilities as numbers", text: "A bag holds these counters.", question: "A counter is picked at random. What is the probability it is green? Give your answer as a fraction.", type: "fraction", marks: 1, answer: "6/10",
+      counters: { red: 4, green: 6 } },
+    { section: "Section C: Probabilities as numbers", question: "An ordinary dice is rolled. What is the probability of rolling a 3? Give your answer as a fraction.", type: "fraction", marks: 1, answer: "1/6" },
+    { section: "Section C: Probabilities as numbers", question: "The probability that it rains tomorrow is 0.3. What is the probability that it does NOT rain?", type: "number", marks: 1, answer: "0.7" },
+    { section: "Section C: Probabilities as numbers", question: "Zak says: \"There are two outcomes, win or lose, so the probability of winning is 1/2.\" Explain why Zak might be wrong.", type: "explain", marks: 1,
+      answer: "Having two outcomes doesn't make them equally likely. The probability is only 1/2 if winning and losing are equally likely, which they often aren't." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Frequency polygons",
+  title: "Frequency Polygons",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "A frequency polygon plots each frequency at the midpoint of its class, then joins the points with straight lines. To plot, click the grid to place each point. Then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Midpoints", text: "The table shows the heights of some plants.", question: "What is the midpoint of the class 20 < h ≤ 30?", marks: 1, answer: "25",
+      table: { headings: ["Height, h (cm)", "Frequency"], rows: [["0 < h ≤ 10", "4"], ["10 < h ≤ 20", "9"], ["20 < h ≤ 30", "12"], ["30 < h ≤ 40", "7"], ["40 < h ≤ 50", "3"]] } },
+    { section: "Section A: Midpoints", question: "What is the midpoint of the class 40 < t ≤ 60?", marks: 1, answer: "50" },
+    { section: "Section A: Midpoints", question: "A frequency polygon plots each frequency against the...", type: "choice", marks: 1,
+      options: ["midpoint of the class", "upper bound of the class", "lower bound of the class", "class width"], answer: "midpoint of the class" },
+
+    { section: "Section B: Drawing a frequency polygon", text: "The table shows the heights of some plants.",
+      table: { headings: ["Height, h (cm)", "Frequency"], rows: [["0 < h ≤ 10", "4"], ["10 < h ≤ 20", "9"], ["20 < h ≤ 30", "12"], ["30 < h ≤ 40", "7"], ["40 < h ≤ 50", "3"]] },
+      question: "Plot the five points of the frequency polygon for this data.", type: "plot", marks: 3, answer: "(5, 4); (15, 9); (25, 12); (35, 7); (45, 3)",
+      graph: { x: [0, 50], xstep: 5, y: [0, 14], ystep: 1, xlabel: "Height (cm)", ylabel: "Frequency" } },
+
+    { section: "Section C: Reading a frequency polygon", text: "The frequency polygon shows the heights of some plants.", question: "What is the frequency for the class with midpoint 35?", marks: 1, answer: "7",
+      graph: { x: [0, 50], xstep: 5, y: [0, 14], ystep: 1, xlabel: "Height (cm)", ylabel: "Frequency",
+        lines: [[[5, 4], [15, 9], [25, 12], [35, 7], [45, 3]]], dots: [[5, 4], [15, 9], [25, 12], [35, 7], [45, 3]] } },
+    { section: "Section C: Reading a frequency polygon", text: "The frequency polygon shows the heights of some plants.", question: "Which class has the highest frequency?", type: "choice", marks: 1,
+      options: ["0 < h ≤ 10", "10 < h ≤ 20", "20 < h ≤ 30", "30 < h ≤ 40", "40 < h ≤ 50"], answer: "20 < h ≤ 30",
+      graph: { x: [0, 50], xstep: 5, y: [0, 14], ystep: 1, xlabel: "Height (cm)", ylabel: "Frequency",
+        lines: [[[5, 4], [15, 9], [25, 12], [35, 7], [45, 3]]], dots: [[5, 4], [15, 9], [25, 12], [35, 7], [45, 3]] } },
+    { section: "Section C: Reading a frequency polygon", text: "The frequency polygon shows the heights of some plants.", question: "How many plants were measured altogether?", marks: 2, answer: "35",
+      graph: { x: [0, 50], xstep: 5, y: [0, 14], ystep: 1, xlabel: "Height (cm)", ylabel: "Frequency",
+        lines: [[[5, 4], [15, 9], [25, 12], [35, 7], [45, 3]]], dots: [[5, 4], [15, 9], [25, 12], [35, 7], [45, 3]] } },
+    { section: "Section C: Reading a frequency polygon", question: "Why are the points of a frequency polygon plotted at the midpoints of the classes?", type: "explain", marks: 1,
+      answer: "We don't know the exact values inside each class, so the midpoint is used as a typical value to represent the whole class." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Averages from lists (mean and median)",
+  title: "Averages: Mean and Median",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Mean: add them up and divide by how many there are. Median: put them in order and take the middle one (or halfway between the middle two). Mode: the most common. Range: biggest minus smallest.",
+  questions: [
+    { section: "Section A: Finding averages", question: "Find the median of 3, 7, 2, 9, 5", marks: 1, answer: "5" },
+    { section: "Section A: Finding averages", question: "Find the median of 12, 4, 8, 10", marks: 2, answer: "9" },
+    { section: "Section A: Finding averages", question: "Find the mean of 4, 6, 8, 10, 12", marks: 1, answer: "8" },
+    { section: "Section A: Finding averages", question: "Find the mean of 3, 5, 5, 7, 10", marks: 2, answer: "6" },
+    { section: "Section A: Finding averages", question: "Find the mode of 2, 3, 3, 5, 7, 3, 9", marks: 1, answer: "3" },
+    { section: "Section A: Finding averages", question: "Find the range of 15, 8, 21, 11", marks: 1, answer: "13" },
+    { section: "Section A: Finding averages", text: "Find the median of 9, 2, 7, 4, 6.", parts: [
+      { question: "Put the numbers in order, smallest first.", type: "order", marks: 1, items: ["9", "2", "7", "4", "6"], answer: "2, 4, 6, 7, 9" },
+      { question: "What is the median?", marks: 1, answer: "6" }
+    ] },
+
+    { section: "Section B: Using a table", text: "The table shows four pupils' test scores.", question: "Work out the mean score.", marks: 2, answer: "7",
+      table: { headings: ["Pupil", "Score"], rows: [["Amy", "7"], ["Ben", "9"], ["Cal", "4"], ["Dev", "8"]] } },
+    { section: "Section B: Using a table", text: "The table shows four pupils' test scores.", question: "Work out the median score.", marks: 2, answer: "7.5",
+      table: { headings: ["Pupil", "Score"], rows: [["Amy", "7"], ["Ben", "9"], ["Cal", "4"], ["Dev", "8"]] } },
+
+    { section: "Section C: Problem solving", question: "The mean of four numbers is 6. Three of the numbers are 5, 7 and 4. What is the fourth number?", marks: 2, answer: "8" },
+    { section: "Section C: Problem solving", question: "Which average best represents 2, 3, 3, 4, 100?", type: "choice", marks: 1,
+      options: ["mean", "median"], answer: "median" },
+    { section: "Section C: Problem solving", question: "Rosa says the median of 5, 1, 9 is 1 because it is in the middle. Explain Rosa's mistake.", type: "explain", marks: 1,
+      answer: "The numbers must be put in order first: 1, 5, 9. The middle number is then 5, so the median is 5." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Bar charts",
+  title: "Bar Charts",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Check what each line on the scale is worth before reading a bar. To draw a bar, click on the chart at the right height (it snaps to whole numbers), then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Reading a bar chart", text: "The bar chart shows pupils' favourite sports.", question: "How many pupils chose swimming?", marks: 1, answer: "8",
+      bars: { labels: ["Football", "Tennis", "Swimming", "Netball"], values: [12, 5, 8, 9], ystep: 2, ymax: 14, ylabel: "Number of pupils" } },
+    { section: "Section A: Reading a bar chart", text: "The bar chart shows pupils' favourite sports.", question: "How many more pupils chose football than tennis?", marks: 1, answer: "7",
+      bars: { labels: ["Football", "Tennis", "Swimming", "Netball"], values: [12, 5, 8, 9], ystep: 2, ymax: 14, ylabel: "Number of pupils" } },
+    { section: "Section A: Reading a bar chart", text: "The bar chart shows pupils' favourite sports.", question: "How many pupils are shown altogether?", marks: 2, answer: "34",
+      bars: { labels: ["Football", "Tennis", "Swimming", "Netball"], values: [12, 5, 8, 9], ystep: 2, ymax: 14, ylabel: "Number of pupils" } },
+    { section: "Section A: Reading a bar chart", text: "The bar chart shows pupils' favourite sports.", question: "Which sport was the least popular?", type: "choice", marks: 1,
+      options: ["Football", "Tennis", "Swimming", "Netball"], answer: "Tennis",
+      bars: { labels: ["Football", "Tennis", "Swimming", "Netball"], values: [12, 5, 8, 9], ystep: 2, ymax: 14, ylabel: "Number of pupils" } },
+
+    { section: "Section B: Drawing bars", question: "9 pupils chose netball. Click on the chart to draw the bar for netball.", type: "drawbar", marks: 1, answer: "9",
+      bars: { labels: ["Football", "Tennis", "Swimming", "Netball"], values: [12, 5, 8, null], ask: 3, ystep: 2, ymax: 14, ylabel: "Number of pupils" } },
+    { section: "Section B: Drawing bars", question: "7 people chose strawberry. Click on the chart to draw the bar for strawberry.", type: "drawbar", marks: 1, answer: "7",
+      bars: { labels: ["Vanilla", "Chocolate", "Strawberry", "Mint"], values: [6, 10, null, 3], ask: 2, ystep: 2, ymax: 12, ylabel: "Number of people" } },
+
+    { section: "Section C: Reasoning", question: "Why are there gaps between the bars on a bar chart?", type: "choice", marks: 1,
+      options: ["Each bar is a separate category", "To save ink", "Because the data is continuous", "To make the numbers fit"], answer: "Each bar is a separate category" },
+    { section: "Section C: Reasoning", text: "The bar chart shows pupils' favourite sports.", question: "Kim reads the tennis bar as 6. Explain Kim's mistake.", type: "explain", marks: 1,
+      bars: { labels: ["Football", "Tennis", "Swimming", "Netball"], values: [12, 5, 8, 9], ystep: 2, ymax: 14, ylabel: "Number of pupils" },
+      answer: "The scale goes up in 2s. The tennis bar stops halfway between 4 and 6, so it shows 5, not 6." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Stem and leaf",
+  title: "Stem and Leaf Diagrams",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Use the key to read each value: with the key 2 | 3 = 23, the stem gives the tens and each leaf gives the units. Type your answer or tap your choice, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Reading values", text: "The stem and leaf diagram shows the ages of people at a party.", question: "How many people are shown?", marks: 1, answer: "12",
+      stemleaf: { rows: [[1, "2 5 8"], [2, "1 3 3 7"], [3, "0 4 6"], [4, "1 5"]], key: "2 | 3 means 23" } },
+    { section: "Section A: Reading values", text: "The stem and leaf diagram shows the ages of people at a party.", question: "How old is the oldest person?", marks: 1, answer: "45",
+      stemleaf: { rows: [[1, "2 5 8"], [2, "1 3 3 7"], [3, "0 4 6"], [4, "1 5"]], key: "2 | 3 means 23" } },
+    { section: "Section A: Reading values", text: "The stem and leaf diagram shows the ages of people at a party.", question: "How many people are older than 30?", marks: 1, answer: "4",
+      stemleaf: { rows: [[1, "2 5 8"], [2, "1 3 3 7"], [3, "0 4 6"], [4, "1 5"]], key: "2 | 3 means 23" } },
+    { section: "Section A: Reading values", question: "In a stem and leaf diagram with the key 2 | 3 means 23, what does 3 | 4 mean?", type: "choice", marks: 1,
+      options: ["34", "3.4", "7", "43"], answer: "34" },
+
+    { section: "Section B: Averages and range", text: "The stem and leaf diagram shows the ages of people at a party.", question: "Work out the range of the ages.", marks: 1, answer: "33",
+      stemleaf: { rows: [[1, "2 5 8"], [2, "1 3 3 7"], [3, "0 4 6"], [4, "1 5"]], key: "2 | 3 means 23" } },
+    { section: "Section B: Averages and range", text: "The stem and leaf diagram shows the ages of people at a party.", question: "What is the mode?", marks: 1, answer: "23",
+      stemleaf: { rows: [[1, "2 5 8"], [2, "1 3 3 7"], [3, "0 4 6"], [4, "1 5"]], key: "2 | 3 means 23" } },
+    { section: "Section B: Averages and range", text: "The stem and leaf diagram shows the ages of people at a party.", question: "Work out the median age.", marks: 2, answer: "25",
+      stemleaf: { rows: [[1, "2 5 8"], [2, "1 3 3 7"], [3, "0 4 6"], [4, "1 5"]], key: "2 | 3 means 23" } },
+
+    { section: "Section C: Building a diagram", question: "The leaves for the stem 5 are 7, 2, 9 and 4. Put them in the order they should be written.", type: "order", marks: 1,
+      items: ["7", "2", "9", "4"], answer: "2, 4, 7, 9" },
+    { section: "Section C: Building a diagram", question: "Why should the leaves in a stem and leaf diagram be written in order?", type: "explain", marks: 1,
+      answer: "Ordered leaves make it easy to read off the smallest and largest values and to count to the middle to find the median." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Pie charts",
+  title: "Pie Charts",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "The angles in a pie chart add up to 360°. Work out what 1° (or one person) is worth first: angle for one person = 360 ÷ total. Type your answer or tap your choice, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Reading a pie chart", text: "The pie chart shows how 36 pupils travel to school. Walk 120°, Bus 90°, Car 100°, Bike 50°.", question: "Which way of travelling is the most popular?", type: "choice", marks: 1,
+      options: ["Walk", "Bus", "Car", "Bike"], answer: "Walk",
+      pie: { sectors: [["Walk", 120], ["Bus", 90], ["Car", 100], ["Bike", 50]], showAngles: true } },
+    { section: "Section A: Reading a pie chart", text: "The pie chart shows how 36 pupils travel to school.", question: "How many pupils walk to school?", marks: 2, answer: "12",
+      pie: { sectors: [["Walk", 120], ["Bus", 90], ["Car", 100], ["Bike", 50]], showAngles: true } },
+    { section: "Section A: Reading a pie chart", text: "The pie chart shows how 36 pupils travel to school.", question: "How many pupils come by bike?", marks: 2, answer: "5",
+      pie: { sectors: [["Walk", 120], ["Bus", 90], ["Car", 100], ["Bike", 50]], showAngles: true } },
+    { section: "Section A: Reading a pie chart", text: "The pie chart shows how 36 pupils travel to school.", question: "What fraction of the pupils travel by bus? Give your answer in its simplest form.", type: "fraction", simplest: true, marks: 2, answer: "1/4",
+      pie: { sectors: [["Walk", 120], ["Bus", 90], ["Car", 100], ["Bike", 50]], showAngles: true } },
+    { section: "Section A: Reading a pie chart", text: "The pie chart shows the favourite colours of 60 people.", question: "How many people chose blue?", marks: 2, answer: "25",
+      pie: { sectors: [["Red", 90], ["Blue", 150], ["Green", 60], ["Yellow", 60]], showAngles: true } },
+
+    { section: "Section B: Working with angles", question: "A pie chart shows 60 people. What angle represents one person?", marks: 1, answer: "6°" },
+    { section: "Section B: Working with angles", question: "A pie chart shows 30 people. What angle represents one person?", marks: 1, answer: "12°" },
+    { section: "Section B: Working with angles", question: "45 out of 90 people chose pizza. What angle would pizza have in a pie chart?", marks: 2, answer: "180°" },
+    { section: "Section B: Working with angles", question: "The angles in a pie chart always add up to...", type: "choice", marks: 1,
+      options: ["90°", "180°", "360°", "100°"], answer: "360°" },
+    { section: "Section B: Working with angles", text: "The pie chart shows how 36 pupils travel to school.", question: "Ben says 90 pupils travel by bus because the bus angle is 90°. Explain Ben's mistake.", type: "explain", marks: 1,
+      pie: { sectors: [["Walk", 120], ["Bus", 90], ["Car", 100], ["Bike", 50]], showAngles: true },
+      answer: "The angle isn't the number of pupils. 36 pupils share 360°, so each pupil is 10°. 90° ÷ 10 = 9 pupils travel by bus." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Systematic listing strategies",
+  title: "Systematic Listing",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "List the options in an organised way, for example keep the first choice fixed while you go through every second choice. Type your answer or tap ALL the correct options, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Listing outcomes", question: "Tap all the 2-digit numbers you can make using two of the digits 1, 4 and 7 (no digit used twice).", type: "select", marks: 2,
+      options: ["14", "17", "41", "47", "71", "74", "11", "44", "77"], answer: "14, 17, 41, 47, 71, 74" },
+    { section: "Section A: Listing outcomes", question: "Two coins are flipped. Tap all the possible outcomes (H = heads, T = tails).", type: "select", marks: 2,
+      options: ["HH", "HT", "TH", "TT", "H", "HHT"], answer: "HH, HT, TH, TT" },
+    { section: "Section A: Listing outcomes", text: "The table shows the outcomes when spinner A (1, 2, 3) and spinner B (1, 2) are spun.",
+      table: { headings: ["A \\ B", "1", "2"], rows: [["1", "1, 1", "1, 2"], ["2", "2, 1", "2, 2"], ["3", "3, 1", "3, 2"]] },
+      question: "How many outcomes have a total of 4?", marks: 1, answer: "2" },
+
+    { section: "Section B: Counting combinations", question: "A café sells 3 sandwiches (cheese, ham, egg) and 2 drinks (tea, juice). How many different sandwich-and-drink meals are there?", marks: 1, answer: "6" },
+    { section: "Section B: Counting combinations", question: "A menu has 4 starters and 3 main courses. How many different starter-and-main combinations are there?", marks: 1, answer: "12" },
+    { section: "Section B: Counting combinations", question: "In how many different orders can 3 people, A, B and C, stand in a line?", marks: 2, answer: "6" },
+    { section: "Section B: Counting combinations", question: "How many different 3-digit numbers can be made using the digits 2, 5 and 8 once each?", marks: 2, answer: "6" },
+    { section: "Section B: Counting combinations", question: "Using the digits 2, 5 and 8 once each, what is the largest 3-digit number you can make?", marks: 1, answer: "852" },
+    { section: "Section B: Counting combinations", question: "Using the digits 2, 5 and 8 once each, what is the smallest 3-digit number you can make?", marks: 1, answer: "258" },
+
+    { section: "Section C: Reasoning", question: "Which method best makes sure you don't miss any combinations?", type: "choice", marks: 1,
+      options: ["List them in an organised order", "Guess", "Pick some at random", "Only write the first few"], answer: "List them in an organised order" },
+    { section: "Section C: Reasoning", question: "Ravi has a red shirt and a blue shirt, and jeans and shorts. He lists: red-jeans, blue-jeans, red-shorts. Explain what is wrong with his list.", type: "explain", marks: 1,
+      answer: "He has missed blue-shorts. Listing systematically (red-jeans, red-shorts, blue-jeans, blue-shorts) shows there are 2 × 2 = 4 outfits." }
   ]
 });

@@ -347,6 +347,33 @@
   .clock .hand-hit { stroke: transparent; stroke-width: 28; stroke-linecap: round; cursor: grab; pointer-events: stroke; }
   .clock.dragging .hand-hit { cursor: grabbing; }
 
+  .machine, .outline-fig, .spinner, .counters, .bars, .pie { display: block; max-width: 100%; height: auto; }
+  .machine text, .outline-fig text, .spinner text, .bars text, .pie text, .graph .axis-title { font-family: "Inter", sans-serif; }
+  .machine .m-step { fill: var(--green-50); stroke: var(--green-700); stroke-width: 2; }
+  .machine .m-end { fill: var(--white); stroke: var(--ink); stroke-width: 2; stroke-dasharray: 5 3; }
+  .machine .m-text { font-size: 17px; font-weight: 700; fill: var(--ink); }
+  .machine .m-arrow { stroke: var(--ink); stroke-width: 2.5; }
+  .machine .m-head { fill: var(--ink); }
+  .outline-fig .o-grid { stroke: var(--line); stroke-width: 1; }
+  .outline-fig .o-shape { fill: rgba(25, 135, 84, .12); stroke: var(--green-700); stroke-width: 2.5; stroke-linejoin: round; }
+  .outline-fig .o-label { font-size: 13px; font-weight: 600; fill: var(--ink); }
+  .spinner .spin-part, .pie .pie-part { stroke: var(--white); stroke-width: 2; }
+  .spinner .spin-label, .pie .spin-label { font-size: 13px; font-weight: 700; fill: #1b2a23; paint-order: stroke; stroke: rgba(255,255,255,.85); stroke-width: 3px; }
+  .pie .pie-angle { font-size: 11px; font-weight: 600; fill: #1b2a23; paint-order: stroke; stroke: rgba(255,255,255,.85); stroke-width: 3px; }
+  .spinner .spin-arrow { stroke: var(--ink); stroke-width: 4; stroke-linecap: round; }
+  .counters .counter { stroke: var(--ink); stroke-width: 1.5; }
+  .bars .bar-grid { stroke: var(--line); stroke-width: 1; }
+  .bars .tick { font-size: 11px; font-weight: 500; fill: var(--muted); }
+  .bars .axis { stroke: var(--ink); stroke-width: 1.6; }
+  .bars .bar { fill: #5fae82; }
+  .bars .bar.ask { fill: #e8873a; }
+  .bars .bar-label { font-size: 12px; font-weight: 600; fill: var(--ink); }
+  .bars .bar-hit { fill: transparent; stroke: var(--green-600); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .bars.set { cursor: pointer; background: var(--white); border-radius: 8px; }
+  .graph .axis-title, .bars .axis-title { font-size: 12px; font-weight: 600; fill: var(--muted); }
+  .scale .scale-word { font-size: 11px; font-weight: 600; fill: var(--muted); }
+  .stem-leaf td.leaves { letter-spacing: .25em; font-weight: 600; font-variant-numeric: tabular-nums; }
+
   .shape-fig, .poly-fig { display: block; max-width: 100%; height: auto; }
   .shape-fig .frac-part { fill: var(--white); stroke: var(--ink); stroke-width: 2; }
   .shape-fig .frac-part.on { fill: #86c9a3; }
@@ -943,7 +970,7 @@
   const KIND_FOR_TYPE = {
     algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords", mark: "num",
     order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle", column: "column",
-    fraction: "fraction", shade: "shade", tally: "tally", pictogram: "pictogram", select: "select"
+    fraction: "fraction", shade: "shade", tally: "tally", pictogram: "pictogram", select: "select", drawbar: "drawbar"
   };
   const ANGLE_NAMES = ["acute", "right", "obtuse", "straight", "reflex"];
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
@@ -1006,7 +1033,8 @@
           simplest: p.simplest === true,
           // Shading and pictogram questions keep their picture inside the part so it can be tapped.
           shape: kind === "shade" ? p.shape || {} : null,
-          pictogram: kind === "pictogram" ? p.pictogram || {} : null
+          pictogram: kind === "pictogram" ? p.pictogram || {} : null,
+          bars: kind === "drawbar" ? p.bars || {} : null
         };
       });
       const unreadable = parts.some(p => !p.text || !p.answer ||
@@ -1018,7 +1046,8 @@
         (p.kind === "drawangle" && !ANGLE_NAMES.includes(normText(p.answer))) ||
         (p.kind === "column" && !p.layout) ||
         ((p.kind === "fraction" || p.kind === "shade") && !readFraction(p.answer)) ||
-        ((p.kind === "tally" || p.kind === "pictogram") && readNumber(p.answer) === null) ||
+        ((p.kind === "tally" || p.kind === "pictogram" || p.kind === "drawbar") && readNumber(p.answer) === null) ||
+        (p.kind === "drawbar" && !(Number.isInteger(p.bars.ask) && Array.isArray(p.bars.labels))) ||
         (p.kind === "pictogram" && !(Number(p.pictogram.key) > 0)) ||
         (p.kind === "select" && (!p.options || !p.answer.split(",").every(a => p.options.some(o => normText(o) === normText(a))))));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
@@ -1037,6 +1066,10 @@
         polygon: q.polygon || null,
         tally: q.tally || null,
         pictogram: grouped || parts[0].kind !== "pictogram" ? q.pictogram || null : null,
+        table: q.table || null, machine: q.machine || null, outline: q.outline || null,
+        spinner: Array.isArray(q.spinner) ? q.spinner : null, counters: q.counters || null,
+        bars: grouped || parts[0].kind !== "drawbar" ? q.bars || null : null,
+        stemleaf: q.stemleaf || null, pie: q.pie || null,
         parts
       });
     }
@@ -1136,7 +1169,7 @@
   // Number answers: ignores £, units and trailing zeros; "p" means pence.
   function readNumber(raw) {
     const m = String(raw).replace(/,/g, "").replace(/[−–]/g, "-").trim()
-      .match(/^£?\s*(-?\d*\.?\d+)\s*(p|pence|pounds?|km|kg|cm|mm|ml|m|g|l|°\s*c|c|degrees?|kilometres?|kilograms?|metres?|grams?|litres?|millilitres?)?\.?$/i);
+      .match(/^£?\s*(-?\d*\.?\d+)\s*(p|pence|pounds?|km|kg|cm²|cm2|m²|m2|cm|mm|ml|m|g|l|°\s*c|c|°|degrees?|%|per\s*cent|kilometres?|kilograms?|metres?|grams?|litres?|millilitres?|minutes?|mins?|hours?|seconds?|miles?)?\.?$/i);
     if (!m) return null;
     const n = parseFloat(m[1]);
     return /^p(ence)?$/i.test(m[2] || "") ? n / 100 : n;
@@ -1173,28 +1206,47 @@
   }
 
   // Draws a coordinate grid from a question's graph settings: x and y ranges, labelled points and lines.
+  // xstep / ystep set how much each grid square is worth (for graphs like frequency polygons), and
+  // xlabel / ylabel name the axes. Squares shrink to keep big grids a sensible size.
   function graphSVG(g, plot) {
     const [x0, x1] = g.x || [-5, 5], [y0, y1] = g.y || [-5, 5];
-    const u = 30, m = 28;
-    const W = (x1 - x0) * u + 2 * m, H = (y1 - y0) * u + 2 * m;
-    const px = x => m + (x - x0) * u, py = y => m + (y1 - y) * u;
+    const xs = g.xstep || 1, ys = g.ystep || 1, nx = (x1 - x0) / xs, ny = (y1 - y0) / ys;
+    const ux = Math.min(30, 360 / nx), uy = Math.min(30, 300 / ny), m = 28;
+    const named = g.xlabel || g.ylabel, extra = named ? 18 : 0;
+    const W = nx * ux + 2 * m + extra, H = ny * uy + 2 * m + extra;
+    const px = x => m + extra + (x - x0) / xs * ux, py = y => m + (y1 - y) / ys * uy;
     // The axes sit at 0, or at the edge if 0 is outside the range.
     const ax = Math.min(Math.max(0, x0), x1), ay = Math.min(Math.max(0, y0), y1);
+    // On dense grids, label every other line.
+    const xEvery = ux < 18 ? 2 : 1, yEvery = uy < 16 ? 2 : 1;
     let s = `<svg class="graph${plot ? " plot" : ""}" viewBox="0 0 ${W} ${H}" width="${W}"
-      data-x0="${x0}" data-x1="${x1}" data-y0="${y0}" data-y1="${y1}" data-u="${u}" data-m="${m}"
+      data-x0="${x0}" data-x1="${x1}" data-y0="${y0}" data-y1="${y1}" data-xs="${xs}" data-ys="${ys}"
+      data-ux="${ux}" data-uy="${uy}" data-left="${m + extra}" data-m="${m}"
       role="img" aria-label="Coordinate grid${plot ? ". Click to plot a point." : ""}">`;
-    for (let x = x0; x <= x1; x++) s += `<line class="grid" x1="${px(x)}" y1="${py(y1)}" x2="${px(x)}" y2="${py(y0)}"/>`;
-    for (let y = y0; y <= y1; y++) s += `<line class="grid" x1="${px(x0)}" y1="${py(y)}" x2="${px(x1)}" y2="${py(y)}"/>`;
+    for (let k = 0; k <= nx; k++) s += `<line class="grid" x1="${px(x0 + k * xs)}" y1="${py(y1)}" x2="${px(x0 + k * xs)}" y2="${py(y0)}"/>`;
+    for (let k = 0; k <= ny; k++) s += `<line class="grid" x1="${px(x0)}" y1="${py(y0 + k * ys)}" x2="${px(x1)}" y2="${py(y0 + k * ys)}"/>`;
     s += `<line class="axis" x1="${px(x0)}" y1="${py(ay)}" x2="${px(x1)}" y2="${py(ay)}"/>`;
     s += `<line class="axis" x1="${px(ax)}" y1="${py(y0)}" x2="${px(ax)}" y2="${py(y1)}"/>`;
-    for (let x = x0; x <= x1; x++) if (x !== ax) s += `<text class="tick" x="${px(x)}" y="${py(ay) + 15}" text-anchor="middle">${x}</text>`;
-    for (let y = y0; y <= y1; y++) if (y !== ay) s += `<text class="tick" x="${px(ax) - 6}" y="${py(y) + 4}" text-anchor="end">${y}</text>`;
+    for (let k = 0; k <= nx; k++) {
+      const x = +(x0 + k * xs).toFixed(6);
+      if (x !== ax && k % xEvery === 0) s += `<text class="tick" x="${px(x)}" y="${py(ay) + 15}" text-anchor="middle">${x}</text>`;
+    }
+    for (let k = 0; k <= ny; k++) {
+      const y = +(y0 + k * ys).toFixed(6);
+      if (y !== ay && k % yEvery === 0) s += `<text class="tick" x="${px(ax) - 6}" y="${py(y) + 4}" text-anchor="end">${y}</text>`;
+    }
     s += `<text class="tick" x="${px(ax) - 6}" y="${py(ay) + 15}" text-anchor="end">0</text>`;
-    s += `<text class="axis-name" x="${px(x1) + 10}" y="${py(ay) + 5}">x</text>`;
-    s += `<text class="axis-name" x="${px(ax)}" y="${py(y1) - 10}" text-anchor="middle">y</text>`;
+    if (named) {
+      s += `<text class="axis-title" x="${(px(x0) + px(x1)) / 2}" y="${H - 6}" text-anchor="middle">${esc(g.xlabel || "")}</text>`;
+      s += `<text class="axis-title" x="12" y="${(py(y0) + py(y1)) / 2}" text-anchor="middle" transform="rotate(-90 12 ${(py(y0) + py(y1)) / 2})">${esc(g.ylabel || "")}</text>`;
+    } else {
+      s += `<text class="axis-name" x="${px(x1) + 10}" y="${py(ay) + 5}">x</text>`;
+      s += `<text class="axis-name" x="${px(ax)}" y="${py(y1) - 10}" text-anchor="middle">y</text>`;
+    }
     (g.lines || []).forEach(line => {
       s += `<polyline class="shape" points="${line.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`;
     });
+    (g.dots || []).forEach(([x, y]) => { s += `<circle class="pt" cx="${px(x)}" cy="${py(y)}" r="4"/>`; });
     Object.entries(g.points || {}).forEach(([name, [x, y]]) => {
       s += `<circle class="pt" cx="${px(x)}" cy="${py(y)}" r="4.5"/>`;
       s += `<text class="pt-label" x="${px(x) + 7}" y="${py(y) - 7}">${esc(name)}</text>`;
@@ -1203,12 +1255,18 @@
     return s + `</svg>`;
   }
 
+  // Where a grid point sits in a graph's drawing.
+  function gridPos(svg, x, y) {
+    const d = svg.dataset;
+    return [+d.left + (x - d.x0) / d.xs * d.ux, +d.m + (d.y1 - y) / d.ys * d.uy];
+  }
+
   // Shows the points currently in a plot question's answer box on its grid.
   function drawPlotted(svg, pts) {
-    const d = svg.dataset, u = +d.u, m = +d.m;
+    const d = svg.dataset;
     svg.querySelector(".plotted").innerHTML = pts
       .filter(([x, y]) => x >= +d.x0 && x <= +d.x1 && y >= +d.y0 && y <= +d.y1)
-      .map(([x, y]) => `<circle cx="${m + (x - d.x0) * u}" cy="${m + (d.y1 - y) * u}" r="6"/>`)
+      .map(([x, y]) => { const [cx, cy] = gridPos(svg, x, y); return `<circle cx="${cx}" cy="${cy}" r="6"/>`; })
       .join("");
   }
 
@@ -1217,8 +1275,9 @@
     const pt = svg.createSVGPoint();
     pt.x = e.clientX; pt.y = e.clientY;
     const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-    const d = svg.dataset, u = +d.u, m = +d.m;
-    const x = Math.round((p.x - m) / u + +d.x0), y = Math.round(+d.y1 - (p.y - m) / u);
+    const d = svg.dataset, xs = +d.xs, ys = +d.ys;
+    const x = +(+d.x0 + Math.round((p.x - d.left) / d.ux) * xs).toFixed(6);
+    const y = +(+d.y1 - Math.round((p.y - d.m) / d.uy) * ys).toFixed(6);
     return x < +d.x0 || x > +d.x1 || y < +d.y0 || y > +d.y1 ? null : [x, y];
   }
 
@@ -1316,7 +1375,8 @@
     const style = SCALE_STYLES[s.style] ? s.style : "line", st = SCALE_STYLES[style];
     const min = Number(s.min ?? 0), max = Number(s.max ?? 10), major = Number(s.major || 1), minor = Number(s.minor || major);
     const unit = esc(s.unit || "");
-    let svg = `<svg class="scale${mark ? " mark" : ""}" viewBox="0 0 ${st.W} ${st.H}" width="${st.W}"
+    const height = st.H + (style === "line" && Array.isArray(s.words) ? 20 : 0);
+    let svg = `<svg class="scale${mark ? " mark" : ""}" viewBox="0 0 ${st.W} ${height}" width="${st.W}"
       data-style="${style}" data-min="${min}" data-max="${max}" data-minor="${minor}"
       role="img" aria-label="Scale from ${min} to ${max} ${unit}${mark ? ". Click to set the scale." : ""}">`;
     svg += st.body();
@@ -1327,6 +1387,10 @@
       svg += st.tick((v - min) / (max - min), isMajor, isMajor ? fmtNum(v) : null);
     }
     if (unit) svg += st.unit(unit);
+    // words: [[0, "Impossible"], [0.5, "Even chance"], [1, "Certain"]] adds words under a number line.
+    if (style === "line" && Array.isArray(s.words)) {
+      s.words.forEach(([v, w]) => { svg += `<text class="scale-word" x="${30 + 470 * (v - min) / (max - min)}" y="108" text-anchor="middle">${esc(w)}</text>`; });
+    }
     const shown = !mark && s.value !== undefined ? st.pointer((s.value - min) / (max - min)) : "";
     svg += `<g class="ptr">${shown}</g>`;
     if (mark) svg += `<g class="ghost-ptr"></g>`;
@@ -1744,6 +1808,142 @@
     return { correct: false, message: `Your symbols show ${total} ${pg.item || ""}. Try again.` };
   }
 
+  // Colours for categories in spinners, counters and pie charts; common colour names get their own colour.
+  const NAMED_COLOURS = { red: "#e05252", blue: "#3b82c4", green: "#3f9e5f", yellow: "#e8c13a", purple: "#8b5cc4",
+    orange: "#e8873a", pink: "#e47ab0", white: "#ffffff", black: "#333333", grey: "#9aa5a0" };
+  const PALETTE = ["#3f9e5f", "#e8c13a", "#3b82c4", "#e05252", "#8b5cc4", "#e8873a", "#4fb3b3", "#e47ab0"];
+  function colourFor(label, i) { return NAMED_COLOURS[String(label).toLowerCase()] || PALETTE[i % PALETTE.length]; }
+
+  // A plain table: { headings: [...], rows: [[...], ...] }.
+  function tableHTML(t) {
+    return `<table class="data-table"><thead><tr>${(t.headings || []).map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
+      <tbody>${(t.rows || []).map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  }
+
+  // Function machine: input → [step] → [step] → output, e.g. { input: "4", steps: ["× 3", "+ 2"], output: "?" }.
+  function machineSVG(m) {
+    const boxes = [{ t: m.input, end: true }, ...(m.steps || []).map(t => ({ t })), { t: m.output, end: true }];
+    let x = 6, s = "";
+    boxes.forEach((b, i) => {
+      const w = b.end ? 64 : 84;
+      s += `<rect class="${b.end ? "m-end" : "m-step"}" x="${x}" y="14" width="${w}" height="48" rx="8"/>`;
+      s += `<text class="m-text" x="${x + w / 2}" y="44" text-anchor="middle">${esc(b.t)}</text>`;
+      x += w;
+      if (i < boxes.length - 1) {
+        s += `<line class="m-arrow" x1="${x + 4}" y1="38" x2="${x + 26}" y2="38"/><polygon class="m-head" points="${x + 24},32 ${x + 34},38 ${x + 24},44"/>`;
+        x += 38;
+      }
+    });
+    return `<svg class="machine" viewBox="0 0 ${x + 6} 76" width="${x + 6}" role="img" aria-label="Function machine">${s}</svg>`;
+  }
+
+  // A straight-sided shape from corner points (x across, y up), with each side labelled with its length.
+  // { points: [[0,0],[8,0],[8,5],[0,5]], unit: "cm", hide: [1] (show "?" on side 1), labels: false, grid: true }
+  function outlineSVG(o) {
+    const pts = o.points || [], xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    const k = Math.min(32, 280 / (maxX - minX || 1), 200 / (maxY - minY || 1)), pad = 46;
+    const W = (maxX - minX) * k + 2 * pad, H = (maxY - minY) * k + 2 * pad;
+    const sx = x => pad + (x - minX) * k, sy = y => pad + (maxY - y) * k;
+    let s = "";
+    if (o.grid) {
+      for (let x = minX; x <= maxX; x++) s += `<line class="o-grid" x1="${sx(x)}" y1="${sy(minY)}" x2="${sx(x)}" y2="${sy(maxY)}"/>`;
+      for (let y = minY; y <= maxY; y++) s += `<line class="o-grid" x1="${sx(minX)}" y1="${sy(y)}" x2="${sx(maxX)}" y2="${sy(y)}"/>`;
+    }
+    s += `<polygon class="o-shape" points="${pts.map(([x, y]) => sx(x) + "," + sy(y)).join(" ")}"/>`;
+    if (o.labels !== false) {
+      // Push each label outwards from the shape, using which way round the corners go.
+      const area = pts.reduce((a, [x, y], i) => { const [nx, ny] = pts[(i + 1) % pts.length]; return a + x * ny - nx * y; }, 0);
+      const out = area > 0 ? 1 : -1;
+      pts.forEach(([x, y], i) => {
+        const [nx, ny] = pts[(i + 1) % pts.length], len = Math.hypot(nx - x, ny - y);
+        const mx = (sx(x) + sx(nx)) / 2, my = (sy(y) + sy(ny)) / 2;
+        const dx = (sx(nx) - sx(x)) / (len * k), dy = (sy(ny) - sy(y)) / (len * k);
+        // Outward direction from the side; labels on upright sides sit beside the edge rather than centred on it.
+        const ox = -dy * out, oy = dx * out, upright = Math.abs(ox) > Math.abs(oy);
+        const lx = mx + ox * (upright ? 8 : 16), ly = my + oy * 16;
+        const anchor = upright ? (ox > 0 ? "start" : "end") : "middle";
+        const text = (o.hide || []).includes(i) ? "?" : `${+len.toFixed(2)}${o.unit ? " " + o.unit : ""}`;
+        s += `<text class="o-label" x="${lx}" y="${ly + 4}" text-anchor="${anchor}">${esc(text)}</text>`;
+      });
+    }
+    return `<svg class="outline-fig" viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="A shape with labelled sides">${s}</svg>`;
+  }
+
+  // A spinner with equal sections, e.g. ["red", "blue", "red", "green"].
+  function spinnerSVG(sections) {
+    const n = sections.length, at = (deg, r) => [110 + r * Math.cos(deg * Math.PI / 180), 110 + r * Math.sin(deg * Math.PI / 180)];
+    const order = [...new Set(sections.map(String))];
+    let s = "";
+    sections.forEach((label, i) => {
+      const a0 = -90 + i * 360 / n, a1 = a0 + 360 / n, [x0, y0] = at(a0, 100), [x1, y1] = at(a1, 100), [tx, ty] = at((a0 + a1) / 2, 64);
+      s += `<path class="spin-part" style="fill:${colourFor(label, order.indexOf(String(label)))}" d="M110 110 L${x0} ${y0} A100 100 0 ${360 / n > 180 ? 1 : 0} 1 ${x1} ${y1} Z"/>`;
+      s += `<text class="spin-label" x="${tx}" y="${ty + 4}" text-anchor="middle">${esc(label)}</text>`;
+    });
+    s += `<line class="spin-arrow" x1="110" y1="110" x2="150" y2="70"/><circle class="clock-hub" cx="110" cy="110" r="6"/>`;
+    return `<svg class="spinner" viewBox="0 0 220 220" width="220" role="img" aria-label="A spinner">${s}</svg>`;
+  }
+
+  // A bag of counters, e.g. { red: 3, blue: 7 }.
+  function countersSVG(c) {
+    const dots = Object.entries(c).flatMap(([name, n], i) => Array.from({ length: Number(n) }, () => colourFor(name, i)));
+    const per = Math.min(10, dots.length), rows = Math.ceil(dots.length / per);
+    const s = dots.map((col, i) => `<circle class="counter" style="fill:${col}" cx="${22 + (i % per) * 30}" cy="${22 + Math.floor(i / per) * 30}" r="12"/>`).join("");
+    const key = Object.entries(c).map(([name, n]) => `${n} ${name}`).join(", ");
+    return `<svg class="counters" viewBox="0 0 ${per * 30 + 14} ${rows * 30 + 14}" width="${per * 30 + 14}" role="img" aria-label="Counters: ${esc(key)}">${s}</svg>
+      <div class="picto-key">${esc(key)}</div>`;
+  }
+
+  // Bar chart: { labels: [...], values: [...], ystep: 2, ymax: 14, ylabel: "Frequency" }.
+  // On a "drawbar" question the bar at position "ask" is drawn by the student (value is their bar).
+  function barsSVG(b, ask, value) {
+    const labels = b.labels || [], values = b.values || [], ystep = b.ystep || 1;
+    const ymax = b.ymax || Math.ceil(Math.max(...values.filter(v => v != null), value || 0, 1) / ystep) * ystep;
+    const bw = 64, W = 70 + labels.length * bw, top = 26, base = 216, y = v => base - v / ymax * (base - top);
+    let s = "";
+    for (let v = 0; v <= ymax + 1e-9; v += ystep) {
+      s += `<line class="bar-grid" x1="56" y1="${y(v)}" x2="${W - 8}" y2="${y(v)}"/><text class="tick" x="50" y="${y(v) + 4}" text-anchor="end">${+v.toFixed(4)}</text>`;
+    }
+    labels.forEach((label, i) => {
+      const x = 62 + i * bw, v = i === ask ? value : values[i];
+      if (i === ask) s += `<rect class="bar-hit" x="${x}" y="${top}" width="${bw - 12}" height="${base - top}"/>`;
+      if (v != null && v > 0) s += `<rect class="bar${i === ask ? " ask" : ""}" x="${x}" y="${y(v)}" width="${bw - 12}" height="${base - y(v)}"/>`;
+      s += `<text class="bar-label" x="${x + (bw - 12) / 2}" y="${base + 18}" text-anchor="middle">${esc(label)}</text>`;
+    });
+    s += `<line class="axis" x1="56" y1="${base}" x2="${W - 8}" y2="${base}"/><line class="axis" x1="56" y1="${top - 6}" x2="56" y2="${base}"/>`;
+    if (b.ylabel) s += `<text class="axis-title" x="8" y="14">${esc(b.ylabel)}</text>`;
+    return `<svg class="bars${ask != null ? " set" : ""}" viewBox="0 0 ${W} ${base + 30}" width="${W}"
+      data-ymax="${ymax}" data-top="${top}" data-base="${base}" data-snap="${b.snap || 1}" role="img" aria-label="Bar chart">${s}</svg>`;
+  }
+  function barValueAt(svg, e) {
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse()), d = svg.dataset;
+    const v = (d.base - p.y) / (d.base - d.top) * d.ymax;
+    return Math.max(0, Math.min(+d.ymax, Math.round(v / d.snap) * d.snap));
+  }
+
+  // Stem and leaf diagram: { rows: [[1, "2 5 8"], [2, "1 3 3 7"]], key: "2 | 3 means 23" }.
+  function stemLeafHTML(sl) {
+    return `<table class="data-table stem-leaf"><thead><tr><th>Stem</th><th>Leaf</th></tr></thead><tbody>
+      ${(sl.rows || []).map(([stem, leaves]) => `<tr><td class="num">${esc(stem)}</td><td class="leaves">${esc(leaves)}</td></tr>`).join("")}
+      </tbody></table>${sl.key ? `<div class="picto-key">Key: ${esc(sl.key)}</div>` : ""}`;
+  }
+
+  // Pie chart from angles: { sectors: [["Walk", 120], ["Bus", 90]], showAngles: true }.
+  function pieSVG(p) {
+    const at = (deg, r) => [130 + r * Math.cos(deg * Math.PI / 180), 120 + r * Math.sin(deg * Math.PI / 180)];
+    let a = -90, s = "";
+    (p.sectors || []).forEach(([label, angle], i) => {
+      const [x0, y0] = at(a, 100), [x1, y1] = at(a + angle, 100), [tx, ty] = at(a + angle / 2, 62);
+      s += `<path class="pie-part" style="fill:${colourFor(label, i)}" d="M130 120 L${x0} ${y0} A100 100 0 ${angle > 180 ? 1 : 0} 1 ${x1} ${y1} Z"/>`;
+      s += `<text class="spin-label" x="${tx}" y="${ty + (p.showAngles ? 0 : 4)}" text-anchor="middle">${esc(label)}</text>`;
+      if (p.showAngles) s += `<text class="pie-angle" x="${tx}" y="${ty + 14}" text-anchor="middle">${angle}°</text>`;
+      a += angle;
+    });
+    return `<svg class="pie" viewBox="0 0 260 240" width="260" role="img" aria-label="Pie chart">${s}</svg>`;
+  }
+
   // Select: tap every right answer. The answer box holds the chosen options separated by |.
   function selectHTML(spec, value) {
     const chosen = new Set((value || "").split("|").filter(Boolean).map(normText));
@@ -1841,6 +2041,10 @@
     }
     if (spec.kind === "pictogram") return markPictogram(saved.value, spec.answer, spec.pictogram);
     if (spec.kind === "select") return markSelect(saved.value, spec.answer);
+    if (spec.kind === "drawbar") {
+      return Number(saved.value) === readNumber(spec.answer) ? { correct: true, message: "Correct!" }
+        : { correct: false, message: `Your bar reaches ${Number(saved.value)}. Try again.` };
+    }
     if (spec.kind === "choice") {
       return normText(saved.value) === normText(spec.answer)
         ? { correct: true, message: "Correct!" }
@@ -1891,14 +2095,22 @@
       if (item.polygon) html += `<div class="graph-wrap">${polygonSVG(item.polygon)}</div>`;
       if (item.tally) html += `<div class="graph-wrap">${tallyHTML(item.tally)}</div>`;
       if (item.pictogram) html += `<div class="graph-wrap">${pictogramHTML(item.pictogram)}</div>`;
-      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram }) => {
-        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram };
+      if (item.table) html += `<div class="graph-wrap">${tableHTML(item.table)}</div>`;
+      if (item.machine) html += `<div class="graph-wrap col-wrap">${machineSVG(item.machine)}</div>`;
+      if (item.outline) html += `<div class="graph-wrap">${outlineSVG(item.outline)}</div>`;
+      if (item.spinner) html += `<div class="graph-wrap">${spinnerSVG(item.spinner)}</div>`;
+      if (item.counters) html += `<div class="graph-wrap">${countersSVG(item.counters)}</div>`;
+      if (item.bars) html += `<div class="graph-wrap">${barsSVG(item.bars)}</div>`;
+      if (item.stemleaf) html += `<div class="graph-wrap">${stemLeafHTML(item.stemleaf)}</div>`;
+      if (item.pie) html += `<div class="graph-wrap">${pieSVG(item.pie)}</div>`;
+      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars }) => {
+        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
         const value = esc(saved ? saved.value : "");
         const aria = `aria-label="Answer to question ${n}${label}"`;
         // Plot, mark, order and choice questions are answered by tapping only; the hidden box just holds the answer.
-        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column", "shade", "tally", "pictogram", "select"].includes(kind)
+        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column", "shade", "tally", "pictogram", "select", "drawbar"].includes(kind)
           ? `<input type="hidden" class="answer-value" value="${value}">`
           : kind === "explain"
           ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
@@ -1917,6 +2129,7 @@
             ${kind === "tally" ? tallyWidgetHTML(saved ? Number(saved.value) || 0 : 0) : ""}
             ${kind === "pictogram" ? `<div class="graph-wrap in-part picto-wrap">${pictogramHTML(pictogram, pictoBuild(saved ? saved.value : ""))}</div>` : ""}
             ${kind === "select" ? selectHTML(spec, saved ? saved.value : "") : ""}
+            ${kind === "drawbar" ? `<div class="graph-wrap in-part bars-wrap">${barsSVG(bars, bars.ask, saved ? Number(saved.value) : null)}</div>` : ""}
             <div class="answer-row">
               ${field}
               ${kind === "expr" ? `<button type="button" class="sq-btn" title="Insert ²">x²</button>` : ""}
@@ -2003,6 +2216,7 @@
         spec.kind === "tally" ? "Add some tally marks first." :
         spec.kind === "pictogram" ? "Add some symbols first." :
         spec.kind === "select" ? "Tap at least one answer first." :
+        spec.kind === "drawbar" ? "Click on the chart to draw the bar first." :
         partEl.querySelector("svg.scale") ? "Click on the scale to give your answer first." :
         "Click on the grid to plot your answer first.";
       return;
@@ -2100,7 +2314,15 @@
     const shadePart = e.target.closest("svg.shape-fig.set .frac-part");
     const tallyBtn = e.target.closest(".tally-btn"), pictoBtn = e.target.closest(".picto-btn");
     const answerBox = part.querySelector("input.answer-value");
-    if (plotGraph) plotClick(part, plotGraph, e);
+    const barChart = e.target.closest("svg.bars.set");
+    if (barChart) {
+      // Clicking the chart sets the height of the bar being drawn.
+      const v = barValueAt(barChart, e), b = practiceSpecs[part.dataset.id].bars;
+      answerBox.value = v > 0 ? v : "";
+      barChart.outerHTML = barsSVG(b, b.ask, v > 0 ? v : null);
+      clearResult(part);
+    }
+    else if (plotGraph) plotClick(part, plotGraph, e);
     else if (markScale) scaleClick(part, markScale, e);
     else if (orderTile) orderClick(part, orderTile);
     else if (shadePart) {
@@ -2182,8 +2404,9 @@
     if (!svg) return;
     const at = gridPointAt(svg, e), ghost = svg.querySelector(".ghost"), d = svg.dataset;
     if (!at) { ghost.style.display = "none"; return; }
-    ghost.setAttribute("cx", +d.m + (at[0] - d.x0) * d.u);
-    ghost.setAttribute("cy", +d.m + (d.y1 - at[1]) * d.u);
+    const [gx, gy] = gridPos(svg, at[0], at[1]);
+    ghost.setAttribute("cx", gx);
+    ghost.setAttribute("cy", gy);
     ghost.style.display = "";
   });
   // Column method boxes: keep the answer in step, and move to the next column after each digit
