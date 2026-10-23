@@ -365,6 +365,22 @@
   .scale.mark { cursor: pointer; background: var(--white); border-radius: 8px; }
   .scale .ghost-ptr { opacity: .3; pointer-events: none; }
 
+  .clock { display: block; max-width: 100%; height: auto; user-select: none; }
+  .clock text { font-family: "Inter", sans-serif; }
+  .clock .clock-face { fill: var(--white); stroke: var(--ink); stroke-width: 3; }
+  .clock .clock-tick { stroke: var(--muted); stroke-width: 1.2; }
+  .clock .clock-tick.major { stroke: var(--ink); stroke-width: 2.5; }
+  .clock .clock-num { font-size: 17px; font-weight: 600; fill: var(--ink); }
+  .clock .hand-line { stroke: var(--ink); stroke-linecap: round; }
+  .clock .hour .hand-line { stroke-width: 8; }
+  .clock .minute .hand-line { stroke-width: 4.5; }
+  .clock .clock-hub { fill: var(--ink); }
+  .clock.set { touch-action: none; background: var(--white); border-radius: 50%; }
+  .clock.set .hour .hand-line { stroke: var(--green-800); }
+  .clock.set .minute .hand-line { stroke: #c2410c; }
+  .clock .hand-hit { stroke: transparent; stroke-width: 28; stroke-linecap: round; cursor: grab; pointer-events: stroke; }
+  .clock.dragging .hand-hit { cursor: grabbing; }
+
   .order-widget { margin-bottom: 12px; }
   .order-caption { font-size: 12px; font-weight: 600; color: var(--muted); margin: 0 0 6px; }
   .order-caption b { color: var(--ink); }
@@ -978,7 +994,7 @@
   // "order" parts are answered by tapping tiles into order; "choice" parts by tapping one option.
   const KIND_FOR_TYPE = {
     algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords", mark: "num",
-    order: "order", choice: "choice"
+    order: "order", choice: "choice", time: "time", clock: "clock"
   };
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
   function normText(s) {
@@ -1025,7 +1041,8 @@
         (p.kind === "expr" && !parseExpr(p.answer)) || (p.kind === "num" && readNumber(p.answer) === null) ||
         (p.kind === "coords" && !readPoints(p.answer)) ||
         (p.kind === "order" && (!p.items || p.answer.split(",").length !== p.items.length)) ||
-        (p.kind === "choice" && (!p.options || !p.options.some(o => normText(o) === normText(p.answer)))));
+        (p.kind === "choice" && (!p.options || !p.options.some(o => normText(o) === normText(p.answer)))) ||
+        ((p.kind === "time" || p.kind === "clock") && !readTime(p.answer)));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
       let id = hashText([q.text || "", ...parts.map(p => p.text)].join("|"));
       while (items.some(it => it.id === id)) id += "x";
@@ -1033,7 +1050,10 @@
       // A graph on a grouped question, or on a non-plot question, is shown above the parts for reading from.
       const itemGraph = grouped || !parts[0].plot ? q.graph || null : null;
       const itemScale = grouped || !parts[0].mark ? q.scale || null : null;
-      items.push({ id, section: q.section || "", stem: q.text || "", diagram: q.diagram || "", graph: itemGraph, scale: itemScale, parts });
+      items.push({
+        id, section: q.section || "", stem: q.text || "", diagram: q.diagram || "",
+        graph: itemGraph, scale: itemScale, clock: q.clock ? String(q.clock) : "", parts
+      });
     });
     if (!items.length) return;
     PRACTICE[key] = {
@@ -1346,6 +1366,96 @@
     clearResult(part);
   }
 
+  // Times: "3:45", "03:45", "7:15 pm" or "19:15". day is minutes after midnight, or null when it could be
+  // either am or pm (a 1-12 hour with no am/pm).
+  function readTime(raw) {
+    const m = String(raw).trim().toLowerCase().match(/^(\d{1,2})\s*[:.]\s*(\d{2})\s*(a\.?\s*m\.?|p\.?\s*m\.?)?$/);
+    if (!m) return null;
+    const h = +m[1], min = +m[2];
+    if (min > 59 || h > 23) return null;
+    if (m[3]) {
+      if (h < 1 || h > 12) return null;
+      return { h12: h % 12, m: min, day: (h % 12 + (m[3][0] === "p" ? 12 : 0)) * 60 + min };
+    }
+    // 0:xx, 13:xx and above, or a leading zero like 09:40 are 24-hour times.
+    const exact = h === 0 || h >= 13 || /^0\d/.test(m[1]);
+    return { h12: h % 12, m: min, day: exact ? h * 60 + min : null };
+  }
+
+  function markTime(value, answer) {
+    const got = readTime(value), want = readTime(answer);
+    if (!got) return { correct: false, message: "Write the time like 3:45. You can add am or pm." };
+    if (got.h12 !== want.h12 || got.m !== want.m) return { correct: false, message: "Not quite. Try again." };
+    if (want.day !== null && got.day === null) {
+      return { correct: false, message: "Nearly! Say whether it's am or pm, or use the 24-hour clock." };
+    }
+    if (want.day !== null && got.day !== want.day) return { correct: false, message: "Check whether it should be am or pm." };
+    return { correct: true, message: "Correct!" };
+  }
+
+  // Clocks: the answer box holds the two hand angles, "hour,minute", in degrees clockwise from 12.
+  const handAngles = (h12, m) => [(h12 + m / 60) * 30, m * 6];
+  const angleGap = (a, b) => { const x = ((a - b) % 360 + 360) % 360; return x > 180 ? x - 360 : x; };
+
+  function markClock(value, answer) {
+    const [ha, ma] = String(value).split(",").map(Number);
+    const want = readTime(answer);
+    const minuteOk = Math.round(ma / 6) % 60 === want.m;
+    // The hour hand counts anywhere from the hour to the next one (just on the hour for o'clock times).
+    const from = want.h12 * 30, to = want.m === 0 ? from : from + 30;
+    const hourOk = angleGap(ha, from) >= -4 && angleGap(ha, to) <= 4;
+    if (minuteOk && hourOk) return { correct: true, message: "Correct!" };
+    if (minuteOk) {
+      const hr = want.h12 || 12, next = hr % 12 + 1;
+      return { correct: false, message: want.m === 0
+        ? `The minute hand is right. Now check the hour hand: it should point straight at the ${hr}.`
+        : `The minute hand is right. Now check the hour hand: it should be between the ${hr} and the ${next}.` };
+    }
+    if (hourOk) return { correct: false, message: "The hour hand is fine. Now check the minute hand." };
+    return { correct: false, message: "Not quite. The short hand shows the hour and the long hand shows the minutes." };
+  }
+
+  function clockSVG(time, interactive, angles) {
+    let [ha, ma] = angles || (time ? handAngles(readTime(time).h12, readTime(time).m) : [0, 0]);
+    const at = (deg, r) => [120 + r * Math.sin(deg * Math.PI / 180), 120 - r * Math.cos(deg * Math.PI / 180)];
+    let s = `<svg class="clock${interactive ? " set" : ""}" viewBox="0 0 240 240" width="240"
+      role="img" aria-label="${interactive ? "Clock. Drag the hands to set the time." : "Clock"}">
+      <circle class="clock-face" cx="120" cy="120" r="112"/>`;
+    for (let i = 0; i < 60; i++) {
+      const [x1, y1] = at(i * 6, 106), [x2, y2] = at(i * 6, i % 5 ? 101 : 93);
+      s += `<line class="${i % 5 ? "clock-tick" : "clock-tick major"}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+    }
+    for (let n = 1; n <= 12; n++) {
+      const [x, y] = at(n * 30, 79);
+      s += `<text class="clock-num" x="${x}" y="${y + 6}" text-anchor="middle">${n}</text>`;
+    }
+    const hand = (which, deg, len) => `<g class="hand ${which}" data-hand="${which}" transform="rotate(${deg} 120 120)">
+      <line class="hand-line" x1="120" y1="${which === "hour" ? 132 : 136}" x2="120" y2="${120 - len}"/>
+      ${interactive ? `<line class="hand-hit" data-hand="${which}" x1="120" y1="120" x2="120" y2="${120 - len - 6}"/>` : ""}
+    </g>`;
+    s += hand("hour", ha, 54) + hand("minute", ma, 86) + `<circle class="clock-hub" cx="120" cy="120" r="6"/>`;
+    return s + `</svg>`;
+  }
+
+  // Dragging a hand: the minute hand snaps to whole minutes, the hour hand to small steps so it can sit between numbers.
+  let clockDrag = null;
+  function moveClockHand(e) {
+    const { svg, which, part } = clockDrag;
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    let deg = Math.atan2(p.x - 120, 120 - p.y) * 180 / Math.PI;
+    deg = (deg + 360) % 360;
+    const step = which === "minute" ? 6 : 2.5;
+    deg = (Math.round(deg / step) * step) % 360;
+    svg.querySelector(`.hand.${which}`).setAttribute("transform", `rotate(${deg} 120 120)`);
+    const input = part.querySelector("input");
+    const angles = input.value ? input.value.split(",").map(Number) : [0, 0];
+    angles[which === "hour" ? 0 : 1] = deg;
+    input.value = angles.join(",");
+    clearResult(part);
+  }
+
   // Changing a tapped answer (grid, scale, tiles or options) clears the old result until it's checked again.
   function clearResult(part) {
     part.classList.remove("correct", "incorrect");
@@ -1415,6 +1525,8 @@
     }
     if (spec.kind === "coords") return markCoords(saved.value, spec.answer);
     if (spec.kind === "order") return markOrder(saved.value, spec.answer);
+    if (spec.kind === "time") return markTime(saved.value, spec.answer);
+    if (spec.kind === "clock") return markClock(saved.value, spec.answer);
     if (spec.kind === "choice") {
       return normText(saved.value) === normText(spec.answer)
         ? { correct: true, message: "Correct!" }
@@ -1459,6 +1571,7 @@
       if (item.diagram) html += `<div class="diagram">${item.diagram}</div>`;
       if (item.graph) html += `<div class="graph-wrap">${graphSVG(item.graph, false)}</div>`;
       if (item.scale) html += `<div class="graph-wrap">${scaleSVG(item.scale, false)}</div>`;
+      if (item.clock) html += `<div class="graph-wrap">${clockSVG(item.clock, false)}</div>`;
       item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels }) => {
         const spec = practiceSpecs[id] = { answer, kind, items, options, labels };
         const saved = practiceSaved[id];
@@ -1466,7 +1579,7 @@
         const value = esc(saved ? saved.value : "");
         const aria = `aria-label="Answer to question ${n}${label}"`;
         // Plot, mark, order and choice questions are answered by tapping only; the hidden box just holds the answer.
-        const field = plot || mark || kind === "order" || kind === "choice"
+        const field = plot || mark || kind === "order" || kind === "choice" || kind === "clock"
           ? `<input type="hidden" value="${value}">`
           : kind === "explain"
           ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
@@ -1478,6 +1591,7 @@
             ${scale ? `<div class="graph-wrap in-part">${scaleSVG(scale, mark)}</div>` : ""}
             ${kind === "order" ? orderWidgetHTML(spec, saved ? saved.value : "") : ""}
             ${kind === "choice" ? choiceHTML(spec, saved ? saved.value : "") : ""}
+            ${kind === "clock" ? `<div class="graph-wrap in-part">${clockSVG(null, true, saved ? saved.value.split(",").map(Number) : null)}</div>` : ""}
             <div class="answer-row">
               ${field}
               ${kind === "expr" ? `<button type="button" class="sq-btn" title="Insert ²">x²</button>` : ""}
@@ -1550,6 +1664,7 @@
     if (!value && field.type === "hidden") {
       partEl.querySelector(".feedback").textContent =
         spec.kind === "choice" ? "Choose an answer first." :
+        spec.kind === "clock" ? "Drag the clock hands to set the time first." :
         partEl.querySelector("svg.scale") ? "Click on the scale to give your answer first." :
         "Click on the grid to plot your answer first.";
       return;
@@ -1661,6 +1776,25 @@
       input.setSelectionRange(start + 1, start + 1);
     }
   });
+  // Clock hands are dragged with the mouse or a finger.
+  $("practiceBody").addEventListener("pointerdown", e => {
+    const hit = e.target.closest("svg.clock.set .hand-hit");
+    if (!hit) return;
+    e.preventDefault();
+    const svg = hit.closest("svg");
+    clockDrag = { svg, which: hit.dataset.hand, part: svg.closest(".part") };
+    try { svg.setPointerCapture(e.pointerId); } catch (err) { /* dragging still works within the clock */ }
+    svg.classList.add("dragging");
+    moveClockHand(e);
+  });
+  $("practiceBody").addEventListener("pointermove", e => { if (clockDrag) moveClockHand(e); });
+  const endClockDrag = () => {
+    if (clockDrag) clockDrag.svg.classList.remove("dragging");
+    clockDrag = null;
+  };
+  $("practiceBody").addEventListener("pointerup", endClockDrag);
+  $("practiceBody").addEventListener("pointercancel", endClockDrag);
+
   // A ring follows the pointer on plot grids to show which point a click would place.
   $("practiceBody").addEventListener("pointermove", e => {
     // On scales, a faint pointer previews where a click would set it.

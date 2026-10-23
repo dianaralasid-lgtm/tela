@@ -53,6 +53,14 @@
                   { question: "Write these in order.", type: "order",
                     items: ["0.5", "0.25", "0.7"], answer: "0.25, 0.5, 0.7",
                     labels: ["smallest", "largest"] }
+     "time"     A time such as "3:45", "7:15 pm" or "19:15". If the answer
+                has no am/pm (e.g. "3:45"), any matching time is accepted. If
+                it has am/pm or is a 24-hour time (e.g. "19:15" or "09:40"),
+                the student must get am/pm right too (7:15 pm and 19:15 both
+                count). To show a clock to read, add  clock: "3:45".
+     "clock"    The student drags the hands of a clock to show the answer,
+                e.g. answer: "3:45". The minute hand must be exact; the hour
+                hand can be anywhere between the hour and the next one.
      "choice"   The student taps one of the "options"; the answer is the
                 right one.
                   { question: "Which is bigger?", type: "choice",
@@ -1756,6 +1764,42 @@ QUESTION_BANK.add({
       items: ["12.4", "12.04", "12.44", "12.14"], answer: "12.04, 12.14, 12.4, 12.44", labels: ["fastest", "slowest"] },
     { section: "Problem solving", question: "Tom says 0.45 is bigger than 0.5, because 45 is bigger than 5. Explain why Tom is wrong.", type: "explain", marks: 1,
       answer: "0.5 is the same as 0.50, which is 50 hundredths, and 0.45 is only 45 hundredths. Comparing the tenths first, 0.5 has 5 tenths but 0.45 has only 4, so 0.5 is bigger." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Time",
+  title: "Time",
+  type: "time",
+  questionsPerSet: 10,
+  tip: "Type times like 3:45, adding am or pm where needed (or use the 24-hour clock, e.g. 19:15). To set a clock, drag the <b>short hour hand</b> and the <b>long minute hand</b>, then press <b>Check</b>.",
+  questions: [
+    { section: "Reading clocks", question: "What time does the clock show?", marks: 1, answer: "3:00", clock: "3:00" },
+    { section: "Reading clocks", question: "What time does the clock show?", marks: 1, answer: "7:30", clock: "7:30" },
+    { section: "Reading clocks", question: "What time does the clock show?", marks: 1, answer: "10:15", clock: "10:15" },
+    { section: "Reading clocks", question: "What time does the clock show?", marks: 1, answer: "1:45", clock: "1:45" },
+    { section: "Reading clocks", question: "What time does the clock show?", marks: 1, answer: "4:20", clock: "4:20" },
+    { section: "Reading clocks", question: "What time does the clock show?", marks: 1, answer: "11:55", clock: "11:55" },
+    { section: "Reading clocks", question: "What time does the clock show? Give your answer to the nearest minute.", marks: 1, answer: "8:37", clock: "8:37" },
+
+    { section: "Setting clocks", question: "Set the clock to 9 o'clock.", type: "clock", marks: 1, answer: "9:00" },
+    { section: "Setting clocks", question: "Set the clock to half past 5.", type: "clock", marks: 1, answer: "5:30" },
+    { section: "Setting clocks", question: "Set the clock to quarter past 2.", type: "clock", marks: 1, answer: "2:15" },
+    { section: "Setting clocks", question: "Set the clock to quarter to 7.", type: "clock", marks: 1, answer: "6:45" },
+    { section: "Setting clocks", question: "Set the clock to 11:20.", type: "clock", marks: 1, answer: "11:20" },
+    { section: "Setting clocks", question: "Set the clock to ten to 5.", type: "clock", marks: 1, answer: "4:50" },
+
+    { section: "12-hour and 24-hour time", question: "Write 14:30 as a 12-hour time, using am or pm.", marks: 1, answer: "2:30 pm" },
+    { section: "12-hour and 24-hour time", question: "Write 7:15 pm as a 24-hour time.", marks: 1, answer: "19:15" },
+    { section: "12-hour and 24-hour time", question: "Which time is the same as 17:20?", type: "choice", marks: 1,
+      options: ["7:20 pm", "5:20 pm", "5:20 am", "7:20 am"], answer: "5:20 pm" },
+
+    { section: "Problem solving", question: "A film starts at 6:45 pm and lasts 1 hour 50 minutes. What time does it finish?", marks: 2, answer: "8:35 pm" },
+    { section: "Problem solving", question: "A bus leaves at 09:40 and arrives at 10:25. How long is the journey, in minutes?", type: "number", marks: 2, answer: "45" },
+    { section: "Problem solving", question: "How many minutes are there in 2½ hours?", type: "number", marks: 1, answer: "150" },
+    { section: "Problem solving", question: "Mia says 2.5 hours is the same as 2 hours 50 minutes. Explain why Mia is wrong.", type: "explain", marks: 1,
+      answer: "0.5 of an hour is half an hour, which is 30 minutes, not 50. So 2.5 hours is 2 hours 30 minutes. There are 60 minutes in an hour, not 100." }
   ]
 });
 
