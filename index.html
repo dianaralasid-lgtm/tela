@@ -347,6 +347,30 @@
   .clock .hand-hit { stroke: transparent; stroke-width: 28; stroke-linecap: round; cursor: grab; pointer-events: stroke; }
   .clock.dragging .hand-hit { cursor: grabbing; }
 
+  .col-wrap { overflow-x: auto; }
+  .col-grid {
+    display: inline-grid; grid-auto-rows: 46px; padding: 10px 14px; background: var(--white);
+    border-radius: 10px; font-family: "Inter", sans-serif; font-variant-numeric: tabular-nums;
+  }
+  .col-c { display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; color: var(--ink); }
+  .col-c.ph { color: #b9c7c0; }
+  .col-c.op { font-weight: 700; }
+  .col-c.ans-row { border-top: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink); }
+  .col-c.carry-label { font-size: 10px; font-weight: 600; color: var(--muted); }
+  .col-c.bus { border-top: 2.5px solid var(--ink); }
+  .col-c.bus-left { border-left: 2.5px solid var(--ink); }
+  .col-cell {
+    width: 34px; height: 38px; text-align: center; font: inherit; font-size: 20px; font-weight: 600; color: var(--ink);
+    border: 1.5px solid var(--line); border-radius: 6px; background: var(--white); outline: none; padding: 0;
+  }
+  .col-cell:focus { border-color: var(--green-600); box-shadow: 0 0 0 3px rgba(25,135,84,.15); }
+  .part.correct .col-cell { border-color: var(--ok-line); background: var(--ok-bg); }
+  .col-cell.bad { border-color: var(--danger); background: var(--bad-bg); }
+  .col-carry {
+    width: 22px; height: 22px; text-align: center; font: inherit; font-size: 12px; color: var(--muted);
+    border: 1px dashed var(--line); border-radius: 4px; background: transparent; outline: none; padding: 0;
+  }
+
   .angle-fig { display: block; max-width: 100%; height: auto; user-select: none; }
   .angle-fig .arm { stroke: var(--ink); stroke-width: 4; stroke-linecap: round; }
   .angle-fig .angle-mark { fill: rgba(25, 135, 84, .18); stroke: var(--green-700); stroke-width: 2; }
@@ -892,7 +916,7 @@
   // "order" parts are answered by tapping tiles into order; "choice" parts by tapping one option.
   const KIND_FOR_TYPE = {
     algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords", mark: "num",
-    order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle"
+    order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle", column: "column"
   };
   const ANGLE_NAMES = ["acute", "right", "obtuse", "straight", "reflex"];
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
@@ -915,16 +939,25 @@
     const topicKind = KIND_FOR_TYPE[t.type] || "expr";
     const items = [];
     t.questions.forEach((q, i) => {
+      // A question that can't be read is skipped rather than stopping the whole dashboard.
+      try { addQuestion(q, i); }
+      catch (err) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: ${err.message}`); }
+    });
+    function addQuestion(q, i) {
       const grouped = Array.isArray(q.parts);
       const parts = (grouped ? q.parts : [q]).map((p, pi) => {
         const plot = (p.type || t.type) === "plot";
         const mark = (p.type || t.type) === "mark";
+        const kind = KIND_FOR_TYPE[p.type] || topicKind;
+        // Column-method questions work their answer out from the sum.
+        const layout = kind === "column" ? columnLayout(p.sum) : null;
         return {
           label: grouped ? String.fromCharCode(97 + pi) : "",
           text: String(p.question || ""),
           marks: Number(p.marks) || 1,
-          answer: String(p.answer ?? ""),
-          kind: KIND_FOR_TYPE[p.type] || topicKind,
+          answer: String(p.answer ?? (layout ? layout.ans : "")),
+          kind,
+          layout,
           plot,
           // A plot question always gets a grid; it sits inside the part so it can be clicked.
           graph: plot ? (p.graph || {}) : (grouped ? p.graph || null : null),
@@ -942,7 +975,8 @@
         (p.kind === "order" && (!p.items || p.answer.split(",").length !== p.items.length)) ||
         (p.kind === "choice" && (!p.options || !p.options.some(o => normText(o) === normText(p.answer)))) ||
         ((p.kind === "time" || p.kind === "clock") && !readTime(p.answer)) ||
-        (p.kind === "drawangle" && !ANGLE_NAMES.includes(normText(p.answer))));
+        (p.kind === "drawangle" && !ANGLE_NAMES.includes(normText(p.answer))) ||
+        (p.kind === "column" && !p.layout));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
       let id = hashText([q.text || "", ...parts.map(p => p.text)].join("|"));
       while (items.some(it => it.id === id)) id += "x";
@@ -955,7 +989,7 @@
         graph: itemGraph, scale: itemScale, clock: q.clock ? String(q.clock) : "",
         angle: q.angle !== undefined && Number.isFinite(Number(q.angle)) ? Number(q.angle) : null, parts
       });
-    });
+    }
     if (!items.length) return;
     PRACTICE[key] = {
       title: t.title || t.topic,
@@ -1411,6 +1445,127 @@
     return { correct: false, message: `That's ${made === "acute" || made === "obtuse" ? "an" : "a"} ${made} angle. Try again.` };
   }
 
+  // Column method: lays out a sum like "7.6 + 3.45" in place-value columns, with one answer box per digit.
+  // + and − line up the decimal points; × is by a single digit; ÷ (by a single digit) uses short division.
+  // These are function declarations (not consts) because the question loader calls columnLayout
+  // before this part of the script has run.
+  function fixedPoint(v, d) {
+    const s = String(v).padStart(d + 1, "0");
+    return d ? s.slice(0, -d) + "." + s.slice(-d) : s;
+  }
+  function decimals(s) { return (s.split(".")[1] || "").length; }
+  function wholeLen(s) { return s.split(".")[0].length; }
+
+  function columnLayout(sum) {
+    const m = String(sum || "").replace(/[−–]/g, "-").replace(/\s+/g, "")
+      .match(/^(\d+(?:\.\d+)?)([-+×x*÷/])(\d+(?:\.\d+)?)$/);
+    if (!m) return null;
+    const a = m[1], b = m[3];
+    const op = { "+": "+", "-": "−", "×": "×", x: "×", "*": "×", "÷": "÷", "/": "÷" }[m[2]];
+    const scaled = (s, d) => Math.round(Number(s) * 10 ** d);
+    let d, ans, top = a;
+    if (op === "+" || op === "−") {
+      d = Math.max(decimals(a), decimals(b));
+      const v = op === "+" ? scaled(a, d) + scaled(b, d) : scaled(a, d) - scaled(b, d);
+      if (v < 0) return null;
+      ans = fixedPoint(v, d);
+    } else if (op === "×") {
+      if (!/^\d$/.test(b)) return null;
+      d = decimals(a);
+      ans = fixedPoint(scaled(a, d) * Number(b), d);
+    } else {
+      if (!/^[1-9]$/.test(b)) return null;
+      // Add zeros after the point until it divides exactly (up to 3 extra places).
+      d = null;
+      for (let k = decimals(a); k <= decimals(a) + 3 && d === null; k++) if (scaled(a, k) % Number(b) === 0) d = k;
+      if (d === null) return null;
+      ans = fixedPoint(scaled(a, d) / Number(b), d);
+      top = fixedPoint(scaled(a, d), d);
+    }
+    const width = op === "÷" ? wholeLen(top) : Math.max(wholeLen(a), wholeLen(b), wholeLen(ans));
+    // The digits the student should write in the answer boxes, left to right.
+    const [ai, af = ""] = ans.split(".");
+    const cells = (op === "÷" ? ai.padStart(width, "0") : ai).split("").concat(af.split(""));
+    const firstNonZero = Math.max(0, cells.findIndex(c => c !== "0"));
+    return { op, a: top, b, d, ans, width, cells, firstNonZero };
+  }
+
+  function columnHTML(spec, value, result) {
+    const L = spec.layout, slots = L.width + (L.d ? L.d + 1 : 0), pointAt = L.d ? L.width : -1;
+    const given = (value || "").split("");
+    const wrong = new Set(result && result.wrong || []);
+    // The digit of a number that sits in a slot; missing decimal places show as faint placeholder zeros.
+    const digitAt = (str, s) => {
+      const [ip, fp = ""] = str.split(".");
+      if (s === pointAt) return `<span class="col-c${str.includes(".") ? "" : " ph"}">.</span>`;
+      if (s < L.width) { const k = s - (L.width - ip.length); return `<span class="col-c">${k >= 0 ? ip[k] : ""}</span>`; }
+      const k = s - L.width - 1;
+      return k < fp.length ? `<span class="col-c">${fp[k]}</span>` : `<span class="col-c ph">0</span>`;
+    };
+    const answerCell = (i, extra) => `<input class="col-cell${wrong.has(i) ? " bad" : ""}" data-i="${i}" ${extra}
+      value="${given[i] && given[i] !== "_" ? esc(given[i]) : ""}" maxlength="1" inputmode="numeric" autocomplete="off" aria-label="Answer digit ${i + 1}">`;
+    let html = "", i = 0;
+    if (L.op === "÷") {
+      const lead = L.b.length;
+      html += `<div class="col-grid bus-stop" data-dir="1" style="grid-template-columns: repeat(${lead + slots}, 40px)">`;
+      html += `<span class="col-c"></span>`.repeat(lead);
+      for (let s = 0; s < slots; s++) {
+        if (s === pointAt) { html += `<span class="col-c">.</span>`; continue; }
+        html += answerCell(i, i === 0 ? "data-start" : "");
+        i++;
+      }
+      html += L.b.split("").map(ch => `<span class="col-c divisor">${ch}</span>`).join("");
+      for (let s = 0; s < slots; s++) html += digitAt(L.a, s).replace('class="col-c', `class="col-c bus${s === 0 ? " bus-left" : ""}`);
+      return html + `</div>`;
+    }
+    const start = L.width - wholeLen(L.ans), last = L.cells.length - 1;
+    html += `<div class="col-grid" data-dir="-1" style="grid-template-columns: repeat(${slots + 1}, 40px)">`;
+    html += `<span class="col-c"></span>`;
+    for (let s = 0; s < slots; s++) html += digitAt(L.a, s);
+    html += `<span class="col-c op">${L.op}</span>`;
+    for (let s = 0; s < slots; s++) {
+      html += L.op === "×" ? `<span class="col-c">${s === slots - 1 ? L.b : ""}</span>` : digitAt(L.b, s);
+    }
+    html += `<span class="col-c ans-row"></span>`;
+    for (let s = 0; s < slots; s++) {
+      if (s === pointAt) html += `<span class="col-c ans-row">.</span>`;
+      else if (s < start) html += `<span class="col-c ans-row"></span>`;
+      else { html += `<span class="col-c ans-row">${answerCell(i, i === last ? "data-start" : "")}</span>`; i++; }
+    }
+    // A row of small boxes for carrying; they're for working and aren't marked.
+    if (L.op !== "−") {
+      html += `<span class="col-c carry-label">carry</span>`;
+      for (let s = 0; s < slots; s++) {
+        html += s === pointAt ? `<span class="col-c"></span>`
+          : `<span class="col-c"><input class="col-carry" maxlength="1" inputmode="numeric" autocomplete="off" aria-label="Carry"></span>`;
+      }
+    }
+    return html + `</div>`;
+  }
+
+  // Bus-stop answers may leave leading zeros blank; every other box must match.
+  function markColumn(value, layout) {
+    const given = (value || "").split("");
+    const wrong = [];
+    layout.cells.forEach((want, i) => {
+      const got = given[i] && given[i] !== "_" ? given[i] : "";
+      const blankOk = layout.op === "÷" && i < layout.firstNonZero && got === "";
+      if (got !== want && !blankOk) wrong.push(i);
+    });
+    if (!wrong.length) return { correct: true, message: "Correct!" };
+    return { correct: false, wrong, message: wrong.length === layout.cells.length
+      ? "Not quite. Work through the columns again."
+      : `${wrong.length === 1 ? "One digit isn't" : "Some digits aren't"} right yet. Check the box${wrong.length === 1 ? "" : "es"} in red.` };
+  }
+
+  // Have all the answer boxes that need a digit been filled in?
+  function columnComplete(value, layout) {
+    const given = (value || "").split("").map(c => (c === "_" ? "" : c));
+    if (layout.op !== "÷") return layout.cells.every((_, i) => given[i]);
+    const first = given.findIndex(Boolean);
+    return first >= 0 && layout.cells.every((_, i) => i < first || given[i]);
+  }
+
   // Changing a tapped answer (grid, scale, tiles or options) clears the old result until it's checked again.
   function clearResult(part) {
     part.classList.remove("correct", "incorrect");
@@ -1483,6 +1638,7 @@
     if (spec.kind === "time") return markTime(saved.value, spec.answer);
     if (spec.kind === "clock") return markClock(saved.value, spec.answer);
     if (spec.kind === "drawangle") return markDrawnAngle(saved.value, spec.answer);
+    if (spec.kind === "column") return markColumn(saved.value, spec.layout);
     if (spec.kind === "choice") {
       return normText(saved.value) === normText(spec.answer)
         ? { correct: true, message: "Correct!" }
@@ -1529,15 +1685,15 @@
       if (item.scale) html += `<div class="graph-wrap">${scaleSVG(item.scale, false)}</div>`;
       if (item.clock) html += `<div class="graph-wrap">${clockSVG(item.clock, false)}</div>`;
       if (item.angle !== null) html += `<div class="graph-wrap">${angleSVG(item.angle, false)}</div>`;
-      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels }) => {
-        const spec = practiceSpecs[id] = { answer, kind, items, options, labels };
+      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout }) => {
+        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
         const value = esc(saved ? saved.value : "");
         const aria = `aria-label="Answer to question ${n}${label}"`;
         // Plot, mark, order and choice questions are answered by tapping only; the hidden box just holds the answer.
-        const field = plot || mark || ["order", "choice", "clock", "drawangle"].includes(kind)
-          ? `<input type="hidden" value="${value}">`
+        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column"].includes(kind)
+          ? `<input type="hidden" class="answer-value" value="${value}">`
           : kind === "explain"
           ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
           : `<input type="text" value="${value}" placeholder="${kind === "coords" ? (plot ? "Click the grid, or type (x, y)" : "Type (x, y)") : "Your answer"}" autocomplete="off" autocapitalize="none" spellcheck="false" ${kind === "num" ? `inputmode="decimal"` : ""} ${aria}>`;
@@ -1550,6 +1706,7 @@
             ${kind === "choice" ? choiceHTML(spec, saved ? saved.value : "") : ""}
             ${kind === "clock" ? `<div class="graph-wrap in-part">${clockSVG(null, true, saved ? saved.value.split(",").map(Number) : null)}</div>` : ""}
             ${kind === "drawangle" ? `<div class="graph-wrap in-part">${angleSVG(saved ? Number(saved.value) : 30, true)}</div>` : ""}
+            ${kind === "column" ? `<div class="graph-wrap in-part col-wrap">${columnHTML(spec, saved ? saved.value : "", result)}</div>` : ""}
             <div class="answer-row">
               ${field}
               ${kind === "expr" ? `<button type="button" class="sq-btn" title="Insert ²">x²</button>` : ""}
@@ -1607,14 +1764,22 @@
     partEl.classList.toggle("correct", !!result && result.correct);
     partEl.classList.toggle("incorrect", !!result && !result.correct);
     partEl.querySelector(".feedback").innerHTML = feedbackHTML(spec, result, saved);
+    if (spec.kind === "column") {
+      const wrong = new Set(result && result.wrong || []);
+      partEl.querySelectorAll(".col-cell").forEach(c => c.classList.toggle("bad", wrong.has(Number(c.dataset.i))));
+    }
     syncPracticeStatus(updatePracticeScore());
     if (result) moveToNext(partEl);
   }
 
   function checkPart(partEl) {
-    const field = partEl.querySelector("input, textarea");
+    const field = partEl.querySelector("input.answer-value") || partEl.querySelector("input, textarea");
     const value = field.value.trim();
     const spec = practiceSpecs[partEl.dataset.id];
+    if (spec.kind === "column" && !columnComplete(value, spec.layout)) {
+      partEl.querySelector(".feedback").textContent = "Fill in every box in the answer row first.";
+      return;
+    }
     if (spec.kind === "order" && placedTiles(value).length < spec.items.length) {
       partEl.querySelector(".feedback").textContent = "Put all the numbers into your order first.";
       return;
@@ -1638,7 +1803,8 @@
     const next = parts[parts.indexOf(partEl) + 1];
     setTimeout(() => {
       (next || $("practiceDone")).scrollIntoView({ behavior: "smooth", block: "center" });
-      const field = next && next.querySelector("input:not([type=hidden]), textarea");
+      const field = next && (next.querySelector(".col-cell[data-start]") ||
+        next.querySelector("input:not([type=hidden]):not(.col-carry), textarea"));
       if (field) field.focus({ preventScroll: true });
     }, 400);
   }
@@ -1784,6 +1950,29 @@
     ghost.setAttribute("cy", +d.m + (d.y1 - at[1]) * d.u);
     ghost.style.display = "";
   });
+  // Column method boxes: keep the answer in step, and move to the next column after each digit
+  // (leftwards for + − ×, rightwards for short division).
+  $("practiceBody").addEventListener("input", e => {
+    const cell = e.target.closest(".col-cell, .col-carry");
+    if (!cell) return;
+    cell.value = cell.value.replace(/\D/g, "").slice(-1);
+    if (!cell.classList.contains("col-cell")) return;
+    const part = cell.closest(".part"), grid = cell.closest(".col-grid");
+    const cells = [...grid.querySelectorAll(".col-cell")].sort((x, y) => x.dataset.i - y.dataset.i);
+    part.querySelector("input.answer-value").value = cells.map(c => c.value || "_").join("");
+    cell.classList.remove("bad");
+    clearResult(part);
+    const next = cells[Number(cell.dataset.i) + Number(grid.dataset.dir)];
+    if (cell.value && next) next.focus();
+  });
+  $("practiceBody").addEventListener("keydown", e => {
+    const cell = e.target.closest(".col-cell");
+    if (!cell || e.key !== "Backspace" || cell.value) return;
+    const grid = cell.closest(".col-grid");
+    const prev = grid.querySelector(`.col-cell[data-i="${Number(cell.dataset.i) - Number(grid.dataset.dir)}"]`);
+    if (prev) { e.preventDefault(); prev.value = ""; prev.focus(); prev.dispatchEvent(new Event("input", { bubbles: true })); }
+  });
+
   // Typing coordinates into a plot question's box updates its grid too.
   $("practiceBody").addEventListener("input", e => {
     const part = e.target.closest(".part");

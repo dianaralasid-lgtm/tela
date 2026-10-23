@@ -67,6 +67,14 @@
      "drawangle"  The student drags the arm of an angle to make the type of
                 angle asked for. The answer is "acute", "right", "obtuse",
                 "straight" or "reflex".
+     "column"   The column method. Give the sum and the app lays it out in
+                columns and works out the answer itself; the student types
+                one digit per box.
+                  { question: "Use the column method to work out 7.6 + 3.45.",
+                    type: "column", sum: "7.6 + 3.45", marks: 2 }
+                Works with + and − (any numbers, decimal points lined up),
+                × by a single digit (e.g. "3.48 × 6"), and ÷ by a single
+                digit, shown as short division (e.g. "9.36 ÷ 3").
      "choice"   The student taps one of the "options"; the answer is the
                 right one.
                   { question: "Which is bigger?", type: "choice",
@@ -1859,7 +1867,7 @@ QUESTION_BANK.add({
   title: "Division of Integers and Decimals",
   type: "number",
   questionsPerSet: 10,
-  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. You can include £ or units, but you don't have to.",
+  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. For short division questions, type one digit in each box above the bus stop, starting from the left. You can include £ or units, but you don't have to.",
   questions: [
     { section: "Section A: Integers", question: "Work out 84 ÷ 4", marks: 1, answer: "21" },
     { section: "Section A: Integers", question: "Work out 156 ÷ 6", marks: 1, answer: "26" },
@@ -1876,11 +1884,15 @@ QUESTION_BANK.add({
     { section: "Section B: Decimals", question: "Which calculation has the answer 0.4?", type: "choice", marks: 1,
       options: ["4 ÷ 100", "4 ÷ 10", "0.4 ÷ 10", "40 ÷ 1000"], answer: "4 ÷ 10" },
 
-    { section: "Section C: Problem Solving", question: "£13.50 is shared equally between 3 friends. How much does each friend get?", marks: 2, answer: "£4.50" },
-    { section: "Section C: Problem Solving", question: "A 2 m ribbon is cut into 8 equal pieces. How long is each piece, in metres?", marks: 2, answer: "0.25 m" },
-    { section: "Section C: Problem Solving", question: "A pack of 6 pens costs £4.20. How much does one pen cost?", marks: 2, answer: "£0.70" },
-    { section: "Section C: Problem Solving", question: "100 people are going on a trip. Each minibus holds 15 people. How many minibuses are needed?", marks: 2, answer: "7" },
-    { section: "Section C: Problem Solving", question: "Lily says 3.6 ÷ 3 = 1.02. Explain Lily's mistake and give the correct answer.", type: "explain", marks: 2,
+    { section: "Section C: Short division", question: "Use short division to work out 852 ÷ 4.", type: "column", sum: "852 ÷ 4", marks: 2 },
+    { section: "Section C: Short division", question: "Use short division to work out 9.36 ÷ 3.", type: "column", sum: "9.36 ÷ 3", marks: 2 },
+    { section: "Section C: Short division", question: "Use short division to work out 7 ÷ 4. Use the zeros after the decimal point.", type: "column", sum: "7 ÷ 4", marks: 2 },
+
+    { section: "Section D: Problem Solving", question: "£13.50 is shared equally between 3 friends. How much does each friend get?", marks: 2, answer: "£4.50" },
+    { section: "Section D: Problem Solving", question: "A 2 m ribbon is cut into 8 equal pieces. How long is each piece, in metres?", marks: 2, answer: "0.25 m" },
+    { section: "Section D: Problem Solving", question: "A pack of 6 pens costs £4.20. How much does one pen cost?", marks: 2, answer: "£0.70" },
+    { section: "Section D: Problem Solving", question: "100 people are going on a trip. Each minibus holds 15 people. How many minibuses are needed?", marks: 2, answer: "7" },
+    { section: "Section D: Problem Solving", question: "Lily says 3.6 ÷ 3 = 1.02. Explain Lily's mistake and give the correct answer.", type: "explain", marks: 2,
       answer: "3 ÷ 3 = 1 and 0.6 ÷ 3 = 0.2, so 3.6 ÷ 3 = 1.2. Lily has put an extra 0 in, giving 2 hundredths instead of 2 tenths." }
   ]
 });
@@ -1954,11 +1966,77 @@ QUESTION_BANK.add({
 
 
 QUESTION_BANK.add({
+  topic: "Subtraction of integers and decimals",
+  title: "Subtraction of Integers and Decimals",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. For column method questions, type one digit in each box of the answer row, starting from the right. You can include £ or units, but you don't have to.",
+  questions: [
+    { section: "Section A: Integers", question: "Work out 58 − 23", marks: 1, answer: "35" },
+    { section: "Section A: Integers", question: "Work out 142 − 67", marks: 1, answer: "75" },
+    { section: "Section A: Integers", question: "Work out 503 − 278", marks: 1, answer: "225" },
+    { section: "Section A: Integers", question: "Work out 4000 − 1365", marks: 2, answer: "2635" },
+
+    { section: "Section B: Decimals", question: "Work out 8.7 − 3.2", marks: 1, answer: "5.5" },
+    { section: "Section B: Decimals", question: "Work out 6.4 − 2.9", marks: 1, answer: "3.5" },
+    { section: "Section B: Decimals", question: "Work out 15.35 − 7.42", marks: 1, answer: "7.93" },
+    { section: "Section B: Decimals", question: "Work out 9 − 3.6", marks: 1, answer: "5.4" },
+    { section: "Section B: Decimals", question: "Work out 12.5 − 4.75", marks: 2, answer: "7.75" },
+    { section: "Section B: Decimals", question: "Work out 1 − 0.35", marks: 2, answer: "0.65" },
+
+    { section: "Section C: Column method", question: "Use the column method to work out 726 − 348.", type: "column", sum: "726 − 348", marks: 2 },
+    { section: "Section C: Column method", question: "Use the column method to work out 8.42 − 3.67.", type: "column", sum: "8.42 − 3.67", marks: 2 },
+    { section: "Section C: Column method", question: "Use the column method to work out 20 − 6.85.", type: "column", sum: "20 − 6.85", marks: 2 },
+
+    { section: "Section D: Problem Solving", question: "Kim has £20. She spends £7.85. How much money does she have left?", marks: 2, answer: "£12.15" },
+    { section: "Section D: Problem Solving", question: "A plank is 3.2 m long. A piece 1.45 m long is cut off. How long is the piece that is left?", marks: 2, answer: "1.75 m" },
+    { section: "Section D: Problem Solving", question: "The temperature was 14.5 °C. It fell by 6.8 °C. What is the temperature now?", marks: 2, answer: "7.7 °C" },
+    { section: "Section D: Problem Solving", question: "Raj says 6.3 − 2.8 = 4.5. Explain Raj's mistake and give the correct answer.", type: "explain", marks: 2,
+      answer: "You can't take 8 tenths from 3 tenths, so exchange 1 one for 10 tenths: 13 − 8 = 5 tenths, then 5 − 2 = 3 ones. The answer is 3.5. Raj did 8 − 3 instead of exchanging." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Multiplication of integers and decimals",
+  title: "Multiplication of Integers and Decimals",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. For column method questions, type one digit in each box of the answer row, starting from the right; the small boxes are for carrying. You can include £ or units, but you don't have to.",
+  questions: [
+    { section: "Section A: Integers", question: "Work out 23 × 3", marks: 1, answer: "69" },
+    { section: "Section A: Integers", question: "Work out 47 × 6", marks: 1, answer: "282" },
+    { section: "Section A: Integers", question: "Work out 124 × 5", marks: 1, answer: "620" },
+    { section: "Section A: Integers", question: "Work out 36 × 24", marks: 2, answer: "864" },
+
+    { section: "Section B: Decimals", question: "Work out 0.4 × 3", marks: 1, answer: "1.2" },
+    { section: "Section B: Decimals", question: "Work out 2.5 × 4", marks: 1, answer: "10" },
+    { section: "Section B: Decimals", question: "Work out 1.6 × 7", marks: 1, answer: "11.2" },
+    { section: "Section B: Decimals", question: "Work out 0.3 × 0.2", marks: 2, answer: "0.06" },
+    { section: "Section B: Decimals", question: "Work out 3.45 × 10", marks: 1, answer: "34.5" },
+    { section: "Section B: Decimals", question: "Work out 0.07 × 100", marks: 1, answer: "7" },
+    { section: "Section B: Decimals", question: "Which is the same as 2.4 × 100?", type: "choice", marks: 1,
+      options: ["24", "240", "2400", "0.024"], answer: "240" },
+
+    { section: "Section C: Column method", question: "Use the column method to work out 256 × 7.", type: "column", sum: "256 × 7", marks: 2 },
+    { section: "Section C: Column method", question: "Use the column method to work out 3.48 × 6.", type: "column", sum: "3.48 × 6", marks: 2 },
+    { section: "Section C: Column method", question: "Use the column method to work out 47.5 × 4.", type: "column", sum: "47.5 × 4", marks: 2 },
+
+    { section: "Section D: Problem Solving", question: "One cinema ticket costs £4.75. How much do 6 tickets cost?", marks: 2, answer: "£28.50" },
+    { section: "Section D: Problem Solving", question: "A recipe uses 0.25 kg of flour for each cake. How much flour is needed for 8 cakes?", marks: 2, answer: "2 kg" },
+    { section: "Section D: Problem Solving", question: "A rectangle is 3.5 cm long and 6 cm wide. Work out its area in cm².", marks: 2, answer: "21" },
+    { section: "Section D: Problem Solving", question: "Zoe says 0.3 × 0.2 = 0.6. Explain Zoe's mistake.", type: "explain", marks: 1,
+      answer: "3 × 2 = 6, but tenths × tenths make hundredths, so 0.3 × 0.2 has two decimal places in total. The answer is 0.06." }
+  ]
+});
+
+
+QUESTION_BANK.add({
   topic: "Addition of integers and decimals",
   title: "Addition of Integers and Decimals",
   type: "number",
   questionsPerSet: 10,
-  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. You can include £ or units (e.g. £4.74 or 6.35 km), but you don't have to.",
+  tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. For column method questions, type one digit in each box of the answer row, starting from the right; the small boxes are for carrying. You can include £ or units (e.g. £4.74 or 6.35 km), but you don't have to.",
   questions: [
     { section: "Section A: Integers", question: "Work out 34 + 25", marks: 1, answer: "59" },
     { section: "Section A: Integers", question: "Work out 128 + 47", marks: 1, answer: "175" },
@@ -1976,13 +2054,17 @@ QUESTION_BANK.add({
     { section: "Section B: Decimals", question: "Work out 105.6 + 39.48", marks: 2, answer: "145.08" },
     { section: "Section B: Decimals", question: "Work out 0.007 + 0.25", marks: 2, answer: "0.257" },
 
-    { section: "Section C: Problem Solving", question: "Sam buys a sandwich for £3.45 and a drink for £1.29. How much does Sam spend altogether?", marks: 2, answer: "£4.74" },
-    { section: "Section C: Problem Solving", question: "Priya runs 2.6 km on Monday and 3.75 km on Tuesday. How far does she run in total?", marks: 2, answer: "6.35 km" },
-    { section: "Section C: Problem Solving", question: "Three bags weigh 1.25 kg, 0.8 kg and 2.4 kg. What is their total weight?", marks: 2, answer: "4.45 kg" },
-    { section: "Section C: Problem Solving", question: "Find the missing number: 4.7 + ____ = 10", marks: 2, answer: "5.3" },
-    { section: "Section C: Problem Solving", question: "A carpenter joins two pieces of wood. One is 1.35 m long and the other is 0.92 m long. How long is the joined piece?", marks: 2, answer: "2.27 m" },
+    { section: "Section C: Column method", question: "Use the column method to work out 2847 + 1596.", type: "column", sum: "2847 + 1596", marks: 2 },
+    { section: "Section C: Column method", question: "Use the column method to work out 36.8 + 7.45.", type: "column", sum: "36.8 + 7.45", marks: 2 },
+    { section: "Section C: Column method", question: "Use the column method to work out 125.6 + 9.75.", type: "column", sum: "125.6 + 9.75", marks: 2 },
+
+    { section: "Section D: Problem Solving", question: "Sam buys a sandwich for £3.45 and a drink for £1.29. How much does Sam spend altogether?", marks: 2, answer: "£4.74" },
+    { section: "Section D: Problem Solving", question: "Priya runs 2.6 km on Monday and 3.75 km on Tuesday. How far does she run in total?", marks: 2, answer: "6.35 km" },
+    { section: "Section D: Problem Solving", question: "Three bags weigh 1.25 kg, 0.8 kg and 2.4 kg. What is their total weight?", marks: 2, answer: "4.45 kg" },
+    { section: "Section D: Problem Solving", question: "Find the missing number: 4.7 + ____ = 10", marks: 2, answer: "5.3" },
+    { section: "Section D: Problem Solving", question: "A carpenter joins two pieces of wood. One is 1.35 m long and the other is 0.92 m long. How long is the joined piece?", marks: 2, answer: "2.27 m" },
     {
-      section: "Section C: Problem Solving",
+      section: "Section D: Problem Solving",
       text: "Jo says 3.4 + 2.15 = 5.19.",
       parts: [
         { question: "Explain Jo's mistake.", marks: 1, type: "explain",
