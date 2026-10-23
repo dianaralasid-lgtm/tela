@@ -78,6 +78,29 @@
      "choice"   The student taps one of the "options"; the answer is the
                 right one.
 
+   MORE TYPES
+     "fraction"  A fraction such as "3/8". Equivalent fractions count
+                unless you add  simplest: true , which needs lowest terms.
+     "shade"    The student taps parts of a shape to shade the answer
+                fraction, e.g. answer: "2/5" with
+                shape: { style: "bar", parts: 5 }.
+     "select"   The student taps ALL the right options. Give the answer as
+                a list: answer: "1, 2, 3, 6". Use  range: [1, 30]  instead of
+                "options" for the numbers 1 to 30.
+     "tally"    The student draws tally marks; the answer is the number.
+     "pictogram"  The student builds a pictogram row from whole, half and
+                quarter symbols; the answer is the amount it should show.
+                  pictogram: { key: 4, item: "books", rows: [["Mon", 3]], ask: "Fri" }
+                (rows give the number of symbols; ask names the row to fill)
+
+   MORE PICTURES (add to any question)
+     shape: { style: "bar", parts: 8, shaded: 3 }   bar, "circle", or
+                "grid" (with rows and cols); the first "shaded" parts are shaded.
+     polygon: 6   or   polygon: { sides: 5, irregular: true }
+     tally: { rows: [["Red", 7], ["Blue", 12]], headings: ["Colour", "Tally", "Frequency"], show: "tally" }
+                show is "tally", "frequency" or "both".
+     pictogram: { key: 4, item: "books", rows: [["Mon", 3], ["Tue", 2.5]] }
+
    SAME TOPIC TWICE: if a topic has more than one QUESTION_BANK.add block,
    the questions are combined into one list. The title, tip and
    questionsPerSet come from the first block; each block's questions are
@@ -2087,5 +2110,284 @@ QUESTION_BANK.add({
         { question: "Give the correct answer.", marks: 1, answer: "5.55" }
       ]
     }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Fractions: writing, simplifying and ordering",
+  title: "Fractions: Writing, Simplifying and Ordering",
+  type: "fraction",
+  questionsPerSet: 10,
+  tip: "Type fractions like 3/8. To shade a shape, tap its parts (tap again to unshade). For ordering, tap the fractions in order. Then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Writing fractions", question: "What fraction of the shape is shaded?", marks: 1, answer: "3/8",
+      shape: { style: "bar", parts: 8, shaded: 3 } },
+    { section: "Section A: Writing fractions", question: "What fraction of the circle is shaded?", marks: 1, answer: "1/4",
+      shape: { style: "circle", parts: 4, shaded: 1 } },
+    { section: "Section A: Writing fractions", question: "What fraction of the grid is shaded?", marks: 1, answer: "5/12",
+      shape: { style: "grid", rows: 3, cols: 4, shaded: 5 } },
+    { section: "Section A: Writing fractions", question: "What fraction of the circle is shaded?", marks: 1, answer: "5/6",
+      shape: { style: "circle", parts: 6, shaded: 5 } },
+    { section: "Section A: Writing fractions", question: "Shade 2/5 of the shape.", type: "shade", marks: 1, answer: "2/5",
+      shape: { style: "bar", parts: 5 } },
+    { section: "Section A: Writing fractions", question: "Shade 3/4 of the circle.", type: "shade", marks: 1, answer: "3/4",
+      shape: { style: "circle", parts: 4 } },
+    { section: "Section A: Writing fractions", question: "Shade 1/3 of the grid.", type: "shade", marks: 1, answer: "1/3",
+      shape: { style: "grid", rows: 2, cols: 3 } },
+
+    { section: "Section B: Simplifying fractions", question: "Write 6/8 in its simplest form.", simplest: true, marks: 1, answer: "3/4" },
+    { section: "Section B: Simplifying fractions", question: "Write 10/15 in its simplest form.", simplest: true, marks: 1, answer: "2/3" },
+    { section: "Section B: Simplifying fractions", question: "Write 12/16 in its simplest form.", simplest: true, marks: 1, answer: "3/4" },
+    { section: "Section B: Simplifying fractions", question: "Write 14/21 in its simplest form.", simplest: true, marks: 1, answer: "2/3" },
+    { section: "Section B: Simplifying fractions", question: "Write 20/50 in its simplest form.", simplest: true, marks: 1, answer: "2/5" },
+    { section: "Section B: Simplifying fractions", question: "Which fraction is equivalent to 2/3?", type: "choice", marks: 1,
+      options: ["4/9", "6/9", "3/4", "2/6"], answer: "6/9" },
+    { section: "Section B: Simplifying fractions", question: "Find the missing number: 3/5 = ?/20", type: "number", marks: 1, answer: "12" },
+
+    { section: "Section C: Ordering fractions", question: "Put these fractions in order, starting with the smallest.", type: "order", marks: 1,
+      items: ["1/2", "1/4", "3/4", "1/8"], answer: "1/8, 1/4, 1/2, 3/4" },
+    { section: "Section C: Ordering fractions", question: "Put these fractions in order, starting with the smallest.", type: "order", marks: 2,
+      items: ["2/3", "1/2", "5/6", "7/12"], answer: "1/2, 7/12, 2/3, 5/6" },
+    { section: "Section C: Ordering fractions", question: "Which fraction is bigger?", type: "choice", marks: 1,
+      options: ["3/5", "2/3"], answer: "2/3" },
+    { section: "Section C: Ordering fractions", question: "Ben says 1/5 is bigger than 1/3 because 5 is bigger than 3. Explain why Ben is wrong.", type: "explain", marks: 1,
+      answer: "The bottom number tells you how many equal parts the whole is split into. Splitting into 5 parts makes each part smaller than splitting into 3, so 1/5 is smaller than 1/3." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Place value",
+  title: "Place Value",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Think about which column each digit is in: thousands, hundreds, tens, ones, then tenths and hundredths after the decimal point. Type your answer or tap your choice, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Value of a digit", question: "What is the value of the 7 in 3742?", marks: 1, answer: "700" },
+    { section: "Section A: Value of a digit", question: "What is the value of the 4 in 54 316?", marks: 1, answer: "4000" },
+    { section: "Section A: Value of a digit", question: "What is the value of the 3 in 6.135?", marks: 1, answer: "0.03" },
+    { section: "Section A: Value of a digit", question: "Write down the digit in the tenths column of 47.82.", marks: 1, answer: "8" },
+    { section: "Section A: Value of a digit", question: "Which number has 6 in the hundreds column?", type: "choice", marks: 1,
+      options: ["3628", "6283", "2836", "8362"], answer: "3628" },
+    { section: "Section A: Value of a digit", question: "Which is the same as 5.07?", type: "choice", marks: 1,
+      options: ["5 ones and 7 tenths", "5 ones and 7 hundredths", "57 tenths", "5 tens and 7 ones"], answer: "5 ones and 7 hundredths" },
+
+    { section: "Section B: Writing numbers", question: "Write forty-two thousand and seven in figures.", marks: 1, answer: "42007" },
+    { section: "Section B: Writing numbers", question: "Write three hundred and five thousand, two hundred in figures.", marks: 1, answer: "305200" },
+    { section: "Section B: Writing numbers", question: "Write 3 tens, 4 tenths and 2 hundredths as a number.", marks: 1, answer: "30.42" },
+    { section: "Section B: Writing numbers", question: "Put these numbers in order, starting with the smallest.", type: "order", marks: 1,
+      items: ["4.5", "4.05", "45", "0.45"], answer: "0.45, 4.05, 4.5, 45" },
+
+    { section: "Section C: Changing numbers", question: "What is 10 more than 4995?", marks: 1, answer: "5005" },
+    { section: "Section C: Changing numbers", question: "What is 1000 less than 20 450?", marks: 1, answer: "19450" },
+    { section: "Section C: Changing numbers", question: "Work out 3.6 × 100", marks: 1, answer: "360" },
+    { section: "Section C: Changing numbers", question: "Work out 52 ÷ 10", marks: 1, answer: "5.2" },
+    { section: "Section C: Changing numbers", question: "Amy says the 5 in 2.05 is worth 5 tenths. Explain why Amy is wrong.", type: "explain", marks: 1,
+      answer: "The 5 is in the second column after the decimal point, which is the hundredths column, so it is worth 5 hundredths (0.05). The tenths digit is 0." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Names of polygons",
+  title: "Names of Polygons",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Count the sides: 3 triangle, 4 quadrilateral, 5 pentagon, 6 hexagon, 7 heptagon, 8 octagon, 9 nonagon, 10 decagon. Tap your answer, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Naming polygons", question: "What is the name of this polygon?", polygon: 5, marks: 1,
+      options: ["quadrilateral", "pentagon", "hexagon", "octagon"], answer: "pentagon" },
+    { section: "Section A: Naming polygons", question: "What is the name of this polygon?", polygon: 6, marks: 1,
+      options: ["pentagon", "hexagon", "heptagon", "octagon"], answer: "hexagon" },
+    { section: "Section A: Naming polygons", question: "What is the name of this polygon?", polygon: 8, marks: 1,
+      options: ["hexagon", "heptagon", "octagon", "decagon"], answer: "octagon" },
+    { section: "Section A: Naming polygons", question: "What is the name of this polygon?", polygon: { sides: 7, irregular: true }, marks: 1,
+      options: ["hexagon", "heptagon", "octagon", "nonagon"], answer: "heptagon" },
+    { section: "Section A: Naming polygons", question: "What is the name of this polygon?", polygon: { sides: 4, irregular: true }, marks: 1,
+      options: ["triangle", "quadrilateral", "pentagon", "hexagon"], answer: "quadrilateral" },
+    { section: "Section A: Naming polygons", question: "What is the name of this polygon?", polygon: { sides: 3, irregular: true }, marks: 1,
+      options: ["triangle", "quadrilateral", "pentagon", "hexagon"], answer: "triangle" },
+    { section: "Section A: Naming polygons", question: "What is the name of this polygon?", polygon: 10, marks: 1,
+      options: ["octagon", "nonagon", "decagon", "hexagon"], answer: "decagon" },
+    { section: "Section A: Naming polygons", question: "What is the name of this polygon?", polygon: { sides: 9, irregular: true }, marks: 1,
+      options: ["heptagon", "octagon", "nonagon", "decagon"], answer: "nonagon" },
+
+    { section: "Section B: Sides and properties", question: "How many sides does an octagon have?", type: "number", marks: 1, answer: "8" },
+    { section: "Section B: Sides and properties", question: "How many sides does a heptagon have?", type: "number", marks: 1, answer: "7" },
+    { section: "Section B: Sides and properties", question: "How many sides does a decagon have?", type: "number", marks: 1, answer: "10" },
+    { section: "Section B: Sides and properties", question: "A regular polygon has all its sides equal and...", marks: 1,
+      options: ["all its angles equal", "four sides", "a right angle", "parallel sides"], answer: "all its angles equal" },
+    { section: "Section B: Sides and properties", question: "Tap all the shapes that are quadrilaterals.", type: "select", marks: 2,
+      options: ["square", "triangle", "rectangle", "kite", "pentagon", "trapezium", "hexagon"], answer: "square, rectangle, kite, trapezium" },
+    { section: "Section B: Sides and properties", question: "Is a circle a polygon? Explain your answer.", type: "explain", marks: 1,
+      answer: "No. A polygon is a flat shape made only of straight sides. A circle has one curved edge, so it is not a polygon." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Tally charts",
+  title: "Tally Charts",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Count tally marks in fives: each group of four upright lines with one across is 5. To draw a tally, use <b>Add a mark</b>; every fifth mark goes across the group. Then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Reading a tally chart", text: "The tally chart shows people's favourite fruit.", question: "How many people chose banana?", marks: 1, answer: "12",
+      tally: { rows: [["Apple", 7], ["Banana", 12], ["Orange", 4], ["Grape", 9]], headings: ["Fruit", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section A: Reading a tally chart", text: "The tally chart shows people's favourite fruit.", question: "How many people chose grape?", marks: 1, answer: "9",
+      tally: { rows: [["Apple", 7], ["Banana", 12], ["Orange", 4], ["Grape", 9]], headings: ["Fruit", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section A: Reading a tally chart", text: "The tally chart shows people's favourite fruit.", question: "Which fruit was the most popular?", type: "choice", marks: 1,
+      options: ["Apple", "Banana", "Orange", "Grape"], answer: "Banana",
+      tally: { rows: [["Apple", 7], ["Banana", 12], ["Orange", 4], ["Grape", 9]], headings: ["Fruit", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section A: Reading a tally chart", text: "The tally chart shows people's favourite fruit.", question: "How many people were asked altogether?", marks: 2, answer: "32",
+      tally: { rows: [["Apple", 7], ["Banana", 12], ["Orange", 4], ["Grape", 9]], headings: ["Fruit", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section A: Reading a tally chart", text: "The tally chart shows people's favourite fruit.", question: "How many more people chose apple than orange?", marks: 1, answer: "3",
+      tally: { rows: [["Apple", 7], ["Banana", 12], ["Orange", 4], ["Grape", 9]], headings: ["Fruit", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section A: Reading a tally chart", question: "What number do these tally marks show?", marks: 1, answer: "17",
+      tally: { rows: [["Votes", 17]], headings: ["", "Tally", ""], show: "tally" } },
+
+    { section: "Section B: Drawing tallies", question: "Draw the tally marks for 8.", type: "tally", marks: 1, answer: "8" },
+    { section: "Section B: Drawing tallies", question: "Draw the tally marks for 13.", type: "tally", marks: 1, answer: "13" },
+    { section: "Section B: Drawing tallies", question: "Draw the tally marks for 20.", type: "tally", marks: 1, answer: "20" },
+
+    { section: "Section C: Understanding tallies", question: "Why is every fifth tally mark drawn across the other four?", type: "choice", marks: 1,
+      options: ["To make them easier to count in fives", "To show the fifth one is bigger", "Because the fifth one doesn't count", "To make the chart look neat"],
+      answer: "To make them easier to count in fives" },
+    { section: "Section C: Understanding tallies", question: "Cars has a frequency of 23 in a tally chart. How many complete groups of five tally marks are there?", marks: 1, answer: "4" },
+    { section: "Section C: Understanding tallies", question: "Sita draws five upright lines next to each other to show 5. Explain what she should have drawn.", type: "explain", marks: 1,
+      answer: "Four upright lines with the fifth line drawn across them, like a gate. This makes groups of five that are easy to count." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Pictograms",
+  title: "Pictograms",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Always check the key first. Half a symbol is half the key's amount, and a quarter is a quarter of it. To complete a pictogram, add whole, half or quarter symbols, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Reading a pictogram", text: "The pictogram shows how many books a class read.", question: "How many books were read on Monday?", marks: 1, answer: "12",
+      pictogram: { key: 4, item: "books", rows: [["Monday", 3], ["Tuesday", 2.5], ["Wednesday", 4], ["Thursday", 1.25]] } },
+    { section: "Section A: Reading a pictogram", text: "The pictogram shows how many books a class read.", question: "How many books were read on Tuesday?", marks: 1, answer: "10",
+      pictogram: { key: 4, item: "books", rows: [["Monday", 3], ["Tuesday", 2.5], ["Wednesday", 4], ["Thursday", 1.25]] } },
+    { section: "Section A: Reading a pictogram", text: "The pictogram shows how many books a class read.", question: "How many books were read on Thursday?", marks: 1, answer: "5",
+      pictogram: { key: 4, item: "books", rows: [["Monday", 3], ["Tuesday", 2.5], ["Wednesday", 4], ["Thursday", 1.25]] } },
+    { section: "Section A: Reading a pictogram", text: "The pictogram shows how many books a class read.", question: "On which day were the most books read?", type: "choice", marks: 1,
+      options: ["Monday", "Tuesday", "Wednesday", "Thursday"], answer: "Wednesday",
+      pictogram: { key: 4, item: "books", rows: [["Monday", 3], ["Tuesday", 2.5], ["Wednesday", 4], ["Thursday", 1.25]] } },
+    { section: "Section A: Reading a pictogram", text: "The pictogram shows how many books a class read.", question: "How many books were read altogether from Monday to Thursday?", marks: 2, answer: "43",
+      pictogram: { key: 4, item: "books", rows: [["Monday", 3], ["Tuesday", 2.5], ["Wednesday", 4], ["Thursday", 1.25]] } },
+    { section: "Section A: Reading a pictogram", text: "The pictogram shows how many books a class read.", question: "How many more books were read on Wednesday than on Thursday?", marks: 1, answer: "11",
+      pictogram: { key: 4, item: "books", rows: [["Monday", 3], ["Tuesday", 2.5], ["Wednesday", 4], ["Thursday", 1.25]] } },
+
+    { section: "Section B: Completing a pictogram", question: "On Friday the class read 14 books. Complete the pictogram for Friday.", type: "pictogram", marks: 1, answer: "14",
+      pictogram: { key: 4, item: "books", rows: [["Monday", 3], ["Tuesday", 2.5], ["Wednesday", 4], ["Thursday", 1.25]], ask: "Friday" } },
+    { section: "Section B: Completing a pictogram", question: "A shop sold 9 ice creams on Saturday. Complete the pictogram for Saturday.", type: "pictogram", marks: 1, answer: "9",
+      pictogram: { key: 2, item: "ice creams", rows: [["Thursday", 3], ["Friday", 5.5]], ask: "Saturday" } },
+    { section: "Section B: Completing a pictogram", question: "35 people went swimming on Sunday. Complete the pictogram for Sunday.", type: "pictogram", marks: 1, answer: "35",
+      pictogram: { key: 10, item: "people", rows: [["Friday", 2], ["Saturday", 4.5]], ask: "Sunday" } },
+
+    { section: "Section C: Using the key", question: "In a pictogram, one symbol stands for 6 people. How many people does half a symbol stand for?", marks: 1, answer: "3" },
+    { section: "Section C: Using the key", question: "Why does a pictogram need a key?", type: "choice", marks: 1,
+      options: ["To show how many each symbol stands for", "To make it colourful", "To show the title", "To count the rows"],
+      answer: "To show how many each symbol stands for" },
+    { section: "Section C: Using the key", question: "The key says one symbol stands for 8 people. Leo says a quarter of a symbol is 1 person. Explain Leo's mistake.", type: "explain", marks: 1,
+      answer: "A quarter of a symbol is a quarter of 8 people, and 8 ÷ 4 = 2. So a quarter of a symbol stands for 2 people, not 1." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Negative numbers",
+  title: "Negative Numbers",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "On a number line, numbers get smaller as you go left. The further a negative number is from zero, the smaller it is. Type your answer, tap your choice or click the number line, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Ordering and comparing", question: "Put these numbers in order, starting with the smallest.", type: "order", marks: 1,
+      items: ["3", "−5", "0", "−1", "4"], answer: "−5, −1, 0, 3, 4" },
+    { section: "Section A: Ordering and comparing", question: "Which symbol goes in the box?  −7 ☐ −4", type: "choice", marks: 1,
+      options: ["<", ">", "="], answer: "<" },
+    { section: "Section A: Ordering and comparing", question: "Which temperature is the coldest?", type: "choice", marks: 1,
+      options: ["−2 °C", "−9 °C", "0 °C", "3 °C"], answer: "−9 °C" },
+    { section: "Section A: Ordering and comparing", question: "Click on the number line to point the arrow at −3.", type: "mark", marks: 1, answer: "-3",
+      scale: { style: "line", min: -10, max: 10, major: 2, minor: 1 } },
+    { section: "Section A: Ordering and comparing", question: "What number is the arrow pointing to?", marks: 1, answer: "−6",
+      scale: { style: "line", min: -10, max: 10, major: 2, minor: 1, value: -6 } },
+    { section: "Section A: Ordering and comparing", question: "What temperature does the thermometer show?", marks: 1, answer: "−8 °C",
+      scale: { style: "thermometer", min: -20, max: 20, major: 10, minor: 2, unit: "°C", value: -8 } },
+
+    { section: "Section B: Calculating", question: "Work out −3 + 8", marks: 1, answer: "5" },
+    { section: "Section B: Calculating", question: "Work out 4 − 9", marks: 1, answer: "−5" },
+    { section: "Section B: Calculating", question: "Work out −2 − 6", marks: 1, answer: "−8" },
+    { section: "Section B: Calculating", question: "Work out −4 × 3", marks: 1, answer: "−12" },
+    { section: "Section B: Calculating", question: "Work out −20 ÷ 5", marks: 1, answer: "−4" },
+
+    { section: "Section C: Problem solving", question: "The temperature is −4 °C. It rises by 9 °C. What is the new temperature?", marks: 1, answer: "5 °C" },
+    { section: "Section C: Problem solving", question: "What is the difference between −6 °C and 5 °C?", marks: 2, answer: "11 °C" },
+    { section: "Section C: Problem solving", question: "Max says −8 is bigger than −3 because 8 is bigger than 3. Explain why Max is wrong.", type: "explain", marks: 1,
+      answer: "Negative numbers get smaller the further they are from zero. −8 is further left on the number line than −3, so −8 is smaller than −3." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Powers and roots",
+  title: "Powers and Roots",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "5² means 5 × 5, and 3³ means 3 × 3 × 3. √49 asks which number times itself makes 49, and ∛8 asks which number times itself three times makes 8. Type your answer or tap your choice, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Powers", question: "Work out 5²", marks: 1, answer: "25" },
+    { section: "Section A: Powers", question: "Work out 9²", marks: 1, answer: "81" },
+    { section: "Section A: Powers", question: "Work out 3³", marks: 1, answer: "27" },
+    { section: "Section A: Powers", question: "Work out 2⁴", marks: 1, answer: "16" },
+    { section: "Section A: Powers", question: "Work out 10³", marks: 1, answer: "1000" },
+    { section: "Section A: Powers", question: "Work out 4² + 3²", marks: 2, answer: "25" },
+
+    { section: "Section B: Roots", question: "Work out √49", marks: 1, answer: "7" },
+    { section: "Section B: Roots", question: "Work out √144", marks: 1, answer: "12" },
+    { section: "Section B: Roots", question: "Work out ∛8", marks: 1, answer: "2" },
+    { section: "Section B: Roots", question: "Work out ∛64", marks: 1, answer: "4" },
+
+    { section: "Section C: Comparing", question: "Which is bigger?", type: "choice", marks: 1,
+      options: ["2⁵", "5²", "They are equal"], answer: "2⁵" },
+    { section: "Section C: Comparing", question: "Tap all the square numbers.", type: "select", marks: 2,
+      options: ["4", "9", "12", "16", "20", "25", "30", "36"], answer: "4, 9, 16, 25, 36" },
+    { section: "Section C: Comparing", question: "Put these in order of size, starting with the smallest.", type: "order", marks: 2,
+      items: ["3²", "2³", "√100", "1⁵"], answer: "1⁵, 2³, 3², √100" },
+    { section: "Section C: Comparing", question: "Jo says 3² = 6. Explain Jo's mistake.", type: "explain", marks: 1,
+      answer: "3² means 3 × 3, not 3 × 2. So 3² = 9." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Factors and multiples",
+  title: "Factors and Multiples",
+  type: "select",
+  questionsPerSet: 10,
+  tip: "A factor divides into a number exactly. A multiple is in the number's times table. A prime number has exactly two factors: 1 and itself. Tap ALL the answers that fit, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Factors", question: "Tap all the factors of 12.", marks: 2, range: [1, 12], answer: "1, 2, 3, 4, 6, 12" },
+    { section: "Section A: Factors", question: "Tap all the factors of 20.", marks: 2, range: [1, 20], answer: "1, 2, 4, 5, 10, 20" },
+    { section: "Section A: Factors", question: "Which number is a factor of 18?", type: "choice", marks: 1,
+      options: ["4", "5", "6", "8"], answer: "6" },
+    { section: "Section A: Factors", question: "How many factors does 16 have?", type: "number", marks: 1, answer: "5" },
+    { section: "Section A: Factors", question: "Write down the common factor of 12 and 18 that is bigger than 4.", type: "number", marks: 1, answer: "6" },
+
+    { section: "Section B: Multiples", question: "Tap all the multiples of 4.", marks: 2, range: [1, 30], answer: "4, 8, 12, 16, 20, 24, 28" },
+    { section: "Section B: Multiples", question: "Tap all the multiples of 7.", marks: 2, range: [1, 50], answer: "7, 14, 21, 28, 35, 42, 49" },
+    { section: "Section B: Multiples", question: "What is the 6th multiple of 8?", type: "number", marks: 1, answer: "48" },
+    { section: "Section B: Multiples", question: "Which number is a multiple of 9?", type: "choice", marks: 1,
+      options: ["28", "36", "42", "50"], answer: "36" },
+    { section: "Section B: Multiples", question: "What is the smallest number that is a multiple of both 4 and 6?", type: "number", marks: 1, answer: "12" },
+
+    { section: "Section C: Prime numbers", question: "Tap all the prime numbers.", marks: 2, range: [1, 20], answer: "2, 3, 5, 7, 11, 13, 17, 19" },
+    { section: "Section C: Prime numbers", question: "Is 1 a prime number?", type: "choice", marks: 1, options: ["Yes", "No"], answer: "No" },
+    { section: "Section C: Prime numbers", question: "Ella says 2 is not a prime number because it is even. Explain why Ella is wrong.", type: "explain", marks: 1,
+      answer: "A prime number has exactly two factors, 1 and itself. 2 has exactly two factors, 1 and 2, so it is prime. It is the only even prime number." }
   ]
 });

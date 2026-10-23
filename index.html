@@ -347,6 +347,28 @@
   .clock .hand-hit { stroke: transparent; stroke-width: 28; stroke-linecap: round; cursor: grab; pointer-events: stroke; }
   .clock.dragging .hand-hit { cursor: grabbing; }
 
+  .shape-fig, .poly-fig { display: block; max-width: 100%; height: auto; }
+  .shape-fig .frac-part { fill: var(--white); stroke: var(--ink); stroke-width: 2; }
+  .shape-fig .frac-part.on { fill: #86c9a3; }
+  .shape-fig.set .frac-part { cursor: pointer; }
+  .shape-fig.set .frac-part:hover { fill: var(--green-100); }
+  .shape-fig.set .frac-part.on:hover { fill: #6fbd91; }
+  .poly-fig polygon { fill: var(--green-50); stroke: var(--green-700); stroke-width: 3; stroke-linejoin: round; }
+  .data-table { border-collapse: collapse; background: var(--white); font-size: 14px; }
+  .data-table th, .data-table td { border: 1.5px solid var(--line); padding: 6px 12px; text-align: left; vertical-align: middle; }
+  .data-table th { background: var(--green-50); font-weight: 600; }
+  .data-table td.num { text-align: center; font-weight: 600; }
+  .tally-marks line { stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+  .tally-widget { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tally-box { min-width: 120px; min-height: 48px; padding: 6px 10px; border: 2px dashed var(--line); border-radius: 10px; background: var(--white); display: flex; align-items: center; }
+  .tally-btn, .picto-btn { border: 1.5px solid var(--green-600); color: var(--green-700); background: var(--white); padding: 7px 12px; }
+  .picto td:last-child { min-width: 160px; }
+  .picto-symbol { vertical-align: middle; margin-right: 2px; }
+  .picto-symbol circle, .picto-symbol path { fill: var(--green-700); }
+  .picto-ask td { background: var(--green-50); }
+  .picto-key { font-size: 13px; color: var(--muted); margin: 8px 0; display: flex; align-items: center; gap: 4px; }
+  .picto-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
   .col-wrap { overflow-x: auto; }
   .col-grid {
     display: inline-grid; grid-auto-rows: 46px; padding: 10px 14px; background: var(--white);
@@ -920,7 +942,8 @@
   // "order" parts are answered by tapping tiles into order; "choice" parts by tapping one option.
   const KIND_FOR_TYPE = {
     algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords", mark: "num",
-    order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle", column: "column"
+    order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle", column: "column",
+    fraction: "fraction", shade: "shade", tally: "tally", pictogram: "pictogram", select: "select"
   };
   const ANGLE_NAMES = ["acute", "right", "obtuse", "straight", "reflex"];
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
@@ -976,8 +999,14 @@
           mark,
           scale: mark ? (p.scale || {}) : (grouped ? p.scale || null : null),
           items: Array.isArray(p.items) ? p.items.map(String) : null,
-          options: Array.isArray(p.options) ? p.options.map(String) : null,
-          labels: Array.isArray(p.labels) ? p.labels.map(String) : null
+          // range: [1, 30] is a shorthand for the options 1, 2, 3, ... 30.
+          options: Array.isArray(p.options) ? p.options.map(String)
+            : Array.isArray(p.range) ? Array.from({ length: p.range[1] - p.range[0] + 1 }, (_, k) => String(p.range[0] + k)) : null,
+          labels: Array.isArray(p.labels) ? p.labels.map(String) : null,
+          simplest: p.simplest === true,
+          // Shading and pictogram questions keep their picture inside the part so it can be tapped.
+          shape: kind === "shade" ? p.shape || {} : null,
+          pictogram: kind === "pictogram" ? p.pictogram || {} : null
         };
       });
       const unreadable = parts.some(p => !p.text || !p.answer ||
@@ -987,7 +1016,11 @@
         (p.kind === "choice" && (!p.options || !p.options.some(o => normText(o) === normText(p.answer)))) ||
         ((p.kind === "time" || p.kind === "clock") && !readTime(p.answer)) ||
         (p.kind === "drawangle" && !ANGLE_NAMES.includes(normText(p.answer))) ||
-        (p.kind === "column" && !p.layout));
+        (p.kind === "column" && !p.layout) ||
+        ((p.kind === "fraction" || p.kind === "shade") && !readFraction(p.answer)) ||
+        ((p.kind === "tally" || p.kind === "pictogram") && readNumber(p.answer) === null) ||
+        (p.kind === "pictogram" && !(Number(p.pictogram.key) > 0)) ||
+        (p.kind === "select" && (!p.options || !p.answer.split(",").every(a => p.options.some(o => normText(o) === normText(a))))));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
       let id = hashText([q.text || "", ...parts.map(p => p.text)].join("|"));
       while (items.some(it => it.id === id)) id += "x";
@@ -998,7 +1031,13 @@
       items.push({
         id, section: sectionFor(q), stem: q.text || "", diagram: q.diagram || "", always: q.always === true,
         graph: itemGraph, scale: itemScale, clock: q.clock ? String(q.clock) : "",
-        angle: q.angle !== undefined && Number.isFinite(Number(q.angle)) ? Number(q.angle) : null, parts
+        angle: q.angle !== undefined && Number.isFinite(Number(q.angle)) ? Number(q.angle) : null,
+        // Pictures shown above the question for reading from.
+        shape: grouped || parts[0].kind !== "shade" ? q.shape || null : null,
+        polygon: q.polygon || null,
+        tally: q.tally || null,
+        pictogram: grouped || parts[0].kind !== "pictogram" ? q.pictogram || null : null,
+        parts
       });
     }
     });
@@ -1581,6 +1620,146 @@
     return first >= 0 && layout.cells.every((_, i) => i < first || given[i]);
   }
 
+  // Fractions such as "3/8"; a whole number counts as itself over 1.
+  function readFraction(raw) {
+    const m = String(raw ?? "").trim().match(/^(-?\d+)\s*(?:\/\s*(\d+))?$/);
+    if (!m || m[2] === "0") return null;
+    return { n: Number(m[1]), d: m[2] ? Number(m[2]) : 1 };
+  }
+  function gcd(a, b) { return b ? gcd(b, a % b) : Math.abs(a); }
+
+  function markFraction(value, answer, simplest) {
+    const got = readFraction(value), want = readFraction(answer);
+    if (!got) return { correct: false, message: "Write a fraction like 3/8." };
+    if (got.n * want.d !== want.n * got.d) return { correct: false, message: "Not quite. Try again." };
+    if (simplest && gcd(got.n, got.d) !== 1) return { correct: false, message: "Right value, but it isn't in its simplest form yet." };
+    return { correct: true, message: "Correct!" };
+  }
+
+  // Fraction shapes: a bar, circle or grid split into equal parts. On a "shade" question the parts can be tapped.
+  function shapeParts(s) { return s.style === "grid" ? (s.rows || 2) * (s.cols || 4) : (s.parts || 4); }
+  function shapeSVG(s, interactive, shaded) {
+    const n = shapeParts(s), on = shaded || new Set(Array.from({ length: s.shaded || 0 }, (_, i) => i));
+    const cls = i => `frac-part${on.has(i) ? " on" : ""}`;
+    let body = "", W, H;
+    if (s.style === "circle") {
+      W = H = 220;
+      const at = deg => [110 + 100 * Math.cos(deg * Math.PI / 180), 110 + 100 * Math.sin(deg * Math.PI / 180)];
+      for (let i = 0; i < n; i++) {
+        if (n === 1) { body += `<circle class="${cls(i)}" data-i="0" cx="110" cy="110" r="100"/>`; break; }
+        const [x0, y0] = at(-90 + i * 360 / n), [x1, y1] = at(-90 + (i + 1) * 360 / n);
+        body += `<path class="${cls(i)}" data-i="${i}" d="M110 110 L${x0} ${y0} A100 100 0 ${360 / n > 180 ? 1 : 0} 1 ${x1} ${y1} Z"/>`;
+      }
+    } else {
+      const rows = s.style === "grid" ? s.rows || 2 : 1, cols = s.style === "grid" ? s.cols || 4 : n;
+      const cw = s.style === "grid" ? 50 : Math.min(60, 320 / cols), ch = s.style === "grid" ? 50 : 70;
+      W = cols * cw + 4; H = rows * ch + 4;
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const i = r * cols + c;
+        body += `<rect class="${cls(i)}" data-i="${i}" x="${2 + c * cw}" y="${2 + r * ch}" width="${cw}" height="${ch}"/>`;
+      }
+    }
+    return `<svg class="shape-fig${interactive ? " set" : ""}" viewBox="0 0 ${W} ${H}" width="${W}"
+      role="img" aria-label="Shape split into ${n} equal parts${interactive ? ". Tap parts to shade them." : ""}">${body}</svg>`;
+  }
+
+  function markShade(value, answer, parts) {
+    const count = value ? value.split(",").filter(Boolean).length : 0, want = readFraction(answer);
+    if (count * want.d === want.n * parts) return { correct: true, message: "Correct!" };
+    return { correct: false, message: `You've shaded ${count} out of ${parts} parts. Try again.` };
+  }
+
+  // Polygons: regular, or irregular with each corner nudged so the sides differ.
+  function polygonSVG(p) {
+    const sides = Number(typeof p === "object" ? p.sides : p), irregular = typeof p === "object" && p.irregular;
+    const radius = [1, .8, .95, .72, 1.04, .86, .98, .78], turn = [0, 11, -7, 14, -10, 6, -13, 9];
+    const pts = Array.from({ length: sides }, (_, i) => {
+      const deg = -90 + i * 360 / sides + (irregular ? turn[i % 8] : 0), r = 90 * (irregular ? radius[i % 8] : 1);
+      return `${110 + r * Math.cos(deg * Math.PI / 180)},${110 + r * Math.sin(deg * Math.PI / 180)}`;
+    });
+    return `<svg class="poly-fig" viewBox="0 0 220 220" width="220" role="img" aria-label="A polygon"><polygon points="${pts.join(" ")}"/></svg>`;
+  }
+
+  // Tally marks: groups of four upright lines crossed by a fifth.
+  function tallyMarks(n) {
+    let x = 4, s = "";
+    for (let g = 0; g < Math.floor(n / 5); g++) {
+      for (let k = 0; k < 4; k++) s += `<line x1="${x + k * 7}" y1="4" x2="${x + k * 7}" y2="30"/>`;
+      s += `<line x1="${x - 4}" y1="27" x2="${x + 25}" y2="8"/>`;
+      x += 38;
+    }
+    for (let k = 0; k < n % 5; k++) s += `<line x1="${x + k * 7}" y1="4" x2="${x + k * 7}" y2="30"/>`;
+    const width = Math.max(30, x + (n % 5) * 7 + 4);
+    return `<svg class="tally-marks" viewBox="0 0 ${width} 34" width="${width}" height="34" role="img" aria-label="${n} tally marks">${s}</svg>`;
+  }
+
+  // A tally chart; show can be "tally", "frequency" or "both" (the default).
+  function tallyHTML(t) {
+    const [h1, h2, h3] = t.headings || ["", "Tally", "Frequency"], show = t.show || "both";
+    const rows = (t.rows || []).map(([label, n]) => `<tr><td>${esc(label)}</td>
+      ${show !== "frequency" ? `<td>${tallyMarks(Number(n))}</td>` : ""}${show !== "tally" ? `<td class="num">${esc(n)}</td>` : ""}</tr>`).join("");
+    return `<table class="data-table"><thead><tr><th>${esc(h1)}</th>${show !== "frequency" ? `<th>${esc(h2)}</th>` : ""}${show !== "tally" ? `<th>${esc(h3)}</th>` : ""}</tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function tallyWidgetHTML(count) {
+    return `<div class="tally-widget">
+      <div class="tally-box">${count ? tallyMarks(count) : `<span class="order-empty">No marks yet</span>`}</div>
+      <button type="button" class="btn btn-ghost tally-btn" data-step="1">Add a mark</button>
+      <button type="button" class="btn btn-ghost tally-btn" data-step="-1">Remove a mark</button>
+    </div>`;
+  }
+
+  // Pictograms: rows of circle symbols, where part of a circle means part of the key's amount.
+  function pictoSymbol(part) {
+    const c = 14, r = 11;
+    const shape = part >= 1 ? `<circle cx="${c}" cy="${c}" r="${r}"/>`
+      : part >= .75 ? `<path d="M${c} ${c} L${c} ${c - r} A${r} ${r} 0 1 1 ${c - r} ${c} Z"/>`
+      : part >= .5 ? `<path d="M${c} ${c - r} A${r} ${r} 0 0 1 ${c} ${c + r} Z"/>`
+      : `<path d="M${c} ${c} L${c} ${c - r} A${r} ${r} 0 0 1 ${c + r} ${c} Z"/>`;
+    return `<svg class="picto-symbol" viewBox="0 0 28 28" width="28" height="28">${shape}</svg>`;
+  }
+  function pictoSymbols(count) {
+    let s = "", left = Number(count);
+    while (left > 1e-9) { const part = Math.min(1, left); s += pictoSymbol(part); left = +(left - part).toFixed(4); }
+    return s;
+  }
+  // build (for a "pictogram" question) is the list of symbol pieces the student has added to the asked row.
+  function pictogramHTML(pg, build) {
+    const rows = (pg.rows || []).map(([label, n]) => `<tr><td>${esc(label)}</td><td>${pictoSymbols(n)}</td></tr>`).join("");
+    const asked = build ? `<tr class="picto-ask"><td>${esc(pg.ask || "")}</td><td>${pictoSymbols(build.reduce((a, b) => a + b, 0)) || `<span class="order-empty">Add symbols</span>`}</td></tr>` : "";
+    const controls = build ? `<div class="picto-controls">
+      <button type="button" class="btn btn-ghost picto-btn" data-add="1">Add a whole symbol</button>
+      <button type="button" class="btn btn-ghost picto-btn" data-add="0.5">Add half a symbol</button>
+      ${pg.key % 4 === 0 ? `<button type="button" class="btn btn-ghost picto-btn" data-add="0.25">Add a quarter</button>` : ""}
+      <button type="button" class="btn btn-ghost picto-btn" data-add="undo">Remove last</button>
+    </div>` : "";
+    return `<table class="data-table picto"><tbody>${rows}${asked}</tbody></table>
+      <div class="picto-key">${pictoSymbol(1)} = ${esc(pg.key)} ${esc(pg.item || "")}</div>${controls}`;
+  }
+  const pictoBuild = value => (value ? value.split(",").map(Number).filter(n => n > 0) : []);
+
+  function markPictogram(value, answer, pg) {
+    const total = +(pictoBuild(value).reduce((a, b) => a + b, 0) * pg.key).toFixed(4);
+    if (total === readNumber(answer)) return { correct: true, message: "Correct!" };
+    return { correct: false, message: `Your symbols show ${total} ${pg.item || ""}. Try again.` };
+  }
+
+  // Select: tap every right answer. The answer box holds the chosen options separated by |.
+  function selectHTML(spec, value) {
+    const chosen = new Set((value || "").split("|").filter(Boolean).map(normText));
+    return `<div class="choice-row">${spec.options.map(o =>
+      `<button type="button" class="choice-btn select-btn${chosen.has(normText(o)) ? " selected" : ""}" data-value="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+  }
+  function markSelect(value, answer) {
+    const got = new Set((value || "").split("|").filter(Boolean).map(normText));
+    const want = new Set(answer.split(",").map(normText));
+    const missing = [...want].filter(w => !got.has(w)).length, extra = [...got].filter(g => !want.has(g)).length;
+    if (!missing && !extra) return { correct: true, message: "Correct!" };
+    if (!extra) return { correct: false, message: `Nearly! You've missed ${missing === 1 ? "one" : "some"}.` };
+    if (!missing) return { correct: false, message: `You've found them all, but ${extra === 1 ? "one of your choices isn't" : "some of your choices aren't"} right.` };
+    return { correct: false, message: "Not quite. Try again." };
+  }
+
   // Changing a tapped answer (grid, scale, tiles or options) clears the old result until it's checked again.
   function clearResult(part) {
     part.classList.remove("correct", "incorrect");
@@ -1654,6 +1833,14 @@
     if (spec.kind === "clock") return markClock(saved.value, spec.answer);
     if (spec.kind === "drawangle") return markDrawnAngle(saved.value, spec.answer);
     if (spec.kind === "column") return markColumn(saved.value, spec.layout);
+    if (spec.kind === "fraction") return markFraction(saved.value, spec.answer, spec.simplest);
+    if (spec.kind === "shade") return markShade(saved.value, spec.answer, shapeParts(spec.shape));
+    if (spec.kind === "tally") {
+      return Number(saved.value) === readNumber(spec.answer) ? { correct: true, message: "Correct!" }
+        : { correct: false, message: `Your tally shows ${Number(saved.value) || 0}. Try again.` };
+    }
+    if (spec.kind === "pictogram") return markPictogram(saved.value, spec.answer, spec.pictogram);
+    if (spec.kind === "select") return markSelect(saved.value, spec.answer);
     if (spec.kind === "choice") {
       return normText(saved.value) === normText(spec.answer)
         ? { correct: true, message: "Correct!" }
@@ -1700,14 +1887,18 @@
       if (item.scale) html += `<div class="graph-wrap">${scaleSVG(item.scale, false)}</div>`;
       if (item.clock) html += `<div class="graph-wrap">${clockSVG(item.clock, false)}</div>`;
       if (item.angle !== null) html += `<div class="graph-wrap">${angleSVG(item.angle, false)}</div>`;
-      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout }) => {
-        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout };
+      if (item.shape) html += `<div class="graph-wrap">${shapeSVG(item.shape, false)}</div>`;
+      if (item.polygon) html += `<div class="graph-wrap">${polygonSVG(item.polygon)}</div>`;
+      if (item.tally) html += `<div class="graph-wrap">${tallyHTML(item.tally)}</div>`;
+      if (item.pictogram) html += `<div class="graph-wrap">${pictogramHTML(item.pictogram)}</div>`;
+      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram }) => {
+        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
         const value = esc(saved ? saved.value : "");
         const aria = `aria-label="Answer to question ${n}${label}"`;
         // Plot, mark, order and choice questions are answered by tapping only; the hidden box just holds the answer.
-        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column"].includes(kind)
+        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column", "shade", "tally", "pictogram", "select"].includes(kind)
           ? `<input type="hidden" class="answer-value" value="${value}">`
           : kind === "explain"
           ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
@@ -1722,6 +1913,10 @@
             ${kind === "clock" ? `<div class="graph-wrap in-part">${clockSVG(null, true, saved ? saved.value.split(",").map(Number) : null)}</div>` : ""}
             ${kind === "drawangle" ? `<div class="graph-wrap in-part">${angleSVG(saved ? Number(saved.value) : 30, true)}</div>` : ""}
             ${kind === "column" ? `<div class="graph-wrap in-part col-wrap">${columnHTML(spec, saved ? saved.value : "", result)}</div>` : ""}
+            ${kind === "shade" ? `<div class="graph-wrap in-part">${shapeSVG(shape, true, new Set((saved ? saved.value : "").split(",").filter(Boolean).map(Number)))}</div>` : ""}
+            ${kind === "tally" ? tallyWidgetHTML(saved ? Number(saved.value) || 0 : 0) : ""}
+            ${kind === "pictogram" ? `<div class="graph-wrap in-part picto-wrap">${pictogramHTML(pictogram, pictoBuild(saved ? saved.value : ""))}</div>` : ""}
+            ${kind === "select" ? selectHTML(spec, saved ? saved.value : "") : ""}
             <div class="answer-row">
               ${field}
               ${kind === "expr" ? `<button type="button" class="sq-btn" title="Insert ²">x²</button>` : ""}
@@ -1804,6 +1999,10 @@
         spec.kind === "choice" ? "Choose an answer first." :
         spec.kind === "clock" ? "Drag the clock hands to set the time first." :
         spec.kind === "drawangle" ? "Drag the arm to make your angle first." :
+        spec.kind === "shade" ? "Tap parts of the shape to shade them first." :
+        spec.kind === "tally" ? "Add some tally marks first." :
+        spec.kind === "pictogram" ? "Add some symbols first." :
+        spec.kind === "select" ? "Tap at least one answer first." :
         partEl.querySelector("svg.scale") ? "Click on the scale to give your answer first." :
         "Click on the grid to plot your answer first.";
       return;
@@ -1898,9 +2097,31 @@
     const markScale = e.target.closest("svg.scale.mark");
     const orderTile = e.target.closest(".order-tile");
     const choiceBtn = e.target.closest(".choice-btn");
+    const shadePart = e.target.closest("svg.shape-fig.set .frac-part");
+    const tallyBtn = e.target.closest(".tally-btn"), pictoBtn = e.target.closest(".picto-btn");
+    const answerBox = part.querySelector("input.answer-value");
     if (plotGraph) plotClick(part, plotGraph, e);
     else if (markScale) scaleClick(part, markScale, e);
     else if (orderTile) orderClick(part, orderTile);
+    else if (shadePart) {
+      shadePart.classList.toggle("on");
+      answerBox.value = [...part.querySelectorAll(".frac-part.on")].map(p => p.dataset.i).join(",");
+      clearResult(part);
+    } else if (tallyBtn) {
+      answerBox.value = Math.max(0, (Number(answerBox.value) || 0) + Number(tallyBtn.dataset.step)) || "";
+      part.querySelector(".tally-box").innerHTML = answerBox.value ? tallyMarks(Number(answerBox.value)) : `<span class="order-empty">No marks yet</span>`;
+      clearResult(part);
+    } else if (pictoBtn) {
+      const build = pictoBuild(answerBox.value);
+      if (pictoBtn.dataset.add === "undo") build.pop(); else build.push(Number(pictoBtn.dataset.add));
+      answerBox.value = build.join(",");
+      part.querySelector(".picto-wrap").innerHTML = pictogramHTML(practiceSpecs[part.dataset.id].pictogram, build);
+      clearResult(part);
+    } else if (choiceBtn && choiceBtn.classList.contains("select-btn")) {
+      choiceBtn.classList.toggle("selected");
+      answerBox.value = [...part.querySelectorAll(".select-btn.selected")].map(b => b.dataset.value).join("|");
+      clearResult(part);
+    }
     else if (choiceBtn) choiceClick(part, choiceBtn);
     else if (e.target.closest(".check-btn")) checkPart(part);
     else if (e.target.closest(".show-answer")) {
