@@ -118,6 +118,21 @@
      scale extra: words: [[0, "Impossible"], [1, "Certain"]] puts words
                 under a number line, e.g. for a probability scale.
 
+   "interval" An error interval such as "6.5 ≤ x < 7.5" (the student gets
+              a ≤ button; <= also works). Bounds and signs are both checked.
+   "ratio"    A ratio such as "3:4" or "3:5:8". Equivalent ratios count
+              unless you add  simplest: true .
+   Fractions also accept mixed numbers, e.g. "1 1/2".
+   tolerance: 0.1  on a number question allows answers that far out
+              (e.g. circle answers worked out with π or with 3.14).
+   Number answers may be written "x = 4" as well as "4".
+   ratioBar: { parts: [3, 5], labels: ["Amy", "Ben"], each: "?" }   bar model
+   circle: { label: "5 cm", show: "radius" }   or  show: "diameter"
+   outline extras: only: [0, 2] labels just those sides, and
+              extra: [{ from: [4, 0], to: [4, 6], label: "6 cm" }] adds a
+              dashed line such as a height.
+   graph extra: labels: [["A", -3, 2]] writes text at a grid position.
+
    "drawbar"  The student clicks a bar chart to draw the missing bar. Give
               the chart as  bars: {...}  with null for the missing value and
               ask: its position (counting from 0); the answer is its height.
@@ -2825,5 +2840,579 @@ QUESTION_BANK.add({
       options: ["List them in an organised order", "Guess", "Pick some at random", "Only write the first few"], answer: "List them in an organised order" },
     { section: "Section C: Reasoning", question: "Ravi has a red shirt and a blue shirt, and jeans and shorts. He lists: red-jeans, blue-jeans, red-shorts. Explain what is wrong with his list.", type: "explain", marks: 1,
       answer: "He has missed blue-shorts. Listing systematically (red-jeans, red-shorts, blue-jeans, blue-shorts) shows there are 2 × 2 = 4 outfits." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Error intervals",
+  title: "Error Intervals",
+  type: "interval",
+  questionsPerSet: 10,
+  tip: "An error interval looks like 6.5 ≤ x < 7.5. The lower bound is included (≤) but the upper bound isn't (<), because it would round up. Use the ≤ button or type <=, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Rounding", question: "A length, l, is 7 cm to the nearest cm. Write down the error interval for l.", marks: 2, answer: "6.5 ≤ l < 7.5" },
+    { section: "Section A: Rounding", question: "x = 40 to the nearest 10. Write down the error interval for x.", marks: 2, answer: "35 ≤ x < 45" },
+    { section: "Section A: Rounding", question: "m = 3.4 correct to 1 decimal place. Write down the error interval for m.", marks: 2, answer: "3.35 ≤ m < 3.45" },
+    { section: "Section A: Rounding", question: "A mass, w, is 250 g to the nearest 10 g. Write down the error interval for w.", marks: 2, answer: "245 ≤ w < 255" },
+    { section: "Section A: Rounding", question: "t = 8.2 correct to 1 decimal place. Write down the error interval for t.", marks: 2, answer: "8.15 ≤ t < 8.25" },
+    { section: "Section A: Rounding", question: "n = 600 to the nearest 100. Write down the error interval for n.", marks: 2, answer: "550 ≤ n < 650" },
+
+    { section: "Section B: Truncation and bounds", question: "y = 5.7 when it is truncated to 1 decimal place. Write down the error interval for y.", marks: 2, answer: "5.7 ≤ y < 5.8" },
+    { section: "Section B: Truncation and bounds", question: "A number is 60 when rounded to the nearest 10. What is its lower bound?", type: "number", marks: 1, answer: "55" },
+    { section: "Section B: Truncation and bounds", question: "A number is 4.3 when rounded to 1 decimal place. What is its upper bound?", type: "number", marks: 1, answer: "4.35" },
+    { section: "Section B: Truncation and bounds", question: "Which value is in the error interval 6.5 ≤ x < 7.5?", type: "choice", marks: 1,
+      options: ["6.4", "6.5", "7.5", "7.6"], answer: "6.5" },
+    { section: "Section B: Truncation and bounds", question: "In 6.5 ≤ x < 7.5, why is 7.5 written with < and not ≤?", type: "explain", marks: 1,
+      answer: "7.5 rounds up to 8, not 7, so it can't be one of the values. The values can get as close to 7.5 as you like without reaching it." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Fractions: arithmetic",
+  title: "Fractions: Arithmetic",
+  type: "fraction",
+  questionsPerSet: 10,
+  tip: "To add or subtract, use a common denominator. To multiply, multiply the tops and the bottoms. To divide, flip the second fraction and multiply. Type fractions like 3/4 and mixed numbers like 1 1/2, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Adding and subtracting", question: "Work out 1/4 + 2/4", marks: 1, answer: "3/4" },
+    { section: "Section A: Adding and subtracting", question: "Work out 2/5 + 1/3", marks: 2, answer: "11/15" },
+    { section: "Section A: Adding and subtracting", question: "Work out 3/4 − 1/6", marks: 2, answer: "7/12" },
+    { section: "Section A: Adding and subtracting", question: "Work out 5/6 − 1/2. Give your answer in its simplest form.", simplest: true, marks: 2, answer: "1/3" },
+    { section: "Section A: Adding and subtracting", question: "Work out 1 1/2 + 2 1/4. Give your answer as a mixed number.", marks: 2, answer: "3 3/4" },
+    { section: "Section A: Adding and subtracting", question: "Work out 2 1/3 − 1 1/2", marks: 2, answer: "5/6" },
+
+    { section: "Section B: Multiplying and dividing", question: "Work out 2/3 × 3/5. Give your answer in its simplest form.", simplest: true, marks: 2, answer: "2/5" },
+    { section: "Section B: Multiplying and dividing", question: "Work out 3/4 × 8", marks: 1, answer: "6" },
+    { section: "Section B: Multiplying and dividing", question: "Work out 1/2 ÷ 1/4", marks: 1, answer: "2" },
+    { section: "Section B: Multiplying and dividing", question: "Work out 2/3 ÷ 4/9. Give your answer as a mixed number.", marks: 2, answer: "1 1/2" },
+    { section: "Section B: Multiplying and dividing", question: "Which calculation has the answer 1/2?", type: "choice", marks: 1,
+      options: ["1/4 + 1/3", "1/3 + 1/6", "1/2 × 1/2", "3/4 − 1/2"], answer: "1/3 + 1/6" },
+    { section: "Section B: Multiplying and dividing", question: "Sam says 1/3 + 1/4 = 2/7. Explain Sam's mistake and give the correct answer.", type: "explain", marks: 2,
+      answer: "Sam added the tops and the bottoms. You need a common denominator: 1/3 = 4/12 and 1/4 = 3/12, so 1/3 + 1/4 = 7/12." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Ratio: as a fraction and simplifying",
+  title: "Ratio: Simplifying and Fractions",
+  type: "ratio",
+  questionsPerSet: 10,
+  tip: "Simplify a ratio by dividing every part by the same number until they can't be divided any more. Put both parts in the same units first. Type ratios like 3:4, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Simplifying ratios", question: "Simplify 6 : 9", simplest: true, marks: 1, answer: "2:3" },
+    { section: "Section A: Simplifying ratios", question: "Simplify 12 : 16", simplest: true, marks: 1, answer: "3:4" },
+    { section: "Section A: Simplifying ratios", question: "Simplify 15 : 25 : 40", simplest: true, marks: 2, answer: "3:5:8" },
+    { section: "Section A: Simplifying ratios", question: "Simplify 0.5 : 2", simplest: true, marks: 1, answer: "1:4" },
+    { section: "Section A: Simplifying ratios", question: "Write 40 cm : 2 m in its simplest form.", simplest: true, marks: 2, answer: "1:5" },
+    { section: "Section A: Simplifying ratios", text: "A bag holds these counters.", question: "Write the ratio of red counters to blue counters in its simplest form.", simplest: true, marks: 1, answer: "2:3",
+      counters: { red: 4, blue: 6 } },
+    { section: "Section A: Simplifying ratios", question: "Which ratio is equivalent to 4 : 6?", type: "choice", marks: 1,
+      options: ["2 : 3", "3 : 2", "8 : 10", "1 : 2"], answer: "2 : 3" },
+    { section: "Section A: Simplifying ratios", question: "Write 2 : 5 in the form 1 : n. What is n?", type: "number", marks: 1, answer: "2.5" },
+
+    { section: "Section B: Ratios and fractions", question: "The ratio of red beads to blue beads is 3 : 5. What fraction of the beads are red?", type: "fraction", marks: 1, answer: "3/8" },
+    { section: "Section B: Ratios and fractions", question: "The ratio of boys to girls in a club is 2 : 7. What fraction of the club are girls?", type: "fraction", marks: 1, answer: "7/9" },
+    { section: "Section B: Ratios and fractions", question: "The ratio of red to blue paint is 3 : 4. Tia says 3/4 of the paint is red. Explain why Tia is wrong.", type: "explain", marks: 1,
+      answer: "There are 3 + 4 = 7 parts altogether, and 3 of them are red. So 3/7 of the paint is red, not 3/4." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Proportion: recipes and ingredients",
+  title: "Proportion: Recipes",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Find the amount for one first (divide), then multiply up. For a recipe, work out how many times bigger or smaller the new number of people is. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Recipes", text: "Here is a recipe for pancakes for 4 people.", question: "How much flour is needed for 8 people?", marks: 1, answer: "400 g",
+      table: { headings: ["Ingredient", "For 4 people"], rows: [["Flour", "200 g"], ["Eggs", "2"], ["Milk", "300 ml"], ["Sugar", "50 g"]] } },
+    { section: "Section A: Recipes", text: "Here is a recipe for pancakes for 4 people.", question: "How much milk is needed for 6 people?", marks: 2, answer: "450 ml",
+      table: { headings: ["Ingredient", "For 4 people"], rows: [["Flour", "200 g"], ["Eggs", "2"], ["Milk", "300 ml"], ["Sugar", "50 g"]] } },
+    { section: "Section A: Recipes", text: "Here is a recipe for pancakes for 4 people.", question: "How many eggs are needed for 2 people?", marks: 1, answer: "1",
+      table: { headings: ["Ingredient", "For 4 people"], rows: [["Flour", "200 g"], ["Eggs", "2"], ["Milk", "300 ml"], ["Sugar", "50 g"]] } },
+    { section: "Section A: Recipes", text: "Here is a recipe for pancakes for 4 people.", question: "How much sugar is needed for 10 people?", marks: 2, answer: "125 g",
+      table: { headings: ["Ingredient", "For 4 people"], rows: [["Flour", "200 g"], ["Eggs", "2"], ["Milk", "300 ml"], ["Sugar", "50 g"]] } },
+    { section: "Section A: Recipes", text: "Here is a recipe for pancakes for 4 people.", question: "How many people can be served using 600 g of flour?", marks: 2, answer: "12",
+      table: { headings: ["Ingredient", "For 4 people"], rows: [["Flour", "200 g"], ["Eggs", "2"], ["Milk", "300 ml"], ["Sugar", "50 g"]] } },
+    { section: "Section A: Recipes", text: "Here is a recipe for pancakes for 4 people.", question: "Max has 5 eggs and plenty of everything else. What is the greatest number of people he can make pancakes for?", marks: 2, answer: "10",
+      table: { headings: ["Ingredient", "For 4 people"], rows: [["Flour", "200 g"], ["Eggs", "2"], ["Milk", "300 ml"], ["Sugar", "50 g"]] } },
+
+    { section: "Section B: Direct proportion", question: "5 pens cost £3.50. How much do 8 pens cost?", marks: 2, answer: "£5.60" },
+    { section: "Section B: Direct proportion", question: "3 kg of apples cost £4.20. How much do 5 kg cost?", marks: 2, answer: "£7" },
+    { section: "Section B: Direct proportion", question: "A car uses 6 litres of fuel to travel 72 km. How far can it travel on 10 litres?", marks: 2, answer: "120 km" },
+    { section: "Section B: Direct proportion", question: "A recipe for 6 people needs 300 g of rice. Which method finds the amount for 9 people?", type: "choice", marks: 1,
+      options: ["÷ 6, then × 9", "× 6, then ÷ 9", "add 3", "× 9"], answer: "÷ 6, then × 9" },
+    { section: "Section B: Direct proportion", question: "A recipe for 4 people uses 2 eggs. For 6 people, Jack uses 4 eggs because he adds 2 more people and 2 more eggs. Explain Jack's mistake.", type: "explain", marks: 1,
+      answer: "Recipes scale by multiplying, not adding. 6 people is 1.5 times 4 people, so he needs 2 × 1.5 = 3 eggs." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Ratio: sharing",
+  title: "Ratio: Sharing",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Add the parts of the ratio to find the total number of parts, divide the amount by this to find one part, then multiply for each share. The bar model shows each part as a box. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Sharing an amount", text: "£40 is shared between Amy and Ben in the ratio 3 : 5.", ratioBar: { parts: [3, 5], labels: ["Amy", "Ben"] }, parts: [
+      { question: "How much does Amy get?", marks: 1, answer: "£15" },
+      { question: "How much does Ben get?", marks: 1, answer: "£25" }
+    ] },
+    { section: "Section A: Sharing an amount", question: "Share 90 in the ratio 4 : 5. What is the smaller share?", marks: 2, answer: "40" },
+    { section: "Section A: Sharing an amount", question: "60 sweets are shared in the ratio 1 : 2 : 3. How many sweets are in the largest share?", marks: 2, answer: "30",
+      ratioBar: { parts: [1, 2, 3], labels: ["Ali", "Bea", "Cal"] } },
+    { section: "Section A: Sharing an amount", question: "The ratio of boys to girls in a class is 4 : 5. There are 36 pupils. How many are girls?", marks: 2, answer: "20" },
+
+    { section: "Section B: Working from one share", text: "Amy and Ben share some money in the ratio 2 : 3. Amy gets £12.", question: "How much does Ben get?", marks: 2, answer: "£18",
+      ratioBar: { parts: [2, 3], labels: ["Amy", "Ben"], each: "?" } },
+    { section: "Section B: Working from one share", question: "Money is shared in the ratio 2 : 7. The difference between the two shares is £35. How much money was shared?", marks: 3, answer: "£63" },
+    { section: "Section B: Working from one share", question: "Paint is mixed using white and blue in the ratio 3 : 1. There are 2 litres of blue. How much white is needed?", marks: 2, answer: "6 litres" },
+    { section: "Section B: Working from one share", question: "In a ratio 2 : 3, what fraction of the total is the first share?", type: "choice", marks: 1,
+      options: ["2/3", "2/5", "3/5", "1/2"], answer: "2/5" },
+    { section: "Section B: Working from one share", question: "Kai shares £24 in the ratio 1 : 3. He divides £24 by 3 and gives out £8 and £16. Explain Kai's mistake.", type: "explain", marks: 1,
+      answer: "There are 1 + 3 = 4 parts, so one part is £24 ÷ 4 = £6. The shares are £6 and £18." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Percentages: percentages of amounts",
+  title: "Percentages of Amounts",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Build percentages from easy ones: 10% is ÷ 10, 5% is half of 10%, 1% is ÷ 100. Or use a multiplier, e.g. 35% of 200 = 0.35 × 200. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Working out percentages", question: "Work out 10% of 70", marks: 1, answer: "7" },
+    { section: "Section A: Working out percentages", question: "Work out 25% of 80", marks: 1, answer: "20" },
+    { section: "Section A: Working out percentages", question: "Work out 5% of 60", marks: 1, answer: "3" },
+    { section: "Section A: Working out percentages", question: "Work out 35% of 200", marks: 1, answer: "70" },
+    { section: "Section A: Working out percentages", question: "Work out 12% of 50", marks: 1, answer: "6" },
+    { section: "Section A: Working out percentages", question: "Work out 17.5% of 400", marks: 2, answer: "70" },
+    { section: "Section A: Working out percentages", question: "Work out 150% of 30", marks: 1, answer: "45" },
+    { section: "Section A: Working out percentages", question: "Work out 1% of 3500", marks: 1, answer: "35" },
+
+    { section: "Section B: Problem solving", question: "A coat costs £60. In a sale, 20% is taken off. How much money is saved?", marks: 2, answer: "£12" },
+    { section: "Section B: Problem solving", question: "36% of a class of 25 pupils have a pet. How many pupils have a pet?", marks: 2, answer: "9" },
+    { section: "Section B: Problem solving", question: "Which is bigger?", type: "choice", marks: 1,
+      options: ["30% of 50", "20% of 70", "They are equal"], answer: "30% of 50" },
+    { section: "Section B: Problem solving", question: "Kim says 5% of 80 is 16. Explain Kim's mistake.", type: "explain", marks: 1,
+      answer: "16 is 20% of 80. 10% of 80 is 8, so 5% is half of that: 4." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Percentages: increase/decrease",
+  title: "Percentage Increase and Decrease",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Either find the percentage and add or subtract it, or use a multiplier: increase by 12% is × 1.12, decrease by 30% is × 0.7. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Increase and decrease", question: "Increase 50 by 10%.", marks: 1, answer: "55" },
+    { section: "Section A: Increase and decrease", question: "Increase £80 by 25%.", marks: 2, answer: "£100" },
+    { section: "Section A: Increase and decrease", question: "Decrease 120 by 15%.", marks: 2, answer: "102" },
+    { section: "Section A: Increase and decrease", question: "Decrease £45 by 20%.", marks: 2, answer: "£36" },
+    { section: "Section A: Increase and decrease", question: "Increase 240 by 5%.", marks: 2, answer: "252" },
+    { section: "Section A: Increase and decrease", question: "Which multiplier increases an amount by 12%?", type: "choice", marks: 1,
+      options: ["0.12", "1.12", "0.88", "1.2"], answer: "1.12" },
+    { section: "Section A: Increase and decrease", question: "Which multiplier decreases an amount by 30%?", type: "choice", marks: 1,
+      options: ["0.3", "1.3", "0.7", "0.03"], answer: "0.7" },
+
+    { section: "Section B: Problem solving", question: "A TV costs £350. Its price is reduced by 30%. What is the new price?", marks: 2, answer: "£245" },
+    { section: "Section B: Problem solving", question: "A salary of £24 000 rises by 3%. What is the new salary?", marks: 2, answer: "£24720" },
+    { section: "Section B: Problem solving", question: "A town's population of 8000 increases by 15%. What is the new population?", marks: 2, answer: "9200" },
+    { section: "Section B: Problem solving", question: "A price of £100 is increased by 10%, then the new price is decreased by 10%. Leo says it goes back to £100. Explain why Leo is wrong.", type: "explain", marks: 2,
+      answer: "After the increase the price is £110. 10% of £110 is £11, so the decrease takes it to £99, not £100. The second 10% is of a bigger amount." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Percentage change",
+  title: "Percentage Change",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Percentage change = change ÷ original × 100. Always divide by the ORIGINAL amount. Type your answer (the % sign is optional) and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Finding percentage change", question: "A price rises from £40 to £50. What is the percentage increase?", marks: 2, answer: "25%" },
+    { section: "Section A: Finding percentage change", question: "A number falls from 80 to 60. What is the percentage decrease?", marks: 2, answer: "25%" },
+    { section: "Section A: Finding percentage change", question: "A number rises from 250 to 300. What is the percentage increase?", marks: 2, answer: "20%" },
+    { section: "Section A: Finding percentage change", question: "A price falls from £1200 to £1020. What is the percentage decrease?", marks: 2, answer: "15%" },
+    { section: "Section A: Finding percentage change", question: "A ticket price falls from £8 to £7. What is the percentage decrease?", marks: 2, answer: "12.5%" },
+    { section: "Section A: Finding percentage change", question: "A plant grows from 12 cm to 15 cm. What is the percentage increase?", marks: 2, answer: "25%" },
+
+    { section: "Section B: Percentages in context", question: "Sam buys a bike for £20 and sells it for £26. What is his percentage profit?", marks: 2, answer: "30%" },
+    { section: "Section B: Percentages in context", question: "Mia scores 36 out of 40 in a test. What is this as a percentage?", marks: 1, answer: "90%" },
+    { section: "Section B: Percentages in context", question: "Which formula gives the percentage change?", type: "choice", marks: 1,
+      options: ["change ÷ original × 100", "change ÷ new × 100", "new ÷ original × 100", "original ÷ change × 100"], answer: "change ÷ original × 100" },
+    { section: "Section B: Percentages in context", question: "A price goes from £50 to £60. Tom says this is a 10% increase because it went up by £10. Explain Tom's mistake.", type: "explain", marks: 1,
+      answer: "The £10 increase must be compared with the original £50: 10 ÷ 50 × 100 = 20%. So it is a 20% increase." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Exchange rate",
+  title: "Exchange Rates",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "If £1 = €1.15, multiply pounds by 1.15 to get euros, and divide euros by 1.15 to get pounds. On a conversion graph, go across to the line, then up or down to read the value. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Using a rate", question: "£1 = €1.15. Change £200 into euros.", marks: 1, answer: "230" },
+    { section: "Section A: Using a rate", question: "£1 = €1.15. Change €46 into pounds.", marks: 2, answer: "£40" },
+    { section: "Section A: Using a rate", question: "£1 = $1.25. Change £80 into dollars.", marks: 1, answer: "100" },
+    { section: "Section A: Using a rate", question: "£1 = $1.25. Change $150 into pounds.", marks: 2, answer: "£120" },
+    { section: "Section A: Using a rate", question: "£1 = 160 yen. How many yen do you get for £15?", marks: 1, answer: "2400" },
+    { section: "Section A: Using a rate", question: "Which bank gives more euros for £100?", type: "choice", marks: 1,
+      options: ["Bank A: £1 = €1.12", "Bank B: £1 = €1.15"], answer: "Bank B: £1 = €1.15" },
+
+    { section: "Section B: Conversion graphs", text: "The graph converts between pounds and euros.", question: "Use the graph to change £25 into euros.", marks: 1, answer: "30",
+      graph: { x: [0, 50], xstep: 5, y: [0, 60], ystep: 6, xlabel: "Pounds (£)", ylabel: "Euros (€)", lines: [[[0, 0], [50, 60]]] } },
+    { section: "Section B: Conversion graphs", text: "The graph converts between pounds and euros.", question: "Use the graph to change €48 into pounds.", marks: 1, answer: "£40",
+      graph: { x: [0, 50], xstep: 5, y: [0, 60], ystep: 6, xlabel: "Pounds (£)", ylabel: "Euros (€)", lines: [[[0, 0], [50, 60]]] } },
+    { section: "Section B: Conversion graphs", question: "The exchange rate is £1 = €1.20. Jo changes €30 into pounds by multiplying: 30 × 1.2 = £36. Explain Jo's mistake.", type: "explain", marks: 1,
+      answer: "Going from euros to pounds, you divide by the rate: 30 ÷ 1.2 = £25. You get fewer pounds than euros, so £36 can't be right." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Conversions and units",
+  title: "Conversions and Units",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "1 km = 1000 m, 1 m = 100 cm, 1 cm = 10 mm, 1 kg = 1000 g, 1 litre = 1000 ml, 1 hour = 60 minutes. Type your answer (units optional) and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Metric units", question: "Change 3.5 km into metres.", marks: 1, answer: "3500 m" },
+    { section: "Section A: Metric units", question: "Change 450 cm into metres.", marks: 1, answer: "4.5 m" },
+    { section: "Section A: Metric units", question: "Change 2.4 kg into grams.", marks: 1, answer: "2400 g" },
+    { section: "Section A: Metric units", question: "Change 750 ml into litres.", marks: 1, answer: "0.75 litres" },
+    { section: "Section A: Metric units", question: "Change 6400 g into kilograms.", marks: 1, answer: "6.4 kg" },
+    { section: "Section A: Metric units", question: "Change 1.2 litres into millilitres.", marks: 1, answer: "1200 ml" },
+    { section: "Section A: Metric units", question: "Change 0.3 m into millimetres.", marks: 1, answer: "300 mm" },
+
+    { section: "Section B: Time", question: "Change 3 hours into minutes.", marks: 1, answer: "180 minutes" },
+    { section: "Section B: Time", question: "Change 2.5 hours into minutes.", marks: 1, answer: "150 minutes" },
+    { section: "Section B: Time", question: "Change 90 minutes into hours.", marks: 1, answer: "1.5 hours" },
+
+    { section: "Section C: Comparing", question: "Put these lengths in order, starting with the shortest.", type: "order", marks: 2,
+      items: ["1.2 m", "95 cm", "1050 mm", "0.8 m"], answer: "0.8 m, 95 cm, 1050 mm, 1.2 m" },
+    { section: "Section C: Comparing", question: "Which is the most sensible unit for the mass of a car?", type: "choice", marks: 1,
+      options: ["grams", "kilograms", "millilitres", "centimetres"], answer: "kilograms" },
+    { section: "Section C: Comparing", question: "Ben says 2 m is the same as 20 cm. Explain Ben's mistake.", type: "explain", marks: 1,
+      answer: "There are 100 cm in 1 m, not 10. So 2 m = 2 × 100 = 200 cm." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Scale drawings",
+  title: "Scale Drawings",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Multiply by the scale to go from the drawing to real life, and divide to go from real life to the drawing. With a scale like 1 : 50 000, change the units at the end (100 cm = 1 m, 1000 m = 1 km). Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Maps", question: "A map has a scale of 1 cm : 5 km. Two towns are 7 cm apart on the map. How far apart are they in real life?", marks: 1, answer: "35 km" },
+    { section: "Section A: Maps", question: "A map has a scale of 1 cm : 5 km. Two villages are 22.5 km apart. How far apart are they on the map?", marks: 2, answer: "4.5 cm" },
+    { section: "Section A: Maps", question: "A map has a scale of 1 : 50 000. Two places are 4 cm apart on the map. What is the real distance in km?", marks: 2, answer: "2 km" },
+    { section: "Section A: Maps", question: "What does a scale of 1 : 25 mean?", type: "choice", marks: 1,
+      options: ["1 cm on the drawing is 25 cm in real life", "25 cm on the drawing is 1 cm in real life", "The drawing is 25 times bigger", "1 m is 25 km"],
+      answer: "1 cm on the drawing is 25 cm in real life" },
+
+    { section: "Section B: Plans and models", question: "A plan is drawn to a scale of 1 : 100. A room is 6 cm long on the plan. How long is the real room, in metres?", marks: 2, answer: "6 m" },
+    { section: "Section B: Plans and models", question: "A model car is made to a scale of 1 : 20. The model is 21 cm long. How long is the real car, in cm?", marks: 1, answer: "420 cm" },
+    { section: "Section B: Plans and models", text: "This is a plan of a garden. The scale is 1 cm to 2 m.",
+      outline: { points: [[0, 0], [4, 0], [4, 3], [0, 3]], unit: "cm" }, parts: [
+      { question: "How long is the longer side of the real garden, in metres?", marks: 1, answer: "8 m" },
+      { question: "Work out the real area of the garden, in m².", marks: 2, answer: "48 m²" }
+    ] },
+    { section: "Section B: Plans and models", question: "The scale is 1 cm to 2 m. Sara says a drawing 3 cm by 4 cm shows a real area of 12 m². Explain Sara's mistake.", type: "explain", marks: 2,
+      answer: "Sara used the drawing's measurements. The real garden is 3 × 2 = 6 m by 4 × 2 = 8 m, so the real area is 6 × 8 = 48 m²." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Best buy questions",
+  title: "Best Buy",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Compare like with like: find the price of one item (or of 100 g, 1 litre, ...) for each option. The lowest price per unit is the best value. Tap your answer or type a price, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Which is better value?", text: "Eggs are sold in two packs.", question: "Which pack is better value?", marks: 2,
+      table: { headings: ["Pack", "Eggs", "Price"], rows: [["A", "6", "£1.50"], ["B", "10", "£2.40"]] }, options: ["Pack A", "Pack B"], answer: "Pack B" },
+    { section: "Section A: Which is better value?", text: "Eggs are sold in two packs.", question: "How much does one egg cost in pack B?", type: "number", marks: 1, answer: "£0.24",
+      table: { headings: ["Pack", "Eggs", "Price"], rows: [["A", "6", "£1.50"], ["B", "10", "£2.40"]] } },
+    { section: "Section A: Which is better value?", question: "Cereal comes in a 500 g box for £2.20 or a 750 g box for £3.15. Which is better value?", marks: 2,
+      options: ["500 g box", "750 g box"], answer: "750 g box" },
+    { section: "Section A: Which is better value?", question: "Juice comes in a 1 litre carton for £1.20 or a 1.5 litre carton for £1.65. Which is better value?", marks: 2,
+      options: ["1 litre", "1.5 litres"], answer: "1.5 litres" },
+    { section: "Section A: Which is better value?", text: "Shampoo is sold in three sizes.", question: "Which size is the best value?", marks: 3,
+      table: { headings: ["Size", "Price"], rows: [["200 ml", "£2.40"], ["300 ml", "£3.30"], ["500 ml", "£5.25"]] }, options: ["200 ml", "300 ml", "500 ml"], answer: "500 ml" },
+
+    { section: "Section B: Unit prices", question: "2.5 kg of rice costs £3.50. How much does 1 kg cost?", type: "number", marks: 1, answer: "£1.40" },
+    { section: "Section B: Unit prices", question: "4 cans of drink cost £2.60. How much does 1 can cost?", type: "number", marks: 1, answer: "£0.65" },
+    { section: "Section B: Unit prices", question: "Give a reason why someone might not buy the best-value pack.", type: "explain", marks: 1,
+      answer: "For example: they don't need that much and some might go to waste, it might go out of date first, or they can't afford the bigger pack right now." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Number substitution",
+  title: "Substitution",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Replace each letter with its number, then use BIDMAS. Remember 3a means 3 × a, and a² means a × a. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Expressions", question: "Find the value of 3a + 2 when a = 5.", marks: 1, answer: "17" },
+    { section: "Section A: Expressions", question: "Find the value of 4x − y when x = 3 and y = 5.", marks: 1, answer: "7" },
+    { section: "Section A: Expressions", question: "Find the value of a² + b when a = 4 and b = 3.", marks: 1, answer: "19" },
+    { section: "Section A: Expressions", question: "Find the value of 2(p + q) when p = 3 and q = 7.", marks: 1, answer: "20" },
+    { section: "Section A: Expressions", question: "Find the value of 5 − 2n when n = −3.", marks: 2, answer: "11" },
+    { section: "Section A: Expressions", question: "Find the value of ab when a = −2 and b = 6.", marks: 1, answer: "−12" },
+    { section: "Section A: Expressions", question: "Which expression has the value 10 when x = 2?", type: "choice", marks: 1,
+      options: ["3x + 4", "x² + 2", "4x", "x + 9"], answer: "3x + 4" },
+
+    { section: "Section B: Formulae", question: "v = u + at. Work out v when u = 5, a = 2 and t = 10.", marks: 2, answer: "25" },
+    { section: "Section B: Formulae", question: "A = ½bh. Work out A when b = 8 and h = 5.", marks: 2, answer: "20" },
+    { section: "Section B: Formulae", question: "P = 2l + 2w. Work out P when l = 7.5 and w = 4.", marks: 2, answer: "23" },
+    { section: "Section B: Formulae", question: "F = 1.8C + 32. Work out F when C = 20.", marks: 2, answer: "68" },
+    { section: "Section B: Formulae", question: "When x = 3, Ali says 2x² = 36. Explain Ali's mistake.", type: "explain", marks: 1,
+      answer: "Ali worked out (2 × 3)² = 36. In 2x² only the x is squared: 3² = 9, then 2 × 9 = 18." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Solving linear equations",
+  title: "Solving Linear Equations",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Do the same thing to both sides to get x on its own, undoing operations in reverse order. You can type just the number or x = ..., then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: One and two steps", question: "Solve x + 7 = 12", marks: 1, answer: "5" },
+    { section: "Section A: One and two steps", question: "Solve 3x = 21", marks: 1, answer: "7" },
+    { section: "Section A: One and two steps", question: "Solve x/4 = 6", marks: 1, answer: "24" },
+    { section: "Section A: One and two steps", question: "Solve 2x + 5 = 17", marks: 2, answer: "6" },
+    { section: "Section A: One and two steps", question: "Solve 5x − 3 = 22", marks: 2, answer: "5" },
+    { section: "Section A: One and two steps", question: "Solve 7 − 2x = 1", marks: 2, answer: "3" },
+    { section: "Section A: One and two steps", question: "What should you do first to solve 3x + 4 = 19?", type: "choice", marks: 1,
+      options: ["Subtract 4 from both sides", "Divide both sides by 3", "Add 4 to both sides", "Multiply both sides by 3"], answer: "Subtract 4 from both sides" },
+
+    { section: "Section B: Harder equations", question: "Solve 4x + 1 = 2x + 9", marks: 2, answer: "4" },
+    { section: "Section B: Harder equations", question: "Solve 3(x + 2) = 18", marks: 2, answer: "4" },
+    { section: "Section B: Harder equations", question: "Solve (x − 1)/3 = 5", marks: 2, answer: "16" },
+    { section: "Section B: Harder equations", question: "Solve 6x + 4 = 1", marks: 2, answer: "−0.5" },
+
+    { section: "Section C: Forming equations", question: "I think of a number, multiply it by 4 and add 3. The answer is 31. What was my number?", marks: 2, answer: "7" },
+    { section: "Section C: Forming equations", question: "A rectangle has sides of x cm and (x + 3) cm. Its perimeter is 26 cm. Work out x.", marks: 3, answer: "5" },
+    { section: "Section C: Forming equations", question: "To solve 2x + 3 = 11, Amy writes 2x = 14. Explain Amy's mistake and solve the equation.", type: "explain", marks: 2,
+      answer: "To remove the + 3 she should subtract 3 from both sides, not add it: 2x = 8, so x = 4." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Drawing graphs",
+  title: "Drawing Straight Line Graphs",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Make a table of values: put each x into the equation to find y, then plot the points (x, y). To plot, click the grid; the points of a straight line graph should line up. Then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Tables of values", text: "Complete the table of values for y = 2x + 1.",
+      table: { headings: ["x", "0", "1", "2", "3"], rows: [["y", "1", "?", "?", "?"]] }, parts: [
+      { question: "What is y when x = 1?", marks: 1, answer: "3" },
+      { question: "What is y when x = 2?", marks: 1, answer: "5" },
+      { question: "What is y when x = 3?", marks: 1, answer: "7" }
+    ] },
+    { section: "Section A: Tables of values", question: "Does the point (2, 9) lie on the line y = 4x + 1?", type: "choice", marks: 1, options: ["Yes", "No"], answer: "Yes" },
+    { section: "Section A: Tables of values", question: "Which equation gives a horizontal line?", type: "choice", marks: 1,
+      options: ["y = 3", "x = 3", "y = 3x", "y = x + 3"], answer: "y = 3" },
+
+    { section: "Section B: Plotting graphs", question: "Plot the points of y = 2x + 1 for x = 0, 1, 2 and 3.", type: "plot", marks: 2,
+      answer: "(0, 1); (1, 3); (2, 5); (3, 7)", graph: { x: [0, 4], y: [0, 8] } },
+    { section: "Section B: Plotting graphs", question: "Plot the points of y = x − 2 for x = 0, 1, 2, 3 and 4.", type: "plot", marks: 2,
+      answer: "(0, −2); (1, −1); (2, 0); (3, 1); (4, 2)", graph: { x: [0, 5], y: [-3, 3] } },
+    { section: "Section B: Plotting graphs", question: "Plot the points of y = 3 − x for x = 0, 1, 2 and 3.", type: "plot", marks: 2,
+      answer: "(0, 3); (1, 2); (2, 1); (3, 0)", graph: { x: [0, 4], y: [0, 4] } },
+
+    { section: "Section C: Reading graphs", text: "The graph shows the line y = 2x − 1.", question: "Use the graph to find y when x = 3.", marks: 1, answer: "5",
+      graph: { x: [-1, 4], y: [-3, 7], lines: [[[-1, -3], [4, 7]]] } },
+    { section: "Section C: Reading graphs", text: "The graph shows the line y = 2x − 1.", question: "Use the graph to find x when y = −1.", marks: 1, answer: "0",
+      graph: { x: [-1, 4], y: [-3, 7], lines: [[[-1, -3], [4, 7]]] } },
+    { section: "Section C: Reading graphs", question: "Jamal plots the points for y = 2x + 1 and one of them doesn't line up with the others. What does this tell him?", type: "explain", marks: 1,
+      answer: "The points of a straight line graph must all lie on one line, so that point has been worked out or plotted wrongly. He should check its y value." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Area and circumference of circles",
+  title: "Area and Circumference of Circles",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Area = πr². Circumference = πd (or 2πr). Remember the diameter is twice the radius. Give answers to 1 decimal place; answers using π = 3.14 are accepted too. Then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Area", question: "Work out the area of the circle. Give your answer to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "78.5 cm²",
+      circle: { label: "5 cm", show: "radius" } },
+    { section: "Section A: Area", question: "Work out the area of the circle. Give your answer to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "28.3 cm²",
+      circle: { label: "3 cm", show: "radius" } },
+    { section: "Section A: Area", question: "Work out the area of the circle. Give your answer to 1 decimal place.", tolerance: 0.1, marks: 3, answer: "113.1 cm²",
+      circle: { label: "12 cm", show: "diameter" } },
+    { section: "Section A: Area", question: "A circle has a radius of 4 cm. What is its area, in terms of π?", type: "choice", marks: 1,
+      options: ["16π cm²", "8π cm²", "4π cm²", "64π cm²"], answer: "16π cm²" },
+
+    { section: "Section B: Circumference", question: "Work out the circumference of the circle. Give your answer to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "31.4 cm",
+      circle: { label: "5 cm", show: "radius" } },
+    { section: "Section B: Circumference", question: "Work out the circumference of the circle. Give your answer to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "37.7 cm",
+      circle: { label: "12 cm", show: "diameter" } },
+    { section: "Section B: Circumference", question: "Work out the circumference of the circle. Give your answer to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "44.0 cm",
+      circle: { label: "7 cm", show: "radius" } },
+    { section: "Section B: Circumference", question: "A circle has a circumference of 31.4 cm. Use π = 3.14 to find its diameter.", marks: 2, answer: "10 cm" },
+    { section: "Section B: Circumference", question: "Which is the formula for the area of a circle?", type: "choice", marks: 1,
+      options: ["πr²", "2πr", "πd", "πr"], answer: "πr²" },
+    { section: "Section B: Circumference", question: "A circle has a diameter of 6 cm. Jo works out its area as π × 6² = 113.1 cm². Explain Jo's mistake.", type: "explain", marks: 1,
+      answer: "The formula uses the radius, which is half the diameter: 3 cm. The area is π × 3² = 28.3 cm²." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Area of compound shapes",
+  title: "Area of Compound Shapes",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Split the shape into rectangles and triangles, find each area and add them (or find a big area and subtract a missing part). Triangle = ½ × base × height; trapezium = ½(a + b)h; parallelogram = base × height.",
+  questions: [
+    { section: "Section A: Shapes made of rectangles", question: "Work out the area of this shape, in cm².", marks: 3, answer: "70 cm²",
+      outline: { points: [[0, 0], [10, 0], [10, 4], [6, 4], [6, 9], [0, 9]], unit: "cm" } },
+    { section: "Section A: Shapes made of rectangles", question: "Work out the area of this shape, in cm².", marks: 3, answer: "76 cm²",
+      outline: { points: [[0, 0], [12, 0], [12, 8], [8, 8], [8, 3], [4, 3], [4, 8], [0, 8]], unit: "cm" } },
+    { section: "Section A: Shapes made of rectangles", question: "A rectangle 10 cm by 6 cm has a square hole of side 2 cm cut out of it. What area is left, in cm²?", marks: 2, answer: "56 cm²" },
+
+    { section: "Section B: Triangles and quadrilaterals", question: "Work out the area of the triangle, in cm².", marks: 2, answer: "30 cm²",
+      outline: { points: [[0, 0], [10, 0], [4, 6]], unit: "cm", only: [0], extra: [{ from: [4, 0], to: [4, 6], label: "6 cm" }] } },
+    { section: "Section B: Triangles and quadrilaterals", question: "Work out the area of the trapezium, in cm².", marks: 2, answer: "37.5 cm²",
+      outline: { points: [[0, 0], [10, 0], [7, 5], [2, 5]], unit: "cm", only: [0, 2], extra: [{ from: [2, 0], to: [2, 5], label: "5 cm" }] } },
+    { section: "Section B: Triangles and quadrilaterals", question: "Work out the area of the parallelogram, in cm².", marks: 2, answer: "32 cm²",
+      outline: { points: [[0, 0], [8, 0], [11, 4], [3, 4]], unit: "cm", only: [0], extra: [{ from: [3, 0], to: [3, 4], label: "4 cm" }] } },
+    { section: "Section B: Triangles and quadrilaterals", text: "The shape is a rectangle with a triangle on top.", question: "Work out the total area, in cm².", marks: 3, answer: "52 cm²",
+      outline: { points: [[0, 0], [8, 0], [8, 5], [4, 8], [0, 5]], unit: "cm", only: [0, 1], extra: [{ from: [4, 5], to: [4, 8], label: "3 cm" }] } },
+    { section: "Section B: Triangles and quadrilaterals", question: "Which is the formula for the area of a triangle?", type: "choice", marks: 1,
+      options: ["½ × base × height", "base × height", "base + height", "2 × base × height"], answer: "½ × base × height" },
+    { section: "Section B: Triangles and quadrilaterals", question: "Ben says a triangle with base 10 cm and height 6 cm has an area of 60 cm². Explain Ben's mistake.", type: "explain", marks: 1,
+      answer: "Ben has forgotten to halve. A triangle is half of a rectangle, so its area is ½ × 10 × 6 = 30 cm²." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Frequency tables",
+  title: "Frequency Tables",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "The frequency tells you how many times each value occurs. To find the total of the values, multiply each value by its frequency and add them up. Type your answer or tap your choice, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Reading a frequency table", text: "The table shows how many pets a group of people have.", question: "How many people were asked?", marks: 1, answer: "25",
+      table: { headings: ["Number of pets", "Frequency"], rows: [["0", "5"], ["1", "8"], ["2", "6"], ["3", "4"], ["4", "2"]] } },
+    { section: "Section A: Reading a frequency table", text: "The table shows how many pets a group of people have.", question: "What is the mode (the most common number of pets)?", marks: 1, answer: "1",
+      table: { headings: ["Number of pets", "Frequency"], rows: [["0", "5"], ["1", "8"], ["2", "6"], ["3", "4"], ["4", "2"]] } },
+    { section: "Section A: Reading a frequency table", text: "The table shows how many pets a group of people have.", question: "How many people have 2 or more pets?", marks: 1, answer: "12",
+      table: { headings: ["Number of pets", "Frequency"], rows: [["0", "5"], ["1", "8"], ["2", "6"], ["3", "4"], ["4", "2"]] } },
+    { section: "Section A: Reading a frequency table", text: "The table shows how many pets a group of people have.", question: "How many pets are there altogether?", marks: 2, answer: "40",
+      table: { headings: ["Number of pets", "Frequency"], rows: [["0", "5"], ["1", "8"], ["2", "6"], ["3", "4"], ["4", "2"]] } },
+    { section: "Section A: Reading a frequency table", text: "The table shows how many pets a group of people have.", question: "Work out the mean number of pets.", marks: 3, answer: "1.6",
+      table: { headings: ["Number of pets", "Frequency"], rows: [["0", "5"], ["1", "8"], ["2", "6"], ["3", "4"], ["4", "2"]] } },
+    { section: "Section A: Reading a frequency table", text: "The table shows how many pets a group of people have.", question: "Work out the median number of pets.", marks: 2, answer: "1",
+      table: { headings: ["Number of pets", "Frequency"], rows: [["0", "5"], ["1", "8"], ["2", "6"], ["3", "4"], ["4", "2"]] } },
+
+    { section: "Section B: Grouped data", text: "The table shows how long some pupils took to get to school.", question: "Which is the modal class?", type: "choice", marks: 1,
+      table: { headings: ["Time, t (minutes)", "Frequency"], rows: [["0 < t ≤ 10", "3"], ["10 < t ≤ 20", "7"], ["20 < t ≤ 30", "5"]] },
+      options: ["0 < t ≤ 10", "10 < t ≤ 20", "20 < t ≤ 30"], answer: "10 < t ≤ 20" },
+    { section: "Section B: Grouped data", text: "The table shows how long some pupils took to get to school.", question: "How many pupils took more than 10 minutes?", marks: 1, answer: "12",
+      table: { headings: ["Time, t (minutes)", "Frequency"], rows: [["0 < t ≤ 10", "3"], ["10 < t ≤ 20", "7"], ["20 < t ≤ 30", "5"]] } },
+    { section: "Section B: Grouped data", question: "The frequencies in a frequency table add up to...", type: "choice", marks: 1,
+      options: ["the total number of results", "the mode", "the biggest value", "the mean"], answer: "the total number of results" },
+    { section: "Section B: Grouped data", text: "The table shows how many pets a group of people have.", question: "Mia says the mode of this data is 8. Explain Mia's mistake.", type: "explain", marks: 1,
+      table: { headings: ["Number of pets", "Frequency"], rows: [["0", "5"], ["1", "8"], ["2", "6"], ["3", "4"], ["4", "2"]] },
+      answer: "8 is the highest frequency, not a number of pets. The mode is the value with the highest frequency, which is 1 pet." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Two-way tables",
+  title: "Two-Way Tables",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Each row and each column adds up to its total. Use the totals to fill in missing numbers one at a time. Type your answer and press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Completing a two-way table", text: "The two-way table shows how 50 pupils travel to school. Some numbers are missing.", question: "How many boys travel by bus?", marks: 1, answer: "8",
+      table: { headings: ["", "Walk", "Bus", "Car", "Total"], rows: [["Boys", "12", "?", "5", "25"], ["Girls", "?", "11", "?", "25"], ["Total", "21", "?", "10", "50"]] } },
+    { section: "Section A: Completing a two-way table", text: "The two-way table shows how 50 pupils travel to school. Some numbers are missing.", question: "How many girls walk?", marks: 1, answer: "9",
+      table: { headings: ["", "Walk", "Bus", "Car", "Total"], rows: [["Boys", "12", "?", "5", "25"], ["Girls", "?", "11", "?", "25"], ["Total", "21", "?", "10", "50"]] } },
+    { section: "Section A: Completing a two-way table", text: "The two-way table shows how 50 pupils travel to school. Some numbers are missing.", question: "How many girls travel by car?", marks: 1, answer: "5",
+      table: { headings: ["", "Walk", "Bus", "Car", "Total"], rows: [["Boys", "12", "?", "5", "25"], ["Girls", "?", "11", "?", "25"], ["Total", "21", "?", "10", "50"]] } },
+    { section: "Section A: Completing a two-way table", text: "The two-way table shows how 50 pupils travel to school. Some numbers are missing.", question: "How many pupils travel by bus altogether?", marks: 2, answer: "19",
+      table: { headings: ["", "Walk", "Bus", "Car", "Total"], rows: [["Boys", "12", "?", "5", "25"], ["Girls", "?", "11", "?", "25"], ["Total", "21", "?", "10", "50"]] } },
+    { section: "Section A: Completing a two-way table", text: "The two-way table shows how 50 pupils travel to school. Some numbers are missing.", question: "What fraction of the pupils walk?", type: "fraction", marks: 1, answer: "21/50",
+      table: { headings: ["", "Walk", "Bus", "Car", "Total"], rows: [["Boys", "12", "?", "5", "25"], ["Girls", "?", "11", "?", "25"], ["Total", "21", "?", "10", "50"]] } },
+    { section: "Section A: Completing a two-way table", text: "The two-way table shows how 50 pupils travel to school. Some numbers are missing.", question: "How many more girls than boys travel by bus?", marks: 2, answer: "3",
+      table: { headings: ["", "Walk", "Bus", "Car", "Total"], rows: [["Boys", "12", "?", "5", "25"], ["Girls", "?", "11", "?", "25"], ["Total", "21", "?", "10", "50"]] } },
+
+    { section: "Section B: Using a two-way table", text: "The table shows which film 40 people watched at a cinema.", question: "How many people watched Film A?", marks: 1, answer: "23",
+      table: { headings: ["", "Film A", "Film B", "Total"], rows: [["Adults", "14", "6", "20"], ["Children", "9", "11", "20"], ["Total", "23", "17", "40"]] } },
+    { section: "Section B: Using a two-way table", text: "The table shows which film 40 people watched at a cinema.", question: "One person is chosen at random. What is the probability they are a child who watched Film B?", type: "fraction", marks: 1, answer: "11/40",
+      table: { headings: ["", "Film A", "Film B", "Total"], rows: [["Adults", "14", "6", "20"], ["Children", "9", "11", "20"], ["Total", "23", "17", "40"]] } },
+    { section: "Section B: Using a two-way table", question: "Why are two-way tables useful?", type: "explain", marks: 1,
+      answer: "They show data sorted in two ways at once (for example boys/girls and how they travel), and the totals make it easy to find missing values and compare groups." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Transformations of shapes",
+  title: "Transformations of Shapes",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Translation slides a shape, reflection flips it in a mirror line, rotation turns it about a centre, and enlargement changes its size. To draw an image, click the grid to plot each corner of the new shape, then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Describing transformations", question: "Which transformation maps shape A onto shape B?", marks: 1,
+      options: ["translation", "reflection", "rotation", "enlargement"], answer: "translation",
+      graph: { lines: [[[-4, 1], [-2, 1], [-4, 3], [-4, 1]], [[1, -2], [3, -2], [1, 0], [1, -2]]], labels: [["A", -4.6, 2.2], ["B", 3.4, -1]] } },
+    { section: "Section A: Describing transformations", question: "Shape A is translated onto shape B. Describe the translation.", marks: 1,
+      options: ["5 right and 3 down", "5 left and 3 up", "3 right and 5 down", "5 right and 3 up"], answer: "5 right and 3 down",
+      graph: { lines: [[[-4, 1], [-2, 1], [-4, 3], [-4, 1]], [[1, -2], [3, -2], [1, 0], [1, -2]]], labels: [["A", -4.6, 2.2], ["B", 3.4, -1]] } },
+    { section: "Section A: Describing transformations", question: "Which transformation maps shape A onto shape B?", marks: 1,
+      options: ["translation", "reflection", "rotation", "enlargement"], answer: "reflection",
+      graph: { lines: [[[1, 1], [4, 1], [1, 3], [1, 1]], [[-1, 1], [-4, 1], [-1, 3], [-1, 1]]], labels: [["A", 2.5, 3.4], ["B", -2.5, 3.4]] } },
+    { section: "Section A: Describing transformations", question: "Shape A is reflected onto shape B. What is the mirror line?", marks: 1,
+      options: ["the y-axis", "the x-axis", "y = x", "x = 1"], answer: "the y-axis",
+      graph: { lines: [[[1, 1], [4, 1], [1, 3], [1, 1]], [[-1, 1], [-4, 1], [-1, 3], [-1, 1]]], labels: [["A", 2.5, 3.4], ["B", -2.5, 3.4]] } },
+    { section: "Section A: Describing transformations", question: "Which transformation maps shape A onto shape B?", marks: 1,
+      options: ["translation", "reflection", "rotation", "enlargement"], answer: "rotation",
+      graph: { lines: [[[1, 1], [3, 1], [1, 4], [1, 1]], [[-1, -1], [-3, -1], [-1, -4], [-1, -1]]], labels: [["A", 2.2, 3], ["B", -2.2, -3]] } },
+    { section: "Section A: Describing transformations", question: "Shape A is rotated onto shape B. Describe the rotation.", marks: 1,
+      options: ["90° clockwise about (0, 0)", "180° about (0, 0)", "90° anticlockwise about (0, 0)", "180° about (1, 1)"], answer: "180° about (0, 0)",
+      graph: { lines: [[[1, 1], [3, 1], [1, 4], [1, 1]], [[-1, -1], [-3, -1], [-1, -4], [-1, -1]]], labels: [["A", 2.2, 3], ["B", -2.2, -3]] } },
+    { section: "Section A: Describing transformations", question: "Shape A is enlarged onto shape B. What is the scale factor?", type: "number", marks: 1, answer: "2",
+      graph: { lines: [[[1, 1], [2, 1], [1, 2], [1, 1]], [[2, 2], [4, 2], [2, 4], [2, 2]]], labels: [["A", 0.6, 0.6], ["B", 3.2, 3.4]] } },
+
+    { section: "Section B: Drawing transformations", question: "Translate the triangle 3 right and 2 up. Plot the three corners of the image.", type: "plot", marks: 2,
+      answer: "(−1, −1); (1, −1); (1, 1)", graph: { lines: [[[-4, -3], [-2, -3], [-2, -1], [-4, -3]]] } },
+    { section: "Section B: Drawing transformations", question: "Reflect the triangle in the x-axis. Plot the three corners of the image.", type: "plot", marks: 2,
+      answer: "(1, −1); (4, −1); (4, −3)", graph: { lines: [[[1, 1], [4, 1], [4, 3], [1, 1]]] } },
+    { section: "Section B: Drawing transformations", question: "Rotate the triangle 90° clockwise about (0, 0). Plot the three corners of the image.", type: "plot", marks: 2,
+      answer: "(1, −1); (1, −3); (2, −1)", graph: { lines: [[[1, 1], [3, 1], [1, 2], [1, 1]]] } },
+    { section: "Section B: Drawing transformations", question: "Enlarge the triangle by scale factor 2 with centre (0, 0). Plot the three corners of the image.", type: "plot", marks: 2,
+      answer: "(2, 2); (4, 2); (4, 4)", graph: { lines: [[[1, 1], [2, 1], [2, 2], [1, 1]]] } },
+    { section: "Section B: Drawing transformations", question: "After a reflection, what stays the same about the shape?", type: "explain", marks: 1,
+      answer: "Its shape and size stay the same (the image is congruent): the side lengths and angles don't change. Only its position and which way it faces change." }
   ]
 });

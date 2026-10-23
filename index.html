@@ -372,6 +372,15 @@
   .bars.set { cursor: pointer; background: var(--white); border-radius: 8px; }
   .graph .axis-title, .bars .axis-title { font-size: 12px; font-weight: 600; fill: var(--muted); }
   .scale .scale-word { font-size: 11px; font-weight: 600; fill: var(--muted); }
+  .ratio-bar, .circle-fig { display: block; max-width: 100%; height: auto; }
+  .ratio-bar text, .circle-fig text { font-family: "Inter", sans-serif; }
+  .ratio-bar .rb-box { fill: var(--green-50); stroke: var(--green-700); stroke-width: 2; }
+  .ratio-bar .rb-label { font-size: 14px; font-weight: 600; fill: var(--ink); }
+  .ratio-bar .rb-each { font-size: 13px; font-weight: 600; fill: var(--muted); }
+  .circle-fig .c-shape { fill: rgba(25, 135, 84, .1); stroke: var(--green-700); stroke-width: 2.5; }
+  .circle-fig .c-line { stroke: var(--ink); stroke-width: 2; }
+  .outline-fig .o-dashed { stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: 5 4; }
+  .graph .shape-name { font-size: 15px; }
   .stem-leaf td.leaves { letter-spacing: .25em; font-weight: 600; font-variant-numeric: tabular-nums; }
 
   .shape-fig, .poly-fig { display: block; max-width: 100%; height: auto; }
@@ -970,7 +979,8 @@
   const KIND_FOR_TYPE = {
     algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords", mark: "num",
     order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle", column: "column",
-    fraction: "fraction", shade: "shade", tally: "tally", pictogram: "pictogram", select: "select", drawbar: "drawbar"
+    fraction: "fraction", shade: "shade", tally: "tally", pictogram: "pictogram", select: "select", drawbar: "drawbar",
+    interval: "interval", ratio: "ratio"
   };
   const ANGLE_NAMES = ["acute", "right", "obtuse", "straight", "reflex"];
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
@@ -1031,6 +1041,8 @@
             : Array.isArray(p.range) ? Array.from({ length: p.range[1] - p.range[0] + 1 }, (_, k) => String(p.range[0] + k)) : null,
           labels: Array.isArray(p.labels) ? p.labels.map(String) : null,
           simplest: p.simplest === true,
+          // tolerance: how far off a number answer may be (e.g. 0.1 so π and 3.14 both count).
+          tolerance: Number(p.tolerance) > 0 ? Number(p.tolerance) : 0,
           // Shading and pictogram questions keep their picture inside the part so it can be tapped.
           shape: kind === "shade" ? p.shape || {} : null,
           pictogram: kind === "pictogram" ? p.pictogram || {} : null,
@@ -1048,6 +1060,8 @@
         ((p.kind === "fraction" || p.kind === "shade") && !readFraction(p.answer)) ||
         ((p.kind === "tally" || p.kind === "pictogram" || p.kind === "drawbar") && readNumber(p.answer) === null) ||
         (p.kind === "drawbar" && !(Number.isInteger(p.bars.ask) && Array.isArray(p.bars.labels))) ||
+        (p.kind === "interval" && !readInterval(p.answer)) ||
+        (p.kind === "ratio" && !readRatio(p.answer)) ||
         (p.kind === "pictogram" && !(Number(p.pictogram.key) > 0)) ||
         (p.kind === "select" && (!p.options || !p.answer.split(",").every(a => p.options.some(o => normText(o) === normText(a))))));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
@@ -1070,6 +1084,7 @@
         spinner: Array.isArray(q.spinner) ? q.spinner : null, counters: q.counters || null,
         bars: grouped || parts[0].kind !== "drawbar" ? q.bars || null : null,
         stemleaf: q.stemleaf || null, pie: q.pie || null,
+        ratioBar: q.ratioBar || null, circle: q.circle || null,
         parts
       });
     }
@@ -1168,16 +1183,17 @@
 
   // Number answers: ignores £, units and trailing zeros; "p" means pence.
   function readNumber(raw) {
-    const m = String(raw).replace(/,/g, "").replace(/[−–]/g, "-").trim()
+    // "x = 4" counts as 4, so equation answers can be written either way.
+    const m = String(raw).replace(/,/g, "").replace(/[−–]/g, "-").trim().replace(/^[a-z]\s*=\s*/i, "")
       .match(/^£?\s*(-?\d*\.?\d+)\s*(p|pence|pounds?|km|kg|cm²|cm2|m²|m2|cm|mm|ml|m|g|l|°\s*c|c|°|degrees?|%|per\s*cent|kilometres?|kilograms?|metres?|grams?|litres?|millilitres?|minutes?|mins?|hours?|seconds?|miles?)?\.?$/i);
     if (!m) return null;
     const n = parseFloat(m[1]);
     return /^p(ence)?$/i.test(m[2] || "") ? n / 100 : n;
   }
-  function markNumber(value, answer) {
+  function markNumber(value, answer, tolerance = 0) {
     const got = readNumber(value);
     if (got === null) return { correct: false, message: "I couldn't read that. Type a number, e.g. 12.5." };
-    if (Math.abs(got - readNumber(answer)) > 1e-9) return { correct: false, message: "Not quite. Try again." };
+    if (Math.abs(got - readNumber(answer)) > tolerance + 1e-9) return { correct: false, message: "Not quite. Try again." };
     return { correct: true, message: "Correct!" };
   }
 
@@ -1247,6 +1263,8 @@
       s += `<polyline class="shape" points="${line.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`;
     });
     (g.dots || []).forEach(([x, y]) => { s += `<circle class="pt" cx="${px(x)}" cy="${py(y)}" r="4"/>`; });
+    // labels: [["A", x, y]] writes text (such as a shape's name) at a grid position.
+    (g.labels || []).forEach(([text, x, y]) => { s += `<text class="pt-label shape-name" x="${px(x)}" y="${py(y) + 5}" text-anchor="middle">${esc(text)}</text>`; });
     Object.entries(g.points || {}).forEach(([name, [x, y]]) => {
       s += `<circle class="pt" cx="${px(x)}" cy="${py(y)}" r="4.5"/>`;
       s += `<text class="pt-label" x="${px(x) + 7}" y="${py(y) - 7}">${esc(name)}</text>`;
@@ -1686,9 +1704,84 @@
 
   // Fractions such as "3/8"; a whole number counts as itself over 1.
   function readFraction(raw) {
-    const m = String(raw ?? "").trim().match(/^(-?\d+)\s*(?:\/\s*(\d+))?$/);
+    const s = String(raw ?? "").trim().replace(/[−–]/g, "-");
+    // Mixed numbers such as "1 1/2".
+    const mixed = s.match(/^(-?)(\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+    if (mixed && mixed[4] !== "0") {
+      const n = Number(mixed[2]) * Number(mixed[4]) + Number(mixed[3]);
+      return { n: mixed[1] ? -n : n, d: Number(mixed[4]) };
+    }
+    const m = s.match(/^(-?\d+)\s*(?:\/\s*(\d+))?$/);
     if (!m || m[2] === "0") return null;
     return { n: Number(m[1]), d: m[2] ? Number(m[2]) : 1 };
+  }
+
+  // Error intervals such as "6.5 ≤ x < 7.5" (<= is accepted for ≤).
+  function readInterval(raw) {
+    const s = String(raw ?? "").replace(/<=|=</g, "≤").replace(/[−–]/g, "-").replace(/\s+/g, "");
+    const m = s.match(/^(-?\d*\.?\d+)(≤|<)([a-z])(≤|<)(-?\d*\.?\d+)$/i);
+    return m ? { lo: Number(m[1]), loSign: m[2], hiSign: m[4], hi: Number(m[5]) } : null;
+  }
+  function markInterval(value, answer) {
+    const got = readInterval(value), want = readInterval(answer);
+    if (!got) return { correct: false, message: "Write it like 6.5 ≤ x < 7.5. Use the ≤ button, or type <=." };
+    const loOk = Math.abs(got.lo - want.lo) < 1e-9, hiOk = Math.abs(got.hi - want.hi) < 1e-9;
+    if (!loOk && !hiOk) return { correct: false, message: "Not quite. Check both bounds." };
+    if (!loOk) return { correct: false, message: "The upper bound is right. Check the lower bound." };
+    if (!hiOk) return { correct: false, message: "The lower bound is right. Check the upper bound." };
+    if (got.loSign !== want.loSign || got.hiSign !== want.hiSign) {
+      return { correct: false, message: "The bounds are right. Check the signs: the lower bound is included (≤) but the upper bound isn't (<)." };
+    }
+    return { correct: true, message: "Correct!" };
+  }
+
+  // Ratios such as "3:4" or "3 : 5 : 8".
+  function readRatio(raw) {
+    const parts = String(raw ?? "").replace(/\s+/g, "").split(":");
+    if (parts.length < 2 || parts.some(p => !/^\d*\.?\d+$/.test(p))) return null;
+    const nums = parts.map(Number);
+    return nums.every(n => n > 0) ? nums : null;
+  }
+  function markRatio(value, answer, simplest) {
+    const got = readRatio(value), want = readRatio(answer);
+    if (!got) return { correct: false, message: "Write a ratio like 3:4." };
+    if (got.length !== want.length) return { correct: false, message: `The ratio should have ${want.length} parts.` };
+    const same = (a, b) => a.every((x, i) => Math.abs(x * b[0] - b[i] * a[0]) < 1e-9);
+    if (!same(got, want)) {
+      return same(got.slice().reverse(), want)
+        ? { correct: false, message: "Check the order: the parts should be in the same order as the question." }
+        : { correct: false, message: "Not quite. Try again." };
+    }
+    if (simplest && (!got.every(Number.isInteger) || got.reduce((g, x) => gcd(g, x)) !== 1)) {
+      return { correct: false, message: "Right ratio, but it isn't in its simplest form yet." };
+    }
+    return { correct: true, message: "Correct!" };
+  }
+
+  // Ratio bar model: one row of equal boxes per person, e.g. { parts: [3, 5], labels: ["Amy", "Ben"], each: "?" }.
+  function ratioBarSVG(rb) {
+    const parts = rb.parts || [], labels = rb.labels || [], box = 42, left = 70;
+    const W = left + Math.max(...parts) * box + 10, H = parts.length * 52 + 8;
+    let s = "";
+    parts.forEach((n, r) => {
+      const y = 8 + r * 52;
+      s += `<text class="rb-label" x="${left - 10}" y="${y + 26}" text-anchor="end">${esc(labels[r] || "")}</text>`;
+      for (let i = 0; i < n; i++) {
+        s += `<rect class="rb-box" x="${left + i * box}" y="${y}" width="${box}" height="38"/>`;
+        if (rb.each !== undefined) s += `<text class="rb-each" x="${left + i * box + box / 2}" y="${y + 24}" text-anchor="middle">${esc(rb.each)}</text>`;
+      }
+    });
+    return `<svg class="ratio-bar" viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Ratio bar model">${s}</svg>`;
+  }
+
+  // Circle with its radius or diameter marked: { label: "5 cm", show: "radius" | "diameter" }.
+  function circleSVG(c) {
+    const d = c.show === "diameter";
+    return `<svg class="circle-fig" viewBox="0 0 220 220" width="220" role="img" aria-label="A circle with its ${d ? "diameter" : "radius"} marked">
+      <circle class="c-shape" cx="110" cy="110" r="90"/>
+      <line class="c-line" x1="${d ? 20 : 110}" y1="110" x2="200" y2="110"/><circle class="clock-hub" cx="110" cy="110" r="4"/>
+      <text class="o-label" x="${d ? 110 : 155}" y="100" text-anchor="middle">${esc(c.label || "")}</text>
+    </svg>`;
   }
   function gcd(a, b) { return b ? gcd(b, a % b) : Math.abs(a); }
 
@@ -1851,11 +1944,18 @@
       for (let y = minY; y <= maxY; y++) s += `<line class="o-grid" x1="${sx(minX)}" y1="${sy(y)}" x2="${sx(maxX)}" y2="${sy(y)}"/>`;
     }
     s += `<polygon class="o-shape" points="${pts.map(([x, y]) => sx(x) + "," + sy(y)).join(" ")}"/>`;
+    // extra: dashed lines such as a height, e.g. [{ from: [4, 0], to: [4, 6], label: "6 cm" }].
+    (o.extra || []).forEach(x => {
+      s += `<line class="o-dashed" x1="${sx(x.from[0])}" y1="${sy(x.from[1])}" x2="${sx(x.to[0])}" y2="${sy(x.to[1])}"/>`;
+      if (x.label) s += `<text class="o-label" x="${(sx(x.from[0]) + sx(x.to[0])) / 2 + 6}" y="${(sy(x.from[1]) + sy(x.to[1])) / 2 + 4}">${esc(x.label)}</text>`;
+    });
     if (o.labels !== false) {
       // Push each label outwards from the shape, using which way round the corners go.
       const area = pts.reduce((a, [x, y], i) => { const [nx, ny] = pts[(i + 1) % pts.length]; return a + x * ny - nx * y; }, 0);
       const out = area > 0 ? 1 : -1;
       pts.forEach(([x, y], i) => {
+        // only: [0, 2] labels just those sides (useful when slanted sides shouldn't show a length).
+        if (Array.isArray(o.only) && !o.only.includes(i)) return;
         const [nx, ny] = pts[(i + 1) % pts.length], len = Math.hypot(nx - x, ny - y);
         const mx = (sx(x) + sx(nx)) / 2, my = (sy(y) + sy(ny)) / 2;
         const dx = (sx(nx) - sx(x)) / (len * k), dy = (sy(ny) - sy(y)) / (len * k);
@@ -2050,7 +2150,9 @@
         ? { correct: true, message: "Correct!" }
         : { correct: false, message: "Not quite. Try again." };
     }
-    return spec.kind === "num" ? markNumber(saved.value, spec.answer) : markAnswer(saved.value, spec.answer);
+    if (spec.kind === "interval") return markInterval(saved.value, spec.answer);
+    if (spec.kind === "ratio") return markRatio(saved.value, spec.answer, spec.simplest);
+    return spec.kind === "num" ? markNumber(saved.value, spec.answer, spec.tolerance) : markAnswer(saved.value, spec.answer);
   }
 
   function feedbackHTML(spec, result, saved) {
@@ -2103,8 +2205,10 @@
       if (item.bars) html += `<div class="graph-wrap">${barsSVG(item.bars)}</div>`;
       if (item.stemleaf) html += `<div class="graph-wrap">${stemLeafHTML(item.stemleaf)}</div>`;
       if (item.pie) html += `<div class="graph-wrap">${pieSVG(item.pie)}</div>`;
-      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars }) => {
-        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars };
+      if (item.ratioBar) html += `<div class="graph-wrap">${ratioBarSVG(item.ratioBar)}</div>`;
+      if (item.circle) html += `<div class="graph-wrap">${circleSVG(item.circle)}</div>`;
+      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance }) => {
+        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
         const value = esc(saved ? saved.value : "");
@@ -2132,7 +2236,8 @@
             ${kind === "drawbar" ? `<div class="graph-wrap in-part bars-wrap">${barsSVG(bars, bars.ask, saved ? Number(saved.value) : null)}</div>` : ""}
             <div class="answer-row">
               ${field}
-              ${kind === "expr" ? `<button type="button" class="sq-btn" title="Insert ²">x²</button>` : ""}
+              ${kind === "expr" ? `<button type="button" class="sq-btn" data-insert="²" title="Insert ²">x²</button>` : ""}
+              ${kind === "interval" ? `<button type="button" class="sq-btn" data-insert="≤" title="Insert ≤">≤</button>` : ""}
               <button type="button" class="btn btn-primary check-btn">Check</button>
             </div>
             <div class="feedback">${feedbackHTML(spec, result, saved)}</div>
@@ -2354,7 +2459,7 @@
     } else if (e.target.closest(".sq-btn")) {
       const input = part.querySelector("input");
       const start = input.selectionStart ?? input.value.length, end = input.selectionEnd ?? start;
-      input.value = input.value.slice(0, start) + "²" + input.value.slice(end);
+      input.value = input.value.slice(0, start) + (e.target.closest(".sq-btn").dataset.insert || "²") + input.value.slice(end);
       input.focus();
       input.setSelectionRange(start + 1, start + 1);
     }
