@@ -545,6 +545,7 @@
         <div class="practice-score" id="practiceScore"></div>
       </div>
       <div class="practice-head-btns">
+        <button type="button" class="btn btn-ghost" id="practiceNew">New questions</button>
         <button type="button" class="btn btn-ghost" id="practiceReset">Clear answers</button>
         <button type="button" class="btn btn-ghost" id="practiceSave">Save</button>
         <button type="button" class="icon-btn" id="practiceClose" aria-label="Close practice questions">
@@ -571,6 +572,17 @@
 
 <div class="toast" id="toast"></div>
 
+<script>
+  // questions.js adds each topic's practice questions here with QUESTION_BANK.add({...}).
+  window.QUESTION_BANK = {
+    topics: {},
+    add(topic) { this.topics[String(topic && topic.topic).trim().toLowerCase()] = topic; }
+  };
+  window.addEventListener("error", e => {
+    if (/questions\.js/.test(e.filename || "")) window.QUESTION_BANK.loadError = e.message;
+  });
+</script>
+<script src="questions.js"></script>
 <script>
   const SESSION_KEY = "tela.session";
   let currentUser = null, account = null;
@@ -911,129 +923,75 @@
   function render() { renderFilters(); renderCards(); renderStats(); }
 
   // ---------- Practice questions ----------
-  // Keyed by topic title (lower case). Each part is [label, question, marks, answer, kind?].
-  // kind is "expr" (algebra, the default), "num" (a number) or "explain" (self-marked against a model answer);
-  // a set's "kind" applies to all its parts unless a part gives its own.
-  const PRACTICE = {
-    "addition of integers and decimals": {
-      title: "Addition of Integers and Decimals",
-      kind: "num",
-      tip: "Type your answer and press <b>Enter</b> or <b>Check</b>. You can include £ or units (e.g. £4.74 or 6.35 km), but you don't have to.",
-      questions: [
-        { section: "Section A: Integers", parts: [["", "Work out 34 + 25", 1, "59"]] },
-        { parts: [["", "Work out 128 + 47", 1, "175"]] },
-        { parts: [["", "Work out 356 + 289", 1, "645"]] },
-        { parts: [["", "Work out 1407 + 2685", 1, "4092"]] },
-        { section: "Section B: Decimals", parts: [["", "Work out 4.5 + 3.2", 1, "7.7"]] },
-        { parts: [["", "Work out 6.8 + 2.7", 1, "9.5"]] },
-        { parts: [["", "Work out 12.35 + 4.21", 1, "16.56"]] },
-        { parts: [["", "Work out 7.6 + 3.45", 1, "11.05"]] },
-        { parts: [["", "Work out 15 + 2.8", 1, "17.8"]] },
-        { parts: [["", "Work out 0.9 + 0.35", 1, "1.25"]] },
-        { parts: [["", "Work out 23.47 + 18.86", 1, "42.33"]] },
-        { parts: [["", "Work out 3.2 + 4.65 + 0.8", 2, "8.65"]] },
-        { parts: [["", "Work out 105.6 + 39.48", 2, "145.08"]] },
-        { parts: [["", "Work out 0.007 + 0.25", 2, "0.257"]] },
-        { section: "Section C: Problem Solving", parts: [
-          ["", "Sam buys a sandwich for £3.45 and a drink for £1.29. How much does Sam spend altogether?", 2, "£4.74"]
-        ] },
-        { parts: [["", "Priya runs 2.6 km on Monday and 3.75 km on Tuesday. How far does she run in total?", 2, "6.35 km"]] },
-        { parts: [["", "Three bags weigh 1.25 kg, 0.8 kg and 2.4 kg. What is their total weight?", 2, "4.45 kg"]] },
-        { parts: [["", "Find the missing number: 4.7 + ____ = 10", 2, "5.3"]] },
-        { parts: [["", "A carpenter joins two pieces of wood. One is 1.35 m long and the other is 0.92 m long. How long is the joined piece?", 2, "2.27 m"]] },
-        { stem: "Jo says 3.4 + 2.15 = 5.19.", parts: [
-          ["a", "Explain Jo's mistake.", 1,
-            "Jo didn't line up the decimal points. She added the 4 tenths to the 15 hundredths as if they were 4 + 15. Writing 3.4 as 3.40 lines the digits up correctly.", "explain"],
-          ["b", "Give the correct answer.", 1, "5.55"]
-        ] }
-      ]
-    },
+  // The questions themselves live in questions.js (QUESTION_BANK). Here each topic is turned into a list
+  // of items; an item is one question, or a group of parts that always appear together.
+  // Each part is marked as "expr" (algebra), "num" (a number) or "explain" (self-marked against a model answer).
+  const KIND_FOR_TYPE = { algebra: "expr", number: "num", explain: "explain" };
 
-    "algebra: collecting like terms": {
-      title: "Collecting Like Terms: Exam Style Questions",
-      questions: [
-        { parts: [
-          ["a", "Simplify a + a + a", 1, "3a"],
-          ["b", "Simplify 4a + 3a − a", 1, "6a"],
-          ["c", "Simplify 4ac + 5ac", 1, "9ac"],
-          ["d", "Simplify 4c − 6c", 1, "−2c"],
-          ["e", "Simplify a² + a²", 1, "2a²"]
-        ] },
-        { parts: [
-          ["a", "Simplify m + m + m + m", 1, "4m"],
-          ["b", "Simplify 8c + 2p − 2c + 4p", 2, "6c + 6p"]
-        ] },
-        { parts: [
-          ["", "Simplify 6a + 5w − 2a + w", 2, "4a + 6w"]
-        ] },
-        { parts: [
-          ["a", "Simplify 9y − 3y", 1, "6y"],
-          ["b", "Simplify 7y + 2w − 3y + 2w", 2, "4y + 4w"],
-          ["c", "Simplify 7y + 10 + 3y − 9", 2, "10y + 1"]
-        ] },
-        { parts: [
-          ["a", "Simplify s + s + s + s − s", 1, "3s"],
-          ["b", "Simplify 5c − 3s + 3c + 7s", 2, "8c + 4s"],
-          ["c", "Simplify 8a + 3c − 5c + 3a", 2, "11a − 2c"],
-          ["d", "Simplify 3a + 2w − 5a − 9w", 2, "−2a − 7w"],
-          ["e", "Simplify 3y² + 2w² + y² − w²", 2, "4y² + w²"]
-        ] },
-        { parts: [
-          ["a", "Simplify 2x + 2x", 1, "4x"],
-          ["b", "Simplify 7w − 2w", 1, "5w"],
-          ["c", "Simplify 3m − m", 1, "2m"],
-          ["d", "Simplify y² + y² + y²", 1, "3y²"],
-          ["e", "Simplify 7h + 5k + h − 3k", 2, "8h + 2k"]
-        ] },
-        { stem: "The diagram shows a pentagon.", diagram: "pentagon", parts: [
-          ["", "Find an expression, in terms of x and y, for the perimeter of the pentagon.", 2, "4x + 2y"]
-        ] },
-        { stem: "The diagram shows an equilateral triangle. The length of each side is 2x + y.", diagram: "triangle", parts: [
-          ["", "Find an expression, in terms of x and y, for the perimeter of the triangle.", 2, "6x + 3y"]
-        ] },
-        { stem: "The diagram shows a rectangle.", diagram: "rectangle", parts: [
-          ["", "Find an expression, in terms of x, for the perimeter of the rectangle.", 2, "6x + 20"]
-        ] },
-        { stem: "The diagram shows an L shape. The two inner edges are not labelled.", diagram: "lshape", parts: [
-          ["", "Find an expression, in terms of x, for the perimeter of this L shape.", 2, "12x + 8"]
-        ] }
-      ]
+  // A short id made from a question's wording, so saved answers stay with the question if the list is reordered.
+  function hashText(s) {
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+    return (h >>> 0).toString(36);
+  }
+
+  const PRACTICE = {};
+  const bankProblems = [];
+  Object.values((window.QUESTION_BANK && QUESTION_BANK.topics) || {}).forEach(t => {
+    const key = String(t.topic || "").trim().toLowerCase();
+    if (!key || !Array.isArray(t.questions)) { bankProblems.push("a topic is missing its name or its questions list"); return; }
+    const topicKind = KIND_FOR_TYPE[t.type] || "expr";
+    const items = [];
+    t.questions.forEach((q, i) => {
+      const grouped = Array.isArray(q.parts);
+      const parts = (grouped ? q.parts : [q]).map((p, pi) => ({
+        label: grouped ? String.fromCharCode(97 + pi) : "",
+        text: String(p.question || ""),
+        marks: Number(p.marks) || 1,
+        answer: String(p.answer ?? ""),
+        kind: KIND_FOR_TYPE[p.type] || topicKind
+      }));
+      const unreadable = parts.some(p => !p.text || !p.answer ||
+        (p.kind === "expr" && !parseExpr(p.answer)) || (p.kind === "num" && readNumber(p.answer) === null));
+      if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
+      let id = hashText([q.text || "", ...parts.map(p => p.text)].join("|"));
+      while (items.some(it => it.id === id)) id += "x";
+      parts.forEach((p, pi) => { p.id = id + "-" + pi; });
+      items.push({ id, section: q.section || "", stem: q.text || "", diagram: q.diagram || "", parts });
+    });
+    if (!items.length) return;
+    PRACTICE[key] = {
+      title: t.title || t.topic,
+      tip: t.tip || "",
+      perSet: Number(t.questionsPerSet) > 0 ? Math.floor(t.questionsPerSet) : items.length,
+      items
+    };
+  });
+
+  // A typo anywhere in questions.js stops the whole file loading, so no topics at all means it needs checking.
+  // (Opened from the Desktop, browsers hide which file an error came from, so loadError isn't always set.)
+  if (window.QUESTION_BANK && (QUESTION_BANK.loadError || !Object.keys(QUESTION_BANK.topics).length)) {
+    console.warn("questions.js: " + (QUESTION_BANK.loadError || "no questions were loaded"));
+    setTimeout(() => toast("Couldn't load questions.js. Check it for a missing comma, quote or bracket."), 600);
+  } else if (bankProblems.length) {
+    bankProblems.forEach(p => console.warn("questions.js: " + p));
+    setTimeout(() => toast(`questions.js: ${bankProblems.length} question(s) skipped. See the browser console.`), 600);
+  }
+
+  // Picks a random set of questions, shown in the order they appear in questions.js.
+  function drawQuestions(items, count) {
+    const order = items.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
     }
-  };
-
-  const DIAGRAMS = {
-    pentagon: `<svg viewBox="0 0 210 170" width="210" role="img" aria-label="Pentagon with sides y, y, x, x and 2x">
-      <polygon points="30,140 180,140 180,70 105,12 30,70"/>
-      <text x="105" y="162" text-anchor="middle">2x</text>
-      <text x="190" y="110">x</text>
-      <text x="20" y="110" text-anchor="end">x</text>
-      <text x="152" y="34">y</text>
-      <text x="58" y="34" text-anchor="end">y</text>
-    </svg>`,
-    triangle: `<svg viewBox="0 0 200 195" width="200" role="img" aria-label="Equilateral triangle with each side 2x + y">
-      <polygon points="100,10 190,165 10,165"/>
-      <line x1="47.2" y1="92" x2="62.8" y2="83"/>
-      <line x1="137.2" y1="83" x2="152.8" y2="92"/>
-      <line x1="100" y1="156" x2="100" y2="174"/>
-      <text x="100" y="188" text-anchor="middle">2x + y</text>
-    </svg>`,
-    rectangle: `<svg viewBox="0 0 290 130" width="290" role="img" aria-label="Rectangle with length 2x + 7 and width x + 3">
-      <rect x="20" y="28" width="200" height="90"/>
-      <text x="120" y="18" text-anchor="middle">2x + 7</text>
-      <text x="230" y="78">x + 3</text>
-    </svg>`,
-    lshape: `<svg viewBox="0 0 360 250" width="360" role="img" aria-label="L shape with top x, left 3x + 3, bottom 3x + 1 and right x + 2">
-      <polygon points="70,20 150,20 150,140 290,140 290,220 70,220"/>
-      <text x="110" y="12" text-anchor="middle">x</text>
-      <text x="62" y="124" text-anchor="end">3x + 3</text>
-      <text x="180" y="242" text-anchor="middle">3x + 1</text>
-      <text x="298" y="184">x + 2</text>
-    </svg>`
-  };
+    return order.slice(0, count).sort((a, b) => a - b).map(i => items[i].id);
+  }
 
   const practiceKey = t => t.title.trim().toLowerCase();
   // practiceSaved holds this session's answers; they're only written to storage when the student saves.
-  let practiceOpen = null, practiceSaved = {}, practiceSpecs = {}, practiceDirty = false;
+  // practicePicked lists the ids of the questions chosen for this student's current set.
+  let practiceOpen = null, practiceSaved = {}, practiceSpecs = {}, practiceDirty = false, practicePicked = [];
   let practiceTopicId = null, practiceStatusAtOpen = null;
 
   // Reads an expression like "3a − 2b + a²" into like terms. Returns null if it can't be read.
@@ -1075,12 +1033,20 @@
 
   const practiceStoreKey = () => STORAGE_KEY + ".practice." + practiceOpen.replace(/[^a-z0-9]+/g, "-");
   function loadPractice() {
-    try { return JSON.parse(localStorage.getItem(practiceStoreKey())) || {}; }
-    catch (e) { return {}; }
+    try {
+      const data = JSON.parse(localStorage.getItem(practiceStoreKey())) || {};
+      // Saves from before questions.js had no question list, so they start afresh.
+      return Array.isArray(data.picked) ? data : { picked: [], answers: {} };
+    } catch (e) { return { picked: [], answers: {} }; }
   }
   function savePractice() {
-    try { localStorage.setItem(practiceStoreKey(), JSON.stringify(practiceSaved)); } catch (e) {}
+    try { localStorage.setItem(practiceStoreKey(), JSON.stringify({ picked: practicePicked, answers: practiceSaved })); } catch (e) {}
   }
+
+  const currentItems = () => {
+    const items = PRACTICE[practiceOpen].items;
+    return practicePicked.map(id => items.find(it => it.id === id)).filter(Boolean);
+  };
 
   // Number answers: ignores £, units and trailing zeros; "p" means pence.
   function readNumber(raw) {
@@ -1128,14 +1094,20 @@
   function renderPractice() {
     const set = PRACTICE[practiceOpen];
     practiceSpecs = {};
-    let html = `<div class="practice-tip">${set.tip || "Type your answer and press <b>Enter</b> or <b>Check</b>. For powers, use the <b>x²</b> button or type ^2 (e.g. 2a^2)."}</div>`;
-    set.questions.forEach((q, qi) => {
+    const items = currentItems();
+    const picked = items.length < set.items.length
+      ? ` These are ${items.length} questions picked at random from ${set.items.length}. Click <b>New questions</b> for a different set.`
+      : "";
+    let html = `<div class="practice-tip">${set.tip || "Type your answer and press <b>Enter</b> or <b>Check</b>."}${picked}</div>`;
+    let lastSection = "";
+    items.forEach((item, qi) => {
       const n = qi + 1;
-      if (q.section) html += `<h3 class="q-section">${esc(q.section)}</h3>`;
-      html += `<section class="q-block"><div class="q-head"><span class="q-num">${n}</span>${q.stem ? `<span>${esc(q.stem)}</span>` : ""}</div>`;
-      if (q.diagram) html += `<div class="diagram">${DIAGRAMS[q.diagram]}</div>`;
-      q.parts.forEach(([label, text, marks, answer, kind = set.kind || "expr"]) => {
-        const id = `q${n}${label}`;
+      if (item.section && item.section !== lastSection) html += `<h3 class="q-section">${esc(item.section)}</h3>`;
+      lastSection = item.section;
+      html += `<section class="q-block"><div class="q-head"><span class="q-num">${n}</span>${item.stem ? `<span>${esc(item.stem)}</span>` : ""}</div>`;
+      // Diagrams are SVG written in questions.js, so they're inserted as-is.
+      if (item.diagram) html += `<div class="diagram">${item.diagram}</div>`;
+      item.parts.forEach(({ id, label, text, marks, answer, kind }) => {
         const spec = practiceSpecs[id] = { answer, kind };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
@@ -1163,10 +1135,8 @@
   }
 
   function updatePracticeScore() {
-    const set = PRACTICE[practiceOpen];
     let parts = 0, correct = 0, marks = 0, earned = 0, answered = 0;
-    set.questions.forEach((q, qi) => q.parts.forEach(([label, , m]) => {
-      const id = `q${qi + 1}${label}`;
+    currentItems().forEach(item => item.parts.forEach(({ id, marks: m }) => {
       const result = markPart(practiceSpecs[id], practiceSaved[id]);
       parts++; marks += m;
       if (result) answered++;
@@ -1223,8 +1193,18 @@
 
   function openPractice(topic) {
     practiceOpen = practiceKey(topic);
-    practiceSaved = loadPractice();
+    const set = PRACTICE[practiceOpen];
+    const data = loadPractice();
+    practiceSaved = data.answers || {};
     practiceDirty = false;
+    // Keep the student's saved set, dropping questions since deleted from questions.js and topping up if it's short.
+    practicePicked = data.picked.filter(id => set.items.some(it => it.id === id));
+    const wanted = Math.min(set.perSet, set.items.length);
+    if (practicePicked.length < wanted) {
+      const extra = drawQuestions(set.items.filter(it => !practicePicked.includes(it.id)), wanted - practicePicked.length);
+      practicePicked = set.items.filter(it => practicePicked.includes(it.id) || extra.includes(it.id)).map(it => it.id);
+    }
+    $("practiceNew").style.display = set.perSet < set.items.length ? "" : "none";
     practiceTopicId = topic.id;
     practiceStatusAtOpen = topic.status;
     $("practiceTitle").textContent = PRACTICE[practiceOpen].title;
@@ -1300,6 +1280,15 @@
   });
   $("practiceClose").addEventListener("click", closePractice);
   $("practiceOverlay").addEventListener("click", e => { if (e.target === $("practiceOverlay")) closePractice(); });
+  $("practiceNew").addEventListener("click", () => {
+    if (Object.keys(practiceSaved).length && !confirm("Get a new set of questions? Your answers to these ones will be cleared.")) return;
+    const set = PRACTICE[practiceOpen];
+    practicePicked = drawQuestions(set.items, set.perSet);
+    practiceSaved = {};
+    practiceDirty = true;
+    renderPractice();
+    $("practiceBody").scrollTop = 0;
+  });
   $("practiceReset").addEventListener("click", () => {
     if (!confirm("Clear all your answers for these questions?")) return;
     practiceSaved = {};
