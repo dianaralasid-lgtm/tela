@@ -56,6 +56,21 @@
      it's just there to read from. A plot question with no graph gets an
      empty -5 to 5 grid.
 
+   SCALES (for reading scales)
+     scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: 18 }
+       style    "line" (number line or ruler), "thermometer", "jug" (measuring
+                jug) or "dial" (weighing scale).
+       min, max The ends of the scale.
+       major    The gap between the labelled marks.
+       minor    The gap between the small marks (leave out for none).
+       unit     Shown on the scale, e.g. "cm", "ml", "kg".
+       value    Where the arrow, liquid or needle points. Leave this out on
+                "mark" questions.
+     Use type "number" with a scale to ask the student to read it. Use type
+     "mark" to make the scale clickable: the student sets the arrow, liquid
+     or needle themselves, and it snaps to the nearest small mark. The answer
+     is the value they should set, e.g. answer: "7.5".
+
    EDITING TIPS
    - Every question needs a comma after its closing } except the last.
    - Put text inside "double quotes". If the text itself contains a double
@@ -961,6 +976,483 @@ QUESTION_BANK.add({
 });
 
 QUESTION_BANK.add({
+  topic: "Reading scales",
+  title: "Reading Scales",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Work out what each small division is worth before you read the scale. You can include units (e.g. 6 kg or 350 ml), but you don't have to.",
+  questions: [
+    {
+      section: "Section A: Number lines",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">0</text>
+        <line x1="60.0" y1="64" x2="60.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="90.0" y1="64" x2="90.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="120.0" y1="64" x2="120.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="150.0" y1="64" x2="150.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="210.0" y1="64" x2="210.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="240.0" y1="64" x2="240.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="270.0" y1="64" x2="270.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="300.0" y1="64" x2="300.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">10</text>
+        <line x1="240.0" y1="18" x2="240.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="235.0,54 245.0,54 240.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the number the arrow is pointing to.",
+      marks: 1,
+      answer: "7"
+    },
+    {
+      section: "Section A: Number lines",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">20</text>
+        <line x1="60.0" y1="64" x2="60.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="90.0" y1="64" x2="90.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="120.0" y1="64" x2="120.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="150.0" y1="64" x2="150.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="210.0" y1="64" x2="210.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="240.0" y1="64" x2="240.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="270.0" y1="64" x2="270.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="300.0" y1="64" x2="300.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">30</text>
+        <line x1="150.0" y1="18" x2="150.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="145.0,54 155.0,54 150.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the number the arrow is pointing to.",
+      marks: 1,
+      answer: "24"
+    },
+    {
+      section: "Section A: Number lines",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">0</text>
+        <line x1="90.0" y1="64" x2="90.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="150.0" y1="64" x2="150.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="210.0" y1="64" x2="210.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="270.0" y1="64" x2="270.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">50</text>
+        <line x1="210.0" y1="18" x2="210.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="205.0,54 215.0,54 210.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the number the arrow is pointing to.",
+      marks: 1,
+      answer: "30"
+    },
+    {
+      section: "Section A: Number lines",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">100</text>
+        <line x1="60.0" y1="64" x2="60.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="90.0" y1="64" x2="90.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="120.0" y1="64" x2="120.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="150.0" y1="64" x2="150.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="210.0" y1="64" x2="210.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="240.0" y1="64" x2="240.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="270.0" y1="64" x2="270.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="300.0" y1="64" x2="300.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">200</text>
+        <line x1="210.0" y1="18" x2="210.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="205.0,54 215.0,54 210.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the number the arrow is pointing to.",
+      marks: 1,
+      answer: "160"
+    },
+    {
+      section: "Section A: Number lines",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">0</text>
+        <line x1="60.0" y1="64" x2="60.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="90.0" y1="64" x2="90.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="120.0" y1="64" x2="120.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="150.0" y1="64" x2="150.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="210.0" y1="64" x2="210.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="240.0" y1="64" x2="240.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="270.0" y1="64" x2="270.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="300.0" y1="64" x2="300.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">1</text>
+        <line x1="240.0" y1="18" x2="240.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="235.0,54 245.0,54 240.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the number the arrow is pointing to.",
+      marks: 1,
+      answer: "0.7"
+    },
+    {
+      section: "Section A: Number lines",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">0</text>
+        <line x1="105.0" y1="64" x2="105.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="255.0" y1="64" x2="255.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">20</text>
+        <line x1="255.0" y1="18" x2="255.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="250.0,54 260.0,54 255.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the number the arrow is pointing to.",
+      marks: 1,
+      answer: "15"
+    },
+    {
+      section: "Section A: Number lines",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">300</text>
+        <line x1="105.0" y1="64" x2="105.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="255.0" y1="64" x2="255.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">400</text>
+        <line x1="105.0" y1="18" x2="105.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="100.0,54 110.0,54 105.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the number the arrow is pointing to.",
+      marks: 1,
+      answer: "325"
+    },
+    {
+      section: "Section A: Number lines",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">2</text>
+        <line x1="90.0" y1="64" x2="90.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="150.0" y1="64" x2="150.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="210.0" y1="64" x2="210.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="270.0" y1="64" x2="270.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">3</text>
+        <line x1="210.0" y1="18" x2="210.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="205.0,54 215.0,54 210.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the number the arrow is pointing to.",
+      marks: 1,
+      answer: "2.6"
+    },
+    {
+      section: "Section B: Scales with units",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">0kg</text>
+        <line x1="90.0" y1="64" x2="90.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="150.0" y1="64" x2="150.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="210.0" y1="64" x2="210.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="270.0" y1="64" x2="270.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">10kg</text>
+        <line x1="210.0" y1="18" x2="210.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="205.0,54 215.0,54 210.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the value shown on the scale. Include units.",
+      marks: 1,
+      answer: "6 kg"
+    },
+    {
+      section: "Section B: Scales with units",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">50g</text>
+        <line x1="60.0" y1="64" x2="60.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="90.0" y1="64" x2="90.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="120.0" y1="64" x2="120.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="150.0" y1="64" x2="150.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="210.0" y1="64" x2="210.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="240.0" y1="64" x2="240.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="270.0" y1="64" x2="270.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="300.0" y1="64" x2="300.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">60g</text>
+        <line x1="120.0" y1="18" x2="120.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="115.0,54 125.0,54 120.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the value shown on the scale. Include units.",
+      marks: 1,
+      answer: "53 g"
+    },
+    {
+      section: "Section B: Scales with units",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">1cm</text>
+        <line x1="60.0" y1="64" x2="60.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="90.0" y1="64" x2="90.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="120.0" y1="64" x2="120.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="150.0" y1="64" x2="150.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="210.0" y1="64" x2="210.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="240.0" y1="64" x2="240.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="270.0" y1="64" x2="270.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="300.0" y1="64" x2="300.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">2cm</text>
+        <line x1="150.0" y1="18" x2="150.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="145.0,54 155.0,54 150.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the value shown on the scale. Include units.",
+      marks: 1,
+      answer: "1.4 cm"
+    },
+    {
+      section: "Section B: Scales with units",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">0ml</text>
+        <line x1="105.0" y1="64" x2="105.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="255.0" y1="64" x2="255.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">1000ml</text>
+        <line x1="255.0" y1="18" x2="255.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="250.0,54 260.0,54 255.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Write down the value shown on the scale. Include units.",
+      marks: 1,
+      answer: "750 ml"
+    },
+    {
+      section: "Section C: Containers and thermometers",
+      diagram: `<svg viewBox="0 0 220 250" width="220" role="img" aria-label="Measuring beaker">
+        <rect x="70" y="90.0" width="100" height="140.0" style="fill:#60a5fa;opacity:0.45;stroke:none"/>
+        <polyline points="70,15 70,230 170,230 170,15" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <line x1="70" y1="90.0" x2="170" y2="90.0" style="stroke:#2563eb;stroke-width:2"/>
+        <line x1="70" y1="230.0" x2="88" y2="230.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="234.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">0</text>
+        <line x1="70" y1="210.0" x2="80" y2="210.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="190.0" x2="88" y2="190.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="194.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">100</text>
+        <line x1="70" y1="170.0" x2="80" y2="170.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="150.0" x2="88" y2="150.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="154.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">200</text>
+        <line x1="70" y1="130.0" x2="80" y2="130.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="110.0" x2="88" y2="110.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="114.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">300</text>
+        <line x1="70" y1="90.0" x2="80" y2="90.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="70.0" x2="88" y2="70.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="74.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">400</text>
+        <line x1="70" y1="50.0" x2="80" y2="50.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="30.0" x2="88" y2="30.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="34.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">500</text>
+        <text x="120.0" y="246" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">ml</text>
+        </svg>`,
+      question: "Write down the volume of water in the beaker.",
+      marks: 1,
+      answer: "350 ml"
+    },
+    {
+      section: "Section C: Containers and thermometers",
+      diagram: `<svg viewBox="0 0 220 250" width="220" role="img" aria-label="Measuring beaker">
+        <rect x="70" y="90.0" width="100" height="140.0" style="fill:#60a5fa;opacity:0.45;stroke:none"/>
+        <polyline points="70,15 70,230 170,230 170,15" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <line x1="70" y1="90.0" x2="170" y2="90.0" style="stroke:#2563eb;stroke-width:2"/>
+        <line x1="70" y1="230.0" x2="88" y2="230.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="234.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">0</text>
+        <line x1="70" y1="210.0" x2="80" y2="210.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="190.0" x2="80" y2="190.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="170.0" x2="80" y2="170.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="150.0" x2="80" y2="150.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="130.0" x2="88" y2="130.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="134.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">100</text>
+        <line x1="70" y1="110.0" x2="80" y2="110.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="90.0" x2="80" y2="90.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="70.0" x2="80" y2="70.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="50.0" x2="80" y2="50.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="30.0" x2="88" y2="30.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="34.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">200</text>
+        <text x="120.0" y="246" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">ml</text>
+        </svg>`,
+      question: "Write down the volume of water in the beaker.",
+      marks: 1,
+      answer: "140 ml"
+    },
+    {
+      section: "Section C: Containers and thermometers",
+      diagram: `<svg viewBox="0 0 380 95" width="380" role="img" aria-label="Thermometer">
+        <rect x="30" y="33" width="330" height="14" rx="7" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <circle cx="28" cy="40" r="14" style="fill:#dc2626;stroke:none"/>
+        <rect x="28" y="36" width="119.0" height="8" style="fill:#dc2626;stroke:none"/>
+        <line x1="60.0" y1="49" x2="60.0" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="60.0" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">−10</text>
+        <line x1="89.0" y1="49" x2="89.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="118.0" y1="49" x2="118.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="147.0" y1="49" x2="147.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="176.0" y1="49" x2="176.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="205.0" y1="49" x2="205.0" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="205.0" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">0</text>
+        <line x1="234.0" y1="49" x2="234.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="263.0" y1="49" x2="263.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="292.0" y1="49" x2="292.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="321.0" y1="49" x2="321.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="350.0" y1="49" x2="350.0" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="350.0" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">10</text>
+        <text x="378" y="74" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">°C</text>
+        </svg>`,
+      question: "Write down the temperature shown on the thermometer, in °C.",
+      marks: 1,
+      answer: "−4"
+    },
+    {
+      section: "Section C: Containers and thermometers",
+      diagram: `<svg viewBox="0 0 380 95" width="380" role="img" aria-label="Thermometer">
+        <rect x="30" y="33" width="330" height="14" rx="7" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <circle cx="28" cy="40" r="14" style="fill:#dc2626;stroke:none"/>
+        <rect x="28" y="36" width="249.5" height="8" style="fill:#dc2626;stroke:none"/>
+        <line x1="60.0" y1="49" x2="60.0" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="60.0" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">−20</text>
+        <line x1="84.2" y1="49" x2="84.2" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="108.3" y1="49" x2="108.3" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="132.5" y1="49" x2="132.5" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="156.7" y1="49" x2="156.7" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="156.7" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">0</text>
+        <line x1="180.8" y1="49" x2="180.8" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="205.0" y1="49" x2="205.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="229.2" y1="49" x2="229.2" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="253.3" y1="49" x2="253.3" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="253.3" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">20</text>
+        <line x1="277.5" y1="49" x2="277.5" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="301.7" y1="49" x2="301.7" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="325.8" y1="49" x2="325.8" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="350.0" y1="49" x2="350.0" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="350.0" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">40</text>
+        <text x="378" y="74" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">°C</text>
+        </svg>`,
+      question: "Write down the temperature shown on the thermometer, in °C.",
+      marks: 1,
+      answer: "25"
+    },
+    {
+      section: "Section D: Problem solving",
+      text: "Sam says the arrow points to 270 g.",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">200g</text>
+        <line x1="105.0" y1="64" x2="105.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="255.0" y1="64" x2="255.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">300g</text>
+        <line x1="255.0" y1="18" x2="255.0" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="250.0,54 260.0,54 255.0,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      question: "Explain why Sam is wrong.",
+      marks: 1,
+      type: "explain",
+      answer: "Each small division is 25 g, not 10 g (100 g ÷ 4 = 25 g). The arrow points to 275 g."
+    },
+    {
+      section: "Section D: Problem solving",
+      text: "Leah weighs some apples. The scale shows the mass of the apples.",
+      diagram: `<svg viewBox="0 0 360 105" width="360" role="img" aria-label="Scale with an arrow">
+        <line x1="30" y1="70" x2="330" y2="70" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="30.0" y1="61" x2="30.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="30.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">0kg</text>
+        <line x1="67.5" y1="64" x2="67.5" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="105.0" y1="64" x2="105.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="142.5" y1="64" x2="142.5" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="180.0" y1="64" x2="180.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="217.5" y1="64" x2="217.5" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="255.0" y1="64" x2="255.0" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="292.5" y1="64" x2="292.5" y2="76" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="330.0" y1="61" x2="330.0" y2="79" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="330.0" y="96" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">4kg</text>
+        <line x1="217.5" y1="18" x2="217.5" y2="56" style="stroke:#2563eb;stroke-width:2.2;fill:none"/>
+        <polygon points="212.5,54 222.5,54 217.5,63" style="fill:#2563eb;stroke:none"/>
+        </svg>`,
+      parts: [
+        { question: "What is the mass of the apples?", marks: 1, answer: "2.5 kg" },
+        { question: "Apples cost £2 per kg. How much does Leah pay?", marks: 2, answer: "£5" }
+      ]
+    },
+    {
+      section: "Section D: Problem solving",
+      text: "The beaker shows how much water Paige has. She pours 120 ml of water out of the beaker, then pours 250 ml of water in.",
+      diagram: `<svg viewBox="0 0 220 250" width="220" role="img" aria-label="Measuring beaker">
+        <rect x="70" y="110.0" width="100" height="120.0" style="fill:#60a5fa;opacity:0.45;stroke:none"/>
+        <polyline points="70,15 70,230 170,230 170,15" style="stroke:currentColor;stroke-width:2;fill:none"/>
+        <line x1="70" y1="110.0" x2="170" y2="110.0" style="stroke:#2563eb;stroke-width:2"/>
+        <line x1="70" y1="230.0" x2="88" y2="230.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="234.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">0</text>
+        <line x1="70" y1="210.0" x2="80" y2="210.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="190.0" x2="88" y2="190.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="194.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">100</text>
+        <line x1="70" y1="170.0" x2="80" y2="170.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="150.0" x2="88" y2="150.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="154.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">200</text>
+        <line x1="70" y1="130.0" x2="80" y2="130.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="110.0" x2="88" y2="110.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="114.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">300</text>
+        <line x1="70" y1="90.0" x2="80" y2="90.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="70.0" x2="88" y2="70.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="74.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">400</text>
+        <line x1="70" y1="50.0" x2="80" y2="50.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="70" y1="30.0" x2="88" y2="30.0" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="64" y="34.0" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">500</text>
+        <text x="120.0" y="246" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">ml</text>
+        </svg>`,
+      question: "How much water is now in the beaker?",
+      marks: 2,
+      answer: "430 ml"
+    },
+    {
+      section: "Section D: Problem solving",
+      text: "The thermometer shows the temperature at midnight. By midday, the temperature has risen by 9°C.",
+      diagram: `<svg viewBox="0 0 380 95" width="380" role="img" aria-label="Thermometer">
+        <rect x="30" y="33" width="330" height="14" rx="7" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <circle cx="28" cy="40" r="14" style="fill:#dc2626;stroke:none"/>
+        <rect x="28" y="36" width="90.0" height="8" style="fill:#dc2626;stroke:none"/>
+        <line x1="60.0" y1="49" x2="60.0" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="60.0" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">−10</text>
+        <line x1="89.0" y1="49" x2="89.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="118.0" y1="49" x2="118.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="147.0" y1="49" x2="147.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="176.0" y1="49" x2="176.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="205.0" y1="49" x2="205.0" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="205.0" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">0</text>
+        <line x1="234.0" y1="49" x2="234.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="263.0" y1="49" x2="263.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="292.0" y1="49" x2="292.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="321.0" y1="49" x2="321.0" y2="54" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <line x1="350.0" y1="49" x2="350.0" y2="60" style="stroke:currentColor;stroke-width:1.5;fill:none"/>
+        <text x="350.0" y="74" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:11px">10</text>
+        <text x="378" y="74" text-anchor="end" style="fill:currentColor;stroke:none;font-size:11px">°C</text>
+        </svg>`,
+      question: "What is the temperature at midday, in °C?",
+      marks: 2,
+      answer: "3"
+    }
+  ]
+});
+
+
+QUESTION_BANK.add({
   topic: "Algebra: collecting like terms",
   title: "Collecting Like Terms: Exam Style Questions",
   type: "algebra",
@@ -1090,6 +1582,52 @@ QUESTION_BANK.add({
     { section: "Shapes on a grid",
       question: "Ali says the point (2, 5) is 5 across and 2 up. Is Ali correct? Explain your answer.", type: "explain", marks: 1,
       answer: "No. The first number is the x-coordinate (across) and the second is the y-coordinate (up), so (2, 5) is 2 across and 5 up." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Reading scales",
+  title: "Reading Scales",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Work out what each small mark is worth before you answer. Type your answer and press <b>Enter</b> or <b>Check</b>. Where you're asked to show a value, click or tap the scale to set it, then press <b>Check</b>.",
+  questions: [
+    { section: "Reading scales", question: "What length does the arrow point to?", marks: 1, answer: "6.5 cm",
+      scale: { style: "line", min: 0, max: 10, major: 1, minor: 0.5, unit: "cm", value: 6.5 } },
+    { section: "Reading scales", question: "What number is the arrow pointing to?", marks: 1, answer: "46",
+      scale: { style: "line", min: 0, max: 100, major: 10, minor: 2, value: 46 } },
+    { section: "Reading scales", question: "What number is the arrow pointing to?", marks: 1, answer: "2.7",
+      scale: { style: "line", min: 2, max: 3, major: 0.5, minor: 0.1, value: 2.7 } },
+    { section: "Reading scales", question: "What temperature does the thermometer show?", marks: 1, answer: "18 °C",
+      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: 18 } },
+    { section: "Reading scales", question: "What temperature does the thermometer show?", marks: 1, answer: "−4 °C",
+      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: -4 } },
+    { section: "Reading scales", question: "How much water is in the jug?", marks: 1, answer: "340 ml",
+      scale: { style: "jug", min: 0, max: 500, major: 100, minor: 20, unit: "ml", value: 340 } },
+    { section: "Reading scales", question: "How much water is in the jug?", marks: 1, answer: "650 ml",
+      scale: { style: "jug", min: 0, max: 1000, major: 200, minor: 50, unit: "ml", value: 650 } },
+    { section: "Reading scales", question: "What mass do the scales show?", marks: 1, answer: "2.6 kg",
+      scale: { style: "dial", min: 0, max: 5, major: 1, minor: 0.2, unit: "kg", value: 2.6 } },
+    { section: "Reading scales", question: "What mass do the scales show?", marks: 1, answer: "375 g",
+      scale: { style: "dial", min: 0, max: 1000, major: 100, minor: 25, unit: "g", value: 375 } },
+
+    { section: "Showing values on a scale", question: "Click on the ruler to point the arrow at 7.5 cm.", type: "mark", marks: 1, answer: "7.5",
+      scale: { style: "line", min: 0, max: 10, major: 1, minor: 0.5, unit: "cm" } },
+    { section: "Showing values on a scale", question: "Click on the number line to point the arrow at 64.", type: "mark", marks: 1, answer: "64",
+      scale: { style: "line", min: 0, max: 100, major: 10, minor: 2 } },
+    { section: "Showing values on a scale", question: "Click on the thermometer to show −6 °C.", type: "mark", marks: 1, answer: "-6",
+      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C" } },
+    { section: "Showing values on a scale", question: "Click on the jug to fill it to 275 ml.", type: "mark", marks: 1, answer: "275",
+      scale: { style: "jug", min: 0, max: 500, major: 100, minor: 25, unit: "ml" } },
+    { section: "Showing values on a scale", question: "Click on the scales to set the needle to 3.4 kg.", type: "mark", marks: 1, answer: "3.4",
+      scale: { style: "dial", min: 0, max: 5, major: 1, minor: 0.2, unit: "kg" } },
+    { section: "Showing values on a scale", question: "Click on the scales to set the needle to 750 g.", type: "mark", marks: 1, answer: "750",
+      scale: { style: "dial", min: 0, max: 1000, major: 200, minor: 50, unit: "g" } },
+
+    { section: "Problem solving", text: "The thermometer shows the temperature at 6 am.",
+      question: "By midday the temperature has risen by 7 °C. What is the temperature at midday?", marks: 2, answer: "5 °C",
+      scale: { style: "thermometer", min: -10, max: 30, major: 10, minor: 2, unit: "°C", value: -2 } }
   ]
 });
 
