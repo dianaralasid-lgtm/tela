@@ -5828,3 +5828,716 @@ QUESTION_BANK.add({
       answer: "Parallel vectors could be on two separate parallel lines. To show points are collinear, the two vectors must also share a point (e.g. AB and BC, both through B)." }
   ]
 });
+
+
+QUESTION_BANK.add({
+  topic: "Energy stores & transfers",
+  title: "Energy Stores and Transfers",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Kinetic energy = ½mv². Gravitational potential energy = mgh (g = 9.8 N/kg). Elastic potential energy = ½ke². Efficiency = useful output ÷ total input (× 100 for a percentage). Energy is never destroyed, only transferred or dissipated.",
+  questions: [
+    { section: "Section A: Calculating energy", question: "A 2 kg ball moves at 3 m/s. Calculate its kinetic energy.", marks: 2, answer: "9 J" },
+    { section: "Section A: Calculating energy", question: "A 1000 kg car travels at 20 m/s. Calculate its kinetic energy.", marks: 2, answer: "200000 J" },
+    { section: "Section A: Calculating energy", question: "A 5 kg box is lifted 10 m. Calculate the gain in gravitational potential energy (g = 9.8 N/kg).", marks: 2, answer: "490 J" },
+    { section: "Section A: Calculating energy", question: "A spring with spring constant 200 N/m is stretched by 0.1 m. Calculate the elastic potential energy stored.", marks: 2, answer: "1 J" },
+    { section: "Section A: Calculating energy", question: "A ball is dropped from 5 m. Ignoring air resistance, calculate its speed just before it hits the ground, to 1 decimal place (g = 9.8 N/kg).", tolerance: 0.05, marks: 3, answer: "9.9 m/s" },
+
+    { section: "Section B: Efficiency and stores", question: "A motor is supplied with 200 J and transfers 60 J usefully. Calculate its efficiency as a percentage.", marks: 2, answer: "30%" },
+    { section: "Section B: Efficiency and stores", question: "A motor is supplied with 200 J and transfers 60 J usefully. How much energy is wasted?", marks: 1, answer: "140 J" },
+    { section: "Section B: Efficiency and stores", question: "When you stretch a spring, which energy store increases?", type: "choice", marks: 1,
+      options: ["Elastic potential", "Kinetic", "Chemical", "Nuclear"], answer: "Elastic potential" },
+    { section: "Section B: Efficiency and stores", question: "Which of these reduces unwanted energy transfer by friction in a machine?", type: "choice", marks: 1,
+      options: ["Lubricating the moving parts", "Using thinner wires", "Painting it black", "Running it faster"], answer: "Lubricating the moving parts" },
+    { section: "Section B: Efficiency and stores", question: "Sam says a kettle 'uses up' energy. Explain why this is wrong.", type: "explain", marks: 1,
+      answer: "Energy can't be created or destroyed. The kettle transfers energy from the electrical supply to the thermal store of the water, and some is dissipated to the surroundings; none is used up." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Specific heat capacity",
+  title: "Specific Heat Capacity",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "ΔE = m × c × Δθ: energy (J) = mass (kg) × specific heat capacity (J/kg°C) × temperature change (°C). Rearrange for c or Δθ. Energy from a heater: E = P × t.",
+  questions: [
+    { section: "Section A: Using ΔE = mcΔθ", question: "Calculate the energy needed to heat 2 kg of water by 10 °C (c = 4200 J/kg°C).", marks: 2, answer: "84000 J" },
+    { section: "Section A: Using ΔE = mcΔθ", question: "0.5 kg of aluminium is heated from 20 °C to 60 °C (c = 900 J/kg°C). Calculate the energy transferred.", marks: 3, answer: "18000 J" },
+    { section: "Section A: Using ΔE = mcΔθ", question: "36 000 J raises the temperature of a 2 kg block by 20 °C. Calculate its specific heat capacity.", marks: 3, answer: "900 J/kg°C" },
+    { section: "Section A: Using ΔE = mcΔθ", question: "8400 J is transferred to 0.5 kg of water (c = 4200 J/kg°C). Calculate the temperature rise.", marks: 3, answer: "4 °C" },
+    { section: "Section A: Using ΔE = mcΔθ", question: "A 50 W heater is switched on for 600 s. How much energy does it transfer?", marks: 2, answer: "30000 J" },
+
+    { section: "Section B: The required practical", question: "What does specific heat capacity mean?", type: "choice", marks: 1,
+      options: ["The energy needed to raise 1 kg of a substance by 1 °C", "The energy needed to melt 1 kg of a substance", "The temperature a substance boils at", "How hot a substance can get"],
+      answer: "The energy needed to raise 1 kg of a substance by 1 °C" },
+    { section: "Section B: The required practical", question: "Why is the metal block wrapped in insulation during the practical?", type: "choice", marks: 1,
+      options: ["To reduce energy lost to the surroundings", "To make the block heavier", "To stop the thermometer breaking", "To increase the power of the heater"], answer: "To reduce energy lost to the surroundings" },
+    { section: "Section B: The required practical", question: "A student's value for the specific heat capacity of a block is higher than the true value. Explain why.", type: "explain", marks: 2,
+      answer: "Some energy from the heater was lost to the surroundings, so the energy supplied was more than the energy that actually heated the block. Using the bigger energy in c = ΔE ÷ (mΔθ) gives too high a value." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Circuits & resistance",
+  title: "Circuits and Resistance",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "V = IR (potential difference = current × resistance) and Q = It (charge = current × time). In series, resistances add and the current is the same everywhere. In parallel, the total resistance is less than the smallest resistor.",
+  questions: [
+    { section: "Section A: V = IR", question: "A current of 2 A flows through a 6 Ω resistor. Calculate the potential difference across it.", marks: 2, answer: "12 V" },
+    { section: "Section A: V = IR", question: "A component has a potential difference of 9 V and a current of 0.5 A. Calculate its resistance.", marks: 2, answer: "18 Ω" },
+    { section: "Section A: V = IR", question: "A 12 V battery is connected to a 4 Ω resistor. Calculate the current.", marks: 2, answer: "3 A" },
+    { section: "Section A: V = IR", question: "A current of 2 A flows for 30 s. Calculate the charge that flows.", marks: 2, answer: "60 C" },
+    { section: "Section A: V = IR", text: "The graph shows the I–V characteristic of a resistor.", question: "Use the graph to find its resistance.", marks: 2, answer: "4 Ω",
+      graph: { x: [0, 6], y: [0, 1.5], ystep: 0.25, xlabel: "Potential difference (V)", ylabel: "Current (A)", lines: [[[0, 0], [6, 1.5]]] } },
+
+    { section: "Section B: Series and parallel", question: "A 4 Ω and a 6 Ω resistor are in series. What is the total resistance?", marks: 1, answer: "10 Ω" },
+    { section: "Section B: Series and parallel", question: "A 12 V battery is connected to a 4 Ω and an 8 Ω resistor in series. Calculate the current.", marks: 3, answer: "1 A" },
+    { section: "Section B: Series and parallel", question: "Two resistors of 4 Ω and 6 Ω are connected in parallel. What can you say about the total resistance?", type: "choice", marks: 1,
+      options: ["It is less than 4 Ω", "It is 10 Ω", "It is between 4 Ω and 6 Ω", "It is 24 Ω"], answer: "It is less than 4 Ω" },
+    { section: "Section B: Series and parallel", question: "Why does a filament lamp's I–V graph curve?", type: "choice", marks: 1,
+      options: ["As it gets hotter, its resistance increases", "Its resistance stays the same", "It only lets current flow one way", "Its resistance falls as it heats up"],
+      answer: "As it gets hotter, its resistance increases" },
+    { section: "Section B: Series and parallel", question: "Explain why the lights in a house are wired in parallel, not series.", type: "explain", marks: 2,
+      answer: "In parallel each light has its own loop, so each gets the full mains potential difference and can be switched on and off separately. If one bulb breaks, the others stay on." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Mains electricity & power",
+  title: "Mains Electricity and Power",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "P = IV and P = I²R; energy transferred E = Pt (in J with W and s, or kWh with kW and hours). UK mains is 230 V, 50 Hz alternating current. Live = brown, neutral = blue, earth = green and yellow.",
+  questions: [
+    { section: "Section A: Power and energy", question: "A kettle draws 5 A from the 230 V mains. Calculate its power.", marks: 2, answer: "1150 W" },
+    { section: "Section A: Power and energy", question: "A current of 3 A flows through a 10 Ω resistor. Calculate the power.", marks: 2, answer: "90 W" },
+    { section: "Section A: Power and energy", question: "A 2300 W heater runs on 230 V mains. Calculate the current.", marks: 2, answer: "10 A" },
+    { section: "Section A: Power and energy", question: "A 2 kW heater is on for 3 hours. How many kilowatt-hours of energy does it transfer?", marks: 2, answer: "6 kWh" },
+    { section: "Section A: Power and energy", question: "A 60 W lamp is on for 2 minutes. How many joules does it transfer?", marks: 2, answer: "7200 J" },
+
+    { section: "Section B: Mains supply and safety", question: "What is the UK mains supply?", type: "choice", marks: 1,
+      options: ["230 V, 50 Hz alternating current", "230 V direct current", "12 V, 50 Hz alternating current", "50 V, 230 Hz alternating current"], answer: "230 V, 50 Hz alternating current" },
+    { section: "Section B: Mains supply and safety", question: "What colour is the live wire?", type: "choice", marks: 1, options: ["Brown", "Blue", "Green and yellow", "Red"], answer: "Brown" },
+    { section: "Section B: Mains supply and safety", question: "Why does the National Grid use step-up transformers?", type: "choice", marks: 1,
+      options: ["A higher potential difference means a lower current, so less energy is lost heating the cables", "To make the electricity safer in homes", "To increase the current", "To change AC into DC"],
+      answer: "A higher potential difference means a lower current, so less energy is lost heating the cables" },
+    { section: "Section B: Mains supply and safety", question: "Explain how the earth wire protects someone using a kettle with a metal case.", type: "explain", marks: 2,
+      answer: "If the live wire touches the metal case, a large current flows through the earth wire instead of through the person. This melts the fuse (or trips the breaker) and cuts off the supply." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Density & changes of state",
+  title: "Density and Changes of State",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Density ρ = m ÷ V. Energy for a change of state: E = mL (specific latent heat). During melting or boiling the temperature stays the same: the energy goes into breaking bonds between particles, not into speeding them up.",
+  questions: [
+    { section: "Section A: Density", question: "A block has a mass of 600 kg and a volume of 0.5 m³. Calculate its density.", marks: 2, answer: "1200 kg/m³" },
+    { section: "Section A: Density", question: "A metal sample has a mass of 54 g and a volume of 20 cm³. Calculate its density in g/cm³.", marks: 2, answer: "2.7 g/cm³" },
+    { section: "Section A: Density", question: "Water has a density of 1000 kg/m³. What is the mass of 0.002 m³ of water?", marks: 2, answer: "2 kg" },
+
+    { section: "Section B: Latent heat", question: "How much energy is needed to melt 0.5 kg of ice? (Specific latent heat of fusion = 334 000 J/kg)", marks: 2, answer: "167000 J" },
+    { section: "Section B: Latent heat", question: "113 000 J boils away 0.05 kg of water. Calculate the specific latent heat of vaporisation.", marks: 2, answer: "2260000 J/kg" },
+    { section: "Section B: Latent heat", text: "The graph shows the temperature of a substance being heated.", question: "What is happening between 2 and 6 minutes?", type: "choice", marks: 1,
+      options: ["Melting", "Boiling", "Cooling", "Condensing"], answer: "Melting",
+      graph: { x: [0, 18], xstep: 2, y: [-20, 120], ystep: 20, xlabel: "Time (min)", ylabel: "Temperature (°C)", lines: [[[0, -20], [2, 0], [6, 0], [10, 100], [16, 100], [18, 120]]] } },
+    { section: "Section B: Latent heat", question: "Why does the temperature stay the same while a substance boils?", type: "choice", marks: 1,
+      options: ["The energy breaks the bonds between particles instead of raising their kinetic energy", "No energy is being transferred", "The thermometer stops working", "The particles slow down"],
+      answer: "The energy breaks the bonds between particles instead of raising their kinetic energy" },
+    { section: "Section B: Latent heat", question: "Explain why a gas has a much lower density than the same substance as a solid.", type: "explain", marks: 2,
+      answer: "The mass is the same, but in a gas the particles are far apart, so the same mass takes up a much bigger volume. Density = mass ÷ volume, so it is much lower." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Radioactive decay",
+  title: "Radioactive Decay",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Half-life is the time for the activity (or number of unstable nuclei) to halve. Alpha = 2 protons + 2 neutrons (mass −4, atomic number −2); beta = a fast electron from the nucleus (atomic number +1); gamma = an EM wave (no change).",
+  questions: [
+    { section: "Section A: Half-life", text: "The graph shows the activity of a radioactive sample.", question: "Use the graph to find the half-life, in days.", marks: 2, answer: "2",
+      graph: { x: [0, 10], y: [0, 800], ystep: 100, xlabel: "Time (days)", ylabel: "Activity (Bq)", curves: ["800 * 0.5^(x/2)"] } },
+    { section: "Section A: Half-life", question: "A sample has an activity of 800 Bq. Its half-life is 2 days. What is its activity after 6 days?", marks: 2, answer: "100 Bq" },
+    { section: "Section A: Half-life", question: "An isotope has a half-life of 5 years. What fraction is left after 15 years?", type: "choice", marks: 2, options: ["1/8", "1/3", "1/6", "1/2"], answer: "1/8" },
+
+    { section: "Section B: Types of radiation", question: "Uranium-238 (atomic number 92) emits an alpha particle. What is the mass number of the new nucleus?", marks: 1, answer: "234" },
+    { section: "Section B: Types of radiation", question: "Carbon-14 (atomic number 6) emits a beta particle. What is the atomic number of the new nucleus?", marks: 1, answer: "7" },
+    { section: "Section B: Types of radiation", question: "Which type of radiation is the most penetrating?", type: "choice", marks: 1, options: ["Gamma", "Alpha", "Beta", "They are all the same"], answer: "Gamma" },
+    { section: "Section B: Types of radiation", question: "What is an alpha particle?", type: "choice", marks: 1,
+      options: ["2 protons and 2 neutrons (a helium nucleus)", "A fast-moving electron", "An electromagnetic wave", "A single neutron"], answer: "2 protons and 2 neutrons (a helium nucleus)" },
+    { section: "Section B: Types of radiation", question: "Explain why an alpha source is fairly safe outside the body but very dangerous if swallowed.", type: "explain", marks: 2,
+      answer: "Alpha is stopped by skin or a few cm of air, so it can't reach living cells from outside. Inside the body it is next to cells, and as the most ionising radiation it damages them badly." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Forces & Newton's laws",
+  title: "Forces and Newton's Laws",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Newton's 2nd law: F = ma. Weight W = mg (g = 9.8 N/kg). Momentum p = mv. Stopping distance = thinking distance + braking distance. A zero resultant force means constant velocity (or staying still).",
+  questions: [
+    { section: "Section A: Calculations", question: "A 1200 kg car accelerates at 2 m/s². Calculate the resultant force.", marks: 2, answer: "2400 N" },
+    { section: "Section A: Calculations", question: "A 30 N resultant force acts on a 6 kg trolley. Calculate its acceleration.", marks: 2, answer: "5 m/s²" },
+    { section: "Section A: Calculations", question: "A cyclist has a forward force of 500 N and air resistance of 200 N. What is the resultant force?", marks: 1, answer: "300 N" },
+    { section: "Section A: Calculations", question: "Calculate the weight of a 60 kg person (g = 9.8 N/kg).", marks: 2, answer: "588 N" },
+    { section: "Section A: Calculations", question: "Calculate the momentum of a 70 kg runner moving at 5 m/s.", marks: 2, answer: "350 kg m/s" },
+    { section: "Section A: Calculations", question: "A driver's thinking distance is 12 m and braking distance is 24 m. What is the stopping distance?", marks: 1, answer: "36 m" },
+
+    { section: "Section B: Newton's laws", question: "A car moves at a steady 30 m/s in a straight line. What is the resultant force on it?", type: "choice", marks: 1,
+      options: ["Zero", "Forwards", "Backwards", "Equal to its weight"], answer: "Zero" },
+    { section: "Section B: Newton's laws", question: "Which statement is Newton's third law?", type: "choice", marks: 1,
+      options: ["When two objects interact, they exert equal and opposite forces on each other", "F = ma", "An object stays still or at constant velocity unless a resultant force acts", "Momentum is always conserved"],
+      answer: "When two objects interact, they exert equal and opposite forces on each other" },
+    { section: "Section B: Newton's laws", question: "Which of these increases thinking distance?", type: "choice", marks: 1,
+      options: ["The driver being tired", "Worn brakes", "An icy road", "Worn tyres"], answer: "The driver being tired" },
+    { section: "Section B: Newton's laws", question: "Explain how a crumple zone reduces the force on passengers in a crash.", type: "explain", marks: 2,
+      answer: "The crumple zone makes the car take longer to stop. The same change in momentum over a longer time means a smaller rate of change of momentum, so a smaller force." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Wave properties",
+  title: "Wave Properties",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Wave speed v = fλ (frequency × wavelength); period T = 1/f. Amplitude is the height from the middle to a peak. Transverse waves (light, water) vibrate at right angles to the direction of travel; longitudinal waves (sound) vibrate along it.",
+  questions: [
+    { section: "Section A: Wave calculations", question: "A wave has a frequency of 50 Hz and a wavelength of 2 m. Calculate its speed.", marks: 2, answer: "100 m/s" },
+    { section: "Section A: Wave calculations", question: "Sound travels at 340 m/s. Calculate the wavelength of a 170 Hz note.", marks: 2, answer: "2 m" },
+    { section: "Section A: Wave calculations", question: "A wave has a frequency of 4 Hz. Calculate its period.", marks: 1, answer: "0.25 s" },
+    { section: "Section A: Wave calculations", text: "The graph shows a wave.", question: "What is the amplitude of the wave, in cm?", marks: 1, answer: "3",
+      graph: { x: [0, 8], y: [-4, 4], xlabel: "Distance (cm)", ylabel: "Displacement (cm)", curves: ["3*sin(90*x)"] } },
+    { section: "Section A: Wave calculations", text: "The graph shows a wave.", question: "What is the wavelength of the wave, in cm?", marks: 1, answer: "4",
+      graph: { x: [0, 8], y: [-4, 4], xlabel: "Distance (cm)", ylabel: "Displacement (cm)", curves: ["3*sin(90*x)"] } },
+
+    { section: "Section B: Types of wave", question: "Which of these is a longitudinal wave?", type: "choice", marks: 1, options: ["Sound", "Light", "Microwaves", "Ripples on water"], answer: "Sound" },
+    { section: "Section B: Types of wave", question: "Put these electromagnetic waves in order, from shortest to longest wavelength.", type: "order", marks: 2,
+      items: ["Radio", "Gamma", "Visible light", "Microwaves", "X-rays"], answer: "Gamma, X-rays, Visible light, Microwaves, Radio" },
+    { section: "Section B: Types of wave", question: "Which EM wave is used for communicating with satellites?", type: "choice", marks: 1, options: ["Microwaves", "Gamma rays", "Ultraviolet", "X-rays"], answer: "Microwaves" },
+    { section: "Section B: Types of wave", question: "Explain the difference between transverse and longitudinal waves.", type: "explain", marks: 2,
+      answer: "In a transverse wave the vibrations are at right angles to the direction the energy travels (e.g. light). In a longitudinal wave the vibrations are parallel to it, making compressions and rarefactions (e.g. sound)." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Magnetism & electromagnetism",
+  title: "Magnetism and Electromagnetism",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Force on a wire in a magnetic field: F = BIl (tesla × amps × metres). Field lines go from north to south. Fleming's left-hand rule: First finger = Field, seCond finger = Current, thuMb = Motion.",
+  questions: [
+    { section: "Section A: F = BIl", question: "A wire 0.5 m long carries 3 A at right angles to a 0.2 T field. Calculate the force on it.", marks: 2, answer: "0.3 N" },
+    { section: "Section A: F = BIl", question: "A 0.15 m wire carrying 2 A feels a force of 0.6 N. Calculate the magnetic flux density, in tesla.", marks: 2, answer: "2" },
+    { section: "Section A: F = BIl", question: "A 0.2 m wire in a 0.5 T field feels a force of 0.4 N. Calculate the current.", marks: 2, answer: "4 A" },
+
+    { section: "Section B: Magnets and electromagnets", question: "Which way do magnetic field lines point?", type: "choice", marks: 1,
+      options: ["From the north pole to the south pole", "From the south pole to the north pole", "Towards both poles", "In circles around each pole"], answer: "From the north pole to the south pole" },
+    { section: "Section B: Magnets and electromagnets", question: "Tap all the magnetic materials.", type: "select", marks: 2,
+      options: ["Iron", "Copper", "Nickel", "Aluminium", "Cobalt"], answer: "Iron; Nickel; Cobalt" },
+    { section: "Section B: Magnets and electromagnets", question: "Which change makes an electromagnet stronger?", type: "choice", marks: 1,
+      options: ["Adding more turns to the coil", "Using a thinner wire", "Removing the iron core", "Reducing the current"], answer: "Adding more turns to the coil" },
+    { section: "Section B: Magnets and electromagnets", question: "In Fleming's left-hand rule, what does the thumb show?", type: "choice", marks: 1,
+      options: ["The direction of the force (motion)", "The direction of the current", "The direction of the field", "The strength of the magnet"], answer: "The direction of the force (motion)" },
+    { section: "Section B: Magnets and electromagnets", question: "Explain how to make a simple electric motor spin the other way.", type: "explain", marks: 1,
+      answer: "Reverse the direction of the current (swap the battery connections) or reverse the magnetic field (swap the magnets' poles). This reverses the force on each side of the coil." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Atomic structure & isotopes",
+  title: "Atomic Structure and Isotopes",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Atomic number = protons (= electrons in an atom). Mass number = protons + neutrons. Isotopes have the same number of protons but different numbers of neutrons. Relative atomic mass is the weighted mean of the isotopes' masses.",
+  questions: [
+    { section: "Section A: Particles in atoms", question: "Sodium-23 has atomic number 11. How many protons does it have?", marks: 1, answer: "11" },
+    { section: "Section A: Particles in atoms", question: "Sodium-23 has atomic number 11. How many neutrons does it have?", marks: 1, answer: "12" },
+    { section: "Section A: Particles in atoms", question: "A magnesium atom has 12 electrons. How many electrons does a Mg²⁺ ion have?", marks: 1, answer: "10" },
+    { section: "Section A: Particles in atoms", question: "What is the electron arrangement of magnesium (atomic number 12)?", type: "choice", marks: 1, options: ["2, 8, 2", "2, 10", "2, 8, 8", "12"], answer: "2, 8, 2" },
+    { section: "Section A: Particles in atoms", question: "What is the relative charge of a neutron?", type: "choice", marks: 1, options: ["0", "+1", "−1", "+2"], answer: "0" },
+
+    { section: "Section B: Isotopes and history", question: "Chlorine is 75% chlorine-35 and 25% chlorine-37. Calculate its relative atomic mass.", marks: 2, answer: "35.5" },
+    { section: "Section B: Isotopes and history", question: "What are isotopes?", type: "choice", marks: 1,
+      options: ["Atoms of the same element with different numbers of neutrons", "Atoms with different numbers of protons", "Ions of the same element", "Atoms of different elements with the same mass"],
+      answer: "Atoms of the same element with different numbers of neutrons" },
+    { section: "Section B: Isotopes and history", question: "The alpha-scattering experiment replaced the plum pudding model with which model?", type: "choice", marks: 1,
+      options: ["The nuclear model", "The Bohr model", "Dalton's solid sphere model", "The electron cloud model"], answer: "The nuclear model" },
+    { section: "Section B: Isotopes and history", question: "Explain why isotopes of an element have the same chemical properties.", type: "explain", marks: 1,
+      answer: "Chemical reactions depend on the electrons. Isotopes have the same number of protons and so the same number and arrangement of electrons; only the neutrons differ." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "The periodic table",
+  title: "The Periodic Table",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "The group number is the number of outer electrons; the period is the number of shells. Group 1 gets more reactive going down; group 7 gets less reactive going down. Group 0 (noble gases) have full outer shells and are unreactive.",
+  questions: [
+    { section: "Section A: Groups and periods", question: "An element has the electron arrangement 2, 8, 7. Which group is it in?", type: "number", marks: 1, answer: "7" },
+    { section: "Section A: Groups and periods", question: "An element has the electron arrangement 2, 8, 7. Which period is it in?", type: "number", marks: 1, answer: "3" },
+    { section: "Section A: Groups and periods", question: "Why are the noble gases unreactive?", marks: 1,
+      options: ["They have full outer shells", "They are gases", "They have no electrons", "They have very large atoms"], answer: "They have full outer shells" },
+    { section: "Section A: Groups and periods", question: "Why did Mendeleev leave gaps in his periodic table?", marks: 1,
+      options: ["For elements that hadn't been discovered yet", "Because he ran out of space", "For the noble gases", "To separate metals and non-metals"], answer: "For elements that hadn't been discovered yet" },
+
+    { section: "Section B: Group 1 and group 7", question: "How does the reactivity of group 1 metals change going down the group?", marks: 1,
+      options: ["It increases", "It decreases", "It stays the same", "It increases then decreases"], answer: "It increases" },
+    { section: "Section B: Group 1 and group 7", question: "How does the reactivity of the halogens change going down group 7?", marks: 1,
+      options: ["It decreases", "It increases", "It stays the same", "It decreases then increases"], answer: "It decreases" },
+    { section: "Section B: Group 1 and group 7", question: "What are the products when sodium reacts with water?", marks: 1,
+      options: ["Sodium hydroxide and hydrogen", "Sodium oxide and hydrogen", "Sodium hydroxide and oxygen", "Sodium chloride and water"], answer: "Sodium hydroxide and hydrogen" },
+    { section: "Section B: Group 1 and group 7", question: "Chlorine water is added to potassium bromide solution. What forms?", marks: 1,
+      options: ["Potassium chloride and bromine", "No reaction", "Potassium bromide and chlorine", "Potassium and bromine chloride"], answer: "Potassium chloride and bromine" },
+    { section: "Section B: Group 1 and group 7", question: "Explain why potassium is more reactive than sodium.", type: "explain", marks: 2,
+      answer: "Potassium's outer electron is in a shell further from the nucleus and more shielded by inner shells, so it is less strongly attracted and lost more easily." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Ionic, covalent & metallic bonding",
+  title: "Ionic, Covalent and Metallic Bonding",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Ionic: metal + non-metal, electrons transferred, giant lattice of ions. Covalent: non-metals share pairs of electrons (small molecules or giant structures). Metallic: positive ions in a sea of delocalised electrons.",
+  questions: [
+    { section: "Section A: Types of bonding", question: "What type of bonding is in sodium chloride?", marks: 1, options: ["Ionic", "Covalent", "Metallic", "None"], answer: "Ionic" },
+    { section: "Section A: Types of bonding", question: "What type of bonding is in methane, CH₄?", marks: 1, options: ["Covalent", "Ionic", "Metallic", "None"], answer: "Covalent" },
+    { section: "Section A: Types of bonding", question: "What is the formula of aluminium oxide (Al³⁺ and O²⁻ ions)?", marks: 1, options: ["Al₂O₃", "AlO", "Al₃O₂", "AlO₃"], answer: "Al₂O₃" },
+    { section: "Section A: Types of bonding", question: "How many covalent bonds are in a water molecule, H₂O?", type: "number", marks: 1, answer: "2" },
+
+    { section: "Section B: Structure and properties", question: "Why do ionic compounds conduct electricity when molten?", marks: 1,
+      options: ["The ions are free to move", "The electrons are free to move", "The bonds break", "They become metals"], answer: "The ions are free to move" },
+    { section: "Section B: Structure and properties", question: "Why does graphite conduct electricity?", marks: 1,
+      options: ["It has delocalised electrons", "It has free ions", "It is a metal", "Its layers are held tightly"], answer: "It has delocalised electrons" },
+    { section: "Section B: Structure and properties", question: "Why is diamond very hard?", marks: 1,
+      options: ["Each carbon is covalently bonded to 4 others in a giant lattice", "It has delocalised electrons", "It is made of small molecules", "It has ionic bonds"],
+      answer: "Each carbon is covalently bonded to 4 others in a giant lattice" },
+    { section: "Section B: Structure and properties", question: "Why do simple molecular substances have low boiling points?", marks: 1,
+      options: ["The forces between the molecules are weak", "The covalent bonds are weak", "They have no bonds", "Their molecules are charged"], answer: "The forces between the molecules are weak" },
+    { section: "Section B: Structure and properties", question: "Leah says that when water boils, the covalent bonds in the water molecules break. Explain her mistake.", type: "explain", marks: 1,
+      answer: "Boiling only overcomes the weak forces between the molecules. The strong covalent bonds inside each H₂O molecule don't break; the steam is still H₂O molecules." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Moles & reacting masses",
+  title: "Moles and Reacting Masses",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Moles = mass ÷ Mr. Mr is the sum of the relative atomic masses in the formula. Use the balancing numbers to find the ratio of moles. One mole contains 6.02 × 10²³ particles. Concentration (mol/dm³) = moles ÷ volume (dm³).",
+  questions: [
+    { section: "Section A: Mr and moles", question: "Calculate the Mr of CO₂ (C = 12, O = 16).", marks: 1, answer: "44" },
+    { section: "Section A: Mr and moles", question: "Calculate the Mr of H₂SO₄ (H = 1, S = 32, O = 16).", marks: 1, answer: "98" },
+    { section: "Section A: Mr and moles", question: "How many moles are in 88 g of CO₂ (Mr = 44)?", marks: 1, answer: "2 mol" },
+    { section: "Section A: Mr and moles", question: "What is the mass of 0.5 mol of NaCl (Mr = 58.5)?", marks: 2, answer: "29.25 g" },
+    { section: "Section A: Mr and moles", question: "How many molecules are in 2 mol of water? (Avogadro's constant = 6.02 × 10²³)", marks: 2, answer: "1.204 × 10^24" },
+
+    { section: "Section B: Equations and solutions", text: "2Mg + O₂ → 2MgO (Mg = 24, O = 16)", question: "What mass of magnesium oxide forms from 12 g of magnesium?", marks: 3, answer: "20 g" },
+    { section: "Section B: Equations and solutions", question: "0.5 mol of a solute is dissolved to make 250 cm³ of solution. Calculate its concentration in mol/dm³.", marks: 2, answer: "2 mol/dm³" },
+    { section: "Section B: Equations and solutions", question: "What is the limiting reactant?", type: "choice", marks: 1,
+      options: ["The reactant that is used up first, which stops the reaction", "The reactant there is most of", "The catalyst", "The product with the smallest mass"],
+      answer: "The reactant that is used up first, which stops the reaction" },
+    { section: "Section B: Equations and solutions", question: "When marble chips react with acid in an open flask, the mass goes down. Explain why this doesn't break the law of conservation of mass.", type: "explain", marks: 2,
+      answer: "One product is carbon dioxide gas, which escapes into the air. No atoms are lost; the mass of the gas that left accounts for the drop." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Acids, alkalis & salts",
+  title: "Acids, Alkalis and Salts",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Acids release H⁺ ions; alkalis release OH⁻ ions. Neutralisation: H⁺ + OH⁻ → H₂O. Acid + metal → salt + hydrogen; acid + base → salt + water; acid + carbonate → salt + water + carbon dioxide. Hydrochloric acid makes chlorides, sulfuric acid makes sulfates.",
+  questions: [
+    { section: "Section A: Acids and bases", question: "What is the pH of a neutral solution?", type: "number", marks: 1, answer: "7" },
+    { section: "Section A: Acids and bases", question: "Which ion do all acids release in water?", marks: 1, options: ["H⁺", "OH⁻", "Cl⁻", "Na⁺"], answer: "H⁺" },
+    { section: "Section A: Acids and bases", question: "Which is the ionic equation for neutralisation?", marks: 1, options: ["H⁺ + OH⁻ → H₂O", "Na⁺ + Cl⁻ → NaCl", "H₂ + O₂ → H₂O", "H⁺ + Cl⁻ → HCl"], answer: "H⁺ + OH⁻ → H₂O" },
+    { section: "Section A: Acids and bases", question: "What makes a strong acid strong?", marks: 1,
+      options: ["It fully ionises in water", "It is very concentrated", "It has a high pH", "It reacts slowly"], answer: "It fully ionises in water" },
+
+    { section: "Section B: Making salts", question: "Which salt forms when hydrochloric acid reacts with sodium hydroxide?", marks: 1, options: ["Sodium chloride", "Sodium sulfate", "Sodium nitrate", "Sodium hydride"], answer: "Sodium chloride" },
+    { section: "Section B: Making salts", question: "Which salt forms when sulfuric acid reacts with copper oxide?", marks: 1, options: ["Copper sulfate", "Copper chloride", "Copper sulfide", "Copper nitrate"], answer: "Copper sulfate" },
+    { section: "Section B: Making salts", question: "What are the products of an acid reacting with a metal carbonate?", marks: 1,
+      options: ["A salt, water and carbon dioxide", "A salt and hydrogen", "A salt and water", "An alkali and carbon dioxide"], answer: "A salt, water and carbon dioxide" },
+    { section: "Section B: Making salts", question: "Put the steps for making copper sulfate crystals in order.", type: "order", marks: 2,
+      items: ["Filter off the excess copper oxide", "Add copper oxide to warm acid until no more dissolves", "Leave the solution to crystallise", "Heat the filtrate to evaporate some water"],
+      answer: "Add copper oxide to warm acid until no more dissolves, Filter off the excess copper oxide, Heat the filtrate to evaporate some water, Leave the solution to crystallise" },
+    { section: "Section B: Making salts", question: "When making copper sulfate, why is copper oxide added until it is in excess?", type: "explain", marks: 1,
+      answer: "To make sure all the acid has reacted, so the salt solution has no acid left in it. The leftover solid copper oxide is then easy to remove by filtering." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Electrolysis",
+  title: "Electrolysis",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Positive ions go to the cathode (−) and gain electrons (reduction); negative ions go to the anode (+) and lose electrons (oxidation): OIL RIG. In solutions, hydrogen forms at the cathode if the metal is more reactive than hydrogen; oxygen forms at the anode unless halide ions are present.",
+  questions: [
+    { section: "Section A: Products", question: "Molten lead bromide is electrolysed. What forms at the cathode?", marks: 1, options: ["Lead", "Bromine", "Hydrogen", "Oxygen"], answer: "Lead" },
+    { section: "Section A: Products", question: "Molten lead bromide is electrolysed. What forms at the anode?", marks: 1, options: ["Bromine", "Lead", "Hydrogen", "Oxygen"], answer: "Bromine" },
+    { section: "Section A: Products", question: "Sodium chloride solution is electrolysed. What forms at the cathode?", marks: 1, options: ["Hydrogen", "Sodium", "Chlorine", "Oxygen"], answer: "Hydrogen" },
+    { section: "Section A: Products", question: "Copper sulfate solution is electrolysed with inert electrodes. What forms at the anode?", marks: 1, options: ["Oxygen", "Copper", "Sulfur", "Hydrogen"], answer: "Oxygen" },
+
+    { section: "Section B: How it works", question: "Why must an ionic compound be molten or dissolved to be electrolysed?", marks: 1,
+      options: ["So the ions are free to move", "So it gets hot enough to react", "So electrons can flow through it", "So the bonds become covalent"], answer: "So the ions are free to move" },
+    { section: "Section B: How it works", question: "Which is the half equation at the cathode when copper forms?", marks: 1,
+      options: ["Cu²⁺ + 2e⁻ → Cu", "Cu → Cu²⁺ + 2e⁻", "Cu²⁺ − 2e⁻ → Cu", "2Cu + O₂ → 2CuO"], answer: "Cu²⁺ + 2e⁻ → Cu" },
+    { section: "Section B: How it works", question: "Why is aluminium extracted by electrolysis rather than by heating with carbon?", marks: 1,
+      options: ["Aluminium is more reactive than carbon", "Aluminium is less reactive than carbon", "Carbon is too expensive", "Aluminium oxide is a gas"], answer: "Aluminium is more reactive than carbon" },
+    { section: "Section B: How it works", question: "Explain why the carbon anodes must be replaced regularly when extracting aluminium.", type: "explain", marks: 2,
+      answer: "Oxygen forms at the anodes. At the high temperature it reacts with the carbon to make carbon dioxide, so the anodes slowly burn away." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Exothermic & endothermic reactions",
+  title: "Exothermic and Endothermic Reactions",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Exothermic reactions transfer energy to the surroundings (temperature rises); endothermic reactions take it in (temperature falls). Breaking bonds takes energy; making bonds releases it. Energy change = bonds broken − bonds made (negative = exothermic).",
+  questions: [
+    { section: "Section A: Energy changes", question: "Which reaction is endothermic?", marks: 1, options: ["Thermal decomposition", "Combustion", "Neutralisation", "Respiration"], answer: "Thermal decomposition" },
+    { section: "Section A: Energy changes", question: "During an exothermic reaction, what happens to the temperature of the surroundings?", marks: 1, options: ["It rises", "It falls", "It stays the same", "It drops to zero"], answer: "It rises" },
+    { section: "Section A: Energy changes", question: "In a practical, the temperature goes from 21 °C to 29 °C. What is the temperature change?", type: "number", marks: 1, answer: "8 °C" },
+    { section: "Section A: Energy changes", text: "The reaction profile shows the energy of the reactants and products.", question: "Is this reaction exothermic or endothermic?", marks: 1,
+      options: ["Exothermic", "Endothermic"], answer: "Exothermic",
+      graph: { x: [0, 10], y: [0, 100], ystep: 10, xlabel: "Progress of reaction", ylabel: "Energy (kJ)", lines: [[[0, 40], [2, 40], [5, 80], [8, 20], [10, 20]]] } },
+    { section: "Section A: Energy changes", text: "The reaction profile shows the energy of the reactants and products.", question: "What is the activation energy, in kJ?", type: "number", marks: 1, answer: "40",
+      graph: { x: [0, 10], y: [0, 100], ystep: 10, xlabel: "Progress of reaction", ylabel: "Energy (kJ)", lines: [[[0, 40], [2, 40], [5, 80], [8, 20], [10, 20]]] } },
+
+    { section: "Section B: Bond energies", text: "H₂ + Cl₂ → 2HCl. Bond energies: H–H = 436 kJ/mol, Cl–Cl = 242 kJ/mol, H–Cl = 431 kJ/mol.", question: "Calculate the overall energy change, in kJ/mol.", type: "number", marks: 3, answer: "−184" },
+    { section: "Section B: Bond energies", question: "A reaction needs more energy to break bonds than is released making bonds. What type of reaction is it?", marks: 1,
+      options: ["Endothermic", "Exothermic"], answer: "Endothermic" },
+    { section: "Section B: Bond energies", question: "Tom says breaking bonds releases energy. Explain his mistake.", type: "explain", marks: 1,
+      answer: "Breaking bonds always takes in energy (endothermic). Energy is released when new bonds are made." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Rates of reaction",
+  title: "Rates of Reaction",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Mean rate = amount of product formed (or reactant used) ÷ time. Reactions go faster with higher temperature, concentration or pressure, a bigger surface area, or a catalyst: these give more frequent successful collisions (or, for a catalyst, a lower activation energy).",
+  questions: [
+    { section: "Section A: Measuring rate", question: "60 cm³ of gas is made in 30 s. Calculate the mean rate of reaction.", type: "number", marks: 2, answer: "2 cm³/s" },
+    { section: "Section A: Measuring rate", question: "A flask loses 2.4 g in 120 s. Calculate the mean rate of reaction, in g/s.", type: "number", marks: 2, answer: "0.02 g/s" },
+    { section: "Section A: Measuring rate", text: "The graph shows the volume of gas made during a reaction.", question: "When is the reaction fastest?", marks: 1,
+      options: ["At the start", "In the middle", "At the end", "It is the same throughout"], answer: "At the start",
+      graph: { x: [0, 60], xstep: 10, y: [0, 70], ystep: 10, xlabel: "Time (s)", ylabel: "Volume of gas (cm³)", curves: ["60*(1 - 0.5^(x/8))"] } },
+
+    { section: "Section B: Collision theory", question: "Why does increasing the temperature speed up a reaction?", marks: 1,
+      options: ["Particles move faster, so there are more frequent collisions with enough energy", "It lowers the activation energy", "There are more particles", "The particles get bigger"],
+      answer: "Particles move faster, so there are more frequent collisions with enough energy" },
+    { section: "Section B: Collision theory", question: "Which reacts fastest with acid?", marks: 1, options: ["Magnesium powder", "A magnesium ribbon", "A lump of magnesium", "They all react at the same rate"], answer: "Magnesium powder" },
+    { section: "Section B: Collision theory", question: "How does a catalyst speed up a reaction?", marks: 1,
+      options: ["It provides a different pathway with a lower activation energy", "It gives the particles more energy", "It increases the concentration", "It gets used up in the reaction"],
+      answer: "It provides a different pathway with a lower activation energy" },
+    { section: "Section B: Collision theory", question: "Explain why the rate of reaction slows down as a reaction goes on.", type: "explain", marks: 2,
+      answer: "The reactants are being used up, so there are fewer reactant particles. This means fewer collisions per second, so the rate decreases until one reactant runs out." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Crude oil & alkanes",
+  title: "Crude Oil and Alkanes",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Alkanes are saturated hydrocarbons with the general formula CₙH₂ₙ₊₂ (methane, ethane, propane, butane). Fractional distillation separates crude oil by boiling point. Cracking breaks long alkanes into shorter alkanes and alkenes; alkenes turn bromine water colourless.",
+  questions: [
+    { section: "Section A: Alkanes", question: "How many hydrogen atoms are in an alkane with 5 carbon atoms?", type: "number", marks: 1, answer: "12" },
+    { section: "Section A: Alkanes", question: "What is the name of C₃H₈?", marks: 1, options: ["Propane", "Butane", "Ethane", "Propene"], answer: "Propane" },
+    { section: "Section A: Alkanes", question: "What are the products of the complete combustion of an alkane?", marks: 1,
+      options: ["Carbon dioxide and water", "Carbon monoxide and water", "Carbon and hydrogen", "Carbon dioxide and hydrogen"], answer: "Carbon dioxide and water" },
+    { section: "Section A: Alkanes", text: "C₃H₈ + ?O₂ → 3CO₂ + 4H₂O", question: "What number balances the oxygen?", type: "number", marks: 1, answer: "5" },
+
+    { section: "Section B: Crude oil", question: "In fractional distillation, where are the fractions with the shortest molecules collected?", marks: 1,
+      options: ["At the top of the column", "At the bottom of the column", "In the middle", "They aren't collected"], answer: "At the top of the column" },
+    { section: "Section B: Crude oil", question: "How does viscosity change as hydrocarbon chains get longer?", marks: 1, options: ["It increases", "It decreases", "It stays the same"], answer: "It increases" },
+    { section: "Section B: Crude oil", question: "What is the test for an alkene?", marks: 1,
+      options: ["Bromine water turns from orange to colourless", "Limewater turns milky", "A lit splint pops", "A glowing splint relights"], answer: "Bromine water turns from orange to colourless" },
+    { section: "Section B: Crude oil", question: "Explain why oil companies crack long-chain hydrocarbons.", type: "explain", marks: 2,
+      answer: "There is more demand for short-chain fractions (like petrol) than crude oil supplies, and too little demand for long chains. Cracking turns the long chains into useful shorter alkanes, plus alkenes for making polymers." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Cell structure",
+  title: "Cell Structure",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Animal cells: nucleus, cytoplasm, cell membrane, mitochondria, ribosomes. Plant cells also have a cell wall, chloroplasts and a permanent vacuole. Bacteria have no nucleus: their DNA is a single loop, plus plasmids. Magnification = image size ÷ actual size.",
+  questions: [
+    { section: "Section A: Organelles", question: "Where does aerobic respiration happen?", marks: 1, options: ["Mitochondria", "Ribosomes", "Nucleus", "Chloroplasts"], answer: "Mitochondria" },
+    { section: "Section A: Organelles", question: "Where are proteins made?", marks: 1, options: ["Ribosomes", "Mitochondria", "Cell membrane", "Vacuole"], answer: "Ribosomes" },
+    { section: "Section A: Organelles", question: "Tap all the parts found in plant cells but not animal cells.", type: "select", marks: 2,
+      options: ["Cell wall", "Nucleus", "Chloroplasts", "Cell membrane", "Permanent vacuole"], answer: "Cell wall; Chloroplasts; Permanent vacuole" },
+    { section: "Section A: Organelles", question: "How is a bacterial cell's genetic material different from an animal cell's?", marks: 1,
+      options: ["It is a single loop of DNA, not in a nucleus", "It is inside a nucleus", "It has no DNA", "It is in the mitochondria"], answer: "It is a single loop of DNA, not in a nucleus" },
+
+    { section: "Section B: Microscopy", question: "A cell is 0.1 mm long and its image is 50 mm long. Calculate the magnification.", type: "number", marks: 2, answer: "500" },
+    { section: "Section B: Microscopy", question: "An image is 20 mm long at a magnification of ×400. Calculate the actual size, in mm.", type: "number", marks: 2, answer: "0.05 mm" },
+    { section: "Section B: Microscopy", question: "How many micrometres (μm) are in 1 mm?", type: "number", marks: 1, answer: "1000" },
+    { section: "Section B: Microscopy", question: "What is the main advantage of an electron microscope over a light microscope?", marks: 1,
+      options: ["Higher resolution, so smaller details can be seen", "It can look at living cells", "It is cheaper", "It shows colours"], answer: "Higher resolution, so smaller details can be seen" },
+    { section: "Section B: Microscopy", question: "Explain the difference between eukaryotic and prokaryotic cells.", type: "explain", marks: 2,
+      answer: "Eukaryotic cells (animal and plant) have their DNA inside a nucleus. Prokaryotic cells (bacteria) are smaller and have no nucleus: their DNA is a single loop in the cytoplasm, often with plasmids." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Mitosis & stem cells",
+  title: "Mitosis and Stem Cells",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "In the cell cycle the cell grows and copies its DNA, then mitosis separates the chromosomes and the cell divides into two genetically identical cells. Stem cells are undifferentiated and can become many cell types: found in embryos, bone marrow and plant meristems.",
+  questions: [
+    { section: "Section A: Mitosis", question: "How many chromosomes are in a human body cell?", type: "number", marks: 1, answer: "46" },
+    { section: "Section A: Mitosis", question: "What does mitosis produce?", marks: 1,
+      options: ["Two genetically identical cells", "Four genetically different cells", "Two different cells", "Gametes"], answer: "Two genetically identical cells" },
+    { section: "Section A: Mitosis", question: "Put the stages of the cell cycle in order.", type: "order", marks: 2,
+      items: ["The cytoplasm and membrane divide", "The cell grows and copies its DNA", "The chromosomes are pulled to each end of the cell"],
+      answer: "The cell grows and copies its DNA, The chromosomes are pulled to each end of the cell, The cytoplasm and membrane divide" },
+    { section: "Section A: Mitosis", question: "Which of these uses mitosis?", marks: 1, options: ["Growth and repair", "Making sperm cells", "Making egg cells", "Fertilisation"], answer: "Growth and repair" },
+
+    { section: "Section B: Stem cells", question: "What is a stem cell?", marks: 1,
+      options: ["An undifferentiated cell that can become other types of cell", "A cell in a plant stem", "A cell that can't divide", "A specialised nerve cell"],
+      answer: "An undifferentiated cell that can become other types of cell" },
+    { section: "Section B: Stem cells", question: "Where are stem cells found in plants?", marks: 1, options: ["Meristems (root and shoot tips)", "Leaves", "Xylem", "Flowers only"], answer: "Meristems (root and shoot tips)" },
+    { section: "Section B: Stem cells", question: "Tap all the possible sources of human stem cells.", type: "select", marks: 2,
+      options: ["Embryos", "Bone marrow", "Red blood cells", "Skin hair"], answer: "Embryos; Bone marrow" },
+    { section: "Section B: Stem cells", question: "Give one benefit and one concern about using embryonic stem cells in medicine.", type: "explain", marks: 2,
+      answer: "Benefit: they could replace damaged cells to treat conditions like diabetes or paralysis. Concern: ethical or religious objections to using embryos, or the risk of transferring viral infection or causing cancer." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Diffusion, osmosis & active transport",
+  title: "Diffusion, Osmosis and Active Transport",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Diffusion: particles spread from high to low concentration (passive). Osmosis: water moves across a partially permeable membrane from a dilute to a more concentrated solution. Active transport moves substances against the concentration gradient using energy from respiration.",
+  questions: [
+    { section: "Section A: The three processes", question: "Which process needs energy from respiration?", marks: 1, options: ["Active transport", "Diffusion", "Osmosis", "None of them"], answer: "Active transport" },
+    { section: "Section A: The three processes", question: "What is osmosis?", marks: 1,
+      options: ["Movement of water across a partially permeable membrane from a dilute to a concentrated solution", "Movement of any particles from high to low concentration", "Movement of ions against a concentration gradient", "Movement of sugar out of cells"],
+      answer: "Movement of water across a partially permeable membrane from a dilute to a concentrated solution" },
+    { section: "Section A: The three processes", question: "How do root hair cells take in mineral ions from dilute soil water?", marks: 1, options: ["Active transport", "Osmosis", "Diffusion", "Photosynthesis"], answer: "Active transport" },
+    { section: "Section A: The three processes", question: "Tap all the changes that would increase the rate of diffusion.", type: "select", marks: 2,
+      options: ["Higher temperature", "Steeper concentration gradient", "Smaller surface area", "Larger surface area", "Thicker membrane"],
+      answer: "Higher temperature; Steeper concentration gradient; Larger surface area" },
+
+    { section: "Section B: Calculations", question: "A potato cylinder goes from 2.0 g to 2.4 g in water. Calculate the percentage change in mass.", type: "number", marks: 2, answer: "20%" },
+    { section: "Section B: Calculations", question: "A potato cylinder goes from 2.5 g to 2.0 g in salt solution. Calculate the percentage change in mass.", type: "number", marks: 2, answer: "−20%" },
+    { section: "Section B: Calculations", question: "A cube has sides of 2 cm. Write its surface area to volume ratio in its simplest form.", type: "ratio", simplest: true, marks: 2, answer: "3:1" },
+    { section: "Section B: Calculations", question: "Explain why a plant cell placed in pure water does not burst, but a red blood cell does.", type: "explain", marks: 2,
+      answer: "Both take in water by osmosis. The plant cell has a strong cell wall that stops it expanding too far (it becomes turgid). The red blood cell has only a membrane, so it swells and bursts." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Enzymes & digestion",
+  title: "Enzymes and Digestion",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Enzymes are biological catalysts. The substrate fits the active site (lock and key). High temperatures or the wrong pH change the shape of the active site, so the enzyme is denatured. Amylase: starch → sugars; protease: proteins → amino acids; lipase: lipids → fatty acids + glycerol.",
+  questions: [
+    { section: "Section A: How enzymes work", question: "What happens to an enzyme at a very high temperature?", marks: 1,
+      options: ["Its active site changes shape and it is denatured", "It works faster and faster", "It dies", "It turns into a substrate"], answer: "Its active site changes shape and it is denatured" },
+    { section: "Section A: How enzymes work", text: "The graph shows how temperature affects the rate of an enzyme reaction.", question: "What is the optimum temperature, in °C?", type: "number", tolerance: 1, marks: 1, answer: "37",
+      graph: { x: [0, 60], xstep: 5, y: [0, 45], ystep: 5, xlabel: "Temperature (°C)", ylabel: "Rate", lines: [[[5, 4], [15, 12], [25, 24], [37, 40], [45, 20], [50, 6], [55, 0]]] } },
+    { section: "Section A: How enzymes work", question: "An enzyme reaction takes 50 s. Calculate the rate using rate = 1000 ÷ time.", type: "number", marks: 1, answer: "20" },
+
+    { section: "Section B: Digestion", question: "Which enzyme breaks down starch?", marks: 1, options: ["Amylase", "Protease", "Lipase", "Bile"], answer: "Amylase" },
+    { section: "Section B: Digestion", question: "What are proteins broken down into?", marks: 1, options: ["Amino acids", "Sugars", "Fatty acids and glycerol", "Starch"], answer: "Amino acids" },
+    { section: "Section B: Digestion", question: "What does bile do?", marks: 1,
+      options: ["Emulsifies fats and neutralises stomach acid", "Breaks down starch", "Digests proteins", "Absorbs water"], answer: "Emulsifies fats and neutralises stomach acid" },
+    { section: "Section B: Digestion", question: "Which test shows that protein is present?", marks: 1,
+      options: ["Biuret reagent turns purple", "Iodine turns blue-black", "Benedict's turns brick red", "Limewater turns milky"], answer: "Biuret reagent turns purple" },
+    { section: "Section B: Digestion", question: "Ali says enzymes are 'killed' at high temperatures. Explain why this is wrong.", type: "explain", marks: 1,
+      answer: "Enzymes are proteins, not living things, so they can't be killed. High temperatures denature them: the active site changes shape so the substrate no longer fits." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "The heart & circulation",
+  title: "The Heart and Circulation",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Humans have a double circulatory system: the right side of the heart pumps blood to the lungs, the left side to the body. Arteries carry blood away from the heart at high pressure; veins return it (with valves); capillaries are one cell thick for exchange.",
+  questions: [
+    { section: "Section A: The heart", question: "Which chamber pumps blood to the body?", marks: 1, options: ["Left ventricle", "Right ventricle", "Left atrium", "Right atrium"], answer: "Left ventricle" },
+    { section: "Section A: The heart", question: "What do the valves in the heart do?", marks: 1, options: ["Stop blood flowing backwards", "Pump the blood", "Make blood cells", "Carry oxygen"], answer: "Stop blood flowing backwards" },
+    { section: "Section A: The heart", question: "A heart beats 70 times a minute with a stroke volume of 75 cm³. Calculate the cardiac output in cm³ per minute.", type: "number", marks: 2, answer: "5250" },
+    { section: "Section A: The heart", question: "Where are the pacemaker cells that control the heart rate?", marks: 1, options: ["In the right atrium", "In the left ventricle", "In the brain", "In the aorta"], answer: "In the right atrium" },
+
+    { section: "Section B: Blood and vessels", question: "Which blood vessels carry blood away from the heart?", marks: 1, options: ["Arteries", "Veins", "Capillaries", "Valves"], answer: "Arteries" },
+    { section: "Section B: Blood and vessels", question: "Why are capillary walls only one cell thick?", marks: 1,
+      options: ["So substances can diffuse in and out quickly", "To withstand high pressure", "To pump blood", "To stop blood clotting"], answer: "So substances can diffuse in and out quickly" },
+    { section: "Section B: Blood and vessels", question: "What carries oxygen in red blood cells?", marks: 1, options: ["Haemoglobin", "Plasma", "Platelets", "Antibodies"], answer: "Haemoglobin" },
+    { section: "Section B: Blood and vessels", question: "How does a stent help a person with coronary heart disease?", marks: 1,
+      options: ["It holds a narrowed coronary artery open", "It lowers cholesterol", "It replaces a faulty valve", "It controls the heart rate"], answer: "It holds a narrowed coronary artery open" },
+    { section: "Section B: Blood and vessels", question: "Explain why the wall of the left ventricle is thicker than the right ventricle's.", type: "explain", marks: 2,
+      answer: "The left ventricle pumps blood all around the body, which needs a much higher pressure. The right ventricle only pumps blood to the nearby lungs." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Communicable diseases",
+  title: "Communicable Diseases",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Pathogens are bacteria, viruses, fungi and protists. White blood cells fight them by engulfing them (phagocytosis), making antibodies and making antitoxins. Vaccines give a harmless form of a pathogen so memory cells form. Antibiotics kill bacteria, not viruses.",
+  questions: [
+    { section: "Section A: Pathogens", question: "What type of pathogen causes measles?", marks: 1, options: ["Virus", "Bacterium", "Fungus", "Protist"], answer: "Virus" },
+    { section: "Section A: Pathogens", question: "What type of pathogen causes malaria?", marks: 1, options: ["Protist", "Virus", "Bacterium", "Fungus"], answer: "Protist" },
+    { section: "Section A: Pathogens", question: "What type of pathogen causes Salmonella food poisoning?", marks: 1, options: ["Bacterium", "Virus", "Fungus", "Protist"], answer: "Bacterium" },
+    { section: "Section A: Pathogens", question: "Which of these helps stop the spread of a disease?", marks: 1,
+      options: ["Washing hands", "Sharing towels", "Leaving food uncovered", "Drinking untreated water"], answer: "Washing hands" },
+
+    { section: "Section B: Defence and treatment", question: "Tap all the ways white blood cells defend the body.", type: "select", marks: 2,
+      options: ["Engulfing pathogens", "Making antibodies", "Making antitoxins", "Making haemoglobin", "Carrying oxygen"], answer: "Engulfing pathogens; Making antibodies; Making antitoxins" },
+    { section: "Section B: Defence and treatment", question: "How does a vaccine protect you?", marks: 1,
+      options: ["It contains a harmless form of the pathogen, so your body makes antibodies and memory cells", "It kills all bacteria in your body", "It contains antibiotics", "It makes your blood thicker"],
+      answer: "It contains a harmless form of the pathogen, so your body makes antibodies and memory cells" },
+    { section: "Section B: Defence and treatment", question: "What does herd immunity mean?", marks: 1,
+      options: ["If most people are vaccinated, the disease can't spread easily, protecting those who aren't", "Animals are immune to the disease", "Everyone has caught the disease", "Vaccines work only in groups"],
+      answer: "If most people are vaccinated, the disease can't spread easily, protecting those who aren't" },
+    { section: "Section B: Defence and treatment", question: "Explain why a doctor won't give antibiotics for the flu.", type: "explain", marks: 2,
+      answer: "Flu is caused by a virus. Antibiotics only kill bacteria, so they won't help, and using them unnecessarily makes antibiotic-resistant bacteria more likely." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Photosynthesis & respiration",
+  title: "Photosynthesis and Respiration",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Photosynthesis (endothermic): carbon dioxide + water → glucose + oxygen. Aerobic respiration: glucose + oxygen → carbon dioxide + water. Anaerobic respiration makes lactic acid in muscles, or ethanol and carbon dioxide in yeast. Light, CO₂ and temperature can limit photosynthesis.",
+  questions: [
+    { section: "Section A: Photosynthesis", question: "What are the products of photosynthesis?", marks: 1,
+      options: ["Glucose and oxygen", "Carbon dioxide and water", "Glucose and carbon dioxide", "Oxygen and water"], answer: "Glucose and oxygen" },
+    { section: "Section A: Photosynthesis", question: "A lamp is moved twice as far from a plant. What happens to the light intensity?", marks: 1,
+      options: ["It becomes a quarter", "It halves", "It doubles", "It stays the same"], answer: "It becomes a quarter" },
+    { section: "Section A: Photosynthesis", text: "The graph shows how light intensity affects the rate of photosynthesis.", question: "Why does the graph level off?", marks: 1,
+      options: ["Something other than light (CO₂ or temperature) has become the limiting factor", "The plant has died", "Light is still the limiting factor", "The plant has run out of chlorophyll"],
+      answer: "Something other than light (CO₂ or temperature) has become the limiting factor",
+      graph: { x: [0, 10], y: [0, 10], xlabel: "Light intensity", ylabel: "Rate", lines: [[[0, 0], [5, 8], [6, 8.5], [10, 8.6]]] } },
+    { section: "Section A: Photosynthesis", question: "Is photosynthesis exothermic or endothermic?", marks: 1, options: ["Endothermic", "Exothermic"], answer: "Endothermic" },
+
+    { section: "Section B: Respiration", question: "What are the products of aerobic respiration?", marks: 1,
+      options: ["Carbon dioxide and water", "Glucose and oxygen", "Lactic acid", "Ethanol and carbon dioxide"], answer: "Carbon dioxide and water" },
+    { section: "Section B: Respiration", question: "What do muscles make during anaerobic respiration?", marks: 1, options: ["Lactic acid", "Ethanol", "Oxygen", "Glucose"], answer: "Lactic acid" },
+    { section: "Section B: Respiration", question: "What does yeast make during anaerobic respiration (fermentation)?", marks: 1,
+      options: ["Ethanol and carbon dioxide", "Lactic acid", "Oxygen and water", "Glucose"], answer: "Ethanol and carbon dioxide" },
+    { section: "Section B: Respiration", question: "Explain why you keep breathing hard after intense exercise.", type: "explain", marks: 2,
+      answer: "During exercise, anaerobic respiration builds up lactic acid, creating an oxygen debt. Afterwards extra oxygen is needed to break down the lactic acid, so breathing stays fast and deep." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Hormones & homeostasis",
+  title: "Hormones and Homeostasis",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Homeostasis keeps internal conditions constant, often by negative feedback. Insulin (from the pancreas) lowers blood glucose by making the liver store glycogen; glucagon raises it. In the menstrual cycle FSH matures an egg, LH triggers ovulation, and oestrogen and progesterone control the uterus lining.",
+  questions: [
+    { section: "Section A: Blood glucose", question: "Which organ produces insulin?", marks: 1, options: ["Pancreas", "Liver", "Kidney", "Pituitary gland"], answer: "Pancreas" },
+    { section: "Section A: Blood glucose", question: "What does insulin do?", marks: 1,
+      options: ["Lowers blood glucose by causing glucose to be stored as glycogen", "Raises blood glucose", "Controls water levels", "Triggers ovulation"], answer: "Lowers blood glucose by causing glucose to be stored as glycogen" },
+    { section: "Section A: Blood glucose", question: "What causes type 1 diabetes?", marks: 1,
+      options: ["The pancreas doesn't make enough insulin", "Body cells stop responding to insulin", "Eating too much sugar once", "Too much glucagon"], answer: "The pancreas doesn't make enough insulin" },
+    { section: "Section A: Blood glucose", question: "What is homeostasis?", marks: 1,
+      options: ["Keeping internal conditions constant", "Making hormones", "Growing new cells", "Fighting infection"], answer: "Keeping internal conditions constant" },
+
+    { section: "Section B: Other hormones", question: "Which hormone triggers ovulation?", marks: 1, options: ["LH", "FSH", "Insulin", "Adrenaline"], answer: "LH" },
+    { section: "Section B: Other hormones", question: "Which hormone keeps the uterus lining in place?", marks: 1, options: ["Progesterone", "FSH", "LH", "Thyroxine"], answer: "Progesterone" },
+    { section: "Section B: Other hormones", question: "In a typical 28-day cycle, on about which day does ovulation happen?", type: "number", marks: 1, answer: "14" },
+    { section: "Section B: Other hormones", question: "Which hormone controls the body's metabolic rate?", marks: 1, options: ["Thyroxine", "Adrenaline", "Oestrogen", "Glucagon"], answer: "Thyroxine" },
+    { section: "Section B: Other hormones", question: "Explain why hormonal responses are slower than nervous responses.", type: "explain", marks: 2,
+      answer: "Hormones are chemicals carried in the blood, which takes time to reach the target organ. Nerve impulses are electrical signals that travel very quickly along neurones." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "DNA & inheritance",
+  title: "DNA and Inheritance",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "DNA is a double helix polymer; a gene is a section of DNA coding for a protein. Alleles are versions of a gene: dominant (capital letter) shows with one copy; recessive needs two. Use a Punnett square to find the probability of each offspring. Gametes have 23 chromosomes.",
+  questions: [
+    { section: "Section A: DNA and genes", question: "What shape is a DNA molecule?", marks: 1, options: ["A double helix", "A single straight strand", "A ring", "A sphere"], answer: "A double helix" },
+    { section: "Section A: DNA and genes", question: "How many chromosomes are in a human egg or sperm cell?", type: "number", marks: 1, answer: "23" },
+    { section: "Section A: DNA and genes", question: "What does 'genotype' mean?", marks: 1,
+      options: ["The alleles an organism has, e.g. Bb", "What an organism looks like", "A type of cell division", "A dominant allele"], answer: "The alleles an organism has, e.g. Bb" },
+    { section: "Section A: DNA and genes", question: "What does meiosis produce?", marks: 1,
+      options: ["Four genetically different gametes", "Two identical body cells", "Two different body cells", "One gamete"], answer: "Four genetically different gametes" },
+
+    { section: "Section B: Punnett squares", text: "Brown eyes (B) are dominant to blue eyes (b). Two Bb parents have a child.",
+      table: { headings: ["", "B", "b"], rows: [["B", "BB", "Bb"], ["b", "Bb", "?"]] }, parts: [
+      { question: "What goes in the box marked ?", type: "choice", options: ["bb", "Bb", "BB", "B"], marks: 1, answer: "bb" },
+      { question: "What is the probability the child has blue eyes?", type: "fraction", marks: 1, answer: "1/4" },
+      { question: "What is the expected ratio of brown-eyed to blue-eyed children?", type: "ratio", marks: 1, answer: "3:1" }
+    ] },
+    { section: "Section B: Punnett squares", question: "What is the probability that a baby is a boy?", type: "number", marks: 1, answer: "0.5" },
+    { section: "Section B: Punnett squares", question: "Cystic fibrosis is caused by a recessive allele. Which genotype has the disorder?", marks: 1, options: ["ff", "Ff", "FF"], answer: "ff" },
+    { section: "Section B: Punnett squares", question: "Explain how two brown-eyed parents can have a blue-eyed child.", type: "explain", marks: 2,
+      answer: "Both parents can be heterozygous (Bb), carrying the recessive blue allele. If each passes on b, the child is bb and has blue eyes; the chance is 1 in 4." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Ecosystems",
+  title: "Ecosystems",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Producers (plants) make food by photosynthesis; consumers eat other organisms. Estimate a population with quadrats: mean per quadrat × (total area ÷ quadrat area). Only about 10% of biomass passes to the next trophic level. Decomposers return nutrients and carbon dioxide.",
+  questions: [
+    { section: "Section A: Food chains and cycles", text: "grass → rabbit → fox", question: "Which organism is the primary consumer?", marks: 1, options: ["Rabbit", "Grass", "Fox", "The Sun"], answer: "Rabbit" },
+    { section: "Section A: Food chains and cycles", question: "Which organisms are decomposers?", marks: 1, options: ["Bacteria and fungi", "Plants", "Herbivores", "Predators"], answer: "Bacteria and fungi" },
+    { section: "Section A: Food chains and cycles", question: "Which process removes carbon dioxide from the air?", marks: 1, options: ["Photosynthesis", "Respiration", "Combustion", "Decay"], answer: "Photosynthesis" },
+    { section: "Section A: Food chains and cycles", question: "Tap all the abiotic factors.", type: "select", marks: 2,
+      options: ["Light intensity", "Temperature", "Predators", "Disease", "Soil pH"], answer: "Light intensity; Temperature; Soil pH" },
+
+    { section: "Section B: Sampling and biomass", question: "Five 1 m² quadrats contain 3, 5, 4, 6 and 2 daisies. What is the mean number per quadrat?", type: "number", marks: 1, answer: "4" },
+    { section: "Section B: Sampling and biomass", question: "There is a mean of 4 daisies per 1 m² quadrat. Estimate the number of daisies in a 200 m² field.", type: "number", marks: 2, answer: "800" },
+    { section: "Section B: Sampling and biomass", question: "A trophic level has 1000 kJ of energy and the next has 100 kJ. Calculate the efficiency of the transfer.", type: "number", marks: 2, answer: "10%" },
+    { section: "Section B: Sampling and biomass", question: "In a predator–prey cycle, what happens after the number of prey rises?", marks: 1,
+      options: ["The number of predators rises", "The number of predators falls", "The prey all die", "Nothing changes"], answer: "The number of predators rises" },
+    { section: "Section B: Sampling and biomass", question: "Explain why food chains rarely have more than five trophic levels.", type: "explain", marks: 2,
+      answer: "Biomass and energy are lost at each level (through respiration, movement, heat and waste), so only about 10% passes on. After a few levels there isn't enough to support another population." }
+  ]
+});

@@ -1271,10 +1271,11 @@
     // Only superscripts straight after 10 are powers (10⁴); the ² in a unit like cm² must stay as it is.
     const plain = String(raw).replace(/10([⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => unsuper(m)).replace(/,/g, "").replace(/[−–]/g, "-").trim().replace(/^[a-z]\s*=\s*/i, "")
       .replace(/\s*[×x*]\s*10\s*\^\s*(-?\d+)/i, "e$1");
-    const sf = plain.match(/^(-?\d*\.?\d+e-?\d+)\s*(.*)$/i);
-    if (sf) return readNumber(sf[2] ? `${Number(sf[1])} ${sf[2]}` : String(Number(sf[1])));
+    const sf = plain.match(/^(-?\d*\.?\d+e[+-]?\d+)\s*(.*)$/i);
+    // (the unit, if any, is checked by reading it after a plain 1)
+    if (sf) return !sf[2] || readNumber("1 " + sf[2]) !== null ? Number(sf[1]) : null;
     const m = plain
-      .match(/^£?\s*(-?\d*\.?\d+)\s*(p|pence|pounds?|km\/h|mph|m\/s|km|kg|cm²|cm2|m²|m2|cm³|cm3|m³|m3|cm|mm|ml|m|g|l|°\s*c|c|°|degrees?|%|per\s*cent|kilometres?|kilograms?|metres?|grams?|litres?|millilitres?|minutes?|mins?|hours?|seconds?|miles?)?\.?$/i);
+      .match(/^£?\s*(-?\d*\.?\d+)\s*(p|pence|pounds?|km\/h|mph|m\/s|km|kg|cm²|cm2|m²|m2|cm³|cm3|m³|m3|cm|mm|ml|m|g|l|°\s*c|c|°|degrees?|%|per\s*cent|kilometres?|kilograms?|metres?|grams?|litres?|millilitres?|minutes?|mins?|hours?|seconds?|miles?|days?|years?|weeks?|tonnes?|t|s|ms|j\/kg\s*°?\s*c|j\/kg|kj\/mol|kj|mj|j|kwh|kw|mw|w|mv|kv|v|ma|a|ω|ohms?|kn|nm|n\/m|n\/kg|n|khz|hz|kpa|pa|m\/s²|m\/s2|kg\/m³|kg\/m3|g\/cm³|g\/cm3|g\/dm³|g\/dm3|mol\/dm³|mol\/dm3|dm³|dm3|g\/mol|mol|bq|μm|um|nm|kg m\/s|kg·m\/s|cm³\/s|cm3\/s|cm³\/min|cm3\/min|g\/s|c)?\.?$/i);
     if (!m) return null;
     const n = parseFloat(m[1]);
     return /^p(ence)?$/i.test(m[2] || "") ? n / 100 : n;
