@@ -195,6 +195,11 @@
      graph curves can use sin(x), cos(x), tan(x) (in degrees) and powers like 2^x.
      graph shade can also be a list of polygons, e.g. the bars of a histogram.
      cuboid extras: diagonal: "d" (dashed space diagonal), baseDiagonal: "e" (across the base)
+     outline can be a list of shapes, each with a name, drawn side by side to the same
+              scale (for similar shapes): outline: [{ name: "A", points: ... }, { name: "B", points: ... }]
+     sector extra: label: "θ" replaces the angle shown (e.g. when the angle is the answer)
+     circleFig extras: outside: { P: [0, 1.8] } puts a point outside the circle (angle, radii
+              from the centre); lineLabels: { PA: "7 cm" } writes a length beside a line
    "expression" with simplest: true also needs the simplest form: no square
               factor under a root (5√2, not √50), no root on the bottom of a
               fraction, and no longer than the answer (for algebraic fractions).
@@ -2662,7 +2667,8 @@ QUESTION_BANK.add({
       outline: { points: [[0, 0], [8, 0], [8, 5], [0, 5]], unit: "cm" } },
     { section: "Section A: Rectangles and squares", question: "Work out the perimeter of the square.", marks: 1, answer: "24 m",
       outline: { points: [[0, 0], [6, 0], [6, 6], [0, 6]], unit: "m" } },
-    { section: "Section A: Rectangles and squares", question: "A rectangle is 7 cm long and 4 cm wide. Work out its area, in cm².", marks: 1, answer: "28 cm²" },
+    { section: "Section A: Rectangles and squares", question: "A rectangle is 7 cm long and 4 cm wide. Work out its area, in cm².", marks: 1, answer: "28 cm²",
+      outline: { points: [[0, 0], [7, 0], [7, 4], [0, 4]], unit: "cm", only: [0, 1] } },
     { section: "Section A: Rectangles and squares", text: "The perimeter of this rectangle is 30 cm.", question: "Work out the missing length.", marks: 2, answer: "6 cm",
       outline: { points: [[0, 0], [9, 0], [9, 6], [0, 6]], unit: "cm", hide: [1, 3] } },
 
@@ -3340,7 +3346,8 @@ QUESTION_BANK.add({
       circle: { label: "12 cm", show: "diameter" } },
     { section: "Section B: Circumference", question: "Work out the circumference of the circle. Give your answer to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "44.0 cm",
       circle: { label: "7 cm", show: "radius" } },
-    { section: "Section B: Circumference", question: "A circle has a circumference of 31.4 cm. Use π = 3.14 to find its diameter.", marks: 2, answer: "10 cm" },
+    { section: "Section B: Circumference", question: "A circle has a circumference of 31.4 cm. Use π = 3.14 to find its diameter.", marks: 2, answer: "10 cm",
+      circle: { label: "?", show: "diameter" } },
     { section: "Section B: Circumference", question: "Which is the formula for the area of a circle?", type: "choice", marks: 1,
       options: ["πr²", "2πr", "πd", "πr"], answer: "πr²" },
     { section: "Section B: Circumference", question: "A circle has a diameter of 6 cm. Jo works out its area as π × 6² = 113.1 cm². Explain Jo's mistake.", type: "explain", marks: 1,
@@ -3360,7 +3367,8 @@ QUESTION_BANK.add({
       outline: { points: [[0, 0], [10, 0], [10, 4], [6, 4], [6, 9], [0, 9]], unit: "cm" } },
     { section: "Section A: Shapes made of rectangles", question: "Work out the area of this shape, in cm².", marks: 3, answer: "76 cm²",
       outline: { points: [[0, 0], [12, 0], [12, 8], [8, 8], [8, 3], [4, 3], [4, 8], [0, 8]], unit: "cm" } },
-    { section: "Section A: Shapes made of rectangles", question: "A rectangle 10 cm by 6 cm has a square hole of side 2 cm cut out of it. What area is left, in cm²?", marks: 2, answer: "56 cm²" },
+    { section: "Section A: Shapes made of rectangles", question: "A rectangle 10 cm by 6 cm has a square hole of side 2 cm cut out of it. What area is left, in cm²?", marks: 2, answer: "56 cm²",
+      outline: { points: [[0, 0], [10, 0], [10, 6], [0, 6]], unit: "cm", only: [0, 1], extra: [{ from: [4, 2], to: [6, 2] }, { from: [6, 2], to: [6, 4], label: "2 cm" }, { from: [6, 4], to: [4, 4] }, { from: [4, 4], to: [4, 2] }] } },
 
     { section: "Section B: Triangles and quadrilaterals", question: "Work out the area of the triangle, in cm².", marks: 2, answer: "30 cm²",
       outline: { points: [[0, 0], [10, 0], [4, 6]], unit: "cm", only: [0], extra: [{ from: [4, 0], to: [4, 6], label: "6 cm" }] } },
@@ -3876,13 +3884,18 @@ QUESTION_BANK.add({
   questions: [
     { section: "Section A: Interior angles", question: "Work out the sum of the interior angles of a pentagon.", marks: 1, answer: "540°", polygon: 5 },
     { section: "Section A: Interior angles", question: "Work out the sum of the interior angles of a hexagon.", marks: 1, answer: "720°", polygon: 6 },
-    { section: "Section A: Interior angles", question: "Work out the sum of the interior angles of an octagon.", marks: 1, answer: "1080°" },
-    { section: "Section A: Interior angles", question: "Work out the size of each interior angle of a regular hexagon.", marks: 2, answer: "120°" },
-    { section: "Section A: Interior angles", question: "Work out the size of each interior angle of a regular octagon.", marks: 2, answer: "135°" },
+    { section: "Section A: Interior angles", question: "Work out the sum of the interior angles of an octagon.", marks: 1, answer: "1080°",
+      polygon: 8 },
+    { section: "Section A: Interior angles", question: "Work out the size of each interior angle of a regular hexagon.", marks: 2, answer: "120°",
+      polygon: 6 },
+    { section: "Section A: Interior angles", question: "Work out the size of each interior angle of a regular octagon.", marks: 2, answer: "135°",
+      polygon: 8 },
     { section: "Section A: Interior angles", question: "Three angles of a quadrilateral are 85°, 110° and 95°. Find the fourth angle.", marks: 2, answer: "70°" },
-    { section: "Section A: Interior angles", question: "Four angles of a pentagon are 100°, 120°, 95° and 115°. Find the fifth angle.", marks: 2, answer: "110°" },
+    { section: "Section A: Interior angles", question: "Four angles of a pentagon are 100°, 120°, 95° and 115°. Find the fifth angle.", marks: 2, answer: "110°",
+      outline: { points: [[0, 0], [6, 0], [7.5, 4], [3, 7], [-1.5, 4]], labels: false, angles: [[0, "100°"], [1, "120°"], [2, "95°"], [3, "115°"], [4, "x"]] } },
 
-    { section: "Section B: Exterior angles", question: "Work out the size of each exterior angle of a regular pentagon.", marks: 1, answer: "72°" },
+    { section: "Section B: Exterior angles", question: "Work out the size of each exterior angle of a regular pentagon.", marks: 1, answer: "72°",
+      polygon: 5 },
     { section: "Section B: Exterior angles", question: "Each exterior angle of a regular polygon is 30°. How many sides does it have?", marks: 2, answer: "12" },
     { section: "Section B: Exterior angles", question: "Each interior angle of a regular polygon is 160°. How many sides does it have?", marks: 3, answer: "18" },
     { section: "Section B: Exterior angles", question: "The exterior angles of any polygon add up to...", type: "choice", marks: 1, options: ["180°", "360°", "540°", "it depends on the polygon"], answer: "360°" },
@@ -3901,7 +3914,8 @@ QUESTION_BANK.add({
   questions: [
     { section: "Section A: Cuboids", question: "Work out the surface area of the cuboid, in cm².", marks: 2, answer: "94 cm²", cuboid: { l: "5 cm", w: "3 cm", h: "4 cm" } },
     { section: "Section A: Cuboids", question: "Work out the surface area of the cuboid, in cm².", marks: 2, answer: "112 cm²", cuboid: { l: "10 cm", w: "2 cm", h: "3 cm" } },
-    { section: "Section A: Cuboids", question: "A cube has sides of 6 cm. Work out its surface area, in cm².", marks: 2, answer: "216 cm²" },
+    { section: "Section A: Cuboids", question: "A cube has sides of 6 cm. Work out its surface area, in cm².", marks: 2, answer: "216 cm²",
+      cuboid: { l: "6 cm", w: "6 cm", h: "6 cm" } },
     { section: "Section A: Cuboids", question: "How many faces does a cuboid have?", type: "choice", marks: 1, options: ["4", "6", "8", "12"], answer: "6" },
 
     { section: "Section B: Prisms and cylinders", text: "The cross-section is a right-angled triangle. The sloping face is 10 cm wide.", question: "Work out the surface area of the prism, in cm².", marks: 3, answer: "336 cm²",
@@ -3926,10 +3940,13 @@ QUESTION_BANK.add({
   tip: "Volume of a prism = area of cross-section × length. Cuboid = length × width × height. Cylinder = πr²h. Volume is in cubic units, such as cm³. Answers using π or 3.14 are both accepted.",
   questions: [
     { section: "Section A: Cuboids and prisms", question: "Work out the volume of the cuboid, in cm³.", marks: 1, answer: "60 cm³", cuboid: { l: "5 cm", w: "3 cm", h: "4 cm" } },
-    { section: "Section A: Cuboids and prisms", question: "A cube has sides of 6 cm. Work out its volume, in cm³.", marks: 1, answer: "216 cm³" },
+    { section: "Section A: Cuboids and prisms", question: "A cube has sides of 6 cm. Work out its volume, in cm³.", marks: 1, answer: "216 cm³",
+      cuboid: { l: "6 cm", w: "6 cm", h: "6 cm" } },
     { section: "Section A: Cuboids and prisms", question: "Work out the volume of the triangular prism, in cm³.", marks: 2, answer: "288 cm³", prism: { base: "6 cm", h: "8 cm", l: "12 cm" } },
-    { section: "Section A: Cuboids and prisms", question: "A prism has a cross-section area of 15 cm² and a length of 9 cm. Work out its volume, in cm³.", marks: 1, answer: "135 cm³" },
-    { section: "Section A: Cuboids and prisms", question: "A cuboid has a volume of 120 cm³, a length of 6 cm and a width of 4 cm. What is its height?", marks: 2, answer: "5 cm" },
+    { section: "Section A: Cuboids and prisms", question: "A prism has a cross-section area of 15 cm² and a length of 9 cm. Work out its volume, in cm³.", marks: 1, answer: "135 cm³",
+      prism: { base: "", h: "", l: "9 cm" } },
+    { section: "Section A: Cuboids and prisms", question: "A cuboid has a volume of 120 cm³, a length of 6 cm and a width of 4 cm. What is its height?", marks: 2, answer: "5 cm",
+      cuboid: { l: "6 cm", w: "4 cm", h: "h" } },
     { section: "Section A: Cuboids and prisms", question: "A tank measures 50 cm by 40 cm by 30 cm. How many litres does it hold? (1 litre = 1000 cm³)", marks: 2, answer: "60 litres" },
 
     { section: "Section B: Cylinders", question: "Work out the volume of the cylinder, in cm³, to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "282.7 cm³", cylinder: { r: "3 cm", h: "10 cm" } },
@@ -3956,7 +3973,8 @@ QUESTION_BANK.add({
       options: ["The angle bisector", "The perpendicular bisector", "A circle", "A parallel line"], answer: "The angle bisector" },
     { section: "Section A: Describing loci", question: "A goat is tied to a post with a 5 m rope. Which describes the region it can reach?", marks: 1,
       options: ["A circle of radius 5 m and everything inside it", "A line 5 m long", "A circle of diameter 5 m only", "A square of side 5 m"], answer: "A circle of radius 5 m and everything inside it" },
-    { section: "Section A: Describing loci", question: "The points less than 4 cm from A are inside a circle. What is the diameter of the circle?", type: "number", marks: 1, answer: "8 cm" },
+    { section: "Section A: Describing loci", question: "The points less than 4 cm from A are inside a circle. What is the diameter of the circle?", type: "number", marks: 1, answer: "8 cm",
+      circle: { label: "4 cm", show: "radius" } },
 
     { section: "Section B: Loci on a grid", text: "A is at (−2, 0) and B is at (2, 0).", question: "Which line is the perpendicular bisector of AB?", marks: 1,
       options: ["the y-axis", "the x-axis", "y = x", "x = 2"], answer: "the y-axis",
@@ -4133,7 +4151,8 @@ QUESTION_BANK.add({
       outline: { points: [[0, 0], [9, 0], [0, 12]], unit: "cm", hide: [2], rightAngle: [0] } },
     { section: "Section B: Finding a shorter side", question: "Find the length of the side marked ?", marks: 2, answer: "8 cm",
       outline: { points: [[0, 0], [8, 0], [0, 6]], unit: "cm", hide: [0], rightAngle: [0] } },
-    { section: "Section B: Finding a shorter side", question: "A 5 m ladder leans against a wall. Its foot is 1.5 m from the wall. How high up the wall does it reach, to 1 decimal place?", tolerance: 0.1, marks: 3, answer: "4.8 m" },
+    { section: "Section B: Finding a shorter side", question: "A 5 m ladder leans against a wall. Its foot is 1.5 m from the wall. How high up the wall does it reach, to 1 decimal place?", tolerance: 0.1, marks: 3, answer: "4.8 m",
+      outline: { points: [[0, 0], [1.5, 0], [0, 4.77]], rightAngle: [0], text: { 0: "1.5 m", 1: "5 m", 2: "h" } } },
     { section: "Section B: Finding a shorter side", question: "Which side of a right-angled triangle is the hypotenuse?", type: "choice", marks: 1,
       options: ["The longest side, opposite the right angle", "The shortest side", "Any side next to the right angle", "The bottom side"], answer: "The longest side, opposite the right angle" },
     { section: "Section B: Finding a shorter side", question: "Is a triangle with sides 7 cm, 24 cm and 25 cm right-angled?", type: "choice", marks: 2, options: ["Yes", "No"], answer: "Yes" },
@@ -4493,7 +4512,8 @@ QUESTION_BANK.add({
     { section: "Section A: Spheres", question: "Work out the volume of the sphere, in cm³, to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "113.1 cm³", sphere: { r: "3 cm" } },
     { section: "Section A: Spheres", question: "Work out the surface area of the sphere, in cm², to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "314.2 cm²", sphere: { r: "5 cm" } },
     { section: "Section A: Spheres", question: "Work out the volume of the hemisphere, in cm³, to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "452.4 cm³", sphere: { r: "6 cm", half: true } },
-    { section: "Section A: Spheres", question: "A sphere has a volume of 36π cm³. Find its radius.", marks: 2, answer: "3 cm" },
+    { section: "Section A: Spheres", question: "A sphere has a volume of 36π cm³. Find its radius.", marks: 2, answer: "3 cm",
+      sphere: { r: "r" } },
 
     { section: "Section B: Cones", question: "Work out the volume of the cone, in cm³, to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "150.8 cm³", cone: { r: "4 cm", h: "9 cm" } },
     { section: "Section B: Cones", question: "Work out the curved surface area of the cone, in cm², to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "47.1 cm²", cone: { r: "3 cm", l: "5 cm" } },
@@ -4515,8 +4535,10 @@ QUESTION_BANK.add({
   questions: [
     { section: "Section A: Area of a sector", question: "Work out the area of the sector, in cm², to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "18.8 cm²", sector: { angle: 60, r: "6 cm" } },
     { section: "Section A: Area of a sector", question: "Work out the area of the sector, in cm², to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "19.6 cm²", sector: { angle: 90, r: "5 cm" } },
-    { section: "Section A: Area of a sector", question: "Work out the area of a semicircle with diameter 10 cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "39.3 cm²" },
-    { section: "Section A: Area of a sector", question: "A sector has an area of 25π cm² and a radius of 10 cm. What is its angle?", marks: 2, answer: "90°" },
+    { section: "Section A: Area of a sector", question: "Work out the area of a semicircle with diameter 10 cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "39.3 cm²",
+      sector: { angle: 180, r: "", label: "" } },
+    { section: "Section A: Area of a sector", question: "A sector has an area of 25π cm² and a radius of 10 cm. What is its angle?", marks: 2, answer: "90°",
+      text: "Not drawn to scale.", sector: { angle: 120, r: "10 cm", label: "θ" } },
 
     { section: "Section B: Arc length", question: "Work out the arc length of the sector, in cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "12.6 cm", sector: { angle: 72, r: "10 cm" } },
     { section: "Section B: Arc length", question: "Work out the arc length of the sector, in cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "6.3 cm", sector: { angle: 45, r: "8 cm" } },
@@ -4536,11 +4558,15 @@ QUESTION_BANK.add({
   questionsPerSet: 10,
   tip: "Similar shapes have the same angles, and their matching sides are all multiplied by the same scale factor. Find the scale factor from one pair of matching sides, then use it for the others.",
   questions: [
-    { section: "Section A: Scale factors", question: "A triangle has a side of 5 cm. A similar triangle has the matching side 15 cm. What is the scale factor?", marks: 1, answer: "3" },
-    { section: "Section A: Scale factors", question: "Rectangle A is 4 cm by 6 cm. Rectangle B is similar, with a short side of 10 cm. How long is its long side?", marks: 2, answer: "15 cm" },
-    { section: "Section A: Scale factors", question: "A triangle has sides 3 cm, 4 cm and 5 cm. A similar triangle has a longest side of 20 cm. How long is its shortest side?", marks: 2, answer: "12 cm" },
+    { section: "Section A: Scale factors", question: "A triangle has a side of 5 cm. A similar triangle has the matching side 15 cm. What is the scale factor?", marks: 1, answer: "3",
+      outline: [{ name: "A", points: [[0, 0], [4, 0], [1, 3]], text: { 0: "5 cm", 1: "", 2: "" } }, { name: "B", points: [[0, 0], [12, 0], [3, 9]], text: { 0: "15 cm", 1: "", 2: "" } }] },
+    { section: "Section A: Scale factors", question: "Rectangle A is 4 cm by 6 cm. Rectangle B is similar, with a short side of 10 cm. How long is its long side?", marks: 2, answer: "15 cm",
+      outline: [{ name: "A", points: [[0, 0], [6, 0], [6, 4], [0, 4]], text: { 0: "6 cm", 1: "4 cm", 2: "", 3: "" } }, { name: "B", points: [[0, 0], [15, 0], [15, 10], [0, 10]], text: { 0: "?", 1: "10 cm", 2: "", 3: "" } }] },
+    { section: "Section A: Scale factors", question: "A triangle has sides 3 cm, 4 cm and 5 cm. A similar triangle has a longest side of 20 cm. How long is its shortest side?", marks: 2, answer: "12 cm",
+      outline: [{ name: "A", points: [[0, 0], [4, 0], [0, 3]], rightAngle: [0], text: { 0: "4 cm", 1: "5 cm", 2: "3 cm" } }, { name: "B", points: [[0, 0], [16, 0], [0, 12]], rightAngle: [0], text: { 0: "", 1: "20 cm", 2: "?" } }] },
     { section: "Section A: Scale factors", question: "A photo 10 cm wide and 15 cm tall is enlarged so it is 25 cm wide. How tall is the enlargement?", marks: 2, answer: "37.5 cm" },
-    { section: "Section A: Scale factors", question: "Shape B is similar to shape A with scale factor 0.5. A side of A is 18 cm. How long is the matching side of B?", marks: 1, answer: "9 cm" },
+    { section: "Section A: Scale factors", question: "Shape B is similar to shape A with scale factor 0.5. A side of A is 18 cm. How long is the matching side of B?", marks: 1, answer: "9 cm",
+      outline: [{ name: "A", points: [[0, 0], [6, 0], [6, 3], [2, 5], [0, 3]], text: { 0: "18 cm", 1: "", 2: "", 3: "", 4: "" } }, { name: "B", points: [[0, 0], [3, 0], [3, 1.5], [1, 2.5], [0, 1.5]], text: { 0: "?", 1: "", 2: "", 3: "", 4: "" } }] },
     { section: "Section A: Scale factors", text: "The two triangles are similar. In the small triangle, the bottom side is 4 cm and the sloping side is 5 cm. The large triangle's bottom side is 12 cm.",
       question: "How long is the sloping side of the large triangle?", marks: 2, answer: "15 cm",
       outline: { points: [[0, 0], [4, 0], [4, 3]], text: { 0: "4 cm", 1: "", 2: "5 cm" } } },
@@ -4565,7 +4591,8 @@ QUESTION_BANK.add({
       outline: { points: [[0, 0], [8, 0], [0, 9.5]], rightAngle: [0], angles: [[1, "50°"]], text: { 0: "8 cm", 1: "", 2: "x" } } },
     { section: "Section A: Finding a side", question: "Find the length x, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "9.2 cm",
       outline: { points: [[0, 0], [9.2, 0], [0, 7.7]], rightAngle: [0], angles: [[1, "40°"]], text: { 0: "x", 1: "12 cm", 2: "" } } },
-    { section: "Section A: Finding a side", question: "A 6 m ladder leans against a wall at 70° to the ground. How high up the wall does it reach, to 1 decimal place?", tolerance: 0.1, marks: 2, answer: "5.6 m" },
+    { section: "Section A: Finding a side", question: "A 6 m ladder leans against a wall at 70° to the ground. How high up the wall does it reach, to 1 decimal place?", tolerance: 0.1, marks: 2, answer: "5.6 m",
+      outline: { points: [[0, 0], [2.05, 0], [0, 5.64]], rightAngle: [0], angles: [[1, "70°"]], text: { 0: "", 1: "6 m", 2: "h" } } },
 
     { section: "Section B: Finding an angle", question: "Find the angle θ, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "33.7°",
       outline: { points: [[0, 0], [7.5, 0], [0, 5]], rightAngle: [0], angles: [[1, "θ"]], text: { 0: "", 1: "9 cm", 2: "5 cm" } } },
@@ -4622,7 +4649,8 @@ QUESTION_BANK.add({
     { section: "Section A: Values", question: "What is the exact value of tan 60°?", marks: 1, options: ["√3", "1/√3", "1", "√3/2"], answer: "√3" },
     { section: "Section A: Values", question: "What is the exact value of tan 30°?", marks: 1, options: ["1/√3", "√3", "1/2", "√2/2"], answer: "1/√3" },
 
-    { section: "Section B: Using exact values", question: "A right-angled triangle has a hypotenuse of 10 cm and an angle of 30°. Find the exact length of the side opposite the 30° angle.", type: "number", marks: 2, answer: "5 cm" },
+    { section: "Section B: Using exact values", question: "A right-angled triangle has a hypotenuse of 10 cm and an angle of 30°. Find the exact length of the side opposite the 30° angle.", type: "number", marks: 2, answer: "5 cm",
+      outline: { points: [[0, 0], [8.66, 0], [0, 5]], rightAngle: [0], angles: [[1, "30°"]], text: { 0: "", 1: "10 cm", 2: "x" } } },
     { section: "Section B: Using exact values", question: "Explain why sin 30° and cos 60° are equal.", type: "explain", marks: 1,
       answer: "In a right-angled triangle the two other angles add to 90°, so 30° and 60° fit together. The side opposite the 30° angle is the side adjacent to the 60° angle, so O/H for 30° equals A/H for 60°." }
   ]
@@ -4914,7 +4942,8 @@ QUESTION_BANK.add({
   questionsPerSet: 10,
   tip: "If lengths are multiplied by k, areas are multiplied by k² and volumes by k³. To go back, find the length scale factor from areas (√) or volumes (∛).",
   questions: [
-    { section: "Section A: Area and volume factors", question: "Shape A has an area of 10 cm². Shape B is similar, with lengths 3 times as long. What is the area of B?", marks: 2, answer: "90 cm²" },
+    { section: "Section A: Area and volume factors", question: "Shape A has an area of 10 cm². Shape B is similar, with lengths 3 times as long. What is the area of B?", marks: 2, answer: "90 cm²",
+      outline: [{ name: "A", points: [[0, 0], [3, 0], [3, 2], [0, 2]], labels: false }, { name: "B", points: [[0, 0], [9, 0], [9, 6], [0, 6]], labels: false }] },
     { section: "Section A: Area and volume factors", question: "Solid A has a volume of 15 cm³. Solid B is similar, with lengths twice as long. What is the volume of B?", marks: 2, answer: "120 cm³" },
     { section: "Section A: Area and volume factors", question: "Two similar triangles have sides in the ratio 2 : 5. The small one has an area of 12 cm². What is the area of the large one?", marks: 2, answer: "75 cm²" },
     { section: "Section A: Area and volume factors", question: "Two similar cylinders have heights 4 cm and 6 cm. The small one has a volume of 64 cm³. What is the volume of the large one?", marks: 3, answer: "216 cm³" },
@@ -4973,7 +5002,8 @@ QUESTION_BANK.add({
       circleFig: { points: { A: 30, B: 140, C: 210, D: 340 }, lines: ["AB", "BC", "CD", "DA"], marks: { A: "100°", C: "x" } } },
     { section: "Section A: Finding angles", text: "O is the centre. The line touches the circle at B.", question: "What is the angle between the tangent and the radius OB?", marks: 1, answer: "90°",
       circleFig: { points: { B: 300 }, centre: true, lines: ["OB"], tangentAt: "B" } },
-    { section: "Section A: Finding angles", question: "PA and PB are tangents to a circle from the point P. PA = 7 cm. How long is PB?", marks: 1, answer: "7 cm" },
+    { section: "Section A: Finding angles", question: "PA and PB are tangents to a circle from the point P. PA = 7 cm. How long is PB?", marks: 1, answer: "7 cm",
+      circleFig: { points: { A: 56.25, B: 303.75 }, centre: true, outside: { P: [0, 1.8] }, lines: ["PA", "PB", "OA", "OB"], lineLabels: { PA: "7 cm", PB: "?" } } },
 
     { section: "Section B: Naming the theorems", text: "AB is a diameter. Angle BAC = 30°.", question: "Which fact tells you that angle ACB is 90°?", type: "choice", marks: 1,
       options: ["The angle in a semicircle is 90°", "Angles in the same segment are equal", "Opposite angles in a cyclic quadrilateral add to 180°", "The angle at the centre is twice the angle at the circumference"],
@@ -5434,9 +5464,11 @@ QUESTION_BANK.add({
       outline: { points: [[0, 0], [10, 0], [4.5, 5.362]], angles: [[0, "50°"]], text: { 0: "10 cm", 1: "", 2: "7 cm" } } },
     { section: "Section A: ½ab sin C", question: "Find the area of the triangle, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "19.5 cm²",
       outline: { points: [[0, 0], [9, 0], [-2.5, 4.33]], angles: [[0, "120°"]], text: { 0: "9 cm", 1: "", 2: "5 cm" } } },
-    { section: "Section A: ½ab sin C", question: "Find the area of an equilateral triangle with sides of 6 cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "15.6 cm²" },
+    { section: "Section A: ½ab sin C", question: "Find the area of an equilateral triangle with sides of 6 cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "15.6 cm²",
+      outline: { points: [[0, 0], [6, 0], [3, 5.196]], text: { 0: "6 cm", 1: "6 cm", 2: "6 cm" } } },
 
-    { section: "Section B: Working backwards", question: "A triangle has sides 8 cm and 10 cm with an acute angle between them. Its area is 20 cm². Find the angle.", tolerance: 0.1, marks: 3, answer: "30°" },
+    { section: "Section B: Working backwards", question: "A triangle has sides 8 cm and 10 cm with an acute angle between them. Its area is 20 cm². Find the angle.", tolerance: 0.1, marks: 3, answer: "30°",
+      outline: { points: [[0, 0], [10, 0], [6.93, 4]], angles: [[0, "θ"]], text: { 0: "10 cm", 1: "", 2: "8 cm" } } },
     { section: "Section B: Working backwards", question: "Which formula gives the area of a triangle with sides a and b and included angle C?", type: "choice", marks: 1,
       options: ["½ab sin C", "ab sin C", "½ab cos C", "½(a + b) sin C"], answer: "½ab sin C" },
     { section: "Section B: Working backwards", question: "Why must C be the angle between the two sides you use in ½ab sin C?", type: "explain", marks: 1,
@@ -5595,12 +5627,15 @@ QUESTION_BANK.add({
       outline: { points: [[0, 0], [8, 0], [2.5, 4.33]], angles: [[0, "60°"]], text: { 0: "x + 3", 1: "7 cm", 2: "x" } } },
     { section: "Section A: Cosine rule", question: "Find x.", marks: 4, answer: "3",
       outline: { points: [[0, 0], [5, 0], [-1.5, 2.6]], angles: [[0, "120°"]], text: { 0: "x + 2", 1: "7 cm", 2: "x" } } },
-    { section: "Section A: Cosine rule", question: "A triangle has sides 3 cm, 5 cm and 7 cm. Find its largest angle exactly.", marks: 3, answer: "120°" },
+    { section: "Section A: Cosine rule", question: "A triangle has sides 3 cm, 5 cm and 7 cm. Find its largest angle exactly.", marks: 3, answer: "120°",
+      outline: { points: [[0, 0], [7, 0], [2.357, 1.856]], angles: [[2, "x"]], text: { 0: "7 cm", 1: "5 cm", 2: "3 cm" } } },
     { section: "Section A: Cosine rule", question: "Which is the cosine rule rearranged to find an angle?", type: "choice", marks: 1,
       options: ["cos A = (b² + c² − a²) ÷ 2bc", "cos A = (a² + b² − c²) ÷ 2ab", "cos A = a ÷ (2bc)", "cos A = (b² − c²) ÷ a²"], answer: "cos A = (b² + c² − a²) ÷ 2bc" },
 
-    { section: "Section B: Sine rule and area", question: "In triangle ABC, angle A = 30°, angle B = 45° and a = 4 cm. Find b exactly.", type: "expression", marks: 3, answer: "4√2" },
-    { section: "Section B: Sine rule and area", question: "A triangle has sides x cm and (x + 4) cm with an angle of 30° between them. Its area is 15 cm². Find x.", marks: 4, answer: "6" },
+    { section: "Section B: Sine rule and area", question: "In triangle ABC, angle A = 30°, angle B = 45° and a = 4 cm. Find b exactly.", type: "expression", marks: 3, answer: "4√2",
+      outline: { points: [[0, 0], [7.727, 0], [4.899, 2.828]], angles: [[0, "30°"], [1, "45°"]], text: { 0: "", 1: "4 cm", 2: "b" } } },
+    { section: "Section B: Sine rule and area", question: "A triangle has sides x cm and (x + 4) cm with an angle of 30° between them. Its area is 15 cm². Find x.", marks: 4, answer: "6",
+      outline: { points: [[0, 0], [10, 0], [5.2, 3]], angles: [[0, "30°"]], text: { 0: "x + 4", 1: "", 2: "x" } } },
     { section: "Section B: Sine rule and area", question: "Using the cosine rule with the 60° angle, Ana writes 49 = x² + (x + 3)² − 2x(x + 3) × 60. Explain her mistake.", type: "explain", marks: 1,
       answer: "She used 60 instead of cos 60°. It should be − 2x(x + 3) × cos 60° = − x(x + 3), giving 49 = x² + 3x + 9." }
   ]
