@@ -679,11 +679,11 @@
   .d-list button:hover { border-color: var(--green-600); background: var(--green-50); }
   .d-list small { color: var(--muted); font-size: 12px; white-space: nowrap; }
   .d-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; font-size: 14px; font-weight: 600; }
-  .d-field input, .d-field textarea {
+  .d-field input, .d-field textarea, .d-field select {
     font: inherit; font-weight: 400; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 12px; color: var(--ink); background: var(--white);
   }
   .d-field textarea { min-height: 120px; resize: vertical; }
-  .d-field input:focus, .d-field textarea:focus { outline: none; border-color: var(--green-600); }
+  .d-field input:focus, .d-field textarea:focus, .d-field select:focus { outline: none; border-color: var(--green-600); }
   .d-field input[readonly] { background: var(--grey-bg); color: var(--muted); }
   .d-actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -3462,16 +3462,30 @@
   });
 
   // ---------- Sidebar: Progress, Tutor and Settings panels ----------
-  const TUTOR_KEY = STORAGE_KEY + ".tutor";
   const PRACTICE_PREFIX = STORAGE_KEY + ".practice.";
   let drawerView = null;
 
-  function loadTutor() {
-    try { return JSON.parse(localStorage.getItem(TUTOR_KEY)) || {}; } catch (e) { return {}; }
+  // ---------- Notes to tutors ----------
+  // A student can only write to the tutors they've been added to (their account's tutors list; older
+  // accounts made by a tutor have just addedBy). Notes are kept per tutor: { tutorUsername: { text, updated } }.
+  const NOTES_KEY = STORAGE_KEY + ".notes";
+  const readJSON = (key, fallback) => { try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch (e) { return fallback; } };
+  function myTutors() {
+    const acc = readJSON("tela.accounts", {})[currentUser] || {}, tutorAccounts = readJSON("tela.tutors", {});
+    const ids = Array.isArray(acc.tutors) ? acc.tutors : acc.addedBy ? [acc.addedBy] : [];
+    return ids.filter(id => tutorAccounts[id]).map(id => ({ id, name: tutorAccounts[id].displayName || id }));
   }
-  function saveTutor(data) {
-    try { localStorage.setItem(TUTOR_KEY, JSON.stringify(data)); } catch (e) {}
+  function loadNotes() {
+    const notes = readJSON(NOTES_KEY, {});
+    // A note written before notes were per tutor goes to the student's tutor, if they have exactly one.
+    const old = readJSON(STORAGE_KEY + ".tutor", null), tutors = myTutors();
+    if (old && old.notes && tutors.length === 1 && !notes[tutors[0].id]) {
+      notes[tutors[0].id] = { text: old.notes, updated: old.notesUpdated || Date.now() };
+      try { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); localStorage.removeItem(STORAGE_KEY + ".tutor"); } catch (e) {}
+    }
+    return notes;
   }
+  let noteTutor = null;   // the tutor picked in the dropdown
   function practisedCount() {
     let n = 0;
     try { for (let i = 0; i < localStorage.length; i++) if (localStorage.key(i).startsWith(PRACTICE_PREFIX)) n++; } catch (e) {}
@@ -3536,21 +3550,19 @@
   }
 
   function renderTutor() {
-    const tutor = loadTutor();
+    const tutors = myTutors(), notes = loadNotes();
     const review = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]);
+    if (!tutors.some(t => t.id === noteTutor)) noteTutor = tutors.length ? tutors[0].id : null;
+    const note = noteTutor && notes[noteTutor];
+    const notesSection = !tutors.length
+      ? `<p class="d-note">You haven't been added to a tutor yet. Once a tutor adds you, you'll be able to send them notes here.</p>`
+      : `<label class="d-field">Send notes to
+          <select id="noteTutor">${tutors.map(t => `<option value="${esc(t.id)}"${t.id === noteTutor ? " selected" : ""}>${esc(t.name)}</option>`).join("")}</select></label>
+        <label class="d-field"><span class="visually-hidden">Your note</span>
+          <textarea id="tutorNotes" placeholder="Questions you're stuck on, topics you want to go over…">${esc(note ? note.text : "")}</textarea></label>
+        <p class="d-note"><span id="noteStatus">${note && note.updated ? `Saved · last changed ${shortDate(note.updated)}.` : "Your note saves automatically as you type."}</span> Only ${esc(tutors.find(t => t.id === noteTutor).name)} can see it.</p>`;
     return `
-      <div class="d-section"><h3>My tutor</h3>
-        <label class="d-field">Tutor's name<input id="tutorName" autocomplete="off" value="${esc(tutor.name || "")}"></label>
-        <label class="d-field">Tutor's email<input id="tutorEmail" type="email" autocomplete="off" value="${esc(tutor.email || "")}"></label>
-      </div>
-      <div class="d-section"><h3>Notes for my tutor</h3>
-        <label class="d-field"><span class="visually-hidden">Notes for my tutor</span>
-          <textarea id="tutorNotes" placeholder="Questions you're stuck on, topics you want to go over…">${esc(tutor.notes || "")}</textarea></label>
-        <div class="d-actions">
-          <button type="button" class="btn btn-primary" id="tutorEmailBtn">Email my tutor</button>
-        </div>
-        <p class="d-note">Your notes save automatically. The email includes your notes and the topics below.</p>
-      </div>
+      <div class="d-section"><h3>Notes for my tutor${tutors.length > 1 ? "s" : ""}</h3>${notesSection}</div>
       <div class="d-section"><h3>Topics to go over (${review.length})</h3>
         ${topicButtons(review, "No topics in progress. Topics you've started but aren't confident in yet will show here.")}
       </div>`;
@@ -3649,14 +3661,6 @@
       return;
     }
     const id = e.target.id;
-    if (id === "tutorEmailBtn") {
-      const tutor = loadTutor();
-      if (!tutor.email) { toast("Add your tutor's email first"); $("tutorEmail").focus(); return; }
-      const review = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).map(t => "- " + t.title);
-      const body = [`Hi${tutor.name ? " " + tutor.name : ""},`, "", tutor.notes || "",
-        ...(review.length ? ["", "Topics I'm working on:", ...review] : []), "", account.displayName].join("\n");
-      location.href = `mailto:${encodeURIComponent(tutor.email)}?subject=${encodeURIComponent("Revision questions from " + account.displayName)}&body=${encodeURIComponent(body)}`;
-    }
     if (id === "setReset" && confirm("Set every topic back to Not started and clear all your saved practice answers? This can't be undone.")) {
       topics.forEach(t => { t.status = "todo"; });
       try {
@@ -3668,13 +3672,19 @@
     }
     if (id === "setLogout") $("logoutBtn").click();
   });
-  // Tutor details and notes save as they're typed.
+  // Picking another tutor shows the note written to them; notes save as they're typed, to the picked tutor only.
+  $("drawerBody").addEventListener("change", e => {
+    if (e.target.id !== "noteTutor") return;
+    noteTutor = e.target.value;
+    $("drawerBody").innerHTML = renderTutor();
+  });
   $("drawerBody").addEventListener("input", e => {
-    if (!["tutorName", "tutorEmail", "tutorNotes"].includes(e.target.id)) return;
-    // notesUpdated lets the tutor page show when the notes last changed.
-    const before = loadTutor(), notes = $("tutorNotes").value;
-    saveTutor({ name: $("tutorName").value, email: $("tutorEmail").value.trim(), notes,
-      notesUpdated: notes !== (before.notes || "") ? Date.now() : before.notesUpdated });
+    if (e.target.id !== "tutorNotes" || !myTutors().some(t => t.id === noteTutor)) return;
+    const notes = loadNotes(), text = e.target.value;
+    if (text.trim()) notes[noteTutor] = { text, updated: Date.now() };
+    else delete notes[noteTutor];
+    try { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); } catch (err) {}
+    $("noteStatus").textContent = text.trim() ? "Saved." : "Note cleared.";
   });
 
   // ---------- Keyboard shortcuts ----------

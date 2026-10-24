@@ -137,6 +137,10 @@
   .field .opt { font-weight: 400; color: var(--muted); }
   .error { display: none; background: #fdecea; color: #b42318; border-radius: 10px; padding: 10px 12px; font-size: 14px; margin-bottom: 14px; }
   .error.show { display: block; }
+  .mode-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--green-50); border-radius: 10px; padding: 4px; margin: 14px 0 4px; }
+  .mode-tab { border: none; background: transparent; border-radius: 8px; padding: 8px; font-size: 14px; font-weight: 600; color: var(--muted); }
+  .mode-tab.active { background: var(--white); color: var(--green-800); box-shadow: 0 1px 3px rgba(10,61,44,.12); }
+  [hidden] { display: none !important; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(90px); background: var(--green-900); color: var(--white);
@@ -288,7 +292,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" id="search" placeholder="Search students by name or username…" autocomplete="off" aria-label="Search students">
       </label>
-      <p class="note">Shows the student accounts saved in this browser. Use <strong>Add student</strong> to create a new one.</p>
+      <p class="note">Shows your students. Use <strong>Add student</strong> to create an account or add a student who already has one.</p>
     </div>
     <div class="grid" id="grid"></div>
   </div>
@@ -298,13 +302,23 @@
 <div class="overlay" id="addOverlay">
   <form class="modal" id="addForm" role="dialog" aria-modal="true" aria-labelledby="addTitle" novalidate>
     <h2 id="addTitle">Add a student</h2>
-    <p class="lead">Create their account, then give them the username and password to sign in.</p>
+    <div class="mode-tabs" role="tablist">
+      <button type="button" class="mode-tab active" data-addmode="new" role="tab">New account</button>
+      <button type="button" class="mode-tab" data-addmode="existing" role="tab">Existing student</button>
+    </div>
+    <p class="lead" id="addLead">Create their account, then give them the username and password to sign in.</p>
     <div class="error" id="addError" role="alert"></div>
-    <label class="field">Student's name<input id="stName" maxlength="40" autocomplete="off" placeholder="e.g. Keyara"></label>
-    <label class="field">Username<input id="stUser" maxlength="20" autocomplete="off" autocapitalize="none" spellcheck="false">
-      <small>3–20 characters: letters, numbers, dots, dashes or underscores.</small></label>
-    <label class="field">Password<input id="stPass" type="password" autocomplete="new-password"><small>At least 6 characters.</small></label>
-    <label class="field">Confirm password<input id="stConfirm" type="password" autocomplete="new-password"></label>
+    <div id="newFields">
+      <label class="field">Student's name<input id="stName" maxlength="40" autocomplete="off" placeholder="e.g. Keyara"></label>
+      <label class="field">Username<input id="stUser" maxlength="20" autocomplete="off" autocapitalize="none" spellcheck="false">
+        <small>3–20 characters: letters, numbers, dots, dashes or underscores.</small></label>
+      <label class="field">Password<input id="stPass" type="password" autocomplete="new-password"><small>At least 6 characters.</small></label>
+      <label class="field">Confirm password<input id="stConfirm" type="password" autocomplete="new-password"></label>
+    </div>
+    <div id="existingFields" hidden>
+      <label class="field">Student's username<input id="exUser" maxlength="20" autocomplete="off" autocapitalize="none" spellcheck="false">
+        <small>The username they sign in with.</small></label>
+    </div>
     <div class="modal-actions">
       <button type="button" class="btn btn-ghost" id="addCancel">Cancel</button>
       <button type="submit" class="btn btn-primary">Add student</button>
@@ -351,13 +365,24 @@
   $("greeting").textContent = `${tutor.displayName}'s students`;
 
   // Each student's topics, statuses and notes come from what their dashboard saved in this browser.
+  // A student's tutors: the account's tutors list (older accounts made by a tutor only have addedBy).
+  const tutorsOf = acc => Array.isArray(acc.tutors) ? acc.tutors : acc.addedBy ? [acc.addedBy] : [];
+  // Only this tutor's own students are shown, and only the notes they've written to this tutor.
+  function noteFor(username, acc) {
+    const note = read("tela.topics." + username + ".notes", {})[tutorUser];
+    if (note) return { text: (note.text || "").trim(), updated: note.updated || 0 };
+    // A note from before notes were per tutor belongs to the student's only tutor.
+    const old = read("tela.topics." + username + ".tutor", {});
+    const list = tutorsOf(acc);
+    return list.length === 1 && list[0] === tutorUser && old.notes ? { text: old.notes.trim(), updated: old.notesUpdated || 0 } : { text: "", updated: 0 };
+  }
   let students = [];
-  const loadStudents = () => Object.entries(read("tela.accounts", {})).map(([username, acc]) => {
+  const loadStudents = () => Object.entries(read("tela.accounts", {})).filter(([, acc]) => tutorsOf(acc).includes(tutorUser)).map(([username, acc]) => {
     const topics = read("tela.topics." + username, null);
     const list = Array.isArray(topics) ? topics : [];
     const count = s => list.filter(t => t.status === s).length;
-    const tutorData = read("tela.topics." + username + ".tutor", {});
-    const notes = (tutorData.notes || "").trim(), notesUpdated = tutorData.notesUpdated || 0;
+    const note = noteFor(username, acc);
+    const notes = note.text, notesUpdated = note.updated;
     return {
       username, name: acc.displayName || username, opened: Array.isArray(topics), total: list.length,
       done: count("done"), doing: count("doing"), todo: count("todo"),
@@ -513,12 +538,24 @@
     document.querySelectorAll("#addForm .invalid").forEach(el => el.classList.remove("invalid"));
     if (field) { $(field).classList.add("invalid"); $(field).focus(); }
   }
-  function openAdd() {
-    $("addForm").reset();
+  // The form either creates a new student account or adds an existing student to this tutor.
+  let addMode = "new";
+  function setAddMode(mode) {
+    addMode = mode;
+    document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.addmode === mode));
+    $("newFields").hidden = mode !== "new";
+    $("existingFields").hidden = mode !== "existing";
+    $("addLead").textContent = mode === "new" ? "Create their account, then give them the username and password to sign in."
+      : "Add a student who already has an account. They'll be able to send you notes and you'll see their progress.";
     $("addError").classList.remove("show");
     document.querySelectorAll("#addForm .invalid").forEach(el => el.classList.remove("invalid"));
+    $(mode === "new" ? "stName" : "exUser").focus();
+  }
+  document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => setAddMode(t.dataset.addmode)));
+  function openAdd() {
+    $("addForm").reset();
     $("addOverlay").classList.add("open");
-    $("stName").focus();
+    setAddMode("new");
   }
   const closeAdd = () => $("addOverlay").classList.remove("open");
 
@@ -545,7 +582,7 @@
       return `<li><span>${esc(hw.title)}${hw.questions ? ` <small>· ${hw.questions} Q</small>` : ""}</span>
         <small>${hw.due ? "Due " + shortDate(hw.due + "T12:00") : "Set " + shortDate(hw.setAt)}</small>
         <span class="pill ${status}">${STATUS_LABEL[status]}</span>
-        ${editable ? `<button type="button" class="hw-remove" data-unset="${esc(hw.id)}" aria-label="Cancel ${esc(hw.title)}">Cancel</button>` : ""}</li>`;
+        ${editable && (!hw.setBy || hw.setBy === tutorUser) ? `<button type="button" class="hw-remove" data-unset="${esc(hw.id)}" aria-label="Cancel ${esc(hw.title)}">Cancel</button>` : editable && hw.setByName ? `<small>by ${esc(hw.setByName)}</small>` : ""}</li>`;
     }).join("")}</ul>`;
   }
 
@@ -646,13 +683,21 @@
   });
 
   // ---------- Remove a student ----------
-  // Deletes the account and everything their dashboard saved (topics, practice answers, tutor notes).
+  // If the student has other tutors, this only takes them off this tutor's list. If this is their only tutor,
+  // the account and everything their dashboard saved (topics, practice answers, notes) is deleted.
   function removeStudent(username) {
     const accounts = read("tela.accounts", {});
     const acc = accounts[username];
     if (!acc) return;
-    const name = acc.displayName || username;
-    if (!confirm(`Remove ${name} (@${username})? Their account, progress and saved answers will be deleted from this browser. This can't be undone.`)) return;
+    const name = acc.displayName || username, others = tutorsOf(acc).filter(t => t !== tutorUser);
+    if (others.length) {
+      if (!confirm(`Remove ${name} (@${username}) from your students? They'll stay with their other tutor${others.length > 1 ? "s" : ""}, and their account isn't deleted.`)) return;
+      acc.tutors = others;
+      try { localStorage.setItem("tela.accounts", JSON.stringify(accounts)); } catch (err) { return toast("Couldn't save: browser storage is unavailable."); }
+      refresh();
+      return toast(`Removed ${name} from your students.`);
+    }
+    if (!confirm(`Remove ${name} (@${username})? You're their only tutor, so their account, progress and saved answers will be deleted from this browser. This can't be undone.`)) return;
     try {
       delete accounts[username];
       localStorage.setItem("tela.accounts", JSON.stringify(accounts));
@@ -681,6 +726,7 @@
 
   $("addForm").addEventListener("submit", e => {
     e.preventDefault();
+    if (addMode === "existing") return addExisting();
     const name = $("stName").value.trim();
     const username = $("stUser").value.trim().toLowerCase();
     const password = $("stPass").value;
@@ -692,7 +738,7 @@
     if (accounts[username]) return addError("That username is already taken.", "stUser");
 
     const salt = randomSalt();
-    accounts[username] = { displayName: name, salt, hash: hashPassword(password, salt), created: Date.now(), addedBy: tutorUser };
+    accounts[username] = { displayName: name, salt, hash: hashPassword(password, salt), created: Date.now(), addedBy: tutorUser, tutors: [tutorUser] };
     try {
       localStorage.setItem("tela.accounts", JSON.stringify(accounts));
       // New students start with an empty dashboard: no sample topics, no science top-up.
@@ -708,6 +754,21 @@
     refresh();
     toast(`Added ${name}. They can sign in as "${username}" with the password you chose.`);
   });
+
+  function addExisting() {
+    const username = $("exUser").value.trim().toLowerCase();
+    if (!username) return addError("Enter the student's username.", "exUser");
+    const accounts = read("tela.accounts", {}), acc = accounts[username];
+    if (!acc) return addError(`There's no student with the username "${username}" in this browser.`, "exUser");
+    const list = tutorsOf(acc);
+    if (list.includes(tutorUser)) return addError(`${acc.displayName || username} is already one of your students.`, "exUser");
+    acc.tutors = [...list, tutorUser];
+    try { localStorage.setItem("tela.accounts", JSON.stringify(accounts)); } catch (err) { return addError("Couldn't save: browser storage is unavailable."); }
+    closeAdd();
+    $("search").value = "";
+    refresh();
+    toast(`Added ${acc.displayName || username} to your students.`);
+  }
 
   $("logoutBtn").addEventListener("click", () => {
     try { sessionStorage.removeItem("tela.tutorSession"); localStorage.removeItem("tela.tutorSession"); } catch (e) {}
