@@ -750,7 +750,7 @@
 </main>
 
 <footer>
-  Saved automatically in this browser. · <button id="resetBtn">Load sample topics</button>
+  Saved automatically in this browser.
 </footer>
 
 <!-- Practice questions -->
@@ -3451,13 +3451,11 @@
     return `
       <div class="d-section"><h3>Account</h3>
         <label class="d-field">Username<input value="${esc(currentUser)}" readonly></label>
-        <label class="d-field">Display name<input id="setName" maxlength="40" autocomplete="off" value="${esc(account.displayName)}"></label>
-        <div class="d-actions"><button type="button" class="btn btn-primary" id="setNameBtn">Save name</button></div>
+        <label class="d-field">Name<input value="${esc(account.displayName)}" readonly></label>
       </div>
       <div class="d-section"><h3>Progress</h3>
         <div class="d-actions">
           <button type="button" class="btn btn-line" id="setReset">Reset all progress</button>
-          <button type="button" class="btn btn-line" id="setSamples">Restore sample topics</button>
         </div>
         <p class="d-note">Resetting sets every topic back to "Not started" and clears your saved practice answers.</p>
       </div>
@@ -3504,18 +3502,6 @@
         ...(review.length ? ["", "Topics I'm working on:", ...review] : []), "", account.displayName].join("\n");
       location.href = `mailto:${encodeURIComponent(tutor.email)}?subject=${encodeURIComponent("Revision questions from " + account.displayName)}&body=${encodeURIComponent(body)}`;
     }
-    if (id === "setNameBtn") {
-      const name = $("setName").value.trim();
-      if (!name) { toast("Your display name can't be empty"); return; }
-      try {
-        const accounts = JSON.parse(localStorage.getItem("tela.accounts")) || {};
-        if (accounts[currentUser]) { accounts[currentUser].displayName = name; localStorage.setItem("tela.accounts", JSON.stringify(accounts)); }
-      } catch (err) {}
-      account.displayName = name;
-      $("greeting").textContent = `${name}'s Subjects`;
-      $("avatar").textContent = name.charAt(0).toUpperCase();
-      toast("Name saved");
-    }
     if (id === "setReset" && confirm("Set every topic back to Not started and clear all your saved practice answers? This can't be undone.")) {
       topics.forEach(t => { t.status = "todo"; });
       try {
@@ -3525,7 +3511,6 @@
       } catch (err) {}
       save(); render(); toast("Progress reset");
     }
-    if (id === "setSamples") { closeDrawer(); $("resetBtn").click(); }
     if (id === "setLogout") $("logoutBtn").click();
   });
   // Tutor details and notes save as they're typed.
@@ -3592,13 +3577,6 @@
   $("search").addEventListener("input", e => { state.query = e.target.value; renderCards(); });
   $("sort").addEventListener("change", e => { state.sort = e.target.value; renderCards(); });
 
-  $("resetBtn").addEventListener("click", () => {
-    if (confirm("Replace all topics with the sample GCSE Physics, Chemistry, Biology and Maths topics? Your current topics will be removed.")) {
-      topics = buildSamples();
-      state.subject = state.board = state.grade = state.category = state.status = "All";
-      save(); render(); toast("Sample topics restored");
-    }
-  });
 
   $("greeting").textContent = `${account.displayName}'s Subjects`;
   $("userName").textContent = currentUser;
