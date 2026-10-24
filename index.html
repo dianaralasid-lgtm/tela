@@ -1331,14 +1331,18 @@
 
   // Picks a random set of questions, shown in the order they appear in questions.js.
   // Questions marked "always: true" are in every set; the rest of the places are filled at random.
-  function drawQuestions(items, count) {
+  // Picks a set: "always" questions, then questions the student hasn't been given yet (in random order),
+  // and only then ones they've already had, least recently seen first. `seen` lists ids, oldest first.
+  function drawQuestions(items, count, seen = []) {
     const fixed = items.map((it, i) => (it.always ? i : -1)).filter(i => i >= 0);
-    const order = items.map((_, i) => i).filter(i => !items[i].always);
-    for (let i = order.length - 1; i > 0; i--) {
+    const rest = items.map((_, i) => i).filter(i => !items[i].always);
+    const fresh = rest.filter(i => !seen.includes(items[i].id));
+    for (let i = fresh.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [order[i], order[j]] = [order[j], order[i]];
+      [fresh[i], fresh[j]] = [fresh[j], fresh[i]];
     }
-    return fixed.concat(order.slice(0, Math.max(0, count - fixed.length)))
+    const used = rest.filter(i => seen.includes(items[i].id)).sort((a, b) => seen.indexOf(items[a].id) - seen.indexOf(items[b].id));
+    return fixed.concat(fresh.concat(used).slice(0, Math.max(0, count - fixed.length)))
       .sort((a, b) => a - b).map(i => items[i].id);
   }
 
@@ -1395,6 +1399,17 @@
   }
   function savePractice() {
     try { localStorage.setItem(practiceStoreKey(), JSON.stringify({ picked: practicePicked, answers: practiceSaved })); } catch (e) {}
+  }
+  // Which questions the student has been shown in this topic, oldest first, so new sets don't repeat them.
+  // Kept separately from saved answers and updated whenever a set is shown, saved or not.
+  const seenStoreKey = () => STORAGE_KEY + ".seen." + practiceOpen.replace(/[^a-z0-9]+/g, "-");
+  function loadSeen() {
+    try { const list = JSON.parse(localStorage.getItem(seenStoreKey())); return Array.isArray(list) ? list : []; } catch (e) { return []; }
+  }
+  function noteSeen(ids) {
+    const valid = new Set(PRACTICE[practiceOpen].items.map(it => it.id));
+    const list = loadSeen().filter(id => valid.has(id) && !ids.includes(id)).concat(ids);
+    try { localStorage.setItem(seenStoreKey(), JSON.stringify(list)); } catch (e) {}
   }
 
   const currentItems = () => {
@@ -3186,9 +3201,10 @@
       practicePicked = set.items.filter(it => always.includes(it.id) || rest.includes(it.id)).map(it => it.id);
     }
     if (practicePicked.length < wanted) {
-      const extra = drawQuestions(set.items.filter(it => !practicePicked.includes(it.id)), wanted - practicePicked.length);
+      const extra = drawQuestions(set.items.filter(it => !practicePicked.includes(it.id)), wanted - practicePicked.length, loadSeen());
       practicePicked = set.items.filter(it => practicePicked.includes(it.id) || extra.includes(it.id)).map(it => it.id);
     }
+    noteSeen(practicePicked);
     $("practiceNew").style.display = practicePerSet < set.items.length ? "" : "none";
     practiceTopicId = topic.id;
     practiceStatusAtOpen = topic.status;
@@ -3406,7 +3422,9 @@
   $("practiceNew").addEventListener("click", () => {
     if (Object.keys(practiceSaved).length && !confirm("Get a new set of questions? Your answers to these ones will be cleared.")) return;
     const set = PRACTICE[practiceOpen];
-    practicePicked = drawQuestions(set.items, practicePerSet);
+    // The current set was just noted as most recently seen, so it only comes back once everything else has been used.
+    practicePicked = drawQuestions(set.items, practicePerSet, loadSeen());
+    noteSeen(practicePicked);
     practiceSaved = {};
     practiceDirty = true;
     renderPractice();
@@ -3620,7 +3638,7 @@
       topics.forEach(t => { t.status = "todo"; });
       try {
         const keys = [];
-        for (let i = 0; i < localStorage.length; i++) if (localStorage.key(i).startsWith(PRACTICE_PREFIX)) keys.push(localStorage.key(i));
+        for (let i = 0; i < localStorage.length; i++) if (localStorage.key(i).startsWith(PRACTICE_PREFIX) || localStorage.key(i).startsWith(STORAGE_KEY + ".seen.")) keys.push(localStorage.key(i));
         keys.forEach(k => localStorage.removeItem(k));
       } catch (err) {}
       save(); render(); toast("Progress reset");
