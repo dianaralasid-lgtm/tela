@@ -403,6 +403,13 @@
     width: 44px; height: 32px; box-sizing: border-box; text-align: center; font: 700 16px "Inter", sans-serif; color: var(--ink);
     border: 1.5px solid var(--green-600); border-radius: 6px; background: var(--white); outline: none; padding: 0;
   }
+  .graph .curve { fill: none; stroke-width: 2.5; }
+  .graph .vec { stroke: #c2410c; stroke-width: 2.5; }
+  .graph .vec-head { fill: #c2410c; }
+  .venn .venn-box { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+  .prob-tree .pt-prob { font-size: 14px; font-weight: 700; fill: var(--green-800); }
+  .prob-tree .pt-out { font-size: 14px; font-weight: 600; fill: var(--ink); }
+  .outline-fig .angle-label { fill: var(--green-800); }
   .fill-tree .tree-in.leaf { width: 42px; height: 42px; border-radius: 50%; border-width: 2px; }
   .fill-tree .tree-in:focus { box-shadow: 0 0 0 3px rgba(25,135,84,.2); }
   .fill-tree .tree-in.bad { border-color: var(--danger); background: var(--bad-bg); }
@@ -423,7 +430,7 @@
   .ratio-bar .rb-each { font-size: 13px; font-weight: 600; fill: var(--muted); }
   .circle-fig .c-shape { fill: rgba(25, 135, 84, .1); stroke: var(--green-700); stroke-width: 2.5; }
   .circle-fig .c-line { stroke: var(--ink); stroke-width: 2; }
-  .outline-fig .o-dashed { stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: 5 4; }
+  .outline-fig .o-dashed, .solid .o-dashed { stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: 5 4; }
   .graph .shape-name { font-size: 15px; }
   .stem-leaf td.leaves { letter-spacing: .25em; font-weight: 600; font-variant-numeric: tabular-nums; }
 
@@ -1024,7 +1031,8 @@
     algebra: "expr", number: "num", explain: "explain", coordinates: "coords", plot: "coords", mark: "num",
     order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle", column: "column",
     fraction: "fraction", shade: "shade", tally: "tally", pictogram: "pictogram", select: "select", drawbar: "drawbar",
-    interval: "interval", ratio: "ratio", primes: "primes", factorise: "factorise", bearing: "bearing", filltree: "filltree"
+    interval: "interval", ratio: "ratio", primes: "primes", factorise: "factorise", bearing: "bearing", filltree: "filltree",
+    stdform: "stdform", solutions: "solutions", expression: "expression"
   };
   const ANGLE_NAMES = ["acute", "right", "obtuse", "straight", "reflex"];
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
@@ -1113,6 +1121,9 @@
         (p.kind === "factorise" && !readFactorised(p.answer)) ||
         (p.kind === "bearing" && readNumber(p.answer) === null) ||
         (p.kind === "filltree" && (!p.trees || !treeBlanks(p.trees).length)) ||
+        (p.kind === "stdform" && readNumber(p.answer) === null) ||
+        (p.kind === "solutions" && !readSolutions(p.answer)) ||
+        (p.kind === "expression" && !expressionFn(String(p.answer).split("=").pop())) ||
         (p.kind === "pictogram" && !(Number(p.pictogram.key) > 0)) ||
         (p.kind === "select" && (!p.options || !answerList(p.answer).every(a => p.options.some(o => normText(o) === normText(a))))));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
@@ -1138,7 +1149,8 @@
         ratioBar: q.ratioBar || null, circle: q.circle || null,
         venn: q.venn || null, numline: q.numline || null, parallel: q.parallel || null, cuboid: q.cuboid || null,
         cylinder: q.cylinder || null, prism: q.prism || null, cubes: Array.isArray(q.cubes) ? q.cubes : null,
-        tree: Array.isArray(q.tree) ? q.tree : null, compass: q.compass || null,
+        tree: Array.isArray(q.tree) ? q.tree : null, compass: q.compass || null, probTree: q.probTree || null,
+        cone: q.cone || null, sphere: q.sphere || null, sector: q.sector || null,
         parts
       });
     }
@@ -1236,9 +1248,19 @@
   };
 
   // Number answers: ignores £, units and trailing zeros; "p" means pence.
+  // Superscript digits (as in 10⁻³) turned into ^ powers.
+  function unsuper(s) {
+    const map = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-" };
+    return String(s).replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, m => "^" + [...m].map(c => map[c]).join(""));
+  }
   function readNumber(raw) {
-    // "x = 4" counts as 4, so equation answers can be written either way.
-    const m = String(raw).replace(/,/g, "").replace(/[−–]/g, "-").trim().replace(/^[a-z]\s*=\s*/i, "")
+    // "x = 4" counts as 4, so equation answers can be written either way; standard form such as 3.2 × 10^4 is read too.
+    // Only superscripts straight after 10 are powers (10⁴); the ² in a unit like cm² must stay as it is.
+    const plain = String(raw).replace(/10([⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => unsuper(m)).replace(/,/g, "").replace(/[−–]/g, "-").trim().replace(/^[a-z]\s*=\s*/i, "")
+      .replace(/\s*[×x*]\s*10\s*\^\s*(-?\d+)/i, "e$1");
+    const sf = plain.match(/^(-?\d*\.?\d+e-?\d+)\s*(.*)$/i);
+    if (sf) return readNumber(sf[2] ? `${Number(sf[1])} ${sf[2]}` : String(Number(sf[1])));
+    const m = plain
       .match(/^£?\s*(-?\d*\.?\d+)\s*(p|pence|pounds?|km\/h|mph|m\/s|km|kg|cm²|cm2|m²|m2|cm³|cm3|m³|m3|cm|mm|ml|m|g|l|°\s*c|c|°|degrees?|%|per\s*cent|kilometres?|kilograms?|metres?|grams?|litres?|millilitres?|minutes?|mins?|hours?|seconds?|miles?)?\.?$/i);
     if (!m) return null;
     const n = parseFloat(m[1]);
@@ -1316,7 +1338,29 @@
     (g.lines || []).forEach(line => {
       s += `<polyline class="shape" points="${line.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`;
     });
+    // curves: ["x^2 - 2x - 3", "6/x"] draws the graph of y = each expression, broken where it leaves the grid.
+    (g.curves || []).forEach(expr => {
+      const f = expressionFn(expr);
+      if (!f) return;
+      let seg = [];
+      const flush = () => { if (seg.length > 1) s += `<polyline class="shape curve" points="${seg.join(" ")}"/>`; seg = []; };
+      for (let k = 0; k <= 240; k++) {
+        const x = x0 + (x1 - x0) * k / 240;
+        let y;
+        try { y = f.fn(Math.PI, Math.sqrt, ...f.vars.map(() => x)); } catch (e) { y = NaN; }
+        if (Number.isFinite(y) && y >= y0 - 1e-9 && y <= y1 + 1e-9) seg.push(px(x) + "," + py(y)); else flush();
+      }
+      flush();
+    });
     (g.dots || []).forEach(([x, y]) => { s += `<circle class="pt" cx="${px(x)}" cy="${py(y)}" r="4"/>`; });
+    // arrows: [[x1, y1, x2, y2, "a"]] draws a vector arrow with an optional label.
+    (g.arrows || []).forEach(([x1, y1, x2, y2, label]) => {
+      const [ax, ay, bx, by] = [px(x1), py(y1), px(x2), py(y2)], ang = Math.atan2(by - ay, bx - ax);
+      const hx = (d, r) => bx - 12 * Math.cos(ang + d), hy = d => by - 12 * Math.sin(ang + d);
+      s += `<line class="vec" x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}"/>`;
+      s += `<polygon class="vec-head" points="${bx},${by} ${hx(0.4)},${hy(0.4)} ${hx(-0.4)},${hy(-0.4)}"/>`;
+      if (label) s += `<text class="pt-label shape-name" x="${(ax + bx) / 2 - 10 * Math.sin(ang)}" y="${(ay + by) / 2 + 10 * Math.cos(ang) + 5}" text-anchor="middle">${esc(label)}</text>`;
+    });
     // labels: [["A", x, y]] writes text (such as a shape's name) at a grid position.
     (g.labels || []).forEach(([text, x, y]) => { s += `<text class="pt-label shape-name" x="${px(x)}" y="${py(y) + 5}" text-anchor="middle">${esc(text)}</text>`; });
     Object.entries(g.points || {}).forEach(([name, [x, y]]) => {
@@ -1770,6 +1814,74 @@
     return { n: Number(m[1]), d: m[2] ? Number(m[2]) : 1 };
   }
 
+  // Standard form: the value must match and be written as a × 10^n with 1 ≤ a < 10.
+  function markStdForm(value, answer) {
+    const got = readNumber(value), want = readNumber(answer);
+    if (got === null) return { correct: false, message: "Write it like 3.2 × 10^4 (use the × 10 button)." };
+    if (Math.abs(got - want) > Math.abs(want) * 1e-9) return { correct: false, message: "Not quite. Try again." };
+    const m = unsuper(value).replace(/[−–]/g, "-").replace(/\s+/g, "").match(/^(-?\d+(?:\.\d+)?)[×x*]10\^(-?\d+)$/i);
+    if (!m || Math.abs(Number(m[1])) < 1 || Math.abs(Number(m[1])) >= 10) {
+      return { correct: false, message: "Right value, but write it in standard form: a number from 1 up to 10, times a power of 10." };
+    }
+    return { correct: true, message: "Correct!" };
+  }
+
+  // Sets of solutions or values: "2, −5", "x = 2 or x = −5" or "x = 3, y = −1" (any order; fractions allowed).
+  function readSolutions(raw) {
+    const pieces = String(raw ?? "").replace(/[−–]/g, "-").split(/,|;|\bor\b|\band\b/i).map(s => s.trim()).filter(Boolean);
+    const out = [];
+    for (const p of pieces) {
+      const m = p.match(/^(?:([a-z])\s*=\s*)?(.+)$/i);
+      const f = readFraction(m[2]);
+      const v = f ? f.n / f.d : readNumber(m[2]);
+      if (v === null || Number.isNaN(v)) return null;
+      out.push({ name: m[1] ? m[1].toLowerCase() : "", v });
+    }
+    return out.length ? out : null;
+  }
+  function markSolutions(value, answer, tolerance) {
+    const got = readSolutions(value), want = readSolutions(answer), tol = (tolerance || 0) + 1e-9;
+    if (!got) return { correct: false, message: "Write the values separated by commas, e.g. x = 2, x = −5 (or x = 3, y = 1)." };
+    if (got.length !== want.length) return { correct: false, message: `There should be ${want.length} value${want.length > 1 ? "s" : ""}. Try again.` };
+    const named = want.some(w => w.name);
+    const left = got.slice();
+    for (const w of want) {
+      const i = left.findIndex(g => Math.abs(g.v - w.v) <= tol && (!named || !w.name || g.name === w.name || !g.name));
+      if (i < 0) return { correct: false, message: named ? "Not quite. Check each value (and which letter it belongs to)." : "Not quite. Check your values." };
+      left.splice(i, 1);
+    }
+    return { correct: true, message: "Correct!" };
+  }
+
+  // Expressions and formulae checked by substituting values: any equivalent form counts, e.g. (v − u)/t or v/t − u/t.
+  // Only single letters are variables; π, √ and powers are allowed.
+  function expressionFn(raw) {
+    let s = String(raw ?? "").toLowerCase().replace(/[−–]/g, "-").replace(/×/g, "*").replace(/÷/g, "/").replace(/·/g, "*");
+    s = unsuper(s).replace(/π/g, "P").replace(/√/g, "R");
+    if (/[^0-9a-zPR+\-*/^().\s]/.test(s)) return null;
+    s = s.replace(/\s+/g, "");
+    s = s.replace(/R(\d+(?:\.\d+)?|[a-z])/g, "Q($1)").replace(/R\(/g, "Q(");
+    if (/R/.test(s)) return null;
+    s = s.replace(/(\d|\)|[a-z]|P)(?=[a-z(QP])/g, "$1*").replace(/\^/g, "**");
+    const vars = [...new Set(s.match(/[a-z]/g) || [])];
+    try { return { fn: Function("P", "Q", ...vars, `return (${s});`), vars }; } catch (e) { return null; }
+  }
+  function markExpression(value, answer) {
+    const target = String(answer).includes("=") ? String(answer).split("=").pop() : answer;
+    const v = String(value).includes("=") ? String(value).split("=").pop() : value;
+    const want = expressionFn(target), got = expressionFn(v);
+    if (!got) return { correct: false, message: "I couldn't read that. Use letters, numbers, + − × ÷ and brackets, e.g. (v − u)/t." };
+    const vars = [...new Set([...want.vars, ...got.vars])];
+    for (let trial = 0; trial < 5; trial++) {
+      const vals = vars.map((_, i) => 1.3 + ((trial * 7 + i * 3) % 11) * 0.37);
+      const pick = names => names.map(n => vals[vars.indexOf(n)]);
+      let a, b;
+      try { a = want.fn(Math.PI, Math.sqrt, ...pick(want.vars)); b = got.fn(Math.PI, Math.sqrt, ...pick(got.vars)); } catch (e) { return { correct: false, message: "I couldn't read that. Check your brackets." }; }
+      if (!Number.isFinite(b) || Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) return { correct: false, message: "Not quite. Try again." };
+    }
+    return { correct: true, message: "Correct!" };
+  }
+
   // Inequalities and error intervals: "6.5 ≤ x < 7.5", "x > 4", "x ≤ −2" or "3 < x".
   // Each side is stored as a bound and whether it is included (≤/≥) or not (</>); a missing side is null.
   function readInterval(raw) {
@@ -2077,6 +2189,13 @@
       for (let y = minY; y <= maxY; y++) s += `<line class="o-grid" x1="${sx(minX)}" y1="${sy(y)}" x2="${sx(maxX)}" y2="${sy(y)}"/>`;
     }
     s += `<polygon class="o-shape" points="${pts.map(([x, y]) => sx(x) + "," + sy(y)).join(" ")}"/>`;
+    // angles: [[1, "35°"]] writes an angle label just inside that corner.
+    (o.angles || []).forEach(([i, label]) => {
+      const [cx, cy] = pts[i], prev = pts[(i - 1 + pts.length) % pts.length], next = pts[(i + 1) % pts.length];
+      const dir = ([x, y]) => { const dx = sx(x) - sx(cx), dy = sy(y) - sy(cy), l = Math.hypot(dx, dy); return [dx / l, dy / l]; };
+      const [ax, ay] = dir(prev), [bx, by] = dir(next), bl = Math.hypot(ax + bx, ay + by) || 1;
+      s += `<text class="o-label angle-label" x="${sx(cx) + (ax + bx) / bl * 30}" y="${sy(cy) + (ay + by) / bl * 30 + 4}" text-anchor="middle">${esc(label)}</text>`;
+    });
     // rightAngle: [0] draws a right-angle mark at those corners (counting from the first point).
     (o.rightAngle || []).forEach(i => {
       const [cx, cy] = pts[i], prev = pts[(i - 1 + pts.length) % pts.length], next = pts[(i + 1) % pts.length];
@@ -2103,7 +2222,9 @@
         const ox = -dy * out, oy = dx * out, upright = Math.abs(ox) > Math.abs(oy);
         const lx = mx + ox * (upright ? 8 : 16), ly = my + oy * 16;
         const anchor = upright ? (ox > 0 ? "start" : "end") : "middle";
-        const text = (o.hide || []).includes(i) ? "?" : `${+len.toFixed(2)}${o.unit ? " " + o.unit : ""}`;
+        // text: { 1: "10 cm", 2: "x" } replaces the worked-out length of those sides with your own label.
+        const text = o.text && o.text[i] !== undefined ? o.text[i]
+          : (o.hide || []).includes(i) ? "?" : `${+len.toFixed(2)}${o.unit ? " " + o.unit : ""}`;
         s += `<text class="o-label" x="${lx}" y="${ly + 4}" text-anchor="${anchor}">${esc(text)}</text>`;
       });
     }
@@ -2187,7 +2308,10 @@
   // Venn diagram of prime factors: { labels: ["24", "36"], left: ["2"], both: ["2", "2", "3"], right: ["3"] }.
   function vennSVG(v) {
     const col = (items, x) => (items || []).map((t, i, a) => `<text class="venn-item" x="${x}" y="${112 + (i - (a.length - 1) / 2) * 22}" text-anchor="middle">${esc(t)}</text>`).join("");
-    return `<svg class="venn" viewBox="0 0 300 210" width="300" role="img" aria-label="Venn diagram">
+    // box: true draws the universal set ξ around the circles; outside: ["4"] goes in the box but outside the circles.
+    const box = v.box ? `<rect class="venn-box" x="4" y="24" width="292" height="182" rx="6"/><text class="venn-title" x="16" y="44">ξ</text>
+      ${(v.outside || []).map((t, i) => `<text class="venn-item" x="270" y="${190 - i * 20}" text-anchor="middle">${esc(t)}</text>`).join("")}` : "";
+    return `<svg class="venn" viewBox="0 0 300 210" width="300" role="img" aria-label="Venn diagram">${box}
       <circle class="venn-c" cx="115" cy="110" r="82"/><circle class="venn-c" cx="185" cy="110" r="82"/>
       <text class="venn-title" x="70" y="18" text-anchor="middle">${esc((v.labels || [])[0] || "")}</text>
       <text class="venn-title" x="230" y="18" text-anchor="middle">${esc((v.labels || [])[1] || "")}</text>
@@ -2253,6 +2377,35 @@
       <text class="o-label" x="90" y="190" text-anchor="middle">${esc(c.base || "")}</text>
       <text class="o-label" x="22" y="124" text-anchor="end">${esc(c.h || "")}</text>
       <text class="o-label" x="205" y="160">${esc(c.l || "")}</text></svg>`;
+  }
+
+  // Cone { r: "3 cm", h: "9 cm", l: "5 cm" } and sphere { r: "3 cm", half: true for a hemisphere }.
+  function coneSVG(c) {
+    return `<svg class="solid" viewBox="-20 0 300 230" width="300" role="img" aria-label="Cone">
+      <path class="sf-front" d="M120 20 L40 180 A80 22 0 0 0 200 180 Z"/>
+      <path class="sf-hidden" d="M40 180 A80 22 0 0 1 200 180"/>
+      ${c.h ? `<line class="o-dashed" x1="120" y1="20" x2="120" y2="180"/><text class="o-label" x="126" y="120">${esc(c.h)}</text>` : ""}
+      <line class="c-line" x1="120" y1="180" x2="200" y2="180"/><circle class="clock-hub" cx="120" cy="180" r="3"/>
+      <text class="o-label" x="160" y="174" text-anchor="middle">${esc(c.r || "")}</text>
+      ${c.l ? `<text class="o-label" x="168" y="96">${esc(c.l)}</text>` : ""}</svg>`;
+  }
+  function sphereSVG(c) {
+    const half = c.half;
+    return `<svg class="solid" viewBox="0 0 240 ${half ? 150 : 230}" width="240" role="img" aria-label="${half ? "Hemisphere" : "Sphere"}">
+      ${half ? `<path class="sf-front" d="M20 115 A100 100 0 0 1 220 115 Z"/><ellipse class="sf-top" cx="120" cy="115" rx="100" ry="22"/>`
+        : `<circle class="sf-front" cx="120" cy="115" r="100"/><path class="sf-hidden" d="M20 115 A100 22 0 0 1 220 115"/><path class="sf-edge" d="M20 115 A100 22 0 0 0 220 115"/>`}
+      <line class="c-line" x1="120" y1="115" x2="220" y2="115"/><circle class="clock-hub" cx="120" cy="115" r="3"/>
+      <text class="o-label" x="170" y="108" text-anchor="middle">${esc(c.r || "")}</text></svg>`;
+  }
+  // Sector of a circle { angle: 60, r: "6 cm" }.
+  function sectorSVG(c) {
+    const a = c.angle || 60, R = 100, cx = 120, cy = 130, rad = d => d * Math.PI / 180;
+    const [x1, y1] = [cx + R, cy], [x2, y2] = [cx + R * Math.cos(rad(-a)), cy + R * Math.sin(rad(-a))];
+    const [lx, ly] = [cx + 26 * Math.cos(rad(-a / 2)), cy + 26 * Math.sin(rad(-a / 2))];
+    return `<svg class="solid" viewBox="0 0 240 240" width="240" role="img" aria-label="Sector">
+      <path class="sf-front" d="M${cx} ${cy} L${x1} ${y1} A${R} ${R} 0 ${a > 180 ? 1 : 0} 0 ${x2} ${y2} Z"/>
+      <text class="o-label" x="${cx + 50}" y="${cy + 18}" text-anchor="middle">${esc(c.r || "")}</text>
+      <text class="o-label angle-label" x="${lx + 8}" y="${ly + 4}">${a}°</text></svg>`;
   }
 
   // Isometric cubes: positions [x, y, z] with x to the right, y to the back and z up.
@@ -2357,6 +2510,29 @@
     trees.forEach(walk);
     if (!wrong.size) return { correct: true, message: "Correct!" };
     return { correct: false, wrong: [...wrong], message: `${wrong.size === 1 ? "One box isn't" : "Some boxes aren't"} right yet. Check the box${wrong.size === 1 ? "" : "es"} in red: each pair must multiply to the number above it.` };
+  }
+
+  // Probability tree with two stages:
+  // { first: [["Red", "3/5"], ["Blue", "2/5"]], second: [[["Red", "2/4"], ["Blue", "2/4"]], [["Red", "3/4"], ["Blue", "1/4"]]] }
+  function probTreeSVG(t) {
+    const first = t.first || [], second = t.second || [];
+    const n2 = second.reduce((s, b) => s + b.length, 0) || first.length, H = Math.max(160, n2 * 46 + 20);
+    let s = "", row = 0;
+    const midY = H / 2;
+    first.forEach(([name, p], i) => {
+      const kids = second[i] || [], top = row, ys = kids.map((_, k) => 26 + (row + k) * 46);
+      row += Math.max(1, kids.length);
+      const y1 = kids.length ? (ys[0] + ys[ys.length - 1]) / 2 : 26 + top * 46;
+      s += `<line class="tree-line" x1="20" y1="${midY}" x2="150" y2="${y1}"/>`;
+      s += `<text class="pt-prob" x="${85}" y="${(midY + y1) / 2 - 6}" text-anchor="middle">${esc(p)}</text>`;
+      s += `<text class="pt-out" x="158" y="${y1 + 5}">${esc(name)}</text>`;
+      kids.forEach(([n2name, p2], k) => {
+        s += `<line class="tree-line" x1="${150 + 52}" y1="${y1}" x2="320" y2="${ys[k]}"/>`;
+        s += `<text class="pt-prob" x="${261}" y="${(y1 + ys[k]) / 2 - 6}" text-anchor="middle">${esc(p2)}</text>`;
+        s += `<text class="pt-out" x="328" y="${ys[k] + 5}">${esc(n2name)}</text>`;
+      });
+    });
+    return `<svg class="solid prob-tree" viewBox="0 0 400 ${H}" width="400" role="img" aria-label="Probability tree diagram">${s}</svg>`;
   }
 
   // Compass bearing: a north line and a line at the bearing (clockwise from north).
@@ -2515,6 +2691,9 @@
     if (spec.kind === "ratio") return markRatio(saved.value, spec.answer, spec.simplest);
     if (spec.kind === "primes") return markPrimes(saved.value, spec.answer);
     if (spec.kind === "filltree") return markFillTree(saved.value, spec.trees);
+    if (spec.kind === "stdform") return markStdForm(saved.value, spec.answer);
+    if (spec.kind === "solutions") return markSolutions(saved.value, spec.answer, spec.tolerance);
+    if (spec.kind === "expression") return markExpression(saved.value, spec.answer);
     if (spec.kind === "factorise") return markFactorised(saved.value, spec.answer);
     if (spec.kind === "bearing") {
       return Number(saved.value) === readNumber(spec.answer) ? { correct: true, message: "Correct!" }
@@ -2584,6 +2763,10 @@
       if (item.cubes) html += `<div class="graph-wrap">${cubesSVG(item.cubes)}</div>`;
       if (item.tree) html += `<div class="graph-wrap col-wrap">${treeSVG(item.tree)}</div>`;
       if (item.compass) html += `<div class="graph-wrap">${compassSVG(item.compass, false)}</div>`;
+      if (item.probTree) html += `<div class="graph-wrap col-wrap">${probTreeSVG(item.probTree)}</div>`;
+      if (item.cone) html += `<div class="graph-wrap">${coneSVG(item.cone)}</div>`;
+      if (item.sphere) html += `<div class="graph-wrap">${sphereSVG(item.sphere)}</div>`;
+      if (item.sector) html += `<div class="graph-wrap">${sectorSVG(item.sector)}</div>`;
       item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees }) => {
         const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees };
         const saved = practiceSaved[id];
@@ -2618,6 +2801,8 @@
               ${kind === "expr" ? `<button type="button" class="sq-btn" data-insert="²" title="Insert ²">x²</button>` : ""}
               ${kind === "interval" ? `<button type="button" class="sq-btn" data-insert="≤" title="Insert ≤">≤</button><button type="button" class="sq-btn" data-insert="≥" title="Insert ≥">≥</button>` : ""}
               ${kind === "primes" ? `<button type="button" class="sq-btn" data-insert="×" title="Insert ×">×</button>` : ""}
+              ${kind === "stdform" ? `<button type="button" class="sq-btn" data-insert=" × 10^" title="Insert × 10^">× 10ⁿ</button>` : ""}
+              ${kind === "expression" ? `<button type="button" class="sq-btn" data-insert="√" title="Insert √">√</button><button type="button" class="sq-btn" data-insert="π" title="Insert π">π</button>` : ""}
               <button type="button" class="btn btn-primary check-btn">Check</button>
             </div>
             <div class="feedback">${feedbackHTML(spec, result, saved)}</div>

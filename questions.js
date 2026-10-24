@@ -165,6 +165,27 @@
      compass: { angle: 70, label: "70°", from: "A", to: "B" }
      outline extra: rightAngle: [0] marks a right angle at that corner.
 
+   "stdform"  Standard form, e.g. answer: "3.2 × 10^4". The value must match
+              and be written as a × 10ⁿ with 1 ≤ a < 10. (Ordinary number
+              questions also accept standard form.)
+   "solutions"  A set of values in any order: "2, −5" (for example the
+              solutions of a quadratic) or "x = 3, y = −1" (simultaneous
+              equations). Fractions like −1/2 are fine; add tolerance: 0.01
+              for rounded answers.
+   "expression"  A formula or expression, e.g. answer: "(v − u)/t". The
+              student's answer is checked by substituting numbers, so any
+              equivalent form counts (e.g. v/t − u/t). "a = ..." is fine.
+   More pictures and extras:
+     graph curves: ["x^2 - 2x - 3", "6/x"]   draws y = each expression
+     graph arrows: [[0, 0, 3, 2, "a"]]        a vector arrow from (0,0) to (3,2)
+     probTree: { first: [["Red", "3/5"], ["Blue", "2/5"]],
+                 second: [[["Red", "2/4"], ["Blue", "2/4"]], [["Red", "3/4"], ["Blue", "1/4"]]] }
+     venn extras: box: true, outside: ["10"]  (the ξ box and the number outside the circles)
+     outline extras: angles: [[1, "35°"]] labels a corner, and
+              text: { 1: "10 cm", 2: "x" } gives sides your own labels
+     cone: { r: "3 cm", h: "9 cm", l: "5 cm" }   sphere: { r: "3 cm", half: true }
+     sector: { angle: 60, r: "6 cm" }
+
    "drawbar"  The student clicks a bar chart to draw the missing bar. Give
               the chart as  bars: {...}  with null for the missing value and
               ask: its position (counting from 0); the answer is its height.
@@ -4105,5 +4126,577 @@ QUESTION_BANK.add({
     { section: "Section B: Finding a shorter side", question: "Is a triangle with sides 7 cm, 24 cm and 25 cm right-angled?", type: "choice", marks: 2, options: ["Yes", "No"], answer: "Yes" },
     { section: "Section B: Finding a shorter side", question: "To find a shorter side when the hypotenuse is 13 cm and another side is 5 cm, Mo works out √(13² + 5²). Explain Mo's mistake.", type: "explain", marks: 1,
       answer: "When finding a shorter side you subtract the squares: √(13² − 5²) = √144 = 12 cm. Adding gives a side longer than the hypotenuse, which is impossible." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Ratio: writing ratios as fractions",
+  title: "Ratios and Fractions",
+  type: "fraction",
+  questionsPerSet: 10,
+  tip: "In a ratio a : b there are a + b parts, so the first part is a/(a + b) of the total. To go from a fraction to a ratio, compare the part with the rest. Type fractions like 3/8 and ratios like 2:3.",
+  questions: [
+    { section: "Section A: Ratio to fraction", question: "The ratio of cats to dogs is 3 : 5. What fraction of the animals are cats?", marks: 1, answer: "3/8" },
+    { section: "Section A: Ratio to fraction", question: "The ratio of boys to girls is 4 : 7. What fraction of the pupils are girls?", marks: 1, answer: "7/11" },
+    { section: "Section A: Ratio to fraction", question: "Red, blue and green beads are in the ratio 2 : 3 : 5. What fraction of the beads are blue?", marks: 1, answer: "3/10" },
+    { section: "Section A: Ratio to fraction", question: "There are 24 red counters and 16 blue counters. What fraction are red? Give your answer in its simplest form.", simplest: true, marks: 2, answer: "3/5" },
+    { section: "Section A: Ratio to fraction", question: "x : y = 3 : 4. Write x as a fraction of y.", marks: 1, answer: "3/4" },
+
+    { section: "Section B: Fraction to ratio", question: "3/8 of a class are boys. Write the ratio of boys to girls.", type: "ratio", simplest: true, marks: 2, answer: "3:5" },
+    { section: "Section B: Fraction to ratio", question: "2/5 of the sweets in a bag are red and the rest are yellow. Write the ratio of red to yellow.", type: "ratio", simplest: true, marks: 2, answer: "2:3" },
+    { section: "Section B: Fraction to ratio", question: "A : B = 2 : 3 and B : C = 3 : 4. Write A : C in its simplest form.", type: "ratio", simplest: true, marks: 2, answer: "1:2" },
+    { section: "Section B: Fraction to ratio", question: "The ratio of girls to boys is 3 : 2. Zoe says 3/2 of the class are girls. Explain Zoe's mistake.", type: "explain", marks: 1,
+      answer: "There are 3 + 2 = 5 parts in total, and 3 of them are girls, so 3/5 of the class are girls. 3/2 compares girls with boys, not with the whole class." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Ratio: writing ratios as linear functions",
+  title: "Ratios as Linear Functions",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "If y : x = 3 : 1, then y is 3 times x, so y = 3x. In general, if y : x = a : b then y = (a/b)x. Its graph is a straight line through the origin. Type answers like 3x or 5a/2.",
+  questions: [
+    { section: "Section A: Writing the function", question: "y : x = 3 : 1. Write y in terms of x.", marks: 1, answer: "3x" },
+    { section: "Section A: Writing the function", question: "a : b = 2 : 5. Write b in terms of a.", marks: 2, answer: "5a/2" },
+    { section: "Section A: Writing the function", question: "The ratio of length to width of a rectangle is 4 : 1. The width is w. Write the length in terms of w.", marks: 1, answer: "4w" },
+    { section: "Section A: Writing the function", question: "p : q = 3 : 7. Write p in terms of q.", marks: 2, answer: "3q/7" },
+
+    { section: "Section B: Using the function", question: "y = 4x. Write the ratio x : y in its simplest form.", type: "ratio", simplest: true, marks: 1, answer: "1:4" },
+    { section: "Section B: Using the function", question: "y = (2/3)x. Write the ratio x : y in its simplest form.", type: "ratio", simplest: true, marks: 2, answer: "3:2" },
+    { section: "Section B: Using the function", question: "y : x = 5 : 2. Find y when x = 6.", type: "number", marks: 1, answer: "15" },
+    { section: "Section B: Using the function", question: "Cost (£) and mass (kg) of cheese are in the ratio 3 : 1. What does 2.5 kg cost?", type: "number", marks: 1, answer: "£7.50" },
+    { section: "Section B: Using the function", question: "Which graph shows two quantities in a fixed ratio?", type: "choice", marks: 1,
+      options: ["A straight line through the origin", "A curve through the origin", "A horizontal line", "A straight line that doesn't pass through the origin"], answer: "A straight line through the origin" },
+    { section: "Section B: Using the function", question: "Explain why y = 2x + 1 does NOT show y and x in a fixed ratio.", type: "explain", marks: 1,
+      answer: "For a fixed ratio, y ÷ x must always be the same. With y = 2x + 1, x = 1 gives y = 3 (ratio 3) but x = 2 gives y = 5 (ratio 2.5). Its graph doesn't go through the origin." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Reverse percentages",
+  title: "Reverse Percentages",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Work out what percentage of the original the new amount is (e.g. after a 20% increase it is 120%), then divide by that multiplier (÷ 1.2). Don't take the percentage of the new amount.",
+  questions: [
+    { section: "Section A: Finding the original", question: "After a 20% increase, a price is £60. What was the original price?", marks: 2, answer: "£50" },
+    { section: "Section A: Finding the original", question: "After a 15% discount, a coat costs £68. What was the original price?", marks: 2, answer: "£80" },
+    { section: "Section A: Finding the original", question: "A town's population increased by 8% to 5400. What was it before?", marks: 2, answer: "5000" },
+    { section: "Section A: Finding the original", question: "In a sale with 30% off, a jacket costs £42. What was the original price?", marks: 2, answer: "£60" },
+    { section: "Section A: Finding the original", question: "After a 5% pay rise, a salary is £25 200. What was it before the rise?", marks: 2, answer: "£24000" },
+    { section: "Section A: Finding the original", question: "A price of £96 includes VAT at 20%. What is the price before VAT?", marks: 2, answer: "£80" },
+    { section: "Section A: Finding the original", question: "After a 12.5% decrease, a value is £140. What was it before?", marks: 2, answer: "£160" },
+
+    { section: "Section B: Reasoning", question: "A price has been increased by 25%. What should you divide the new price by to find the original?", type: "choice", marks: 1,
+      options: ["1.25", "0.25", "0.75", "125"], answer: "1.25" },
+    { section: "Section B: Reasoning", question: "A price rose by 20% to £60. Mia says the original was £60 − 20% of £60 = £48. Explain Mia's mistake.", type: "explain", marks: 1,
+      answer: "The 20% was of the original price, not of £60. £60 is 120% of the original, so the original is 60 ÷ 1.2 = £50." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Standard form",
+  title: "Standard Form",
+  type: "stdform",
+  questionsPerSet: 10,
+  tip: "Standard form is a × 10ⁿ where 1 ≤ a < 10. Big numbers have positive powers; small numbers have negative powers. Use the × 10ⁿ button (or type × 10^), then press <b>Check</b>.",
+  questions: [
+    { section: "Section A: Writing in standard form", question: "Write 45 000 in standard form.", marks: 1, answer: "4.5 × 10^4" },
+    { section: "Section A: Writing in standard form", question: "Write 0.00032 in standard form.", marks: 1, answer: "3.2 × 10^-4" },
+    { section: "Section A: Writing in standard form", question: "Write 7.1 × 10³ as an ordinary number.", type: "number", marks: 1, answer: "7100" },
+    { section: "Section A: Writing in standard form", question: "Write 6 × 10⁻² as an ordinary number.", type: "number", marks: 1, answer: "0.06" },
+    { section: "Section A: Writing in standard form", question: "Which is the largest?", type: "choice", marks: 1,
+      options: ["3.1 × 10⁵", "9.8 × 10⁴", "2 × 10⁶", "5 × 10⁵"], answer: "2 × 10⁶" },
+
+    { section: "Section B: Calculating", question: "Work out (3 × 10⁴) × (2 × 10⁵). Give your answer in standard form.", marks: 2, answer: "6 × 10^9" },
+    { section: "Section B: Calculating", question: "Work out (8 × 10⁶) ÷ (2 × 10²). Give your answer in standard form.", marks: 2, answer: "4 × 10^4" },
+    { section: "Section B: Calculating", question: "Work out (4 × 10³) × (5 × 10²). Give your answer in standard form.", marks: 2, answer: "2 × 10^6" },
+    { section: "Section B: Calculating", question: "Work out (2.5 × 10⁴) + (3 × 10³). Give your answer in standard form.", marks: 2, answer: "2.8 × 10^4" },
+    { section: "Section B: Calculating", question: "Ben writes 34 000 as 34 × 10³. Explain why this isn't in standard form.", type: "explain", marks: 1,
+      answer: "The first number must be at least 1 and less than 10. 34 is too big, so it should be 3.4 × 10⁴." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Speed and density",
+  title: "Speed and Density",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Speed = distance ÷ time and density = mass ÷ volume. Rearrange them for the other quantities (distance = speed × time, mass = density × volume). Check the units match first.",
+  questions: [
+    { section: "Section A: Speed", question: "A car travels 150 km in 3 hours. What is its average speed, in km/h?", marks: 1, answer: "50 km/h" },
+    { section: "Section A: Speed", question: "A train travels at 70 km/h for 2.5 hours. How far does it go?", marks: 1, answer: "175 km" },
+    { section: "Section A: Speed", question: "How many hours does it take to travel 240 km at 80 km/h?", marks: 1, answer: "3 hours" },
+    { section: "Section A: Speed", question: "A car travels 45 miles in 45 minutes. What is its average speed, in mph?", marks: 2, answer: "60 mph" },
+    { section: "Section A: Speed", question: "Change 36 km/h into metres per second.", marks: 2, answer: "10 m/s" },
+
+    { section: "Section B: Density", question: "A block has a mass of 400 g and a volume of 50 cm³. What is its density, in g/cm³?", marks: 1, answer: "8" },
+    { section: "Section B: Density", question: "Aluminium has a density of 2.7 g/cm³. What is the mass of 20 cm³ of aluminium?", marks: 1, answer: "54 g" },
+    { section: "Section B: Density", question: "Gold has a density of 19.3 g/cm³. What is the volume of 386 g of gold?", marks: 2, answer: "20 cm³" },
+    { section: "Section B: Density", question: "Which is the formula for density?", type: "choice", marks: 1,
+      options: ["mass ÷ volume", "volume ÷ mass", "mass × volume", "mass + volume"], answer: "mass ÷ volume" },
+    { section: "Section B: Density", question: "A car travels 30 km in 20 minutes. Kai says its speed is 30 ÷ 20 = 1.5 km/h. Explain Kai's mistake.", type: "explain", marks: 1,
+      answer: "Kai divided by minutes, which gives km per minute, not km per hour. 20 minutes = 1/3 hour, so the speed is 30 ÷ 1/3 = 90 km/h." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Changing the subject of a formula",
+  title: "Changing the Subject",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "Undo the operations around the letter you want, in reverse order, doing the same to both sides. Type the right-hand side, e.g. (y − 2)/3, or the whole formula, e.g. x = (y − 2)/3. Use the √ and π buttons if you need them.",
+  questions: [
+    { section: "Section A: One and two steps", question: "Make x the subject of y = 3x + 2", marks: 2, answer: "(y − 2)/3" },
+    { section: "Section A: One and two steps", question: "Make a the subject of v = u + at", marks: 2, answer: "(v − u)/t" },
+    { section: "Section A: One and two steps", question: "Make r the subject of C = 2πr", marks: 1, answer: "C/(2π)" },
+    { section: "Section A: One and two steps", question: "Make h the subject of A = ½bh", marks: 2, answer: "2A/b" },
+    { section: "Section A: One and two steps", question: "Make x the subject of y = (x + 4)/5", marks: 2, answer: "5y − 4" },
+
+    { section: "Section B: Harder formulae", question: "Make r the subject of A = πr²", marks: 2, answer: "√(A/π)" },
+    { section: "Section B: Harder formulae", question: "Make t the subject of s = (u + v)t/2", marks: 2, answer: "2s/(u + v)" },
+    { section: "Section B: Harder formulae", question: "Make x the subject of 3(x − a) = b", marks: 2, answer: "b/3 + a" },
+    { section: "Section B: Harder formulae", question: "What is the first step to make x the subject of y = 3x + 2?", type: "choice", marks: 1,
+      options: ["Subtract 2 from both sides", "Divide both sides by 3", "Add 2 to both sides", "Multiply both sides by 3"], answer: "Subtract 2 from both sides" },
+    { section: "Section B: Harder formulae", question: "To make x the subject of y = 3x + 2, Leo writes x = y/3 − 2. Explain Leo's mistake.", type: "explain", marks: 1,
+      answer: "Leo divided by 3 before subtracting 2. Undo in reverse order: subtract 2 first (y − 2 = 3x), then divide by 3: x = (y − 2)/3." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Factorising quadratics",
+  title: "Factorising Quadratics",
+  type: "factorise",
+  questionsPerSet: 10,
+  tip: "For x² + bx + c, find two numbers that multiply to c and add to b. For ax² + bx + c, look for factors that also give the right x term. Difference of two squares: x² − a² = (x + a)(x − a).",
+  questions: [
+    { section: "Section A: x² + bx + c", question: "Factorise x² + 8x + 15", marks: 2, answer: "(x + 3)(x + 5)" },
+    { section: "Section A: x² + bx + c", question: "Factorise x² − x − 12", marks: 2, answer: "(x − 4)(x + 3)" },
+    { section: "Section A: x² + bx + c", question: "Factorise x² − 7x + 10", marks: 2, answer: "(x − 2)(x − 5)" },
+    { section: "Section A: x² + bx + c", question: "Factorise x² + 10x + 25", marks: 2, answer: "(x + 5)²" },
+    { section: "Section A: x² + bx + c", question: "Which two numbers multiply to 12 and add to 7?", type: "choice", marks: 1,
+      options: ["3 and 4", "2 and 6", "1 and 12", "−3 and −4"], answer: "3 and 4" },
+
+    { section: "Section B: Harder quadratics", question: "Factorise x² − 25", marks: 2, answer: "(x + 5)(x − 5)" },
+    { section: "Section B: Harder quadratics", question: "Factorise 2x² + 7x + 3", marks: 3, answer: "(2x + 1)(x + 3)" },
+    { section: "Section B: Harder quadratics", question: "Factorise fully 3x² − 12", marks: 3, answer: "3(x + 2)(x − 2)" },
+    { section: "Section B: Harder quadratics", question: "Jo factorises x² + 5x + 6 as (x + 1)(x + 6). Explain Jo's mistake.", type: "explain", marks: 1,
+      answer: "1 × 6 = 6, but 1 + 6 = 7, not 5. The numbers must multiply to 6 and add to 5, so they are 2 and 3: (x + 2)(x + 3)." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Solving quadratics",
+  title: "Solving Quadratics",
+  type: "solutions",
+  questionsPerSet: 10,
+  tip: "Factorise, then set each bracket equal to zero. If it won't factorise, use the formula x = (−b ± √(b² − 4ac)) ÷ 2a. Type both solutions separated by a comma, e.g. −2, −3.",
+  questions: [
+    { section: "Section A: By factorising", question: "Solve x² + 5x + 6 = 0", marks: 3, answer: "−2, −3" },
+    { section: "Section A: By factorising", question: "Solve x² − x − 20 = 0", marks: 3, answer: "5, −4" },
+    { section: "Section A: By factorising", question: "Solve x² − 9 = 0", marks: 2, answer: "3, −3" },
+    { section: "Section A: By factorising", question: "Solve x² − 6x = 0", marks: 2, answer: "0, 6" },
+    { section: "Section A: By factorising", question: "Solve (x − 4)(x + 7) = 0", marks: 1, answer: "4, −7" },
+    { section: "Section A: By factorising", question: "Solve x² + 4x − 21 = 0", marks: 3, answer: "3, −7" },
+    { section: "Section A: By factorising", question: "Solve 2x² − 5x − 3 = 0", marks: 3, answer: "3, −1/2" },
+
+    { section: "Section B: Using the formula", question: "Solve x² + 3x − 1 = 0, giving your answers to 2 decimal places.", tolerance: 0.01, marks: 3, answer: "0.30, −3.30" },
+    { section: "Section B: Using the formula", question: "If (x − 2)(x + 5) = 0, what are the solutions?", type: "choice", marks: 1,
+      options: ["x = 2 or x = −5", "x = −2 or x = 5", "x = 2 or x = 5", "x = −2 or x = −5"], answer: "x = 2 or x = −5" },
+    { section: "Section B: Using the formula", question: "Explain why (x − 3)(x + 1) = 0 means x = 3 or x = −1.", type: "explain", marks: 1,
+      answer: "If two numbers multiply to give 0, one of them must be 0. So either x − 3 = 0 (x = 3) or x + 1 = 0 (x = −1)." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Drawing quadratic graphs",
+  title: "Quadratic Graphs",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Substitute each x value into the equation to find y (remember (−2)² = 4), plot the points and join them with a smooth U-shaped curve. To plot, click the grid.",
+  questions: [
+    { section: "Section A: Tables of values", text: "Complete the table of values for y = x² − 2.",
+      table: { headings: ["x", "−2", "−1", "0", "1", "2"], rows: [["y", "?", "−1", "?", "?", "2"]] }, parts: [
+      { question: "What is y when x = −2?", marks: 1, answer: "2" },
+      { question: "What is y when x = 0?", marks: 1, answer: "−2" },
+      { question: "What is y when x = 1?", marks: 1, answer: "−1" }
+    ] },
+    { section: "Section A: Tables of values", question: "Plot the points of y = x² for x = −2, −1, 0, 1 and 2.", type: "plot", marks: 2,
+      answer: "(−2, 4); (−1, 1); (0, 0); (1, 1); (2, 4)", graph: { x: [-3, 3], y: [-1, 5] } },
+    { section: "Section A: Tables of values", question: "Plot the points of y = x² − 4 for x = −2, −1, 0, 1 and 2.", type: "plot", marks: 2,
+      answer: "(−2, 0); (−1, −3); (0, −4); (1, −3); (2, 0)", graph: { x: [-3, 3], y: [-5, 5] } },
+
+    { section: "Section B: Reading a quadratic graph", text: "The graph shows y = x² − 2x − 3.", question: "Where does the curve cross the x-axis? Give both x values.", type: "solutions", marks: 2, answer: "−1, 3",
+      graph: { x: [-3, 5], y: [-5, 5], curves: ["x^2 - 2x - 3"] } },
+    { section: "Section B: Reading a quadratic graph", text: "The graph shows y = x² − 2x − 3.", question: "Write down the coordinates of the turning (lowest) point.", type: "coordinates", marks: 1, answer: "(1, −4)",
+      graph: { x: [-3, 5], y: [-5, 5], curves: ["x^2 - 2x - 3"] } },
+    { section: "Section B: Reading a quadratic graph", text: "The graph shows y = x² − 2x − 3.", question: "Where does the curve cross the y-axis? Give the y value.", marks: 1, answer: "−3",
+      graph: { x: [-3, 5], y: [-5, 5], curves: ["x^2 - 2x - 3"] } },
+    { section: "Section B: Reading a quadratic graph", question: "What is the name of the U-shaped curve of a quadratic graph?", type: "choice", marks: 1,
+      options: ["a parabola", "a hyperbola", "a circle", "a straight line"], answer: "a parabola" },
+    { section: "Section B: Reading a quadratic graph", question: "Sam plots y = x² and gets y = −4 when x = −2. Explain Sam's mistake.", type: "explain", marks: 1,
+      answer: "(−2)² means −2 × −2, which is +4. Squaring a negative number gives a positive answer, so the point is (−2, 4)." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Other graphs: cubic, reciprocal",
+  title: "Cubic and Reciprocal Graphs",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "A cubic (x³) graph has an S-shape. A reciprocal (1/x) graph has two separate curves and never touches the axes. Substitute x values carefully, then plot or read the graph.",
+  questions: [
+    { section: "Section A: Recognising graphs", question: "What type of graph is this?", marks: 1,
+      options: ["cubic", "quadratic", "reciprocal", "linear"], answer: "cubic", graph: { x: [-3, 3], y: [-8, 8], ystep: 2, curves: ["x^3"] } },
+    { section: "Section A: Recognising graphs", question: "What type of graph is this?", marks: 1,
+      options: ["cubic", "quadratic", "reciprocal", "linear"], answer: "reciprocal", graph: { x: [-5, 5], y: [-5, 5], curves: ["4/x"] } },
+    { section: "Section A: Recognising graphs", question: "Which equation's graph never crosses either axis?", marks: 1,
+      options: ["y = 1/x", "y = x³", "y = x²", "y = 2x + 1"], answer: "y = 1/x" },
+
+    { section: "Section B: Values and plotting", question: "y = x³. What is y when x = −1?", type: "number", marks: 1, answer: "−1" },
+    { section: "Section B: Values and plotting", question: "y = x³ − 2x. What is y when x = −2?", type: "number", marks: 2, answer: "−4" },
+    { section: "Section B: Values and plotting", question: "y = 12/x. What is y when x = −4?", type: "number", marks: 1, answer: "−3" },
+    { section: "Section B: Values and plotting", question: "Plot the points of y = 6/x for x = 1, 2, 3 and 6.", type: "plot", marks: 2,
+      answer: "(1, 6); (2, 3); (3, 2); (6, 1)", graph: { x: [0, 7], y: [0, 7] } },
+    { section: "Section B: Values and plotting", question: "Explain why the graph of y = 1/x never touches the x-axis.", type: "explain", marks: 1,
+      answer: "To touch the x-axis, y would have to be 0, but 1 divided by any number can never be 0. As x gets bigger, y gets closer and closer to 0 without reaching it." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Using graphs to solve equations",
+  title: "Using Graphs to Solve Equations",
+  type: "solutions",
+  questionsPerSet: 10,
+  tip: "The solutions of f(x) = 0 are where the graph crosses the x-axis. To solve f(x) = k, find where the graph meets the horizontal line y = k and read off the x values. Type all the solutions separated by commas.",
+  questions: [
+    { section: "Section A: Crossing the x-axis", text: "The graph shows y = x² − 3x.", question: "Use the graph to solve x² − 3x = 0.", marks: 2, answer: "0, 3",
+      graph: { x: [-2, 5], y: [-3, 6], curves: ["x^2 - 3x"] } },
+    { section: "Section A: Crossing the x-axis", text: "The graph shows y = x² − 4.", question: "Use the graph to solve x² − 4 = 0.", marks: 2, answer: "2, −2",
+      graph: { x: [-4, 4], y: [-5, 6], curves: ["x^2 - 4"] } },
+
+    { section: "Section B: Meeting a line", text: "The graph shows y = x² − 3x and the line y = 4.", question: "Use the graph to solve x² − 3x = 4.", marks: 2, answer: "−1, 4",
+      graph: { x: [-2, 5], y: [-3, 6], curves: ["x^2 - 3x"], lines: [[[-2, 4], [5, 4]]] } },
+    { section: "Section B: Meeting a line", text: "The graph shows y = x² − 4 and the line y = 5.", question: "Use the graph to solve x² − 4 = 5.", marks: 2, answer: "3, −3",
+      graph: { x: [-4, 4], y: [-5, 6], curves: ["x^2 - 4"], lines: [[[-4, 5], [4, 5]]] } },
+    { section: "Section B: Meeting a line", text: "The graph shows y = 2x + 1.", question: "Use the graph to solve 2x + 1 = 7.", type: "number", marks: 1, answer: "3",
+      graph: { x: [-1, 4], y: [-1, 9], lines: [[[-1, -1], [4, 9]]] } },
+    { section: "Section B: Meeting a line", question: "You have the graph of y = x² − 3x. Which line should you draw to solve x² − 3x = 4?", type: "choice", marks: 1,
+      options: ["y = 4", "x = 4", "y = 4x", "y = x + 4"], answer: "y = 4" },
+    { section: "Section B: Meeting a line", question: "Explain how a graph shows that x² + 1 = 0 has no solutions.", type: "explain", marks: 1,
+      answer: "The graph of y = x² + 1 has its lowest point at (0, 1), so it never reaches the x-axis. There are no points where y = 0, so no solutions." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Simultaneous equations",
+  title: "Simultaneous Equations",
+  type: "solutions",
+  questionsPerSet: 10,
+  tip: "Make the x (or y) terms match, then add or subtract the equations to eliminate one letter. Solve for the other, then substitute back. Type answers like x = 4, y = 3.",
+  questions: [
+    { section: "Section A: Elimination", question: "Solve: x + y = 10 and x − y = 4", marks: 3, answer: "x = 7, y = 3" },
+    { section: "Section A: Elimination", question: "Solve: 2x + y = 11 and x − y = 1", marks: 3, answer: "x = 4, y = 3" },
+    { section: "Section A: Elimination", question: "Solve: 3x + 2y = 16 and x + 2y = 8", marks: 3, answer: "x = 4, y = 2" },
+    { section: "Section A: Elimination", question: "Solve: 5x + 2y = 20 and 3x − 2y = 4", marks: 3, answer: "x = 3, y = 2.5" },
+    { section: "Section A: Elimination", question: "Solve: 2x + 3y = 13 and 4x − y = 5", marks: 4, answer: "x = 2, y = 3" },
+
+    { section: "Section B: Problems", question: "Two numbers add up to 25 and their difference is 7. What are the two numbers?", marks: 2, answer: "16, 9" },
+    { section: "Section B: Problems", question: "3 apples and 2 pears cost £1.70. 1 apple and 2 pears cost £1.10. How much does one apple cost, in pence?", type: "number", marks: 3, answer: "30" },
+    { section: "Section B: Problems", question: "Which values satisfy both x + y = 5 and x − y = 1?", type: "choice", marks: 1,
+      options: ["x = 3, y = 2", "x = 2, y = 3", "x = 4, y = 1", "x = 5, y = 0"], answer: "x = 3, y = 2" },
+    { section: "Section B: Problems", question: "To solve x + y = 10 and x − y = 4, Ella adds the equations and gets 2x = 6. Explain her mistake.", type: "explain", marks: 1,
+      answer: "Adding gives x + x + y − y = 10 + 4, so 2x = 14, not 6 (she subtracted 4 from 10). Then x = 7 and y = 3." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Using graphs to solve simultaneous equations",
+  title: "Simultaneous Equations by Graph",
+  type: "solutions",
+  questionsPerSet: 10,
+  tip: "The solution of two simultaneous equations is where their graphs cross. Read the x and y coordinates of the crossing point. Type answers like x = 2, y = 3.",
+  questions: [
+    { section: "Section A: Reading the crossing point", text: "The graph shows the lines y = x + 1 and y = 5 − x.", question: "Use the graph to solve the simultaneous equations.", marks: 2, answer: "x = 2, y = 3",
+      graph: { x: [-1, 5], y: [-1, 6], lines: [[[-1, 0], [5, 6]], [[-1, 6], [5, 0]]] } },
+    { section: "Section A: Reading the crossing point", text: "The graph shows the lines y = 2x − 1 and y = x + 2.", question: "Use the graph to solve the simultaneous equations.", marks: 2, answer: "x = 3, y = 5",
+      graph: { x: [-1, 5], y: [-3, 8], lines: [[[-1, -3], [4.5, 8]], [[-1, 1], [5, 7]]] } },
+    { section: "Section A: Reading the crossing point", text: "The graph shows the lines y = 3 − x and y = x − 1.", question: "Plot the point where the lines cross.", type: "plot", marks: 1, answer: "(2, 1)",
+      graph: { x: [-1, 5], y: [-2, 4], lines: [[[-1, 4], [5, -2]], [[-1, -2], [5, 4]]] } },
+    { section: "Section A: Reading the crossing point", question: "The solution of two simultaneous equations is shown on a graph where the lines...", type: "choice", marks: 1,
+      options: ["cross", "meet the y-axis", "meet the x-axis", "are steepest"], answer: "cross" },
+    { section: "Section A: Reading the crossing point", question: "The lines y = 2x + 1 and y = 2x + 4 are drawn on a graph. Explain why there is no solution to these simultaneous equations.", type: "explain", marks: 1,
+      answer: "Both lines have gradient 2, so they are parallel and never cross. With no crossing point, no values of x and y satisfy both equations." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Straight line graphs: everything",
+  title: "Straight Line Graphs",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "In y = mx + c, m is the gradient (change in y ÷ change in x) and c is where the line crosses the y-axis. Parallel lines have the same gradient. For equations, type y = 2x + 3 or just 2x + 3.",
+  questions: [
+    { section: "Section A: Gradient and intercept", question: "What is the gradient of y = 3x − 5?", marks: 1, answer: "3" },
+    { section: "Section A: Gradient and intercept", question: "What is the y-intercept of y = −2x + 7?", marks: 1, answer: "7" },
+    { section: "Section A: Gradient and intercept", question: "Find the gradient of the line through (1, 2) and (4, 11).", marks: 2, answer: "3" },
+    { section: "Section A: Gradient and intercept", question: "2y = 4x + 6. What is the gradient of this line?", marks: 2, answer: "2" },
+
+    { section: "Section B: Finding equations", question: "Write the equation of the line with gradient 2 that crosses the y-axis at (0, −3).", type: "expression", marks: 1, answer: "y = 2x − 3" },
+    { section: "Section B: Finding equations", question: "Find the equation of the line through (1, 5) and (3, 9).", type: "expression", marks: 3, answer: "y = 2x + 3" },
+    { section: "Section B: Finding equations", text: "A straight line is shown on the grid.", question: "Find the equation of the line.", type: "expression", marks: 2, answer: "y = 2x + 1",
+      graph: { x: [-2, 4], y: [-3, 8], lines: [[[-2, -3], [3.5, 8]]] } },
+    { section: "Section B: Finding equations", question: "Find the equation of the line parallel to y = 4x + 1 that passes through (0, −2).", type: "expression", marks: 2, answer: "y = 4x − 2" },
+    { section: "Section B: Finding equations", question: "Which pair of lines are parallel?", type: "choice", marks: 1,
+      options: ["y = 2x + 1 and y = 2x − 5", "y = 2x + 1 and y = 3x + 1", "y = x + 2 and y = 2x + 2", "y = 4 and x = 4"], answer: "y = 2x + 1 and y = 2x − 5" },
+    { section: "Section B: Finding equations", question: "A taxi's cost is C = 1.5d + 3. Explain what the 1.5 and the 3 mean.", type: "explain", marks: 1,
+      answer: "1.5 is the gradient: each extra mile costs £1.50. 3 is the intercept: the fixed £3 charge before any miles are travelled." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Surface area and volume of cone & sphere",
+  title: "Cones and Spheres",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Sphere: V = (4/3)πr³, SA = 4πr². Cone: V = (1/3)πr²h, curved SA = πrl (l = slant height). Give answers to 1 decimal place; working with π or 3.14 is accepted.",
+  questions: [
+    { section: "Section A: Spheres", question: "Work out the volume of the sphere, in cm³, to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "113.1 cm³", sphere: { r: "3 cm" } },
+    { section: "Section A: Spheres", question: "Work out the surface area of the sphere, in cm², to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "314.2 cm²", sphere: { r: "5 cm" } },
+    { section: "Section A: Spheres", question: "Work out the volume of the hemisphere, in cm³, to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "452.4 cm³", sphere: { r: "6 cm", half: true } },
+    { section: "Section A: Spheres", question: "A sphere has a volume of 36π cm³. Find its radius.", marks: 2, answer: "3 cm" },
+
+    { section: "Section B: Cones", question: "Work out the volume of the cone, in cm³, to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "150.8 cm³", cone: { r: "4 cm", h: "9 cm" } },
+    { section: "Section B: Cones", question: "Work out the curved surface area of the cone, in cm², to 1 decimal place.", tolerance: 0.5, marks: 2, answer: "47.1 cm²", cone: { r: "3 cm", l: "5 cm" } },
+    { section: "Section B: Cones", question: "Work out the total surface area of the cone (curved surface and base), in cm², to 1 decimal place.", tolerance: 0.5, marks: 3, answer: "75.4 cm²", cone: { r: "3 cm", l: "5 cm" } },
+    { section: "Section B: Cones", question: "Which is the formula for the volume of a cone?", type: "choice", marks: 1,
+      options: ["(1/3)πr²h", "πr²h", "πrl", "(4/3)πr³"], answer: "(1/3)πr²h" },
+    { section: "Section B: Cones", question: "A cone and a cylinder have the same radius and height. How do their volumes compare? Explain.", type: "explain", marks: 1,
+      answer: "The cone's volume is one third of the cylinder's: (1/3)πr²h compared with πr²h. Three cones would fill the cylinder." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Sectors: area and arc length",
+  title: "Sectors and Arcs",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "A sector is a fraction θ/360 of a circle. Area = (θ/360) × πr². Arc length = (θ/360) × 2πr. The perimeter of a sector is the arc length plus two radii. Give answers to 1 decimal place.",
+  questions: [
+    { section: "Section A: Area of a sector", question: "Work out the area of the sector, in cm², to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "18.8 cm²", sector: { angle: 60, r: "6 cm" } },
+    { section: "Section A: Area of a sector", question: "Work out the area of the sector, in cm², to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "19.6 cm²", sector: { angle: 90, r: "5 cm" } },
+    { section: "Section A: Area of a sector", question: "Work out the area of a semicircle with diameter 10 cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "39.3 cm²" },
+    { section: "Section A: Area of a sector", question: "A sector has an area of 25π cm² and a radius of 10 cm. What is its angle?", marks: 2, answer: "90°" },
+
+    { section: "Section B: Arc length", question: "Work out the arc length of the sector, in cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "12.6 cm", sector: { angle: 72, r: "10 cm" } },
+    { section: "Section B: Arc length", question: "Work out the arc length of the sector, in cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "6.3 cm", sector: { angle: 45, r: "8 cm" } },
+    { section: "Section B: Arc length", question: "Work out the perimeter of the sector, in cm, to 1 decimal place.", tolerance: 0.1, marks: 3, answer: "18.3 cm", sector: { angle: 60, r: "6 cm" } },
+    { section: "Section B: Arc length", question: "Which is the formula for arc length?", type: "choice", marks: 1,
+      options: ["(θ/360) × 2πr", "(θ/360) × πr²", "2πr", "θ × r"], answer: "(θ/360) × 2πr" },
+    { section: "Section B: Arc length", question: "Amy finds the perimeter of a sector by working out only the arc length. Explain what she has missed.", type: "explain", marks: 1,
+      answer: "The perimeter is the whole distance around the sector: the curved arc and the two straight radii. She needs to add 2 × r to the arc length." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Similar shapes (lengths)",
+  title: "Similar Shapes: Lengths",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Similar shapes have the same angles, and their matching sides are all multiplied by the same scale factor. Find the scale factor from one pair of matching sides, then use it for the others.",
+  questions: [
+    { section: "Section A: Scale factors", question: "A triangle has a side of 5 cm. A similar triangle has the matching side 15 cm. What is the scale factor?", marks: 1, answer: "3" },
+    { section: "Section A: Scale factors", question: "Rectangle A is 4 cm by 6 cm. Rectangle B is similar, with a short side of 10 cm. How long is its long side?", marks: 2, answer: "15 cm" },
+    { section: "Section A: Scale factors", question: "A triangle has sides 3 cm, 4 cm and 5 cm. A similar triangle has a longest side of 20 cm. How long is its shortest side?", marks: 2, answer: "12 cm" },
+    { section: "Section A: Scale factors", question: "A photo 10 cm wide and 15 cm tall is enlarged so it is 25 cm wide. How tall is the enlargement?", marks: 2, answer: "37.5 cm" },
+    { section: "Section A: Scale factors", question: "Shape B is similar to shape A with scale factor 0.5. A side of A is 18 cm. How long is the matching side of B?", marks: 1, answer: "9 cm" },
+    { section: "Section A: Scale factors", text: "The two triangles are similar. In the small triangle, the bottom side is 4 cm and the sloping side is 5 cm. The large triangle's bottom side is 12 cm.",
+      question: "How long is the sloping side of the large triangle?", marks: 2, answer: "15 cm",
+      outline: { points: [[0, 0], [4, 0], [4, 3]], text: { 0: "4 cm", 1: "", 2: "5 cm" } } },
+    { section: "Section A: Scale factors", question: "Similar shapes always have...", type: "choice", marks: 1,
+      options: ["equal angles and sides in the same ratio", "equal sides", "the same area", "different angles"], answer: "equal angles and sides in the same ratio" },
+    { section: "Section A: Scale factors", question: "A rectangle is 2 cm by 3 cm. Max says a 4 cm by 5 cm rectangle is similar because both sides went up by 2. Explain Max's mistake.", type: "explain", marks: 1,
+      answer: "Similar shapes multiply every side by the same scale factor; adding doesn't keep the shape. 2 × 2 = 4 but 3 × 2 = 6, so a similar rectangle would be 4 cm by 6 cm." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "SOHCAHTOA",
+  title: "Trigonometry: SOHCAHTOA",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Label the sides opposite, adjacent and hypotenuse from the angle. SOH: sin = O/H, CAH: cos = A/H, TOA: tan = O/A. To find an angle, use the inverse (sin⁻¹, cos⁻¹, tan⁻¹). Give answers to 1 decimal place.",
+  questions: [
+    { section: "Section A: Finding a side", question: "Find the length x, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "5.7 cm",
+      outline: { points: [[0, 0], [10, 0], [0, 7]], rightAngle: [0], angles: [[1, "35°"]], text: { 0: "", 1: "10 cm", 2: "x" } } },
+    { section: "Section A: Finding a side", question: "Find the length x, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "9.5 cm",
+      outline: { points: [[0, 0], [8, 0], [0, 9.5]], rightAngle: [0], angles: [[1, "50°"]], text: { 0: "8 cm", 1: "", 2: "x" } } },
+    { section: "Section A: Finding a side", question: "Find the length x, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "9.2 cm",
+      outline: { points: [[0, 0], [9.2, 0], [0, 7.7]], rightAngle: [0], angles: [[1, "40°"]], text: { 0: "x", 1: "12 cm", 2: "" } } },
+    { section: "Section A: Finding a side", question: "A 6 m ladder leans against a wall at 70° to the ground. How high up the wall does it reach, to 1 decimal place?", tolerance: 0.1, marks: 2, answer: "5.6 m" },
+
+    { section: "Section B: Finding an angle", question: "Find the angle θ, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "33.7°",
+      outline: { points: [[0, 0], [7.5, 0], [0, 5]], rightAngle: [0], angles: [[1, "θ"]], text: { 0: "", 1: "9 cm", 2: "5 cm" } } },
+    { section: "Section B: Finding an angle", question: "Find the angle θ, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "29.7°",
+      outline: { points: [[0, 0], [7, 0], [0, 4]], rightAngle: [0], angles: [[1, "θ"]], text: { 0: "7 cm", 1: "", 2: "4 cm" } } },
+    { section: "Section B: Finding an angle", question: "You know the opposite side and the adjacent side. Which ratio should you use?", type: "choice", marks: 1,
+      options: ["tan", "sin", "cos", "Pythagoras"], answer: "tan" },
+    { section: "Section B: Finding an angle", question: "To find a side opposite a 35° angle with hypotenuse 10 cm, Raj works out 10 × cos 35°. Explain Raj's mistake.", type: "explain", marks: 1,
+      answer: "Opposite and hypotenuse go with sin (SOH), not cos. The side is 10 × sin 35° = 5.7 cm." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Congruent shapes",
+  title: "Congruent Shapes",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Congruent shapes are exactly the same shape and size. Triangles are congruent if they match by SSS (three sides), SAS (two sides and the angle between), ASA (two angles and a side) or RHS (right angle, hypotenuse, side).",
+  questions: [
+    { section: "Section A: Conditions for congruence", question: "Two triangles have sides 5 cm, 7 cm and 9 cm. Which condition shows they are congruent?", marks: 1,
+      options: ["SSS", "SAS", "ASA", "RHS"], answer: "SSS" },
+    { section: "Section A: Conditions for congruence", question: "Two triangles each have sides of 6 cm and 8 cm with an angle of 50° between them. Which condition?", marks: 1,
+      options: ["SSS", "SAS", "ASA", "RHS"], answer: "SAS" },
+    { section: "Section A: Conditions for congruence", question: "Two triangles each have angles of 40° and 70° with a 5 cm side between them. Which condition?", marks: 1,
+      options: ["SSS", "SAS", "ASA", "RHS"], answer: "ASA" },
+    { section: "Section A: Conditions for congruence", question: "Two right-angled triangles each have a hypotenuse of 10 cm and another side of 6 cm. Which condition?", marks: 1,
+      options: ["SSS", "SAS", "ASA", "RHS"], answer: "RHS" },
+    { section: "Section A: Conditions for congruence", question: "Which of these does NOT prove two triangles are congruent?", marks: 1,
+      options: ["AAA (three equal angles)", "SSS", "SAS", "RHS"], answer: "AAA (three equal angles)" },
+    { section: "Section A: Conditions for congruence", question: "Congruent shapes are...", marks: 1,
+      options: ["the same shape and the same size", "the same shape but a different size", "the same area only", "the same perimeter only"], answer: "the same shape and the same size" },
+    { section: "Section A: Conditions for congruence", question: "Tap all the transformations that always give a congruent image.", type: "select", marks: 2,
+      options: ["translation", "reflection", "rotation", "enlargement"], answer: "translation, reflection, rotation" },
+    { section: "Section A: Conditions for congruence", question: "Explain why three equal angles (AAA) don't prove two triangles are congruent.", type: "explain", marks: 1,
+      answer: "Two triangles can have the same angles but be different sizes (one an enlargement of the other). They would be similar, not congruent." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Exact trig values",
+  title: "Exact Trig Values",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Learn these: sin 30° = cos 60° = 1/2; sin 60° = cos 30° = √3/2; sin 45° = cos 45° = √2/2; tan 45° = 1; tan 30° = 1/√3; tan 60° = √3; sin 0° = cos 90° = 0; sin 90° = cos 0° = 1.",
+  questions: [
+    { section: "Section A: Values", question: "What is the exact value of sin 30°?", type: "number", marks: 1, answer: "0.5" },
+    { section: "Section A: Values", question: "What is the exact value of cos 60°?", type: "number", marks: 1, answer: "0.5" },
+    { section: "Section A: Values", question: "What is the exact value of tan 45°?", type: "number", marks: 1, answer: "1" },
+    { section: "Section A: Values", question: "What is the exact value of cos 90°?", type: "number", marks: 1, answer: "0" },
+    { section: "Section A: Values", question: "What is the exact value of sin 60°?", marks: 1, options: ["√3/2", "1/2", "√2/2", "√3"], answer: "√3/2" },
+    { section: "Section A: Values", question: "What is the exact value of cos 45°?", marks: 1, options: ["√2/2", "1/2", "√3/2", "1"], answer: "√2/2" },
+    { section: "Section A: Values", question: "What is the exact value of tan 60°?", marks: 1, options: ["√3", "1/√3", "1", "√3/2"], answer: "√3" },
+    { section: "Section A: Values", question: "What is the exact value of tan 30°?", marks: 1, options: ["1/√3", "√3", "1/2", "√2/2"], answer: "1/√3" },
+
+    { section: "Section B: Using exact values", question: "A right-angled triangle has a hypotenuse of 10 cm and an angle of 30°. Find the exact length of the side opposite the 30° angle.", type: "number", marks: 2, answer: "5 cm" },
+    { section: "Section B: Using exact values", question: "Explain why sin 30° and cos 60° are equal.", type: "explain", marks: 1,
+      answer: "In a right-angled triangle the two other angles add to 90°, so 30° and 60° fit together. The side opposite the 30° angle is the side adjacent to the 60° angle, so O/H for 30° equals A/H for 60°." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Probability trees",
+  title: "Probability Trees",
+  type: "fraction",
+  questionsPerSet: 10,
+  tip: "Multiply along the branches to find the probability of a route, and add the probabilities of different routes. The branches from one point add up to 1. Without replacement, the second set of branches changes.",
+  questions: [
+    { section: "Section A: With replacement", text: "A bag holds 3 red and 2 blue counters. A counter is taken, replaced, then a second is taken.", question: "What is the probability of red then red?", marks: 2, answer: "9/25",
+      probTree: { first: [["Red", "3/5"], ["Blue", "2/5"]], second: [[["Red", "3/5"], ["Blue", "2/5"]], [["Red", "3/5"], ["Blue", "2/5"]]] } },
+    { section: "Section A: With replacement", text: "A bag holds 3 red and 2 blue counters. A counter is taken, replaced, then a second is taken.", question: "What is the probability that both are blue?", marks: 2, answer: "4/25",
+      probTree: { first: [["Red", "3/5"], ["Blue", "2/5"]], second: [[["Red", "3/5"], ["Blue", "2/5"]], [["Red", "3/5"], ["Blue", "2/5"]]] } },
+    { section: "Section A: With replacement", text: "A bag holds 3 red and 2 blue counters. A counter is taken, replaced, then a second is taken.", question: "What is the probability of one of each colour?", marks: 3, answer: "12/25",
+      probTree: { first: [["Red", "3/5"], ["Blue", "2/5"]], second: [[["Red", "3/5"], ["Blue", "2/5"]], [["Red", "3/5"], ["Blue", "2/5"]]] } },
+    { section: "Section A: With replacement", text: "A bag holds 3 red and 2 blue counters. A counter is taken, replaced, then a second is taken.", question: "What is the probability of at least one red?", marks: 3, answer: "21/25",
+      probTree: { first: [["Red", "3/5"], ["Blue", "2/5"]], second: [[["Red", "3/5"], ["Blue", "2/5"]], [["Red", "3/5"], ["Blue", "2/5"]]] } },
+
+    { section: "Section B: Without replacement", text: "A bag holds 3 red and 2 blue counters. Two counters are taken without replacement.", question: "What is the probability that both are red?", marks: 2, answer: "6/20",
+      probTree: { first: [["Red", "3/5"], ["Blue", "2/5"]], second: [[["Red", "2/4"], ["Blue", "2/4"]], [["Red", "3/4"], ["Blue", "1/4"]]] } },
+    { section: "Section B: Without replacement", text: "A bag holds 3 red and 2 blue counters. Two counters are taken without replacement.", question: "What is the probability that both are the same colour?", marks: 3, answer: "8/20",
+      probTree: { first: [["Red", "3/5"], ["Blue", "2/5"]], second: [[["Red", "2/4"], ["Blue", "2/4"]], [["Red", "3/4"], ["Blue", "1/4"]]] } },
+    { section: "Section B: Without replacement", text: "The probability that Sam passes a test is 0.7.", question: "What probability goes on the Fail branch?", type: "number", marks: 1, answer: "0.3",
+      probTree: { first: [["Pass", "0.7"], ["Fail", "?"]] } },
+    { section: "Section B: Without replacement", question: "On a probability tree, how do you find the probability of following one route?", type: "choice", marks: 1,
+      options: ["Multiply the probabilities along the branches", "Add the probabilities along the branches", "Use the biggest probability", "Subtract them"], answer: "Multiply the probabilities along the branches" },
+    { section: "Section B: Without replacement", question: "Without replacement, why does the second red branch show 2/4 instead of 3/5?", type: "explain", marks: 1,
+      answer: "After a red is taken and not put back, there are only 4 counters left and only 2 of them are red, so the probability of red becomes 2/4." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Venn diagrams",
+  title: "Venn Diagrams",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Each region shows how many are in that group. A ∩ B (intersection) means in both; A ∪ B (union) means in A or B or both. Remember the number outside the circles inside ξ.",
+  questions: [
+    { section: "Section A: Reading a Venn diagram", text: "The Venn diagram shows which sports 30 pupils play.", question: "How many pupils play football?", marks: 1, answer: "13",
+      venn: { labels: ["Football", "Tennis"], left: ["8"], both: ["5"], right: ["7"], box: true, outside: ["10"] } },
+    { section: "Section A: Reading a Venn diagram", text: "The Venn diagram shows which sports 30 pupils play.", question: "How many pupils play tennis?", marks: 1, answer: "12",
+      venn: { labels: ["Football", "Tennis"], left: ["8"], both: ["5"], right: ["7"], box: true, outside: ["10"] } },
+    { section: "Section A: Reading a Venn diagram", text: "The Venn diagram shows which sports 30 pupils play.", question: "How many pupils play football or tennis or both (Football ∪ Tennis)?", marks: 1, answer: "20",
+      venn: { labels: ["Football", "Tennis"], left: ["8"], both: ["5"], right: ["7"], box: true, outside: ["10"] } },
+    { section: "Section A: Reading a Venn diagram", text: "The Venn diagram shows which sports 30 pupils play.", question: "A pupil is chosen at random. What is the probability they play both sports?", type: "fraction", marks: 2, answer: "5/30",
+      venn: { labels: ["Football", "Tennis"], left: ["8"], both: ["5"], right: ["7"], box: true, outside: ["10"] } },
+    { section: "Section A: Reading a Venn diagram", text: "The Venn diagram shows which sports 30 pupils play.", question: "A pupil is chosen at random. What is the probability they play exactly one sport?", type: "fraction", marks: 2, answer: "15/30",
+      venn: { labels: ["Football", "Tennis"], left: ["8"], both: ["5"], right: ["7"], box: true, outside: ["10"] } },
+
+    { section: "Section B: Set notation", question: "What does A ∩ B mean?", type: "choice", marks: 1,
+      options: ["In both A and B", "In A or B or both", "Not in A", "In A but not B"], answer: "In both A and B" },
+    { section: "Section B: Set notation", question: "ξ = {1, 2, 3, ..., 10}, A = even numbers, B = multiples of 3. Tap all the numbers in A ∩ B.", type: "select", marks: 1,
+      range: [1, 10], answer: "6" },
+    { section: "Section B: Set notation", question: "ξ = {1, 2, 3, ..., 10}, A = even numbers, B = multiples of 3. Tap all the numbers in A ∪ B.", type: "select", marks: 2,
+      range: [1, 10], answer: "2, 3, 4, 6, 8, 9, 10" },
+    { section: "Section B: Set notation", text: "The Venn diagram shows which sports 30 pupils play.", question: "Kim says 8 pupils play football. Explain Kim's mistake.", type: "explain", marks: 1,
+      venn: { labels: ["Football", "Tennis"], left: ["8"], both: ["5"], right: ["7"], box: true, outside: ["10"] },
+      answer: "8 is only the pupils who play football but not tennis. The 5 in the overlap also play football, so 8 + 5 = 13 play football." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Vectors",
+  title: "Vectors",
+  type: "coordinates",
+  questionsPerSet: 10,
+  tip: "A column vector shows the movement across (x) and up (y). Here, write vectors as (x, y), e.g. (3, −1). To add vectors, add the tops and the bottoms; to multiply by a number, multiply both.",
+  questions: [
+    { section: "Section A: Calculating with vectors", text: "a = (2, 3) and b = (1, −4).", question: "Work out a + b.", marks: 1, answer: "(3, −1)" },
+    { section: "Section A: Calculating with vectors", text: "a = (2, 3) and b = (1, −4).", question: "Work out a − b.", marks: 1, answer: "(1, 7)" },
+    { section: "Section A: Calculating with vectors", text: "a = (2, 3) and b = (1, −4).", question: "Work out 3a.", marks: 1, answer: "(6, 9)" },
+    { section: "Section A: Calculating with vectors", text: "a = (2, 3) and b = (1, −4).", question: "Work out 2a + b.", marks: 2, answer: "(5, 2)" },
+
+    { section: "Section B: Vectors on a grid", question: "Write the vector a as a column vector (x, y).", marks: 1, answer: "(3, 2)",
+      graph: { arrows: [[0, 0, 3, 2, "a"]] } },
+    { section: "Section B: Vectors on a grid", question: "Write the vector b as a column vector (x, y).", marks: 1, answer: "(4, −2)",
+      graph: { arrows: [[-2, 3, 2, 1, "b"]] } },
+    { section: "Section B: Vectors on a grid", question: "Which vector is parallel to (2, 3)?", type: "choice", marks: 1,
+      options: ["(4, 6)", "(3, 2)", "(2, −3)", "(5, 6)"], answer: "(4, 6)" },
+    { section: "Section B: Vectors on a grid", question: "Find the length (magnitude) of the vector (3, 4).", type: "number", marks: 2, answer: "5" },
+    { section: "Section B: Vectors on a grid", question: "Explain what the vector (−2, 5) means as a movement.", type: "explain", marks: 1,
+      answer: "Move 2 units to the left (the top number is negative) and 5 units up (the bottom number is positive)." }
   ]
 });
