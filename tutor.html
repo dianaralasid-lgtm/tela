@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TutorsElevateLearningApp — Tutor</title>
+<link rel="icon" href="logo.png.svg" type="image/svg+xml">
+<script>
+  // Only a signed-in tutor can see this page.
+  (function () {
+    try {
+      const user = sessionStorage.getItem("tela.tutorSession") || localStorage.getItem("tela.tutorSession");
+      const tutors = JSON.parse(localStorage.getItem("tela.tutors")) || {};
+      if (user && tutors[user]) return;
+    } catch (e) {}
+    location.replace("login.html#tutor");
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-900: #0a3d2c;
+    --green-800: #0f5132;
+    --green-700: #146c43;
+    --green-600: #198754;
+    --green-100: #e3f2ea;
+    --green-50:  #f2f8f5;
+    --ink: #13261e;
+    --muted: #5f7369;
+    --line: #dce7e1;
+    --white: #ffffff;
+    --amber: #e0a43a;
+    --track: #e3e9e6;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(10, 61, 44, .06), 0 4px 16px rgba(10, 61, 44, .06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--green-50); color: var(--ink); line-height: 1.5; min-height: 100vh; }
+  button { font: inherit; cursor: pointer; }
+
+  header { background: linear-gradient(135deg, var(--green-900), var(--green-700)); color: var(--white); padding: 40px 24px 88px; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  .head-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .logo { width: 46px; height: 46px; border-radius: 50%; display: block; flex: none; }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+  .subtitle { color: rgba(255,255,255,.75); font-size: 14px; }
+  .btn { border: none; border-radius: 10px; padding: 10px 18px; font-weight: 600; font-size: 14px; }
+  .btn-outline { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,.4); }
+  .btn-outline:hover { background: rgba(255,255,255,.1); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+  .stat { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); border-radius: var(--radius); padding: 16px; }
+  .stat-num { font-size: 28px; font-weight: 700; }
+  .stat-label { color: rgba(255,255,255,.75); font-size: 14px; }
+
+  main { margin-top: -56px; padding: 0 24px 64px; }
+  .panel { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
+  .search { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--line); border-radius: 10px; padding: 0 14px; color: var(--muted); }
+  .search:focus-within { border-color: var(--green-600); }
+  .search input { flex: 1; border: none; outline: none; font: inherit; font-size: 15px; padding: 12px 0; color: var(--ink); background: none; }
+  .note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; }
+  .student { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .s-head { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--green-100); color: var(--green-800); display: grid; place-items: center; font-weight: 700; flex: none; }
+  .s-head h2 { font-size: 17px; letter-spacing: -.01em; }
+  .s-head small { color: var(--muted); font-size: 13px; }
+  .s-summary { display: flex; align-items: center; gap: 18px; }
+  .donut { display: block; flex: none; }
+  .donut circle { fill: none; }
+  .donut .c-track { stroke: var(--track); }
+  .donut .c-done { stroke: var(--green-600); }
+  .donut .c-doing { stroke: var(--amber); }
+  .donut text { font-family: "Inter", sans-serif; font-size: 20px; font-weight: 700; fill: var(--green-800); }
+  .key { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 14px; flex: 1; }
+  .key li { display: grid; grid-template-columns: 12px 1fr auto; align-items: center; gap: 8px; }
+  .key i { width: 12px; height: 12px; border-radius: 3px; }
+  .key strong { font-size: 14px; }
+  .s-section h3 { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { background: var(--green-50); border: 1px solid var(--line); border-radius: 99px; padding: 3px 10px; font-size: 13px; }
+  .notes { background: var(--green-50); border-left: 3px solid var(--green-600); border-radius: 8px; padding: 10px 12px; font-size: 14px; white-space: pre-wrap; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .empty { text-align: center; color: var(--muted); padding: 48px 16px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .empty h3 { color: var(--ink); margin-bottom: 6px; }
+
+  @media (max-width: 720px) {
+    header { padding: 28px 16px 80px; }
+    main { padding: 0 16px 48px; }
+    h1 { font-size: 24px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <div class="brand">
+        <img class="logo" src="logo.png.svg" alt="TutorsElevateLearningApp logo">
+        <div>
+          <h1 id="greeting">Tutor dashboard</h1>
+          <div class="subtitle">See how each of your students is getting on.</div>
+        </div>
+      </div>
+      <button class="btn btn-outline" id="logoutBtn">Sign out</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="statStudents">0</div><div class="stat-label">Students</div></div>
+      <div class="stat"><div class="stat-num" id="statAverage">0%</div><div class="stat-label">Average confident</div></div>
+      <div class="stat"><div class="stat-num" id="statNotes">0</div><div class="stat-label">Students with notes for you</div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="panel">
+      <label class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="search" placeholder="Search students by name or username…" autocomplete="off" aria-label="Search students">
+      </label>
+      <p class="note">Shows the student accounts saved in this browser.</p>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const read = (key, fallback) => { try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch (e) { return fallback; } };
+
+  const tutorUser = sessionStorage.getItem("tela.tutorSession") || localStorage.getItem("tela.tutorSession");
+  const tutor = read("tela.tutors", {})[tutorUser] || { displayName: tutorUser };
+  $("greeting").textContent = `${tutor.displayName}'s students`;
+
+  // Each student's topics, statuses and notes come from what their dashboard saved in this browser.
+  const students = Object.entries(read("tela.accounts", {})).map(([username, acc]) => {
+    const topics = read("tela.topics." + username, null);
+    const list = Array.isArray(topics) ? topics : [];
+    const count = s => list.filter(t => t.status === s).length;
+    const notes = (read("tela.topics." + username + ".tutor", {}).notes || "").trim();
+    return {
+      username, name: acc.displayName || username, opened: Array.isArray(topics), total: list.length,
+      done: count("done"), doing: count("doing"), todo: count("todo"),
+      working: list.filter(t => t.status === "doing").map(t => t.title), notes
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+
+  function donut(st) {
+    const n = st.total, pct = n ? Math.round(st.done / n * 100) : 0;
+    let start = 0, rings = "";
+    [[st.done, "c-done"], [st.doing, "c-doing"]].forEach(([c, cls]) => {
+      const len = n ? c / n * 100 : 0;
+      if (len > 0) rings += `<circle class="${cls}" cx="50" cy="50" r="42" pathLength="100" stroke-width="13" stroke-dasharray="${len} ${100 - len}" stroke-dashoffset="${-start}"/>`;
+      start += len;
+    });
+    return `<svg class="donut" viewBox="0 0 100 100" width="104" height="104" role="img" aria-label="${st.done} confident, ${st.doing} in progress, ${st.todo} not started">
+      <circle class="c-track" cx="50" cy="50" r="42" stroke-width="13"/><g transform="rotate(-90 50 50)">${rings}</g>
+      <text x="50" y="57" text-anchor="middle">${pct}%</text></svg>`;
+  }
+
+  function card(st) {
+    const summary = !st.opened ? `<p class="muted">Hasn't opened their dashboard yet.</p>`
+      : !st.total ? `<p class="muted">No topics on their dashboard yet.</p>`
+      : `<div class="s-summary">${donut(st)}<ul class="key">
+          <li><i style="background:var(--green-600)"></i><span>Confident</span><strong>${st.done}</strong></li>
+          <li><i style="background:var(--amber)"></i><span>In progress</span><strong>${st.doing}</strong></li>
+          <li><i style="background:var(--track)"></i><span>Not started</span><strong>${st.todo}</strong></li></ul></div>`;
+    const more = st.working.length > 8 ? `<span class="tag">+${st.working.length - 8} more</span>` : "";
+    return `<article class="student">
+      <div class="s-head"><span class="avatar">${esc(st.name.charAt(0).toUpperCase())}</span>
+        <div><h2>${esc(st.name)}</h2><small>@${esc(st.username)}</small></div></div>
+      ${summary}
+      ${st.working.length ? `<div class="s-section"><h3>Working on</h3><div class="tags">${st.working.slice(0, 8).map(t => `<span class="tag">${esc(t)}</span>`).join("")}${more}</div></div>` : ""}
+      <div class="s-section"><h3>Notes for you</h3>${st.notes ? `<div class="notes">${esc(st.notes)}</div>` : `<p class="muted">No notes yet.</p>`}</div>
+    </article>`;
+  }
+
+  function render() {
+    const q = $("search").value.trim().toLowerCase();
+    const shown = students.filter(s => !q || s.name.toLowerCase().includes(q) || s.username.includes(q));
+    $("grid").innerHTML = shown.length ? shown.map(card).join("")
+      : `<div class="empty"><h3>${students.length ? "No students match your search" : "No students yet"}</h3>
+         <p>${students.length ? "Try a different name." : "Student accounts created in this browser will appear here."}</p></div>`;
+  }
+
+  const withTopics = students.filter(s => s.total);
+  $("statStudents").textContent = students.length;
+  $("statAverage").textContent = (withTopics.length ? Math.round(withTopics.reduce((a, s) => a + s.done / s.total, 0) / withTopics.length * 100) : 0) + "%";
+  $("statNotes").textContent = students.filter(s => s.notes).length;
+  $("search").addEventListener("input", render);
+  render();
+
+  $("logoutBtn").addEventListener("click", () => {
+    try { sessionStorage.removeItem("tela.tutorSession"); localStorage.removeItem("tela.tutorSession"); } catch (e) {}
+    location.href = "login.html#tutor";
+  });
+  // Coming back with Forward after signing out re-checks the sign-in.
+  window.addEventListener("pageshow", e => {
+    if (!e.persisted) return;
+    let user = null;
+    try { user = sessionStorage.getItem("tela.tutorSession") || localStorage.getItem("tela.tutorSession"); } catch (err) {}
+    if (user !== tutorUser) location.reload();
+  });
+</script>
+</body>
+</html>

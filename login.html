@@ -122,6 +122,17 @@
   .switch button { border: none; background: none; color: var(--green-700); font-weight: 600; }
   .switch button:hover { text-decoration: underline; }
 
+  /* Switching between student and tutor sign-in */
+  .mode-switch { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); text-align: center; }
+  .mode-switch p { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .btn-secondary { background: var(--white); color: var(--green-800); border: 1.5px solid var(--line); }
+  .btn-secondary:hover { background: var(--green-50); border-color: var(--green-600); }
+  .mode-badge {
+    display: none; width: fit-content; margin-bottom: 10px; padding: 3px 10px; border-radius: 99px;
+    background: var(--green-100); color: var(--green-800); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .tutor-mode .mode-badge { display: block; }
+
   form[hidden] { display: none; }
   @media (max-width: 860px) {
     body { grid-template-columns: 1fr; }
@@ -150,6 +161,7 @@
 
 <main class="main">
   <div class="card">
+    <div class="mode-badge">Tutor</div>
     <h1 id="heading">Welcome back</h1>
     <p class="lead" id="lead">Sign in to open your dashboard.</p>
 
@@ -206,49 +218,60 @@
       <button type="submit" class="btn">Create account</button>
       <p class="switch">Already have an account? <button type="button" data-tab="signin">Sign in</button></p>
     </form>
+
+    <div class="mode-switch">
+      <p id="modeText">Are you a tutor?</p>
+      <button type="button" class="btn btn-secondary" id="modeBtn">Tutor sign in</button>
+    </div>
   </div>
 </main>
 
 <script>
-  const ACCOUNTS_KEY = "tela.accounts";
-  const SESSION_KEY = "tela.session";
   const USERNAME_RE = /^[a-z0-9._-]{3,20}$/;
+  // Students and tutors have separate accounts and sessions, and land on different pages.
+  const MODES = {
+    student: { accounts: "tela.accounts", session: "tela.session", page: "index.html" },
+    tutor:   { accounts: "tela.tutors",   session: "tela.tutorSession", page: "tutor.html" }
+  };
+  let mode = "student";
 
   const $ = id => document.getElementById(id);
 
   // ---------- Storage ----------
-  function loadAccounts() {
-    try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || {}; }
+  function loadAccounts(m = mode) {
+    try { return JSON.parse(localStorage.getItem(MODES[m].accounts)) || {}; }
     catch (e) { return {}; }
   }
   function saveAccounts(accounts) {
-    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+    localStorage.setItem(MODES[mode].accounts, JSON.stringify(accounts));
   }
   function startSession(username, remember) {
+    const key = MODES[mode].session;
     try {
-      sessionStorage.setItem(SESSION_KEY, username);
-      if (remember) localStorage.setItem(SESSION_KEY, username);
-      else localStorage.removeItem(SESSION_KEY);
-    } catch (e) { /* storage blocked — dashboard will bounce back here */ }
-    location.href = "index.html";
+      sessionStorage.setItem(key, username);
+      if (remember) localStorage.setItem(key, username);
+      else localStorage.removeItem(key);
+    } catch (e) { /* storage blocked — the next page will bounce back here */ }
+    location.href = MODES[mode].page;
   }
 
   function endSession() {
     try {
-      sessionStorage.removeItem(SESSION_KEY);
-      localStorage.removeItem(SESSION_KEY);
+      Object.values(MODES).forEach(m => { sessionStorage.removeItem(m.session); localStorage.removeItem(m.session); });
     } catch (e) {}
   }
 
-  // Arriving here with the browser's back button signs the student out.
-  // Otherwise, if already signed in, go straight to the dashboard.
+  // Arriving here with the browser's back button signs everyone out.
+  // Otherwise, if a student or tutor is already signed in, go straight to their page.
   const navEntry = performance.getEntriesByType("navigation")[0];
   if (navEntry && navEntry.type === "back_forward") {
     endSession();
   } else {
     try {
-      const existing = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-      if (existing && loadAccounts()[existing]) location.replace("index.html");
+      for (const m of Object.keys(MODES)) {
+        const existing = sessionStorage.getItem(MODES[m].session) || localStorage.getItem(MODES[m].session);
+        if (existing && loadAccounts(m)[existing]) { location.replace(MODES[m].page); break; }
+      }
     } catch (e) {}
   }
 
@@ -332,13 +355,30 @@
     document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
     $("signin").hidden = tab !== "signin";
     $("signup").hidden = tab !== "signup";
-    $("heading").textContent = tab === "signin" ? "Welcome back" : "Create your account";
-    $("lead").textContent = tab === "signin" ? "Sign in to open your dashboard." : "Set up your own subjects dashboard in seconds.";
+    const tutor = mode === "tutor";
+    $("heading").textContent = tab === "signin" ? (tutor ? "Tutor sign in" : "Welcome back") : (tutor ? "Create a tutor account" : "Create your account");
+    $("lead").textContent = tab === "signin"
+      ? (tutor ? "Sign in to see your students' progress." : "Sign in to open your dashboard.")
+      : (tutor ? "Set up a tutor account to follow your students." : "Set up your own subjects dashboard in seconds.");
     $(tab === "signin" ? "liUser" : "suName").focus();
   }
 
   document.querySelectorAll("[data-tab]").forEach(el =>
     el.addEventListener("click", () => switchTab(el.dataset.tab)));
+
+  // ---------- Student / tutor switch ----------
+  function switchMode(next) {
+    mode = next;
+    const tutor = mode === "tutor";
+    document.body.classList.toggle("tutor-mode", tutor);
+    $("modeText").textContent = tutor ? "Are you a student?" : "Are you a tutor?";
+    $("modeBtn").textContent = tutor ? "Student sign in" : "Tutor sign in";
+    document.title = "TutorsElevateLearningApp — " + (tutor ? "Tutor sign in" : "Sign in");
+    $("signin").reset();
+    $("signup").reset();
+    switchTab("signin");
+  }
+  $("modeBtn").addEventListener("click", () => switchMode(mode === "tutor" ? "student" : "tutor"));
 
   document.querySelectorAll(".toggle-pw").forEach(btn =>
     btn.addEventListener("click", () => {
@@ -387,11 +427,13 @@
 
     try {
       saveAccounts(accounts);
-      // New students start with an empty dashboard: no sample topics, no science top-up.
-      const topicsKey = "tela.topics." + username;
-      localStorage.setItem(topicsKey, "[]");
-      localStorage.setItem(topicsKey + ".sciences", "1");
-      localStorage.setItem(topicsKey + ".grades", "1");
+      if (mode === "student") {
+        // New students start with an empty dashboard: no sample topics, no science top-up.
+        const topicsKey = "tela.topics." + username;
+        localStorage.setItem(topicsKey, "[]");
+        localStorage.setItem(topicsKey + ".sciences", "1");
+        localStorage.setItem(topicsKey + ".grades", "1");
+      }
     } catch (err) {
       return showError("Couldn't save your account — browser storage is unavailable.");
     }
@@ -403,10 +445,12 @@
   window.addEventListener("pageshow", e => {
     if (!e.persisted) return;
     endSession();
-    $("signin").reset();
-    $("signup").reset();
+    switchMode("student");
     clearError();
   });
+
+  // tutor.html links here with #tutor so its Sign out lands on the tutor form.
+  if (location.hash === "#tutor") switchMode("tutor");
 </script>
 </body>
 </html>
