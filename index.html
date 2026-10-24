@@ -15,6 +15,8 @@
     } catch (e) {}
     location.replace("login.html");
   })();
+  // Start with the sidebar collapsed if that was the last choice.
+  try { if (localStorage.getItem("tela.sidebarCollapsed") === "1") document.documentElement.classList.add("side-collapsed"); } catch (e) {}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -565,13 +567,30 @@
   .toast.show { transform: translateX(-50%) translateY(0); }
 
   /* ---------- Sidebar and its slide-out panels ---------- */
-  body { padding-left: 200px; }
+  /* Collapsing the sidebar (body.side-collapsed) shrinks it to a strip of icons. */
+  /* The class goes on <html> before the page draws, so a collapsed sidebar doesn't animate on load. */
+  html { --side-w: 200px; }
+  html.side-collapsed { --side-w: 68px; }
+  body { padding-left: var(--side-w); }
+  html.side-ready body, html.side-ready .sidebar { transition: padding-left .2s ease, width .2s ease; }
   .sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0; width: 200px; z-index: 47;
+    position: fixed; top: 0; left: 0; bottom: 0; width: var(--side-w); z-index: 47;
     background: var(--white); border-right: 1px solid var(--line);
-    display: flex; flex-direction: column; gap: 4px; padding: 28px 12px;
+    display: flex; flex-direction: column; gap: 4px; padding: 20px 12px; overflow: hidden;
   }
-  .side-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 0 12px 10px; }
+  .side-top { display: flex; align-items: center; justify-content: space-between; padding: 0 0 10px 12px; min-height: 36px; }
+  .side-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .side-toggle {
+    flex: none; width: 36px; height: 36px; border: none; background: none; border-radius: 10px; color: var(--muted);
+    display: grid; place-items: center;
+  }
+  .side-toggle:hover { background: var(--green-50); color: var(--green-800); }
+  .side-toggle:focus-visible { outline: 3px solid var(--green-600); outline-offset: 1px; }
+  .side-toggle svg { transition: transform .2s ease; }
+  .side-collapsed .side-top { padding-left: 4px; }
+  .side-collapsed .side-label, .side-collapsed .side-btn span { display: none; }
+  .side-collapsed .side-toggle svg { transform: rotate(180deg); }
+  .side-collapsed .side-btn { justify-content: center; padding: 11px 0; }
   .side-btn {
     display: flex; align-items: center; gap: 12px; width: 100%; border: none; background: none;
     padding: 11px 12px; border-radius: 10px; color: var(--ink); font-weight: 600; font-size: 14px; text-align: left;
@@ -581,7 +600,7 @@
   .side-btn.active { background: var(--green-100); color: var(--green-800); }
   .side-btn:focus-visible { outline: 3px solid var(--green-600); outline-offset: 1px; }
 
-  .drawer-overlay { position: fixed; inset: 0 0 0 200px; background: rgba(10, 30, 22, .35); z-index: 45; display: none; }
+  .drawer-overlay { position: fixed; inset: 0 0 0 var(--side-w); background: rgba(10, 30, 22, .35); z-index: 45; display: none; }
   .drawer-overlay.open { display: block; }
   .drawer {
     position: absolute; top: 0; bottom: 0; left: 0; width: min(440px, 100%); background: var(--white);
@@ -628,7 +647,9 @@
     /* On phones the sidebar becomes a bar along the bottom. */
     body { padding-left: 0; padding-bottom: 64px; }
     .sidebar { top: auto; width: 100%; height: 64px; flex-direction: row; padding: 6px; border-right: none; border-top: 1px solid var(--line); }
-    .side-label { display: none; }
+    .side-top { display: none; }
+    .side-collapsed .side-btn span { display: inline; }
+    .side-collapsed .side-btn { padding: 6px; }
     .side-btn { flex-direction: column; justify-content: center; gap: 2px; font-size: 12px; padding: 6px; }
     .drawer-overlay { inset: 0 0 64px 0; }
     .drawer { width: 100%; }
@@ -653,7 +674,12 @@
 
 <!-- Sidebar: Settings, Progress and Tutor each open a slide-out panel -->
 <nav class="sidebar" aria-label="Menu">
-  <div class="side-label">Menu</div>
+  <div class="side-top">
+    <div class="side-label">Menu</div>
+    <button type="button" class="side-toggle" id="sideToggle" aria-label="Collapse sidebar" aria-expanded="true" title="Collapse sidebar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+  </div>
   <button type="button" class="side-btn" data-view="progress">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
     <span>Progress</span>
@@ -3478,6 +3504,25 @@
     $("drawerOverlay").classList.remove("open");
     document.querySelectorAll(".side-btn").forEach(b => b.classList.remove("active"));
   }
+
+  // Collapse or expand the sidebar; the choice is remembered in this browser.
+  const SIDE_KEY = "tela.sidebarCollapsed";
+  function setSidebarCollapsed(collapsed) {
+    document.documentElement.classList.toggle("side-collapsed", collapsed);
+    const label = collapsed ? "Expand sidebar" : "Collapse sidebar";
+    $("sideToggle").setAttribute("aria-label", label);
+    $("sideToggle").title = label;
+    $("sideToggle").setAttribute("aria-expanded", String(!collapsed));
+    // When only icons show, hovering a button names it.
+    document.querySelectorAll(".side-btn").forEach(b => { b.title = collapsed ? b.textContent.trim() : ""; });
+  }
+  try { setSidebarCollapsed(localStorage.getItem(SIDE_KEY) === "1"); } catch (e) { setSidebarCollapsed(false); }
+  requestAnimationFrame(() => document.documentElement.classList.add("side-ready"));
+  $("sideToggle").addEventListener("click", () => {
+    const collapsed = !document.documentElement.classList.contains("side-collapsed");
+    setSidebarCollapsed(collapsed);
+    try { localStorage.setItem(SIDE_KEY, collapsed ? "1" : "0"); } catch (e) {}
+  });
 
   document.querySelectorAll(".side-btn").forEach(b => b.addEventListener("click", () => {
     if (drawerView === b.dataset.view) closeDrawer(); else openDrawer(b.dataset.view);
