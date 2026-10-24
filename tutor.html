@@ -87,6 +87,11 @@
   .empty h3 { color: var(--ink); margin-bottom: 6px; }
 
   .head-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .remove-btn {
+    margin-left: auto; align-self: flex-start; border: 1px solid var(--line); background: var(--white); color: #b42318;
+    border-radius: 8px; padding: 5px 10px; font-size: 13px; font-weight: 600;
+  }
+  .remove-btn:hover { background: #fdecea; border-color: #f2b2b2; }
   .btn-light { background: var(--white); color: var(--green-800); }
   .btn-light:hover { background: var(--green-100); }
   .btn-primary { background: var(--green-700); color: var(--white); }
@@ -234,7 +239,8 @@
     const more = st.working.length > 8 ? `<span class="tag">+${st.working.length - 8} more</span>` : "";
     return `<article class="student">
       <div class="s-head"><span class="avatar">${esc(st.name.charAt(0).toUpperCase())}</span>
-        <div><h2>${esc(st.name)}</h2><small>@${esc(st.username)}</small></div></div>
+        <div><h2>${esc(st.name)}</h2><small>@${esc(st.username)}</small></div>
+        <button type="button" class="remove-btn" data-remove="${esc(st.username)}" aria-label="Remove ${esc(st.name)}">Remove</button></div>
       ${summary}
       ${st.working.length ? `<div class="s-section"><h3>Working on</h3><div class="tags">${st.working.slice(0, 8).map(t => `<span class="tag">${esc(t)}</span>`).join("")}${more}</div></div>` : ""}
       <div class="s-section"><h3>Notes for you</h3>${st.notes ? `<div class="notes">${esc(st.notes)}</div>` : `<p class="muted">No notes yet.</p>`}</div>
@@ -286,7 +292,37 @@
   const closeAdd = () => $("addOverlay").classList.remove("open");
 
   $("addBtn").addEventListener("click", openAdd);
-  $("grid").addEventListener("click", e => { if (e.target.id === "emptyAdd") openAdd(); });
+  $("grid").addEventListener("click", e => {
+    if (e.target.id === "emptyAdd") openAdd();
+    const remove = e.target.closest("[data-remove]");
+    if (remove) removeStudent(remove.dataset.remove);
+  });
+
+  // ---------- Remove a student ----------
+  // Deletes the account and everything their dashboard saved (topics, practice answers, tutor notes).
+  function removeStudent(username) {
+    const accounts = read("tela.accounts", {});
+    const acc = accounts[username];
+    if (!acc) return;
+    const name = acc.displayName || username;
+    if (!confirm(`Remove ${name} (@${username})? Their account, progress and saved answers will be deleted from this browser. This can't be undone.`)) return;
+    try {
+      delete accounts[username];
+      localStorage.setItem("tela.accounts", JSON.stringify(accounts));
+      const base = "tela.topics." + username, keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k === base || k.startsWith(base + ".")) keys.push(k);
+      }
+      keys.forEach(k => localStorage.removeItem(k));
+      if (localStorage.getItem("tela.session") === username) localStorage.removeItem("tela.session");
+    } catch (err) {
+      toast("Couldn't remove the account: browser storage is unavailable.");
+      return;
+    }
+    refresh();
+    toast(`Removed ${name}.`);
+  }
   $("addCancel").addEventListener("click", closeAdd);
   $("addOverlay").addEventListener("click", e => { if (e.target === $("addOverlay")) closeAdd(); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeAdd(); });
