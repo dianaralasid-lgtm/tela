@@ -564,6 +564,78 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* ---------- Sidebar and its slide-out panels ---------- */
+  body { padding-left: 200px; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 200px; z-index: 47;
+    background: var(--white); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 4px; padding: 28px 12px;
+  }
+  .side-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 0 12px 10px; }
+  .side-btn {
+    display: flex; align-items: center; gap: 12px; width: 100%; border: none; background: none;
+    padding: 11px 12px; border-radius: 10px; color: var(--ink); font-weight: 600; font-size: 14px; text-align: left;
+  }
+  .side-btn svg { flex: none; color: var(--green-700); }
+  .side-btn:hover { background: var(--green-50); }
+  .side-btn.active { background: var(--green-100); color: var(--green-800); }
+  .side-btn:focus-visible { outline: 3px solid var(--green-600); outline-offset: 1px; }
+
+  .drawer-overlay { position: fixed; inset: 0 0 0 200px; background: rgba(10, 30, 22, .35); z-index: 45; display: none; }
+  .drawer-overlay.open { display: block; }
+  .drawer {
+    position: absolute; top: 0; bottom: 0; left: 0; width: min(440px, 100%); background: var(--white);
+    box-shadow: 0 0 40px rgba(0,0,0,.2); display: flex; flex-direction: column; animation: slideIn .2s ease;
+  }
+  @keyframes slideIn { from { transform: translateX(-24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px 14px; border-bottom: 1px solid var(--line); }
+  .drawer-head h2 { font-size: 20px; letter-spacing: -.01em; }
+  .drawer-body { padding: 20px 24px 32px; overflow-y: auto; flex: 1; }
+  .d-section { margin-bottom: 26px; }
+  .d-section h3 { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .d-note { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .d-big { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+  .d-big strong { font-size: 40px; line-height: 1; color: var(--green-800); letter-spacing: -.02em; }
+  .d-big span { color: var(--muted); font-size: 14px; }
+  .p-row { margin-bottom: 12px; }
+  .p-row-top { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; margin-bottom: 5px; }
+  .p-row-top span:last-child { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .p-bar { height: 10px; border-radius: 99px; background: var(--grey-bg); overflow: hidden; display: flex; }
+  .p-bar .p-done { background: var(--green-600); }
+  .p-bar .p-doing { background: #e0a43a; }
+  .p-key { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin-bottom: 14px; flex-wrap: wrap; }
+  .p-key i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .d-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .d-list button {
+    width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left;
+    border: 1px solid var(--line); background: var(--white); border-radius: 10px; padding: 9px 12px; font-size: 14px; color: var(--ink);
+  }
+  .d-list button:hover { border-color: var(--green-600); background: var(--green-50); }
+  .d-list small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .d-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; font-size: 14px; font-weight: 600; }
+  .d-field input, .d-field textarea {
+    font: inherit; font-weight: 400; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 12px; color: var(--ink); background: var(--white);
+  }
+  .d-field textarea { min-height: 120px; resize: vertical; }
+  .d-field input:focus, .d-field textarea:focus { outline: none; border-color: var(--green-600); }
+  .d-field input[readonly] { background: var(--grey-bg); color: var(--muted); }
+  .d-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .btn-line { background: var(--white); color: var(--ink); border: 1.5px solid var(--line); }
+  .btn-line:hover { border-color: var(--green-600); }
+
+  @media (max-width: 720px) {
+    /* On phones the sidebar becomes a bar along the bottom. */
+    body { padding-left: 0; padding-bottom: 64px; }
+    .sidebar { top: auto; width: 100%; height: 64px; flex-direction: row; padding: 6px; border-right: none; border-top: 1px solid var(--line); }
+    .side-label { display: none; }
+    .side-btn { flex-direction: column; justify-content: center; gap: 2px; font-size: 12px; padding: 6px; }
+    .drawer-overlay { inset: 0 0 64px 0; }
+    .drawer { width: 100%; }
+    .drawer-head { padding: 18px 16px 12px; }
+    .drawer-body { padding: 16px 16px 24px; }
+  }
+
   footer { text-align: center; color: var(--muted); font-size: 13px; padding: 0 16px 32px; }
   footer button { background: none; border: none; color: var(--green-700); text-decoration: underline; font-size: 13px; }
 
@@ -578,6 +650,35 @@
 </style>
 </head>
 <body>
+
+<!-- Sidebar: Settings, Progress and Tutor each open a slide-out panel -->
+<nav class="sidebar" aria-label="Menu">
+  <div class="side-label">Menu</div>
+  <button type="button" class="side-btn" data-view="progress">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+    <span>Progress</span>
+  </button>
+  <button type="button" class="side-btn" data-view="tutor">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
+    <span>Tutor</span>
+  </button>
+  <button type="button" class="side-btn" data-view="settings">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    <span>Settings</span>
+  </button>
+</nav>
+
+<div class="drawer-overlay" id="drawerOverlay">
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer-head">
+      <h2 id="drawerTitle"></h2>
+      <button type="button" class="icon-btn" id="drawerClose" aria-label="Close panel">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+</div>
 
 <header>
   <div class="wrap">
@@ -3270,9 +3371,173 @@
     $("practiceBody").scrollTop = 0;
   });
 
+  // ---------- Sidebar: Progress, Tutor and Settings panels ----------
+  const TUTOR_KEY = STORAGE_KEY + ".tutor";
+  const PRACTICE_PREFIX = STORAGE_KEY + ".practice.";
+  let drawerView = null;
+
+  function loadTutor() {
+    try { return JSON.parse(localStorage.getItem(TUTOR_KEY)) || {}; } catch (e) { return {}; }
+  }
+  function saveTutor(data) {
+    try { localStorage.setItem(TUTOR_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+  function practisedCount() {
+    let n = 0;
+    try { for (let i = 0; i < localStorage.length; i++) if (localStorage.key(i).startsWith(PRACTICE_PREFIX)) n++; } catch (e) {}
+    return n;
+  }
+
+  // One labelled bar showing how many of a group of topics are confident and in progress.
+  function progressRow(label, list) {
+    const s = countBy(list, "status"), done = s.done || 0, doing = s.doing || 0, n = list.length || 1;
+    return `<div class="p-row">
+      <div class="p-row-top"><span>${esc(label)}</span><span>${done} of ${list.length} confident</span></div>
+      <div class="p-bar" role="img" aria-label="${done} confident, ${doing} in progress, out of ${list.length}">
+        <span class="p-done" style="width:${done / n * 100}%"></span><span class="p-doing" style="width:${doing / n * 100}%"></span>
+      </div></div>`;
+  }
+  function topicButtons(list, empty) {
+    if (!list.length) return `<p class="d-note">${empty}</p>`;
+    return `<ul class="d-list">${list.map(t => `<li><button type="button" data-open="${esc(t.id)}">
+      <span>${esc(t.title)}</span><small>${esc(t.grade || t.subject)}</small></button></li>`).join("")}</ul>`;
+  }
+
+  function renderProgress() {
+    const s = countBy(topics, "status"), pct = topics.length ? Math.round((s.done || 0) / topics.length * 100) : 0;
+    const grades = GRADES.filter(g => topics.some(t => t.grade === g));
+    const doing = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).slice(0, 6);
+    return `
+      <div class="d-section">
+        <div class="d-big"><strong>${pct}%</strong><span>of your topics are confident</span></div>
+        <div class="p-key"><span><i style="background:var(--green-600)"></i>Confident (${s.done || 0})</span>
+          <span><i style="background:#e0a43a"></i>In progress (${s.doing || 0})</span>
+          <span><i style="background:var(--grey-bg)"></i>Not started (${s.todo || 0})</span></div>
+        ${progressRow("All topics", topics)}
+        <p class="d-note">You've saved practice answers in ${practisedCount()} topic${practisedCount() === 1 ? "" : "s"}.</p>
+      </div>
+      <div class="d-section"><h3>By subject</h3>
+        ${allSubjects().map(sub => progressRow(sub, topics.filter(t => t.subject === sub))).join("")}
+      </div>
+      ${grades.length ? `<div class="d-section"><h3>Maths by grade</h3>
+        ${grades.map(g => progressRow(g, topics.filter(t => t.grade === g))).join("")}</div>` : ""}
+      <div class="d-section"><h3>Carry on with</h3>
+        ${topicButtons(doing, "Nothing in progress yet. Open any topic tile to start practising.")}
+      </div>`;
+  }
+
+  function renderTutor() {
+    const tutor = loadTutor();
+    const review = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]);
+    return `
+      <div class="d-section"><h3>My tutor</h3>
+        <label class="d-field">Tutor's name<input id="tutorName" autocomplete="off" value="${esc(tutor.name || "")}"></label>
+        <label class="d-field">Tutor's email<input id="tutorEmail" type="email" autocomplete="off" value="${esc(tutor.email || "")}"></label>
+      </div>
+      <div class="d-section"><h3>Notes for my tutor</h3>
+        <label class="d-field"><span class="visually-hidden">Notes for my tutor</span>
+          <textarea id="tutorNotes" placeholder="Questions you're stuck on, topics you want to go over…">${esc(tutor.notes || "")}</textarea></label>
+        <div class="d-actions">
+          <button type="button" class="btn btn-primary" id="tutorEmailBtn">Email my tutor</button>
+        </div>
+        <p class="d-note">Your notes save automatically. The email includes your notes and the topics below.</p>
+      </div>
+      <div class="d-section"><h3>Topics to go over (${review.length})</h3>
+        ${topicButtons(review, "No topics in progress. Topics you've started but aren't confident in yet will show here.")}
+      </div>`;
+  }
+
+  function renderSettings() {
+    return `
+      <div class="d-section"><h3>Account</h3>
+        <label class="d-field">Username<input value="${esc(currentUser)}" readonly></label>
+        <label class="d-field">Display name<input id="setName" maxlength="40" autocomplete="off" value="${esc(account.displayName)}"></label>
+        <div class="d-actions"><button type="button" class="btn btn-primary" id="setNameBtn">Save name</button></div>
+      </div>
+      <div class="d-section"><h3>Progress</h3>
+        <div class="d-actions">
+          <button type="button" class="btn btn-line" id="setReset">Reset all progress</button>
+          <button type="button" class="btn btn-line" id="setSamples">Restore sample topics</button>
+        </div>
+        <p class="d-note">Resetting sets every topic back to "Not started" and clears your saved practice answers.</p>
+      </div>
+      <div class="d-section"><h3>Session</h3>
+        <div class="d-actions"><button type="button" class="btn btn-danger" id="setLogout">Sign out</button></div>
+      </div>`;
+  }
+
+  const DRAWER_VIEWS = { progress: ["Progress", renderProgress], tutor: ["Tutor", renderTutor], settings: ["Settings", renderSettings] };
+  function openDrawer(view) {
+    drawerView = view;
+    $("drawerTitle").textContent = DRAWER_VIEWS[view][0];
+    $("drawerBody").innerHTML = DRAWER_VIEWS[view][1]();
+    $("drawerBody").scrollTop = 0;
+    $("drawerOverlay").classList.add("open");
+    document.querySelectorAll(".side-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
+  }
+  function closeDrawer() {
+    drawerView = null;
+    $("drawerOverlay").classList.remove("open");
+    document.querySelectorAll(".side-btn").forEach(b => b.classList.remove("active"));
+  }
+
+  document.querySelectorAll(".side-btn").forEach(b => b.addEventListener("click", () => {
+    if (drawerView === b.dataset.view) closeDrawer(); else openDrawer(b.dataset.view);
+  }));
+  $("drawerClose").addEventListener("click", closeDrawer);
+  $("drawerOverlay").addEventListener("click", e => { if (e.target === $("drawerOverlay")) closeDrawer(); });
+
+  $("drawerBody").addEventListener("click", e => {
+    const open = e.target.closest("[data-open]");
+    if (open) {
+      const topic = topics.find(t => t.id === open.dataset.open);
+      closeDrawer();
+      if (topic) openPractice(topic);
+      return;
+    }
+    const id = e.target.id;
+    if (id === "tutorEmailBtn") {
+      const tutor = loadTutor();
+      if (!tutor.email) { toast("Add your tutor's email first"); $("tutorEmail").focus(); return; }
+      const review = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).map(t => "- " + t.title);
+      const body = [`Hi${tutor.name ? " " + tutor.name : ""},`, "", tutor.notes || "",
+        ...(review.length ? ["", "Topics I'm working on:", ...review] : []), "", account.displayName].join("\n");
+      location.href = `mailto:${encodeURIComponent(tutor.email)}?subject=${encodeURIComponent("Revision questions from " + account.displayName)}&body=${encodeURIComponent(body)}`;
+    }
+    if (id === "setNameBtn") {
+      const name = $("setName").value.trim();
+      if (!name) { toast("Your display name can't be empty"); return; }
+      try {
+        const accounts = JSON.parse(localStorage.getItem("tela.accounts")) || {};
+        if (accounts[currentUser]) { accounts[currentUser].displayName = name; localStorage.setItem("tela.accounts", JSON.stringify(accounts)); }
+      } catch (err) {}
+      account.displayName = name;
+      $("greeting").textContent = `${name}'s Subjects`;
+      $("avatar").textContent = name.charAt(0).toUpperCase();
+      toast("Name saved");
+    }
+    if (id === "setReset" && confirm("Set every topic back to Not started and clear all your saved practice answers? This can't be undone.")) {
+      topics.forEach(t => { t.status = "todo"; });
+      try {
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) if (localStorage.key(i).startsWith(PRACTICE_PREFIX)) keys.push(localStorage.key(i));
+        keys.forEach(k => localStorage.removeItem(k));
+      } catch (err) {}
+      save(); render(); toast("Progress reset");
+    }
+    if (id === "setSamples") { closeDrawer(); $("resetBtn").click(); }
+    if (id === "setLogout") $("logoutBtn").click();
+  });
+  // Tutor details and notes save as they're typed.
+  $("drawerBody").addEventListener("input", e => {
+    if (!["tutorName", "tutorEmail", "tutorNotes"].includes(e.target.id)) return;
+    saveTutor({ name: $("tutorName").value, email: $("tutorEmail").value.trim(), notes: $("tutorNotes").value });
+  });
+
   // ---------- Keyboard shortcuts ----------
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") {
+      if (drawerView) { closeDrawer(); return; }
       if ($("saveOverlay").classList.contains("open")) { $("saveOverlay").classList.remove("open"); return; }
       closePractice();
     }
