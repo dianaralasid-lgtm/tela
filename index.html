@@ -693,6 +693,11 @@
   .chat-with { display: flex; align-items: center; gap: 10px; }
   .chat-with .d-field { flex: 1; margin-bottom: 0; }
   .chat-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--green-100); color: var(--green-800); display: grid; place-items: center; font-weight: 700; flex: none; }
+  .chat-notice {
+    display: flex; align-items: center; gap: 8px; margin: 0; padding: 8px 12px; border-radius: 10px;
+    background: #fdf3e1; color: #7a4f0c; border: 1px solid #f3dcb0; font-size: 13px; font-weight: 500;
+  }
+  .chat-notice svg { flex: none; }
   .chat-list {
     flex: 1; min-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
     background: var(--green-50); border-radius: 12px; padding: 12px;
@@ -3501,6 +3506,7 @@
     return TelaMessages.tutorsOf(currentUser).filter(id => tutorAccounts[id]).map(id => ({ id, name: tutorAccounts[id].displayName || id }));
   }
   let chatTutor = null;   // the tutor whose conversation is open
+  const CHAT_NOTICE = `<p class="chat-notice" role="note"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>All messages are recorded and can be viewed by admins.</p>`;
   const unreadMessages = () => myTutors().reduce((n, t) => n + TelaMessages.unread(currentUser, t.id, "student"), 0);
   function renderMsgBadge() {
     const n = unreadMessages();
@@ -3525,6 +3531,7 @@
             const n = TelaMessages.unread(currentUser, t.id, "student");
             return `<option value="${esc(t.id)}"${t.id === chatTutor ? " selected" : ""}>${esc(t.name)}${n && t.id !== chatTutor ? ` (${n} new)` : ""}</option>`; }).join("")}</select></label>`
         : `<span class="chat-avatar">${esc(tutor.name.charAt(0).toUpperCase())}</span><strong>${esc(tutor.name)}</strong>`}</div>
+      ${CHAT_NOTICE}
       <div class="chat-list" id="chatList" aria-live="polite">${bubblesHTML(TelaMessages.thread(currentUser, chatTutor), "student", tutor.name)}</div>
       ${review.length ? `<div class="chat-chips">${review.map(t => `<button type="button" class="chip-btn" data-ask="${esc(t.title)}">Ask about ${esc(t.title)}</button>`).join("")}</div>` : ""}
       <form class="composer" id="composer">

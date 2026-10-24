@@ -226,6 +226,8 @@
   .chat-head { display: flex; align-items: center; gap: 10px; }
   .chat-head small { display: block; color: var(--muted); font-size: 12px; }
   .chat-head .chat-hw { margin-left: auto; padding: 7px 12px; }
+  .chat-notice { display: flex; align-items: center; gap: 8px; margin: 0; padding: 8px 12px; border-radius: 10px; background: #fdf3e1; color: #7a4f0c; border: 1px solid #f3dcb0; font-size: 13px; font-weight: 500; }
+  .chat-notice svg { flex: none; }
   .chat-list { flex: 1; min-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: var(--green-50); border-radius: 12px; padding: 12px; }
   .chat-empty { margin: auto; text-align: center; color: var(--muted); font-size: 14px; max-width: 260px; }
   .bubble { max-width: 82%; padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.45; box-shadow: 0 1px 1px rgba(10,61,44,.06); }
@@ -503,6 +505,7 @@
         <div><strong>${esc(st.name)}</strong><small>@${esc(st.username)}</small></div>
         <button type="button" class="btn btn-ghost chat-hw" data-homework="${esc(st.username)}">Set homework</button>
       </div>
+      <p class="chat-notice" role="note"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>All messages are recorded and can be viewed by admins.</p>
       <div class="chat-list" id="chatList" aria-live="polite">${bubblesHTML(TelaMessages.thread(st.username, tutorUser), st)}</div>
       <form class="composer" id="composer">
         <textarea id="msgInput" rows="2" placeholder="Message ${firstName(st)}…" aria-label="Message ${esc(st.name)}"></textarea>
