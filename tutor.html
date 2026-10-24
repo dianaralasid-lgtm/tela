@@ -228,6 +228,13 @@
   .chat-head .chat-hw { margin-left: auto; padding: 7px 12px; }
   .chat-notice { display: flex; align-items: center; gap: 8px; margin: 0; padding: 8px 12px; border-radius: 10px; background: #fdf3e1; color: #7a4f0c; border: 1px solid #f3dcb0; font-size: 13px; font-weight: 500; }
   .chat-notice svg { flex: none; }
+  /* Admin view of all conversations */
+  .admin-note { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+  .chat .admin-note { margin: 0; }
+  .admin-search { margin-bottom: 12px; }
+  .admin-search input { padding: 9px 0; font-size: 14px; }
+  .msg-count { flex: none; min-width: 26px; height: 22px; padding: 0 7px; border-radius: 99px; background: var(--green-50); border: 1px solid var(--line); color: var(--muted); font-size: 12px; font-weight: 600; display: grid; place-items: center; }
+  .bubble-from { font-size: 11px; font-weight: 700; opacity: .8; margin-bottom: 2px; }
   .chat-list { flex: 1; min-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: var(--green-50); border-radius: 12px; padding: 12px; }
   .chat-empty { margin: auto; text-align: center; color: var(--muted); font-size: 14px; max-width: 260px; }
   .bubble { max-width: 82%; padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.45; box-shadow: 0 1px 1px rgba(10,61,44,.06); }
@@ -272,6 +279,11 @@
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>
     <span>Messages</span>
     <b class="side-badge" id="msgBadge" hidden></b>
+  </button>
+  <!-- Only shown to admins (see ADMINS in the script): read-only view of every conversation -->
+  <button type="button" class="side-btn" data-view="admin" id="adminBtn" hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+    <span>All messages</span>
   </button>
 </nav>
 
@@ -464,7 +476,7 @@
     $("statUnread").textContent = students.reduce((n, s) => n + s.unread, 0);
     render();
     renderMsgBadge();
-    if (messagesOpen() && !chatStudent) $("drawerBody").innerHTML = conversationsHTML();
+    if (messagesOpen() && panelMode === "messages" && !chatStudent) $("drawerBody").innerHTML = conversationsHTML();
   }
   $("search").addEventListener("input", render);
 
@@ -538,12 +550,13 @@
     refresh();
   }
   function openMessages(username) {
+    adminChat = null; panelMode = "messages";
     $("drawerOverlay").classList.add("open");
     setActive("messages");
     if (username) showChat(username); else { showConversations(); $("drawerClose").focus(); }
   }
   function closeMessages() {
-    chatStudent = null;
+    chatStudent = null; adminChat = null; panelMode = "messages";
     $("drawerOverlay").classList.remove("open");
     $("drawerBody").classList.remove("chat-mode");
     setActive("students");
@@ -558,13 +571,88 @@
   }
   const setActive = view => document.querySelectorAll(".side-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
 
+  // ---------- Admin: read-only view of every conversation ----------
+  // Admin tutors (by username) get an "All messages" item in the sidebar. They can read every conversation
+  // between any student and any tutor in this browser, but can't send in them, and reading doesn't mark
+  // anything as read for the student or tutor.
+  const ADMINS = ["dayan"];
+  const isAdmin = ADMINS.includes(String(tutorUser).toLowerCase());
+  $("adminBtn").hidden = !isAdmin;
+  let panelMode = "messages", adminChat = null;   // adminChat: { student, tutor } when a conversation is open
+  function allConversations() {
+    const accounts = read("tela.accounts", {}), tutorAccounts = read("tela.tutors", {});
+    return Object.keys(accounts).flatMap(student => TelaMessages.partners(student).map(tutor => {
+      const list = TelaMessages.thread(student, tutor);
+      return { student, tutor, studentName: accounts[student].displayName || student,
+        tutorName: (tutorAccounts[tutor] || {}).displayName || tutor, count: list.length, last: list[list.length - 1] };
+    })).sort((a, b) => b.last.at - a.last.at);
+  }
+  function adminListHTML() {
+    const all = allConversations();
+    const q = ($("adminSearch") ? $("adminSearch").value : "").trim().toLowerCase();
+    const shown = all.filter(c => !q || [c.studentName, c.tutorName, c.student, c.tutor].some(s => s.toLowerCase().includes(q)));
+    const rows = shown.length ? `<ul class="convo-list">${shown.map(c => `<li><button type="button" class="convo" data-admin-chat="${esc(c.student + "|" + c.tutor)}">
+        <span class="avatar">${esc(c.studentName.charAt(0).toUpperCase())}</span>
+        <span class="convo-main"><span class="convo-top"><strong>${esc(c.studentName)} ↔ ${esc(c.tutorName)}</strong><small>${TelaMessages.when(c.last.at)}</small></span>
+          <span class="convo-preview">${esc(c.last.from === "tutor" ? c.tutorName : c.studentName)}: ${esc(c.last.text)}</span></span>
+        <span class="msg-count">${c.count}</span></button></li>`).join("")}</ul>`
+      : `<p class="muted">${all.length ? "No conversations match your search." : "No one has sent any messages yet."}</p>`;
+    return rows;
+  }
+  function showAdminList() {
+    adminChat = null;
+    $("drawerTitle").textContent = "All messages";
+    $("drawerBody").classList.remove("chat-mode");
+    $("drawerBody").innerHTML = `<p class="admin-note">Admin view: every conversation between students and tutors in this browser. Read-only.</p>
+      <label class="search admin-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="adminSearch" placeholder="Search by student or tutor…" autocomplete="off" aria-label="Search conversations"></label>
+      <div id="adminRows">${adminListHTML()}</div>`;
+  }
+  function adminBubbles(c) {
+    return TelaMessages.thread(c.student, c.tutor).map(m => `<div class="bubble ${m.from === "tutor" ? "mine" : "theirs"}">
+      <div class="bubble-from">${esc(m.from === "tutor" ? c.tutorName : c.studentName)}</div>
+      <div class="bubble-text">${esc(m.text)}</div><div class="bubble-time">${TelaMessages.when(m.at)}</div></div>`).join("");
+  }
+  function showAdminChat(student, tutor) {
+    const c = allConversations().find(x => x.student === student && x.tutor === tutor);
+    if (!c) return showAdminList();
+    adminChat = { student, tutor };
+    $("drawerTitle").textContent = "All messages";
+    $("drawerBody").classList.add("chat-mode");
+    $("drawerBody").innerHTML = `<div class="chat">
+      <div class="chat-head">
+        <button type="button" class="icon-btn" id="adminBack" aria-label="Back to all conversations">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <div><strong>${esc(c.studentName)} ↔ ${esc(c.tutorName)}</strong><small>@${esc(c.student)} and @${esc(c.tutor)} · ${c.count} message${c.count === 1 ? "" : "s"}</small></div>
+      </div>
+      <p class="admin-note">Read-only admin view. ${esc(c.tutorName)}'s messages are on the right.</p>
+      <div class="chat-list" id="chatList">${adminBubbles(c)}</div></div>`;
+    $("chatList").scrollTop = $("chatList").scrollHeight;
+  }
+  function openAdmin() {
+    chatStudent = null; panelMode = "admin";
+    $("drawerOverlay").classList.add("open");
+    setActive("admin");
+    showAdminList();
+    $("adminSearch").focus();
+  }
+  function refreshAdmin() {
+    if (adminChat) showAdminChat(adminChat.student, adminChat.tutor);
+    else if ($("adminRows")) $("adminRows").innerHTML = adminListHTML();
+  }
+
   document.querySelectorAll(".side-btn").forEach(b => b.addEventListener("click", () => {
-    if (b.dataset.view === "messages") { if (messagesOpen()) closeMessages(); else openMessages(); }
+    if (b.dataset.view === "messages") { if (messagesOpen() && panelMode === "messages") closeMessages(); else openMessages(); }
+    else if (b.dataset.view === "admin" && isAdmin) { if (messagesOpen() && panelMode === "admin") closeMessages(); else openAdmin(); }
     else { closeMessages(); window.scrollTo({ top: 0, behavior: "smooth" }); }
   }));
+  $("drawerBody").addEventListener("input", e => { if (e.target.id === "adminSearch") $("adminRows").innerHTML = adminListHTML(); });
   $("drawerClose").addEventListener("click", closeMessages);
   $("drawerOverlay").addEventListener("click", e => {
     if (e.target === $("drawerOverlay")) return closeMessages();
+    if (e.target.closest("#adminBack")) return showAdminList();
+    const adminOpen = e.target.closest("[data-admin-chat]");
+    if (adminOpen) { const [student, tutor] = adminOpen.dataset.adminChat.split("|"); return showAdminChat(student, tutor); }
     if (e.target.closest("#chatBack")) return showConversations();
     const chat = e.target.closest("[data-chat]");
     if (chat) return showChat(chat.dataset.chat);
@@ -580,7 +668,8 @@
   // Messages (and progress) from a student in another tab arrive without a reload.
   window.addEventListener("storage", e => {
     if (!e.key || !(e.key.startsWith("tela.topics.") || e.key === "tela.accounts")) return;
-    if (chatStudent && messagesOpen()) refreshChat(); else refresh();
+    if (panelMode === "admin" && messagesOpen()) { refresh(); refreshAdmin(); }
+    else if (chatStudent && messagesOpen()) refreshChat(); else refresh();
   });
 
   // Collapse or expand the sidebar; the choice is remembered in this browser.

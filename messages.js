@@ -60,6 +60,8 @@ const TelaMessages = (() => {
     write(key, map);
   }
   const last = (student, tutor) => thread(student, tutor).pop() || null;
+  // The tutors a student has a conversation with (used by the admin view of all messages).
+  const partners = student => Object.entries(migrate(student)).filter(([, list]) => Array.isArray(list) && list.length).map(([tutor]) => tutor);
 
   // "14:05" today, "Yesterday 14:05", otherwise "24 Oct 14:05".
   function when(at) {
@@ -71,5 +73,5 @@ const TelaMessages = (() => {
   }
   const isMessagesKey = key => /^tela\.(topics\.[^.]+\.(messages|msgRead)|tutorMsgRead\.)/.test(key || "");
 
-  return { tutorsOf, thread, send, unread, markRead, last, when, isMessagesKey };
+  return { tutorsOf, thread, send, unread, markRead, last, partners, when, isMessagesKey };
 })();
