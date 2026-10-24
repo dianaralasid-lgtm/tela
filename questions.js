@@ -185,6 +185,12 @@
               text: { 1: "10 cm", 2: "x" } gives sides your own labels
      cone: { r: "3 cm", h: "9 cm", l: "5 cm" }   sphere: { r: "3 cm", half: true }
      sector: { angle: 60, r: "6 cm" }
+     graph extras: shade: [[x, y], ...] fills a region; dashed: [[[x, y], [x, y]]] draws dashed lines
+     circleFig: { points: { A: 210, B: 330, C: 90 }, centre: true, lines: ["AB", "BC", "CA", "OA"],
+                  marks: { C: "x", O: "100°" }, tangentAt: "B" }
+                (points are placed round the circle at those angles; marks are written inside the named point)
+     boxplot: { min: 10, q1: 18, median: 25, q3: 31, max: 40, from: 0, to: 50, step: 5, label: "Time (minutes)" }
+                (or a list of these, each with a name, to compare)
 
    "drawbar"  The student clicks a bar chart to draw the missing bar. Give
               the chart as  bars: {...}  with null for the missing value and
@@ -4698,5 +4704,356 @@ QUESTION_BANK.add({
     { section: "Section B: Vectors on a grid", question: "Find the length (magnitude) of the vector (3, 4).", type: "number", marks: 2, answer: "5" },
     { section: "Section B: Vectors on a grid", question: "Explain what the vector (−2, 5) means as a movement.", type: "explain", marks: 1,
       answer: "Move 2 units to the left (the top number is negative) and 5 units up (the bottom number is positive)." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Recurring decimals to fractions",
+  title: "Recurring Decimals to Fractions",
+  type: "fraction",
+  questionsPerSet: 10,
+  tip: "Let x = the decimal. Multiply by 10, 100 or 1000 so the repeating part lines up, subtract to remove it, then solve and simplify. Give fractions in their simplest form.",
+  questions: [
+    { section: "Section A: One repeating digit", question: "Write 0.333… (0.3̇) as a fraction in its simplest form.", simplest: true, marks: 2, answer: "1/3" },
+    { section: "Section A: One repeating digit", question: "Write 0.777… (0.7̇) as a fraction in its simplest form.", simplest: true, marks: 2, answer: "7/9" },
+    { section: "Section A: One repeating digit", question: "Write 0.1666… (0.16̇) as a fraction in its simplest form.", simplest: true, marks: 3, answer: "1/6" },
+    { section: "Section A: One repeating digit", question: "Write 0.8333… (0.83̇) as a fraction in its simplest form.", simplest: true, marks: 3, answer: "5/6" },
+    { section: "Section A: One repeating digit", question: "Write 1.333… (1.3̇) as a fraction.", marks: 2, answer: "4/3" },
+
+    { section: "Section B: Longer patterns", question: "Write 0.454545… (0.4̇5̇) as a fraction in its simplest form.", simplest: true, marks: 3, answer: "5/11" },
+    { section: "Section B: Longer patterns", question: "Write 0.121212… (0.1̇2̇) as a fraction in its simplest form.", simplest: true, marks: 3, answer: "4/33" },
+    { section: "Section B: Longer patterns", question: "Write 0.234234… (0.2̇34̇) as a fraction in its simplest form.", simplest: true, marks: 3, answer: "26/111" },
+    { section: "Section B: Longer patterns", question: "Which fraction gives a recurring decimal?", type: "choice", marks: 1, options: ["1/4", "3/8", "2/3", "7/10"], answer: "2/3" },
+    { section: "Section B: Longer patterns", question: "To write 0.777… as a fraction, why do you work out 10x − x?", type: "explain", marks: 1,
+      answer: "10x = 7.777… and x = 0.777… have the same repeating part after the point, so subtracting removes it: 9x = 7, giving x = 7/9." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Product rule for counting",
+  title: "The Product Rule for Counting",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "If there are a ways to do one thing and b ways to do another, there are a × b ways to do both. When an item can't be reused, each choice has one fewer option than the last.",
+  questions: [
+    { section: "Section A: Combinations", question: "A menu has 3 starters, 4 mains and 2 desserts. How many different three-course meals are there?", marks: 1, answer: "24" },
+    { section: "Section A: Combinations", question: "Sam has 4 shirts, 3 pairs of trousers and 2 pairs of shoes. How many different outfits can he make?", marks: 1, answer: "24" },
+    { section: "Section A: Combinations", question: "A 4-digit PIN uses the digits 0–9. Digits can repeat. How many PINs are possible?", marks: 2, answer: "10000" },
+    { section: "Section A: Combinations", question: "A number plate has 2 letters (A–Z) followed by 3 digits (0–9). How many plates are possible?", marks: 2, answer: "676000" },
+
+    { section: "Section B: Without repeats", question: "A 4-digit PIN uses the digits 0–9 with no digit used twice. How many PINs are possible?", marks: 2, answer: "5040" },
+    { section: "Section B: Without repeats", question: "In how many different orders can 5 people stand in a line?", marks: 2, answer: "120" },
+    { section: "Section B: Without repeats", question: "How many 3-digit numbers can be made from the digits 1, 2, 3, 4 and 5 if no digit is repeated?", marks: 2, answer: "60" },
+    { section: "Section B: Without repeats", question: "How many of these 3-digit numbers (digits 1–5, no repeats) are even?", marks: 3, answer: "24" },
+    { section: "Section B: Without repeats", question: "Which calculation gives the number of ways to arrange 4 different books on a shelf?", type: "choice", marks: 1,
+      options: ["4 × 3 × 2 × 1", "4 + 3 + 2 + 1", "4 × 4 × 4 × 4", "4 × 2"], answer: "4 × 3 × 2 × 1" },
+    { section: "Section B: Without repeats", question: "Explain why a PIN with no repeated digits has 10 × 9 × 8 × 7 possibilities.", type: "explain", marks: 1,
+      answer: "There are 10 choices for the first digit, then only 9 left for the second (one is used), 8 for the third and 7 for the fourth. Multiplying gives every combination." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Repeated percentage change",
+  title: "Repeated Percentage Change",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Use the multiplier raised to the number of times: growth of 3% for 4 years is × 1.03⁴; a fall of 12% for 3 years is × 0.88³. Give money to the nearest penny.",
+  questions: [
+    { section: "Section A: Growth and decay", question: "£5000 is invested at 3% compound interest per year. What is it worth after 4 years?", tolerance: 0.01, marks: 2, answer: "£5627.54" },
+    { section: "Section A: Growth and decay", question: "A car worth £15 000 depreciates by 12% each year. What is it worth after 3 years?", tolerance: 0.01, marks: 2, answer: "£10222.08" },
+    { section: "Section A: Growth and decay", question: "A town of 20 000 people grows by 2% each year. What is its population after 5 years, to the nearest whole number?", tolerance: 0.5, marks: 2, answer: "22082" },
+    { section: "Section A: Growth and decay", question: "500 bacteria double every hour. How many are there after 6 hours?", marks: 2, answer: "32000" },
+    { section: "Section A: Growth and decay", question: "Which multiplier gives 4 years of 3% growth?", type: "choice", marks: 1, options: ["1.03⁴", "1.12", "0.03⁴", "4 × 1.03"], answer: "1.03⁴" },
+
+    { section: "Section B: Problem solving", question: "A price is increased by 10% and then decreased by 10%. What is the overall percentage decrease?", marks: 2, answer: "1%" },
+    { section: "Section B: Problem solving", question: "£1000 is invested at 5% compound interest. After how many whole years will it first be worth more than £1200?", marks: 2, answer: "4" },
+    { section: "Section B: Problem solving", question: "A painting's value goes up by 20% one year and down by 20% the next. Sara says it is back to its original value. Explain why Sara is wrong.", type: "explain", marks: 1,
+      answer: "The second change is 20% of a bigger amount. × 1.2 then × 0.8 is × 0.96 overall, so the painting is worth 4% less than at the start." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Indices: fractions and negative powers",
+  title: "Fractional and Negative Indices",
+  type: "fraction",
+  questionsPerSet: 10,
+  tip: "A negative power means 1 over: a⁻ⁿ = 1/aⁿ. A fractional power means a root: a^(1/n) is the nth root, and a^(m/n) is the nth root raised to the power m. Anything to the power 0 is 1.",
+  questions: [
+    { section: "Section A: Negative and zero powers", question: "Work out 2⁻³", marks: 1, answer: "1/8" },
+    { section: "Section A: Negative and zero powers", question: "Work out 5⁻²", marks: 1, answer: "1/25" },
+    { section: "Section A: Negative and zero powers", question: "Work out 10⁰", marks: 1, answer: "1" },
+    { section: "Section A: Negative and zero powers", question: "Work out (1/4)⁻²", marks: 2, answer: "16" },
+
+    { section: "Section B: Fractional powers", question: "Work out 9^(1/2)", marks: 1, answer: "3" },
+    { section: "Section B: Fractional powers", question: "Work out 8^(1/3)", marks: 1, answer: "2" },
+    { section: "Section B: Fractional powers", question: "Work out 27^(2/3)", marks: 2, answer: "9" },
+    { section: "Section B: Fractional powers", question: "Work out 16^(3/4)", marks: 2, answer: "8" },
+    { section: "Section B: Fractional powers", question: "Work out 4^(3/2)", marks: 2, answer: "8" },
+    { section: "Section B: Fractional powers", question: "Work out 64^(−1/2)", marks: 2, answer: "1/8" },
+    { section: "Section B: Fractional powers", question: "What does x⁻¹ mean?", type: "choice", marks: 1, options: ["1/x", "−x", "x − 1", "√x"], answer: "1/x" },
+    { section: "Section B: Fractional powers", question: "Ben says 2⁻³ = −8. Explain Ben's mistake.", type: "explain", marks: 1,
+      answer: "A negative power doesn't make the answer negative; it means 'one over'. 2⁻³ = 1/2³ = 1/8." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Expanding triple brackets",
+  title: "Expanding Triple Brackets",
+  type: "algebra",
+  questionsPerSet: 10,
+  tip: "Expand two of the brackets first and simplify, then multiply every term of that answer by every term of the third bracket and collect like terms. Type x³ as x^3 (or use x²/³ symbols).",
+  questions: [
+    { section: "Section A: Triple brackets", question: "Expand and simplify (x + 1)(x + 2)(x + 3)", marks: 3, answer: "x³ + 6x² + 11x + 6" },
+    { section: "Section A: Triple brackets", question: "Expand and simplify (x − 1)(x + 2)(x + 4)", marks: 3, answer: "x³ + 5x² + 2x − 8" },
+    { section: "Section A: Triple brackets", question: "Expand and simplify (x + 2)³", marks: 3, answer: "x³ + 6x² + 12x + 8" },
+    { section: "Section A: Triple brackets", question: "Expand and simplify (x − 3)(x + 3)(x + 1)", marks: 3, answer: "x³ + x² − 9x − 9" },
+    { section: "Section A: Triple brackets", question: "Expand and simplify (2x + 1)(x − 1)(x + 2)", marks: 3, answer: "2x³ + 3x² − 3x − 2" },
+    { section: "Section A: Triple brackets", question: "Expand and simplify (x + 1)²(x − 2)", marks: 3, answer: "x³ − 3x − 2" },
+    { section: "Section A: Triple brackets", question: "Before collecting like terms, how many terms do you get when expanding (x + a)(x + b)(x + c)?", type: "choice", marks: 1,
+      options: ["8", "6", "4", "9"], answer: "8" },
+    { section: "Section A: Triple brackets", question: "Kai says (x + 2)³ = x³ + 8. Explain Kai's mistake.", type: "explain", marks: 1,
+      answer: "(x + 2)³ means (x + 2)(x + 2)(x + 2). Expanding fully gives x³ + 6x² + 12x + 8; cubing each term separately misses the middle terms." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Straight line graphs: parallel & perpendicular",
+  title: "Parallel and Perpendicular Lines",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "Parallel lines have equal gradients. Perpendicular gradients multiply to −1, so flip the fraction and change the sign (2 → −1/2). Type gradients like −1/2 and equations like y = 3x + 2.",
+  questions: [
+    { section: "Section A: Gradients", question: "What is the gradient of a line perpendicular to y = 2x + 1?", marks: 1, answer: "−1/2" },
+    { section: "Section A: Gradients", question: "What is the gradient of a line perpendicular to y = −3x + 4?", marks: 1, answer: "1/3" },
+    { section: "Section A: Gradients", question: "What is the gradient of a line perpendicular to y = (2/5)x − 1?", marks: 1, answer: "−5/2" },
+    { section: "Section A: Gradients", question: "Are the lines y = 2x + 1 and y = −0.5x + 3 perpendicular?", type: "choice", marks: 1, options: ["Yes", "No"], answer: "Yes" },
+    { section: "Section A: Gradients", question: "Which line is perpendicular to y = 4x − 1?", type: "choice", marks: 1,
+      options: ["y = −x/4 + 2", "y = 4x + 3", "y = −4x", "y = x/4"], answer: "y = −x/4 + 2" },
+
+    { section: "Section B: Equations", question: "Find the equation of the line parallel to y = 3x − 2 that passes through (1, 5).", marks: 2, answer: "y = 3x + 2" },
+    { section: "Section B: Equations", question: "Find the equation of the line perpendicular to y = 2x + 3 that passes through (4, 1).", marks: 3, answer: "y = −x/2 + 3" },
+    { section: "Section B: Equations", question: "Find the equation of the line perpendicular to y = −x + 5 that passes through (0, −2).", marks: 2, answer: "y = x − 2" },
+    { section: "Section B: Equations", question: "Explain how you know y = 3x + 1 and y = −x/3 + 4 are perpendicular.", type: "explain", marks: 1,
+      answer: "Their gradients are 3 and −1/3, and 3 × (−1/3) = −1. Gradients that multiply to −1 belong to perpendicular lines." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Straight line graphs: finding areas under graph",
+  title: "Areas Under Graphs",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "On a speed-time graph, the area underneath gives the distance travelled and the gradient gives the acceleration. Split the area into triangles, rectangles and trapeziums.",
+  questions: [
+    { section: "Section A: Distance from area", text: "The speed-time graph shows a car's journey.", question: "How far does the car travel in the first 4 seconds?", marks: 2, answer: "24 m",
+      graph: { x: [0, 14], y: [0, 14], ystep: 2, xlabel: "Time (s)", ylabel: "Speed (m/s)", lines: [[[0, 0], [4, 12], [10, 12], [14, 0]]] } },
+    { section: "Section A: Distance from area", text: "The speed-time graph shows a car's journey.", question: "What is the total distance the car travels?", marks: 3, answer: "120 m",
+      graph: { x: [0, 14], y: [0, 14], ystep: 2, xlabel: "Time (s)", ylabel: "Speed (m/s)", lines: [[[0, 0], [4, 12], [10, 12], [14, 0]]] } },
+    { section: "Section A: Distance from area", text: "The speed-time graph shows a cyclist speeding up steadily.", question: "How far does the cyclist travel in the 6 seconds?", marks: 2, answer: "66 m",
+      graph: { x: [0, 8], y: [0, 18], ystep: 2, xlabel: "Time (s)", ylabel: "Speed (m/s)", lines: [[[0, 5], [6, 17]]] } },
+
+    { section: "Section B: Gradients and meaning", text: "The speed-time graph shows a car's journey.", question: "What is the car's acceleration in the first 4 seconds, in m/s²?", marks: 2, answer: "3",
+      graph: { x: [0, 14], y: [0, 14], ystep: 2, xlabel: "Time (s)", ylabel: "Speed (m/s)", lines: [[[0, 0], [4, 12], [10, 12], [14, 0]]] } },
+    { section: "Section B: Gradients and meaning", text: "The speed-time graph shows a car's journey.", question: "What is the car's deceleration in the last 4 seconds, in m/s²?", marks: 2, answer: "3",
+      graph: { x: [0, 14], y: [0, 14], ystep: 2, xlabel: "Time (s)", ylabel: "Speed (m/s)", lines: [[[0, 0], [4, 12], [10, 12], [14, 0]]] } },
+    { section: "Section B: Gradients and meaning", question: "What does the area under a speed-time graph represent?", type: "choice", marks: 1,
+      options: ["Distance travelled", "Acceleration", "Speed", "Time taken"], answer: "Distance travelled" },
+    { section: "Section B: Gradients and meaning", question: "On a speed-time graph, what does a horizontal line show?", type: "explain", marks: 1,
+      answer: "The speed isn't changing: the object is moving at a constant speed (zero acceleration). It is not stopped unless the line is at speed 0." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Inequalities on graphs: shading",
+  title: "Inequalities on Graphs",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "Draw each boundary line: solid for ≤ or ≥, dashed for < or >. Test a point (such as (0, 0)) to decide which side satisfies the inequality. To plot integer points, click each one.",
+  questions: [
+    { section: "Section A: Reading regions", question: "Which inequality describes the shaded region?", marks: 1,
+      options: ["y > 2", "y < 2", "y ≥ 2", "x > 2"], answer: "y > 2",
+      graph: { shade: [[-5, 2], [5, 2], [5, 5], [-5, 5]], dashed: [[[-5, 2], [5, 2]]] } },
+    { section: "Section A: Reading regions", question: "Which inequality describes the shaded region?", marks: 1,
+      options: ["y ≤ x + 1", "y ≥ x + 1", "y < x + 1", "y ≤ x − 1"], answer: "y ≤ x + 1",
+      graph: { shade: [[-5, -4], [4, 5], [5, 5], [5, -5], [-5, -5]], lines: [[[-5, -4], [4, 5]]] } },
+    { section: "Section A: Reading regions", question: "What does a dashed boundary line mean?", marks: 1,
+      options: ["Points on the line are not included (< or >)", "Points on the line are included (≤ or ≥)", "The line is not needed", "The region is below the line"],
+      answer: "Points on the line are not included (< or >)" },
+    { section: "Section A: Reading regions", question: "Is the point (2, 5) in the region y < 2x + 1?", marks: 1, options: ["Yes", "No"], answer: "No" },
+
+    { section: "Section B: Integer points", text: "The region satisfies x ≥ 1, y ≥ 1 and x + y ≤ 4.", question: "Plot all the points with whole-number coordinates in the region.", type: "plot", marks: 3,
+      answer: "(1, 1); (1, 2); (1, 3); (2, 1); (2, 2); (3, 1)",
+      graph: { x: [-1, 5], y: [-1, 5], shade: [[1, 1], [3, 1], [1, 3]], lines: [[[1, -1], [1, 5]], [[-1, 1], [5, 1]], [[0, 4], [4, 0]]] } },
+    { section: "Section B: Integer points", question: "Tap all the points that satisfy y ≥ 2x − 1.", type: "select", marks: 2,
+      options: ["(0, 0)", "(1, 0)", "(2, 5)", "(3, 4)", "(1, 1)"], answer: "(0, 0); (2, 5); (1, 1)" },
+    { section: "Section B: Integer points", question: "Explain how to decide which side of the line y = 2x + 1 to shade for y > 2x + 1.", type: "explain", marks: 1,
+      answer: "Test a point not on the line, such as (0, 0): is 0 > 2(0) + 1? No, so (0, 0) is not in the region. Shade the other side (above the line), and draw the line dashed because it's >." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Similar shapes (area and volume)",
+  title: "Similar Shapes: Area and Volume",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "If lengths are multiplied by k, areas are multiplied by k² and volumes by k³. To go back, find the length scale factor from areas (√) or volumes (∛).",
+  questions: [
+    { section: "Section A: Area and volume factors", question: "Shape A has an area of 10 cm². Shape B is similar, with lengths 3 times as long. What is the area of B?", marks: 2, answer: "90 cm²" },
+    { section: "Section A: Area and volume factors", question: "Solid A has a volume of 15 cm³. Solid B is similar, with lengths twice as long. What is the volume of B?", marks: 2, answer: "120 cm³" },
+    { section: "Section A: Area and volume factors", question: "Two similar triangles have sides in the ratio 2 : 5. The small one has an area of 12 cm². What is the area of the large one?", marks: 2, answer: "75 cm²" },
+    { section: "Section A: Area and volume factors", question: "Two similar cylinders have heights 4 cm and 6 cm. The small one has a volume of 64 cm³. What is the volume of the large one?", marks: 3, answer: "216 cm³" },
+
+    { section: "Section B: Working backwards", question: "Two similar shapes have areas 16 cm² and 36 cm². What is the length scale factor from the small to the large?", marks: 2, answer: "1.5" },
+    { section: "Section B: Working backwards", question: "Two similar solids have volumes 27 cm³ and 125 cm³. Write the ratio of their surface areas.", type: "ratio", simplest: true, marks: 2, answer: "9:25" },
+    { section: "Section B: Working backwards", question: "Lengths are multiplied by k. What are areas multiplied by?", type: "choice", marks: 1, options: ["k²", "k", "k³", "2k"], answer: "k²" },
+    { section: "Section B: Working backwards", question: "A model is built with every length half the real size. Amy says it needs half as much paint. Explain why Amy is wrong.", type: "explain", marks: 1,
+      answer: "Paint covers area, and areas scale by the square of the length factor: (1/2)² = 1/4. The model needs a quarter as much paint, not half." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Enlargements: negative scale factor",
+  title: "Enlargements: Negative and Fractional",
+  type: "plot",
+  questionsPerSet: 10,
+  tip: "With a negative scale factor the image is on the opposite side of the centre and upside down. Multiply each point's distance from the centre by the scale factor. Plot the corners of the image by clicking.",
+  questions: [
+    { section: "Section A: Drawing enlargements", question: "Enlarge the triangle by scale factor −1, centre (0, 0). Plot the three corners of the image.", marks: 2,
+      answer: "(−1, −1); (−2, −1); (−1, −3)", graph: { lines: [[[1, 1], [2, 1], [1, 3], [1, 1]]] } },
+    { section: "Section A: Drawing enlargements", question: "Enlarge the triangle by scale factor −2, centre (0, 0). Plot the three corners of the image.", marks: 2,
+      answer: "(−2, −2); (−4, −2); (−2, −4)", graph: { lines: [[[1, 1], [2, 1], [1, 2], [1, 1]]] } },
+    { section: "Section A: Drawing enlargements", question: "Enlarge the triangle by scale factor ½, centre (0, 0). Plot the three corners of the image.", marks: 2,
+      answer: "(1, 1); (2, 1); (1, 2)", graph: { lines: [[[2, 2], [4, 2], [2, 4], [2, 2]]] } },
+    { section: "Section A: Drawing enlargements", question: "Enlarge the triangle by scale factor −½, centre (0, 0). Plot the three corners of the image.", marks: 2,
+      answer: "(−2, −1); (−2, −2); (−1, −1)", graph: { lines: [[[4, 2], [4, 4], [2, 2], [4, 2]]] } },
+
+    { section: "Section B: Describing enlargements", question: "Triangle A is enlarged onto triangle B with centre (0, 0). What is the scale factor?", type: "number", marks: 2, answer: "−2",
+      graph: { lines: [[[1, 1], [2, 1], [1, 2], [1, 1]], [[-2, -2], [-4, -2], [-2, -4], [-2, -2]]], labels: [["A", 2.2, 2.2], ["B", -3.4, -3.4]] } },
+    { section: "Section B: Describing enlargements", question: "An enlargement with scale factor −1 about a point is the same as which other transformation?", type: "choice", marks: 1,
+      options: ["A rotation of 180° about that point", "A reflection in the y-axis", "A translation", "A rotation of 90°"], answer: "A rotation of 180° about that point" },
+    { section: "Section B: Describing enlargements", question: "Explain what a scale factor of −2 does to a shape.", type: "explain", marks: 1,
+      answer: "It makes every length twice as long, and puts the image on the opposite side of the centre of enlargement, turned upside down (each point is twice as far from the centre, in the opposite direction)." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Circle theorems",
+  title: "Circle Theorems",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Key facts: the angle at the centre is twice the angle at the circumference; the angle in a semicircle is 90°; angles in the same segment are equal; opposite angles in a cyclic quadrilateral add to 180°; a tangent meets a radius at 90°.",
+  questions: [
+    { section: "Section A: Finding angles", text: "O is the centre of the circle. Angle AOB = 120°.", question: "Find angle x.", marks: 2, answer: "60°",
+      circleFig: { points: { A: 210, B: 330, C: 90 }, centre: true, lines: ["AC", "BC", "OA", "OB"], marks: { O: "120°", C: "x" } } },
+    { section: "Section A: Finding angles", text: "AB is a diameter. Angle BAC = 30°.", question: "Find angle y (angle ABC).", marks: 2, answer: "60°",
+      circleFig: { points: { A: 180, B: 0, C: 60 }, centre: true, lines: ["AB", "AC", "BC"], marks: { A: "30°", B: "y" } } },
+    { section: "Section A: Finding angles", text: "AB is a diameter.", question: "What is the size of angle ACB?", marks: 1, answer: "90°",
+      circleFig: { points: { A: 180, B: 0, C: 60 }, centre: true, lines: ["AB", "AC", "BC"], marks: { C: "?" } } },
+    { section: "Section A: Finding angles", text: "Angle ACB = 70°.", question: "Find angle x (angle ADB).", marks: 1, answer: "70°",
+      circleFig: { points: { A: 200, B: 340, C: 80, D: 120 }, lines: ["AC", "BC", "AD", "BD"], marks: { C: "70°", D: "x" } } },
+    { section: "Section A: Finding angles", text: "ABCD is a cyclic quadrilateral. Angle DAB = 100°.", question: "Find angle x (angle BCD).", marks: 2, answer: "80°",
+      circleFig: { points: { A: 30, B: 140, C: 210, D: 340 }, lines: ["AB", "BC", "CD", "DA"], marks: { A: "100°", C: "x" } } },
+    { section: "Section A: Finding angles", text: "O is the centre. The line touches the circle at B.", question: "What is the angle between the tangent and the radius OB?", marks: 1, answer: "90°",
+      circleFig: { points: { B: 300 }, centre: true, lines: ["OB"], tangentAt: "B" } },
+    { section: "Section A: Finding angles", question: "PA and PB are tangents to a circle from the point P. PA = 7 cm. How long is PB?", marks: 1, answer: "7 cm" },
+
+    { section: "Section B: Naming the theorems", text: "AB is a diameter. Angle BAC = 30°.", question: "Which fact tells you that angle ACB is 90°?", type: "choice", marks: 1,
+      options: ["The angle in a semicircle is 90°", "Angles in the same segment are equal", "Opposite angles in a cyclic quadrilateral add to 180°", "The angle at the centre is twice the angle at the circumference"],
+      answer: "The angle in a semicircle is 90°",
+      circleFig: { points: { A: 180, B: 0, C: 60 }, centre: true, lines: ["AB", "AC", "BC"], marks: { A: "30°" } } },
+    { section: "Section B: Naming the theorems", question: "What do opposite angles of a cyclic quadrilateral add up to?", type: "choice", marks: 1, options: ["180°", "360°", "90°", "270°"], answer: "180°" },
+    { section: "Section B: Naming the theorems", question: "Angle AOB at the centre is 120°. Leo says the angle ACB at the circumference is 240°. Explain Leo's mistake.", type: "explain", marks: 1,
+      answer: "The angle at the centre is twice the angle at the circumference, so the angle at the circumference is half of 120°: 60°. Leo doubled instead of halving." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Cumulative frequency",
+  title: "Cumulative Frequency",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Add up the frequencies as you go to get the cumulative frequency, and plot each total at the upper end of its class. For n values, read the median at n/2, the lower quartile at n/4 and the upper quartile at 3n/4.",
+  questions: [
+    { section: "Section A: Building the table", text: "The table shows how long 40 pupils took to finish a puzzle.",
+      table: { headings: ["Time, t (minutes)", "Frequency", "Cumulative frequency"], rows: [["0 < t ≤ 10", "4", "4"], ["10 < t ≤ 20", "10", "?"], ["20 < t ≤ 30", "16", "?"], ["30 < t ≤ 40", "6", "?"], ["40 < t ≤ 50", "4", "40"]] }, parts: [
+      { question: "What is the cumulative frequency for t ≤ 20?", marks: 1, answer: "14" },
+      { question: "What is the cumulative frequency for t ≤ 30?", marks: 1, answer: "30" },
+      { question: "What is the cumulative frequency for t ≤ 40?", marks: 1, answer: "36" }
+    ] },
+    { section: "Section A: Building the table", text: "The cumulative frequencies are 4, 14, 30, 36 and 40 for t ≤ 10, 20, 30, 40 and 50.",
+      question: "Plot the five cumulative frequency points.", type: "plot", marks: 2, answer: "(10, 4); (20, 14); (30, 30); (40, 36); (50, 40)",
+      graph: { x: [0, 50], xstep: 5, y: [0, 40], ystep: 2, xlabel: "Time (minutes)", ylabel: "Cumulative frequency" } },
+
+    { section: "Section B: Reading the graph", text: "The cumulative frequency graph shows the puzzle times of 40 pupils.", question: "Estimate the median time.", tolerance: 1.5, marks: 2, answer: "24",
+      graph: { x: [0, 50], xstep: 5, y: [0, 40], ystep: 2, xlabel: "Time (minutes)", ylabel: "Cumulative frequency", lines: [[[0, 0], [10, 4], [20, 14], [30, 30], [40, 36], [50, 40]]] } },
+    { section: "Section B: Reading the graph", text: "The cumulative frequency graph shows the puzzle times of 40 pupils.", question: "Estimate the interquartile range.", tolerance: 2, marks: 3, answer: "14",
+      graph: { x: [0, 50], xstep: 5, y: [0, 40], ystep: 2, xlabel: "Time (minutes)", ylabel: "Cumulative frequency", lines: [[[0, 0], [10, 4], [20, 14], [30, 30], [40, 36], [50, 40]]] } },
+    { section: "Section B: Reading the graph", text: "The cumulative frequency graph shows the puzzle times of 40 pupils.", question: "Estimate how many pupils took more than 35 minutes.", tolerance: 1, marks: 2, answer: "7",
+      graph: { x: [0, 50], xstep: 5, y: [0, 40], ystep: 2, xlabel: "Time (minutes)", ylabel: "Cumulative frequency", lines: [[[0, 0], [10, 4], [20, 14], [30, 30], [40, 36], [50, 40]]] } },
+    { section: "Section B: Reading the graph", question: "For 40 pupils, at what cumulative frequency do you read the median?", type: "choice", marks: 1, options: ["20", "10", "30", "40"], answer: "20" },
+    { section: "Section B: Reading the graph", question: "Why are cumulative frequencies plotted at the upper end of each class, not the middle?", type: "explain", marks: 1,
+      answer: "The cumulative frequency counts everyone up to the end of the class. For example, 14 pupils took 20 minutes or less, so the point goes at t = 20." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Box plots",
+  title: "Box Plots",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "A box plot shows the minimum, lower quartile, median, upper quartile and maximum. Range = max − min; interquartile range (IQR) = upper quartile − lower quartile. A smaller IQR means more consistent results.",
+  questions: [
+    { section: "Section A: Reading a box plot", text: "The box plot shows the time pupils spent on homework.", question: "What is the median?", marks: 1, answer: "25",
+      boxplot: { min: 10, q1: 20, median: 25, q3: 35, max: 45, from: 0, to: 50, step: 5, label: "Time (minutes)" } },
+    { section: "Section A: Reading a box plot", text: "The box plot shows the time pupils spent on homework.", question: "What is the interquartile range?", marks: 1, answer: "15",
+      boxplot: { min: 10, q1: 20, median: 25, q3: 35, max: 45, from: 0, to: 50, step: 5, label: "Time (minutes)" } },
+    { section: "Section A: Reading a box plot", text: "The box plot shows the time pupils spent on homework.", question: "What is the range?", marks: 1, answer: "35",
+      boxplot: { min: 10, q1: 20, median: 25, q3: 35, max: 45, from: 0, to: 50, step: 5, label: "Time (minutes)" } },
+    { section: "Section A: Reading a box plot", question: "What does the box of a box plot show?", type: "choice", marks: 1,
+      options: ["The middle 50% of the data", "All of the data", "The mean", "The top 25% of the data"], answer: "The middle 50% of the data" },
+
+    { section: "Section B: Quartiles and comparing", text: "Here are 7 values in order: 3, 5, 7, 8, 9, 11, 15.", question: "What is the lower quartile?", marks: 1, answer: "5" },
+    { section: "Section B: Quartiles and comparing", text: "Here are 7 values in order: 3, 5, 7, 8, 9, 11, 15.", question: "What is the upper quartile?", marks: 1, answer: "11" },
+    { section: "Section B: Quartiles and comparing", text: "The box plots compare test scores for two classes.", question: "Which class has the higher median?", type: "choice", marks: 1,
+      options: ["Class A", "Class B"], answer: "Class B",
+      boxplot: [{ name: "A", min: 20, q1: 35, median: 45, q3: 55, max: 70, from: 0, to: 80, step: 10, label: "Score" }, { name: "B", min: 30, q1: 40, median: 50, q3: 55, max: 65 }] },
+    { section: "Section B: Quartiles and comparing", text: "The box plots compare test scores for two classes.", question: "Which class's scores are more consistent (smaller interquartile range)?", type: "choice", marks: 1,
+      options: ["Class A", "Class B"], answer: "Class B",
+      boxplot: [{ name: "A", min: 20, q1: 35, median: 45, q3: 55, max: 70, from: 0, to: 80, step: 10, label: "Score" }, { name: "B", min: 30, q1: 40, median: 50, q3: 55, max: 65 }] },
+    { section: "Section B: Quartiles and comparing", question: "When comparing two box plots, what two things should you compare?", type: "explain", marks: 1,
+      answer: "An average (the medians, to say which is higher on average) and a measure of spread (the interquartile ranges or ranges, to say which is more consistent), in context." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Ratio: capture recapture",
+  title: "Capture-Recapture",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "The fraction of tagged animals in the second sample should match the fraction tagged in the whole population: tagged ÷ population = tagged in sample ÷ sample size. So population ≈ (first catch × second catch) ÷ number tagged in the second catch.",
+  questions: [
+    { section: "Section A: Estimating a population", question: "20 fish are caught, tagged and released. Later 30 fish are caught and 5 of them are tagged. Estimate the number of fish in the lake.", marks: 2, answer: "120" },
+    { section: "Section A: Estimating a population", question: "50 birds are tagged. Later 40 are caught and 8 are tagged. Estimate the population.", marks: 2, answer: "250" },
+    { section: "Section A: Estimating a population", question: "60 rabbits are tagged. Later 75 are caught and 15 are tagged. Estimate the population.", marks: 2, answer: "300" },
+    { section: "Section A: Estimating a population", question: "A population is estimated as 400. 80 animals were tagged. In a second sample of 50, how many would you expect to be tagged?", marks: 2, answer: "10" },
+    { section: "Section A: Estimating a population", question: "Which assumption does the capture-recapture method make?", type: "choice", marks: 1,
+      options: ["The tagged animals mix evenly back into the population", "The population is getting bigger", "No animals were tagged", "The second sample is the whole population"],
+      answer: "The tagged animals mix evenly back into the population" },
+    { section: "Section A: Estimating a population", question: "Give a reason why a capture-recapture estimate might be inaccurate.", type: "explain", marks: 1,
+      answer: "For example: tagged animals may not mix evenly, tags may fall off, animals may be born, die or move away between samples, or tagged animals may be easier or harder to catch again." }
   ]
 });

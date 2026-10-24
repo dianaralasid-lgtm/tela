@@ -404,6 +404,17 @@
     border: 1.5px solid var(--green-600); border-radius: 6px; background: var(--white); outline: none; padding: 0;
   }
   .graph .curve { fill: none; stroke-width: 2.5; }
+  .graph .region { fill: rgba(25, 135, 84, .22); stroke: none; }
+  .graph .dashed { fill: none; stroke-dasharray: 7 5; }
+  .circle-theorem .cf-circle { fill: none; stroke: var(--green-700); stroke-width: 2.5; }
+  .circle-theorem .cf-line { stroke: var(--ink); stroke-width: 2; }
+  .circle-theorem .cf-mark { font-size: 14px; font-weight: 700; fill: #c2410c; }
+  .boxplot .bp-box { fill: var(--green-50); stroke: var(--green-700); stroke-width: 2.5; }
+  .boxplot .bp-line { stroke: var(--green-700); stroke-width: 2.5; }
+  .boxplot .bp-name { font-size: 13px; font-weight: 700; fill: var(--ink); }
+  .boxplot .tick { font-size: 11px; fill: var(--muted); }
+  .boxplot .axis { stroke: var(--ink); stroke-width: 1.5; }
+  .boxplot .axis-title { font-size: 12px; font-weight: 600; fill: var(--muted); }
   .graph .vec { stroke: #c2410c; stroke-width: 2.5; }
   .graph .vec-head { fill: #c2410c; }
   .venn .venn-box { fill: none; stroke: var(--ink); stroke-width: 1.5; }
@@ -1151,6 +1162,7 @@
         cylinder: q.cylinder || null, prism: q.prism || null, cubes: Array.isArray(q.cubes) ? q.cubes : null,
         tree: Array.isArray(q.tree) ? q.tree : null, compass: q.compass || null, probTree: q.probTree || null,
         cone: q.cone || null, sphere: q.sphere || null, sector: q.sector || null,
+        circleFig: q.circleFig || null, boxplot: q.boxplot || null,
         parts
       });
     }
@@ -1338,6 +1350,9 @@
     (g.lines || []).forEach(line => {
       s += `<polyline class="shape" points="${line.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`;
     });
+    // shade: [[x, y], ...] fills a region (for example the region an inequality describes); dashed: lines drawn dashed.
+    if (g.shade) s += `<polygon class="region" points="${g.shade.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`;
+    (g.dashed || []).forEach(line => { s += `<polyline class="shape dashed" points="${line.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`; });
     // curves: ["x^2 - 2x - 3", "6/x"] draws the graph of y = each expression, broken where it leaves the grid.
     (g.curves || []).forEach(expr => {
       const f = expressionFn(expr);
@@ -2512,6 +2527,62 @@
     return { correct: false, wrong: [...wrong], message: `${wrong.size === 1 ? "One box isn't" : "Some boxes aren't"} right yet. Check the box${wrong.size === 1 ? "" : "es"} in red: each pair must multiply to the number above it.` };
   }
 
+  // Circle theorem diagram: points on the circle given by their angle (degrees, anticlockwise from the right),
+  // an optional centre O, straight lines between named points, and labels placed just inside named points.
+  // { points: { A: 210, B: 330, C: 90 }, centre: true, lines: ["AB", "BC", "CA"], marks: { C: "x", O: "100°" }, tangentAt: "B" }
+  function circleFigSVG(c) {
+    const R = 100, cx = 130, cy = 130, P = {};
+    Object.entries(c.points || {}).forEach(([k, deg]) => { P[k] = [cx + R * Math.cos(deg * Math.PI / 180), cy - R * Math.sin(deg * Math.PI / 180)]; });
+    if (c.centre) P.O = [cx, cy];
+    let s = `<circle class="cf-circle" cx="${cx}" cy="${cy}" r="${R}"/>`;
+    (c.lines || []).forEach(([a, b]) => { if (P[a] && P[b]) s += `<line class="cf-line" x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[b][0]}" y2="${P[b][1]}"/>`; });
+    if (c.tangentAt && P[c.tangentAt]) {
+      const [x, y] = P[c.tangentAt], dx = -(y - cy) / R, dy = (x - cx) / R;
+      s += `<line class="cf-line" x1="${x - dx * 90}" y1="${y - dy * 90}" x2="${x + dx * 90}" y2="${y + dy * 90}"/>`;
+    }
+    Object.entries(P).forEach(([k, [x, y]]) => {
+      const out = k === "O" ? [0, 0] : [(x - cx) / R, (y - cy) / R];
+      s += `<circle class="clock-hub" cx="${x}" cy="${y}" r="3.5"/><text class="pl-label" x="${x + out[0] * 16 - (k === "O" ? 14 : 0)}" y="${y + out[1] * 16 + 5}" text-anchor="middle">${k}</text>`;
+    });
+    Object.entries(c.marks || {}).forEach(([k, label]) => {
+      if (!P[k]) return;
+      // Write the mark inside the angle: along the bisector of the lines that meet at the point.
+      const [x, y] = P[k];
+      let inX = 0, inY = 0;
+      (c.lines || []).forEach(([a, b]) => {
+        const other = a === k ? b : b === k ? a : null;
+        if (!other || !P[other]) return;
+        const dx = P[other][0] - x, dy = P[other][1] - y, len = Math.hypot(dx, dy) || 1;
+        inX += dx / len; inY += dy / len;
+      });
+      const len = Math.hypot(inX, inY);
+      if (len < 0.1) { inX = k === "O" ? 0 : (cx - x) / R; inY = k === "O" ? 1 : (cy - y) / R; }
+      else { inX /= len; inY /= len; }
+      s += `<text class="cf-mark" x="${x + inX * 30}" y="${y + inY * 30 + 5}" text-anchor="middle">${esc(label)}</text>`;
+    });
+    return `<svg class="solid circle-theorem" viewBox="-30 -20 320 310" width="300" role="img" aria-label="Circle diagram">${s}</svg>`;
+  }
+
+  // Box plot on a scale: { min: 10, q1: 18, median: 25, q3: 31, max: 40, from: 0, to: 50, step: 5, label: "Time (minutes)" }.
+  // Several can be stacked to compare: give a list of them, each with a name.
+  function boxPlotSVG(b) {
+    const plots = Array.isArray(b) ? b : [b], from = plots[0].from ?? 0, to = plots[0].to ?? 50, step = plots[0].step ?? 5;
+    const x = v => 50 + (v - from) / (to - from) * 420, H = plots.length * 70 + 60;
+    let s = "";
+    plots.forEach((p, i) => {
+      const y = 30 + i * 70;
+      s += `<line class="bp-line" x1="${x(p.min)}" y1="${y + 20}" x2="${x(p.q1)}" y2="${y + 20}"/><line class="bp-line" x1="${x(p.q3)}" y1="${y + 20}" x2="${x(p.max)}" y2="${y + 20}"/>`;
+      s += `<line class="bp-line" x1="${x(p.min)}" y1="${y + 10}" x2="${x(p.min)}" y2="${y + 30}"/><line class="bp-line" x1="${x(p.max)}" y1="${y + 10}" x2="${x(p.max)}" y2="${y + 30}"/>`;
+      s += `<rect class="bp-box" x="${x(p.q1)}" y="${y}" width="${x(p.q3) - x(p.q1)}" height="40"/><line class="bp-line" x1="${x(p.median)}" y1="${y}" x2="${x(p.median)}" y2="${y + 40}"/>`;
+      if (p.name) s += `<text class="bp-name" x="44" y="${y + 25}" text-anchor="end">${esc(p.name)}</text>`;
+    });
+    const axisY = H - 30;
+    s += `<line class="axis" x1="${x(from)}" y1="${axisY}" x2="${x(to)}" y2="${axisY}"/>`;
+    for (let v = from; v <= to + 1e-9; v += step) s += `<line class="axis" x1="${x(v)}" y1="${axisY}" x2="${x(v)}" y2="${axisY + 6}"/><text class="tick" x="${x(v)}" y="${axisY + 20}" text-anchor="middle">${+v.toFixed(4)}</text>`;
+    if (plots[0].label) s += `<text class="axis-title" x="${x((from + to) / 2)}" y="${H + 14}" text-anchor="middle">${esc(plots[0].label)}</text>`;
+    return `<svg class="solid boxplot" viewBox="0 0 490 ${H + 22}" width="490" role="img" aria-label="Box plot">${s}</svg>`;
+  }
+
   // Probability tree with two stages:
   // { first: [["Red", "3/5"], ["Blue", "2/5"]], second: [[["Red", "2/4"], ["Blue", "2/4"]], [["Red", "3/4"], ["Blue", "1/4"]]] }
   function probTreeSVG(t) {
@@ -2767,6 +2838,8 @@
       if (item.cone) html += `<div class="graph-wrap">${coneSVG(item.cone)}</div>`;
       if (item.sphere) html += `<div class="graph-wrap">${sphereSVG(item.sphere)}</div>`;
       if (item.sector) html += `<div class="graph-wrap">${sectorSVG(item.sector)}</div>`;
+      if (item.circleFig) html += `<div class="graph-wrap">${circleFigSVG(item.circleFig)}</div>`;
+      if (item.boxplot) html += `<div class="graph-wrap col-wrap">${boxPlotSVG(item.boxplot)}</div>`;
       item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees }) => {
         const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees };
         const saved = practiceSaved[id];
