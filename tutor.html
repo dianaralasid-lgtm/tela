@@ -114,8 +114,25 @@
   .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; font-size: 13px; font-weight: 600; }
   .field input { font: inherit; font-size: 15px; font-weight: 400; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--ink); outline: none; }
   .field input:focus { border-color: var(--green-600); box-shadow: 0 0 0 4px rgba(25,135,84,.12); }
-  .field input.invalid { border-color: #b42318; }
+  .field input.invalid, .field select.invalid { border-color: #b42318; }
+  .field select, .field textarea { font: inherit; font-size: 15px; font-weight: 400; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--ink); background: var(--white); outline: none; }
+  .field textarea { min-height: 70px; resize: vertical; }
+  .field select:focus, .field textarea:focus { border-color: var(--green-600); box-shadow: 0 0 0 4px rgba(25,135,84,.12); }
+  .modal { max-width: 500px; }
+  .hw-current { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .hw-current h3, .s-section h3 { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .hw-rows { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .hw-rows li { display: flex; align-items: center; gap: 10px; font-size: 14px; border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; }
+  .hw-rows li span:first-child { flex: 1; }
+  .hw-rows small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .pill { font-size: 12px; font-weight: 600; border-radius: 99px; padding: 2px 9px; white-space: nowrap; background: #eef1f0; color: var(--muted); }
+  .pill.doing { background: #fdf3e1; color: #9a6510; }
+  .pill.done { background: var(--green-100); color: var(--green-800); }
+  .hw-remove { border: none; background: none; color: #b42318; font-size: 13px; font-weight: 600; padding: 2px 4px; border-radius: 6px; }
+  .hw-remove:hover { background: #fdecea; }
+  .s-actions { margin-top: auto; }
   .field small { font-weight: 400; color: var(--muted); font-size: 12px; }
+  .field .opt { font-weight: 400; color: var(--muted); }
   .error { display: none; background: #fdecea; color: #b42318; border-radius: 10px; padding: 10px 12px; font-size: 14px; margin-bottom: 14px; }
   .error.show { display: block; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
@@ -190,9 +207,27 @@
   </form>
 </div>
 
+<!-- Set homework for one student -->
+<div class="overlay" id="hwOverlay">
+  <form class="modal" id="hwForm" role="dialog" aria-modal="true" aria-labelledby="hwTitle" novalidate>
+    <h2 id="hwTitle">Set homework</h2>
+    <p class="lead" id="hwLead"></p>
+    <div class="error" id="hwError" role="alert"></div>
+    <label class="field">Topic<select id="hwTopic"></select></label>
+    <label class="field"><span>Due date <span class="opt">(optional)</span></span><input id="hwDue" type="date"></label>
+    <label class="field"><span>Note for the student <span class="opt">(optional)</span></span><textarea id="hwNote" maxlength="300" placeholder="e.g. Do the whole set and try the explain questions."></textarea></label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="hwCancel">Close</button>
+      <button type="submit" class="btn btn-primary">Set homework</button>
+    </div>
+    <div class="hw-current" id="hwCurrent"></div>
+  </form>
+</div>
+
 <div class="toast" id="toast" role="status"></div>
 
 <script src="auth.js"></script>
+<script src="catalog.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -212,7 +247,9 @@
     return {
       username, name: acc.displayName || username, opened: Array.isArray(topics), total: list.length,
       done: count("done"), doing: count("doing"), todo: count("todo"),
-      working: list.filter(t => t.status === "doing").map(t => t.title), notes
+      working: list.filter(t => t.status === "doing").map(t => t.title), notes,
+      homework: read("tela.topics." + username + ".homework", []),
+      statusOf: title => (list.find(t => t.title.trim().toLowerCase() === title.trim().toLowerCase()) || {}).status || "todo"
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
@@ -243,7 +280,9 @@
         <button type="button" class="remove-btn" data-remove="${esc(st.username)}" aria-label="Remove ${esc(st.name)}">Remove</button></div>
       ${summary}
       ${st.working.length ? `<div class="s-section"><h3>Working on</h3><div class="tags">${st.working.slice(0, 8).map(t => `<span class="tag">${esc(t)}</span>`).join("")}${more}</div></div>` : ""}
+      <div class="s-section"><h3>Homework</h3>${homeworkRows(st, false)}</div>
       <div class="s-section"><h3>Notes for you</h3>${st.notes ? `<div class="notes">${esc(st.notes)}</div>` : `<p class="muted">No notes yet.</p>`}</div>
+      <div class="s-actions"><button type="button" class="btn btn-primary" data-homework="${esc(st.username)}">Set homework</button></div>
     </article>`;
   }
 
@@ -265,7 +304,6 @@
     render();
   }
   $("search").addEventListener("input", render);
-  refresh();
 
   // ---------- Add a student ----------
   const USERNAME_RE = /^[a-z0-9._-]{3,20}$/;
@@ -296,6 +334,94 @@
     if (e.target.id === "emptyAdd") openAdd();
     const remove = e.target.closest("[data-remove]");
     if (remove) removeStudent(remove.dataset.remove);
+    const setHw = e.target.closest("[data-homework]");
+    if (setHw) openHomework(setHw.dataset.homework);
+  });
+
+  // ---------- Homework ----------
+  // Each student's homework is saved with their data, as [{ id, title, subject, grade, setBy, setByName, setAt, due, note }].
+  // An item counts as complete once the student has that topic at Confident.
+  const STATUS_LABEL = { todo: "Not started", doing: "In progress", done: "Complete" };
+  const shortDate = ms => new Date(ms).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  const hwKey = username => "tela.topics." + username + ".homework";
+
+  function homeworkRows(st, editable) {
+    if (!Array.isArray(st.homework) || !st.homework.length) return `<p class="muted">No homework set.</p>`;
+    return `<ul class="hw-rows">${st.homework.map(hw => {
+      const status = st.statusOf(hw.title);
+      return `<li><span>${esc(hw.title)}</span>
+        <small>${hw.due ? "Due " + shortDate(hw.due + "T12:00") : "Set " + shortDate(hw.setAt)}</small>
+        <span class="pill ${status}">${STATUS_LABEL[status]}</span>
+        ${editable ? `<button type="button" class="hw-remove" data-unset="${esc(hw.id)}" aria-label="Cancel ${esc(hw.title)}">Cancel</button>` : ""}</li>`;
+    }).join("")}</ul>`;
+  }
+
+  // The topic picker lists every topic: sciences by subject, then Maths grade by grade.
+  (function fillTopicPicker() {
+    let html = `<option value="">Choose a topic…</option>`;
+    ["Physics", "Chemistry", "Biology"].forEach(subject => {
+      html += `<optgroup label="${subject}">${SAMPLE_TOPICS[subject].map(r => `<option value="${esc(subject + "|" + r[0])}">${esc(r[0])}</option>`).join("")}</optgroup>`;
+    });
+    GRADES.forEach(grade => {
+      html += `<optgroup label="Maths · ${grade}">${MATHS_BY_GRADE[grade].map(e => `<option value="${esc("Maths|" + e.slice(2))}">${esc(e.slice(2))}</option>`).join("")}</optgroup>`;
+    });
+    $("hwTopic").innerHTML = html;
+  })();
+
+  let hwStudent = null;
+  function openHomework(username) {
+    hwStudent = students.find(s => s.username === username);
+    if (!hwStudent) return;
+    $("hwForm").reset();
+    $("hwError").classList.remove("show");
+    $("hwTopic").classList.remove("invalid");
+    $("hwTitle").textContent = `Set homework for ${hwStudent.name}`;
+    $("hwLead").textContent = `Choose a topic. It will appear in the Homework section of ${hwStudent.name}'s dashboard.`;
+    $("hwDue").min = new Date().toISOString().slice(0, 10);
+    renderCurrentHomework();
+    $("hwOverlay").classList.add("open");
+    $("hwTopic").focus();
+  }
+  function renderCurrentHomework() {
+    $("hwCurrent").innerHTML = `<h3>Current homework</h3>${homeworkRows(hwStudent, true)}`;
+  }
+  const closeHomework = () => $("hwOverlay").classList.remove("open");
+  function saveHomework(list) {
+    localStorage.setItem(hwKey(hwStudent.username), JSON.stringify(list));
+    refresh();
+    hwStudent = students.find(s => s.username === hwStudent.username);
+  }
+
+  $("hwCancel").addEventListener("click", closeHomework);
+  $("hwOverlay").addEventListener("click", e => {
+    if (e.target === $("hwOverlay")) return closeHomework();
+    const unset = e.target.closest("[data-unset]");
+    if (!unset) return;
+    const hw = hwStudent.homework.find(h => h.id === unset.dataset.unset);
+    if (!hw || !confirm(`Cancel the homework "${hw.title}" for ${hwStudent.name}?`)) return;
+    try { saveHomework(hwStudent.homework.filter(h => h.id !== hw.id)); } catch (err) { return toast("Couldn't save: browser storage is unavailable."); }
+    renderCurrentHomework();
+    toast(`Cancelled "${hw.title}".`);
+  });
+  $("hwTopic").addEventListener("change", () => { $("hwTopic").classList.remove("invalid"); $("hwError").classList.remove("show"); });
+
+  $("hwForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const [subject, title] = $("hwTopic").value.split("|");
+    const showErr = msg => { $("hwError").textContent = msg; $("hwError").classList.add("show"); $("hwTopic").classList.add("invalid"); $("hwTopic").focus(); };
+    if (!title) return showErr("Choose a topic to set.");
+    const list = Array.isArray(hwStudent.homework) ? hwStudent.homework : [];
+    if (list.some(h => h.title === title && hwStudent.statusOf(h.title) !== "done")) return showErr(`${hwStudent.name} already has "${title}" as homework.`);
+    const grade = subject === "Maths" ? GRADES.find(g => MATHS_BY_GRADE[g].some(e => e.slice(2) === title)) : "";
+    const item = {
+      id: "hw" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title, subject, grade,
+      setBy: tutorUser, setByName: tutor.displayName || tutorUser, setAt: Date.now(),
+      due: $("hwDue").value || "", note: $("hwNote").value.trim()
+    };
+    try { saveHomework([...list.filter(h => h.title !== title), item]); } catch (err) { return toast("Couldn't save: browser storage is unavailable."); }
+    $("hwForm").reset();
+    renderCurrentHomework();
+    toast(`Set "${title}" for ${hwStudent.name}.`);
   });
 
   // ---------- Remove a student ----------
@@ -325,7 +451,7 @@
   }
   $("addCancel").addEventListener("click", closeAdd);
   $("addOverlay").addEventListener("click", e => { if (e.target === $("addOverlay")) closeAdd(); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") closeAdd(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { closeAdd(); closeHomework(); } });
   document.querySelectorAll("#addForm input").forEach(el => el.addEventListener("input", () => el.classList.remove("invalid")));
 
   $("addForm").addEventListener("submit", e => {
@@ -362,6 +488,9 @@
     try { sessionStorage.removeItem("tela.tutorSession"); localStorage.removeItem("tela.tutorSession"); } catch (e) {}
     location.href = "login.html#tutor";
   });
+  // Draw the students once everything above is defined.
+  refresh();
+
   // Coming back with Forward after signing out re-checks the sign-in.
   window.addEventListener("pageshow", e => {
     if (!e.persisted) return;

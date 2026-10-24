@@ -117,6 +117,27 @@
     background: var(--white); border-radius: var(--radius);
     box-shadow: var(--shadow); padding: 20px;
   }
+
+  /* Homework set by a tutor */
+  .homework { margin-bottom: 20px; }
+  .hw-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .hw-head h2 { font-size: 18px; letter-spacing: -.01em; }
+  .hw-count { font-size: 13px; font-weight: 600; color: var(--green-700); }
+  .hw-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .hw-item {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    border: 1px solid var(--line); border-left: 4px solid var(--green-600); border-radius: 12px; padding: 12px 14px;
+  }
+  .hw-item.hw-done { border-left-color: var(--line); background: var(--green-50); }
+  .hw-main { flex: 1; min-width: 200px; }
+  .hw-title { font-weight: 600; font-size: 15px; }
+  .hw-meta { font-size: 13px; color: var(--muted); }
+  .hw-meta strong { color: var(--ink); font-weight: 600; }
+  .hw-late { color: var(--danger); font-weight: 600; }
+  .hw-note { font-size: 13px; margin-top: 4px; color: var(--ink); background: var(--green-50); border-radius: 8px; padding: 6px 10px; white-space: pre-wrap; }
+  .hw-item .status { cursor: default; }
+  .hw-start { white-space: nowrap; }
+  .hw-empty { font-size: 14px; color: var(--muted); }
   .search {
     position: relative;
   }
@@ -763,6 +784,8 @@
 
 <main>
   <div class="wrap">
+    <section class="panel homework" id="homework" aria-label="Homework"></section>
+
     <div class="panel">
       <div class="search">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -861,6 +884,7 @@
   });
 </script>
 <script src="questions.js"></script>
+<script src="catalog.js"></script>
 <script>
   const SESSION_KEY = "tela.session";
   let currentUser = null, account = null;
@@ -888,124 +912,6 @@
   const SCIENCE_FLAG = STORAGE_KEY + ".sciences";
   const GRADES_FLAG = STORAGE_KEY + ".grades";
   const GRADE_FIELD_FLAG = STORAGE_KEY + ".gradefield";
-
-  const SAMPLE_TOPICS = {
-   Physics: [
-    ["Energy stores & transfers", "Energy", "Both", "Kinetic, gravitational and elastic energy stores; conservation of energy and efficiency.", "done"],
-    ["Specific heat capacity", "Energy", "Both", "Using ΔE = mcΔθ and the required practical.", "doing"],
-    ["Circuits & resistance", "Electricity", "Both", "Series and parallel circuits, V = IR, and I–V characteristics.", "doing"],
-    ["Mains electricity & power", "Electricity", "Both", "AC vs DC, the plug, P = IV and the National Grid.", "todo"],
-    ["Density & changes of state", "Particle Model", "Both", "ρ = m/V, specific latent heat and internal energy.", "todo"],
-    ["Radioactive decay", "Atomic Structure", "Both", "Alpha, beta and gamma radiation, half-life and nuclear equations.", "doing"],
-    ["Forces & Newton's laws", "Forces", "Both", "Resultant forces, F = ma, stopping distances and momentum.", "todo"],
-    ["Wave properties", "Waves", "Both", "Transverse and longitudinal waves, v = fλ and the EM spectrum.", "todo"],
-    ["Magnetism & electromagnetism", "Magnetism", "Both", "Magnetic fields, the motor effect and F = BIl.", "todo"]
-   ],
-   Chemistry: [
-    ["Atomic structure & isotopes", "Atomic Structure", "Both", "Protons, neutrons and electrons, relative atomic mass and the history of the atom.", "done"],
-    ["The periodic table", "Atomic Structure", "Both", "Groups 1, 7 and 0, and trends down a group.", "doing"],
-    ["Ionic, covalent & metallic bonding", "Bonding", "Both", "How each bond forms and the properties of the resulting structures.", "doing"],
-    ["Moles & reacting masses", "Quantitative Chemistry", "Higher", "Avogadro's constant, moles = mass ÷ Mr and limiting reactants.", "todo"],
-    ["Acids, alkalis & salts", "Chemical Changes", "Both", "Neutralisation, pH and making soluble salts.", "doing"],
-    ["Electrolysis", "Chemical Changes", "Both", "Electrolysis of molten and aqueous compounds and half equations.", "todo"],
-    ["Exothermic & endothermic reactions", "Energy Changes", "Both", "Reaction profiles and bond energy calculations.", "todo"],
-    ["Rates of reaction", "Rates of Reaction", "Both", "Collision theory, factors affecting rate, and catalysts.", "todo"],
-    ["Crude oil & alkanes", "Organic Chemistry", "Both", "Fractional distillation, cracking and hydrocarbons.", "todo"]
-   ],
-   Biology: [
-    ["Cell structure", "Cell Biology", "Both", "Animal, plant and bacterial cells, and microscopy.", "done"],
-    ["Mitosis & stem cells", "Cell Biology", "Both", "The cell cycle, differentiation and uses of stem cells.", "doing"],
-    ["Diffusion, osmosis & active transport", "Cell Biology", "Both", "Movement of substances into and out of cells.", "doing"],
-    ["Enzymes & digestion", "Organisation", "Both", "Lock and key model, digestive enzymes and the required practical.", "todo"],
-    ["The heart & circulation", "Organisation", "Both", "Blood vessels, blood, and coronary heart disease.", "todo"],
-    ["Communicable diseases", "Infection & Response", "Both", "Pathogens, the immune system and vaccination.", "todo"],
-    ["Photosynthesis & respiration", "Bioenergetics", "Both", "Limiting factors, aerobic and anaerobic respiration.", "doing"],
-    ["Hormones & homeostasis", "Homeostasis", "Both", "Blood glucose control, diabetes and the menstrual cycle.", "todo"],
-    ["DNA & inheritance", "Inheritance", "Both", "Genes, alleles, Punnett squares and genetic disorders.", "todo"],
-    ["Ecosystems", "Ecology", "Both", "Food chains, adaptations, biodiversity and the carbon cycle.", "todo"]
-   ],
-   Maths: []
-  };
-
-  // GCSE Maths topics grouped by grade. Each starts with a code for its area of maths:
-  // N Number, A Algebra, R Ratio & Proportion, G Geometry & Measures, P Probability, S Statistics.
-  const MATHS_AREAS = {
-    N: "Number", A: "Algebra", R: "Ratio & Proportion",
-    G: "Geometry & Measures", P: "Probability", S: "Statistics"
-  };
-  const MATHS_BY_GRADE = {
-    "Grade 1": [
-      "N Addition of integers and decimals", "N Subtraction of integers and decimals",
-      "N Multiplication of integers and decimals", "N Division of integers and decimals",
-      "N Ordering integers and decimals", "G Reading scales", "N Fractions: writing, simplifying and ordering",
-      "N Rounding", "N Place value", "G Time", "A Coordinates", "G Names of polygons", "G Names of angles",
-      "S Tally charts", "S Pictograms", "N Negative numbers", "N Powers and roots", "N Factors and multiples", "N BIDMAS"
-    ],
-    "Grade 2": [
-      "N Calculation money problems", "N Fractions of an amount", "N Fractions, decimals and percentages",
-      "A Algebra: collecting like terms", "N Estimation", "A Function machines", "G Perimeter and area",
-      "P Probability: scales", "S Frequency polygons", "S Averages from lists (mean and median)",
-      "S Bar charts", "S Stem and leaf", "S Pie charts", "N Systematic listing strategies"
-    ],
-    "Grade 3": [
-      "N Error intervals", "N Fractions: arithmetic", "R Ratio: as a fraction and simplifying",
-      "R Proportion: recipes and ingredients", "R Ratio: sharing", "R Percentages: percentages of amounts",
-      "R Percentages: increase/decrease", "R Percentage change", "R Exchange rate", "R Conversions and units",
-      "G Scale drawings", "R Best buy questions", "A Number substitution", "A Solving linear equations",
-      "A Drawing graphs", "G Area and circumference of circles", "G Area of compound shapes",
-      "S Frequency tables", "S Two-way tables", "G Transformations of shapes"
-    ],
-    "Grade 4": [
-      "R Compound interest and depreciation", "N Indices: basics", "N HCF and LCM", "N Prime factor trees",
-      "A Real life graphs", "A Distance time graphs", "A Inequalities: representing on a number line",
-      "A Inequalities: solving equations", "A Forming and solving equations", "A Sequences: generating",
-      "A Sequences: nth term", "A Expanding single and double brackets", "A Factorising",
-      "G Angles in parallel lines", "G Angles in polygons", "G Surface area (prisms and cylinders)",
-      "G Volume (prisms and cylinders)", "G Loci and construction", "G Bearings", "G Plans and elevations",
-      "S Averages: frequency tables (mean and median)", "P Probability basics", "S Scatter graphs", "G Pythagoras"
-    ],
-    "Grade 5": [
-      "R Ratio: writing ratios as fractions", "R Ratio: writing ratios as linear functions",
-      "R Reverse percentages", "N Standard form", "R Speed and density", "A Changing the subject of a formula",
-      "A Factorising quadratics", "A Solving quadratics", "A Drawing quadratic graphs",
-      "A Other graphs: cubic, reciprocal", "A Using graphs to solve equations", "A Simultaneous equations",
-      "A Using graphs to solve simultaneous equations", "A Straight line graphs: everything",
-      "G Surface area and volume of cone & sphere", "G Sectors: area and arc length",
-      "G Similar shapes (lengths)", "G SOHCAHTOA", "G Congruent shapes", "G Exact trig values",
-      "P Probability trees", "P Venn diagrams", "G Vectors"
-    ],
-    "Grade 6": [
-      "N Recurring decimals to fractions", "N Product rule for counting", "R Repeated percentage change",
-      "N Indices: fractions and negative powers", "A Expanding triple brackets",
-      "A Straight line graphs: parallel & perpendicular", "A Straight line graphs: finding areas under graph",
-      "A Inequalities on graphs: shading", "G Similar shapes (area and volume)",
-      "G Enlargements: negative scale factor", "G Circle theorems", "S Cumulative frequency", "S Box plots",
-      "R Ratio: capture recapture"
-    ],
-    "Grade 7": [
-      "P Tree diagrams: conditional probability", "P Probability: conditional probability algebra",
-      "P Venn diagrams: \"given that\" questions", "N Surds", "A Factorising harder quadratics",
-      "R Direct and inverse proportion", "N Bounds", "A Other graphs: trig and exponential",
-      "A Exponential functions and exponential growth", "A Algebraic fractions", "A Re-arranging harder formulae",
-      "A Functions: inverse and composite", "A Iteration", "G Sine & cosine rule", "G Area of any triangle",
-      "G 3D Pythagoras", "A Rates of change and tangents to curves", "S Histograms"
-    ],
-    "Grade 8/9": [
-      "A Quadratic simultaneous equations", "A Area of shapes with algebra", "G Sine/cosine rule with algebra",
-      "R Ratio with algebra", "A Transforming curves", "G Proof: circle theorems, sine & cosine rule",
-      "A Completing the square", "A nth term of a quadratic sequence", "A Quadratic inequalities",
-      "A Velocity time graphs", "A Equation of a tangent", "G Vector proof questions"
-    ]
-  };
-  const GRADES = Object.keys(MATHS_BY_GRADE);
-
-  // Grades 1–3 sit on Foundation, 4–5 on both tiers, 6 and above on Higher.
-  const tierForGrade = grade => {
-    const n = parseInt(grade.replace("Grade ", ""), 10);
-    return n <= 3 ? "Foundation" : n <= 5 ? "Both" : "Higher";
-  };
-  SAMPLE_TOPICS.Maths = Object.entries(MATHS_BY_GRADE).flatMap(([grade, entries]) =>
-    entries.map(entry => [entry.slice(2), MATHS_AREAS[entry[0]], tierForGrade(grade), "", "todo", grade]));
 
   function buildSamples(subjects = SUBJECTS) {
     const now = Date.now();
@@ -1187,7 +1093,61 @@
     $("statSubjects").textContent = allSubjects().length;
   }
 
-  function render() { renderFilters(); renderCards(); renderStats(); }
+  function render() { renderFilters(); renderCards(); renderStats(); renderHomework(); }
+
+  // ---------- Homework set by a tutor ----------
+  // Tutors add items from tutor.html: { id, title, subject, grade, setBy, setByName, setAt, due, note }.
+  // An item is complete once its topic is Confident.
+  const HOMEWORK_KEY = STORAGE_KEY + ".homework";
+  function loadHomework() {
+    try { const list = JSON.parse(localStorage.getItem(HOMEWORK_KEY)); return Array.isArray(list) ? list : []; } catch (e) { return []; }
+  }
+  const findTopicByTitle = title => topics.find(t => t.title.trim().toLowerCase() === String(title).trim().toLowerCase());
+  const shortDate = ms => new Date(ms).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+
+  function renderHomework() {
+    const list = loadHomework().sort((a, b) => (a.due || "9999").localeCompare(b.due || "9999") || a.setAt - b.setAt);
+    const today = new Date().toISOString().slice(0, 10);
+    const rows = list.map(hw => {
+      const status = (findTopicByTitle(hw.title) || {}).status || "todo";
+      const late = hw.due && hw.due < today && status !== "done";
+      const label = status === "done" ? "Complete" : STATUS[status].label;
+      return `<li class="hw-item${status === "done" ? " hw-done" : ""}">
+        <div class="hw-main">
+          <div class="hw-title">${esc(hw.title)}</div>
+          <div class="hw-meta">${esc(hw.grade || hw.subject || "")} · Set by <strong>${esc(hw.setByName || hw.setBy)}</strong> on ${shortDate(hw.setAt)}${hw.due ? ` · <span class="${late ? "hw-late" : ""}">Due ${shortDate(hw.due + "T12:00")}</span>` : ""}</div>
+          ${hw.note ? `<div class="hw-note">${esc(hw.note)}</div>` : ""}
+        </div>
+        <span class="status ${status}">${label}</span>
+        <button type="button" class="btn ${status === "done" ? "btn-ghost" : "btn-primary"} hw-start" data-hw="${esc(hw.id)}">${status === "done" ? "Review" : status === "doing" ? "Continue" : "Start"}</button>
+      </li>`;
+    });
+    const left = list.filter(hw => ((findTopicByTitle(hw.title) || {}).status || "todo") !== "done").length;
+    $("homework").innerHTML = `<div class="hw-head"><h2>Homework</h2>
+        <span class="hw-count">${list.length ? (left ? `${left} to do` : "All done") : ""}</span></div>
+      ${rows.length ? `<ul class="hw-list">${rows.join("")}</ul>` : `<p class="hw-empty">No homework set right now. When your tutor sets a topic, it will appear here.</p>`}`;
+  }
+
+  // Starting homework opens that topic's questions, adding the topic to the dashboard first if it isn't there.
+  $("homework").addEventListener("click", e => {
+    const btn = e.target.closest("[data-hw]");
+    if (!btn) return;
+    const hw = loadHomework().find(h => h.id === btn.dataset.hw);
+    if (!hw) return;
+    let topic = findTopicByTitle(hw.title);
+    if (!topic) {
+      const subject = Object.keys(SAMPLE_TOPICS).find(s => SAMPLE_TOPICS[s].some(r => r[0] === hw.title)) || hw.subject;
+      const row = (SAMPLE_TOPICS[subject] || []).find(r => r[0] === hw.title) || [hw.title, "", "Both", "", "todo", hw.grade || ""];
+      const [title, category, tier, description, , grade = ""] = row;
+      topic = { id: "hw-" + Date.now().toString(36), title, subject, category, tier, description, status: "todo", grade, boards: [...BOARDS], created: Date.now() };
+      topics.push(topic);
+      save(); render();
+    }
+    if (PRACTICE[practiceKey(topic)]) openPractice(topic);
+    else toast("This topic doesn't have questions yet");
+  });
+  // A tutor setting homework in another tab shows up here without a reload.
+  window.addEventListener("storage", e => { if (e.key === HOMEWORK_KEY) renderHomework(); });
 
   // ---------- Practice questions ----------
   // The questions themselves live in questions.js (QUESTION_BANK). Here each topic is turned into a list
