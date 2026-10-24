@@ -191,6 +191,12 @@
                 (points are placed round the circle at those angles; marks are written inside the named point)
      boxplot: { min: 10, q1: 18, median: 25, q3: 31, max: 40, from: 0, to: 50, step: 5, label: "Time (minutes)" }
                 (or a list of these, each with a name, to compare)
+     graph curves can use sin(x), cos(x), tan(x) (in degrees) and powers like 2^x.
+     graph shade can also be a list of polygons, e.g. the bars of a histogram.
+     cuboid extras: diagonal: "d" (dashed space diagonal), baseDiagonal: "e" (across the base)
+   "expression" with simplest: true also needs the simplest form: no square
+              factor under a root (5√2, not √50), no root on the bottom of a
+              fraction, and no longer than the answer (for algebraic fractions).
 
    "drawbar"  The student clicks a bar chart to draw the missing bar. Give
               the chart as  bars: {...}  with null for the missing value and
@@ -5055,5 +5061,471 @@ QUESTION_BANK.add({
       answer: "The tagged animals mix evenly back into the population" },
     { section: "Section A: Estimating a population", question: "Give a reason why a capture-recapture estimate might be inaccurate.", type: "explain", marks: 1,
       answer: "For example: tagged animals may not mix evenly, tags may fall off, animals may be born, die or move away between samples, or tagged animals may be easier or harder to catch again." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Tree diagrams: conditional probability",
+  title: "Tree Diagrams: Conditional Probability",
+  type: "fraction",
+  questionsPerSet: 10,
+  tip: "Without replacement, the second set of branches changes: one item has gone, so the total drops by 1 (and so might the number of that colour). Multiply along the branches, add between outcomes.",
+  questions: [
+    { section: "Section A: Without replacement", text: "A bag has 5 red and 3 blue counters. Two are taken out without replacement.", question: "What probability goes on the branch marked ?",
+      marks: 1, answer: "4/7",
+      probTree: { first: [["Red", "5/8"], ["Blue", "3/8"]], second: [[["Red", "?"], ["Blue", "3/7"]], [["Red", "5/7"], ["Blue", "2/7"]]] } },
+    { section: "Section A: Without replacement", text: "A bag has 5 red and 3 blue counters. Two are taken out without replacement.", question: "Find the probability that both are red.", simplest: true, marks: 2, answer: "5/14",
+      probTree: { first: [["Red", "5/8"], ["Blue", "3/8"]], second: [[["Red", "4/7"], ["Blue", "3/7"]], [["Red", "5/7"], ["Blue", "2/7"]]] } },
+    { section: "Section A: Without replacement", text: "A bag has 5 red and 3 blue counters. Two are taken out without replacement.", question: "Find the probability that both are blue.", simplest: true, marks: 2, answer: "3/28",
+      probTree: { first: [["Red", "5/8"], ["Blue", "3/8"]], second: [[["Red", "4/7"], ["Blue", "3/7"]], [["Red", "5/7"], ["Blue", "2/7"]]] } },
+    { section: "Section A: Without replacement", text: "A bag has 5 red and 3 blue counters. Two are taken out without replacement.", question: "Find the probability of getting one of each colour.", simplest: true, marks: 3, answer: "15/28",
+      probTree: { first: [["Red", "5/8"], ["Blue", "3/8"]], second: [[["Red", "4/7"], ["Blue", "3/7"]], [["Red", "5/7"], ["Blue", "2/7"]]] } },
+    { section: "Section A: Without replacement", text: "A bag has 5 red and 3 blue counters. Two are taken out without replacement.", question: "Find the probability that at least one is red.", simplest: true, marks: 3, answer: "25/28" },
+    { section: "Section A: Without replacement", question: "A tin has 6 toffees and 4 mints. Jo eats two sweets at random. Find the probability they are the same flavour.", simplest: true, marks: 3, answer: "7/15" },
+
+    { section: "Section B: Dependent events", text: "The probability it rains on Monday is 0.3. If it rains on Monday, the probability it rains on Tuesday is 0.6; if not, it is 0.2.", question: "Find the probability it rains on both days.", type: "number", marks: 2, answer: "0.18",
+      probTree: { first: [["Rain", "0.3"], ["Dry", "0.7"]], second: [[["Rain", "0.6"], ["Dry", "0.4"]], [["Rain", "0.2"], ["Dry", "0.8"]]] } },
+    { section: "Section B: Dependent events", text: "The probability it rains on Monday is 0.3. If it rains on Monday, the probability it rains on Tuesday is 0.6; if not, it is 0.2.", question: "Find the probability it rains on exactly one of the two days.", type: "number", marks: 3, answer: "0.26",
+      probTree: { first: [["Rain", "0.3"], ["Dry", "0.7"]], second: [[["Rain", "0.6"], ["Dry", "0.4"]], [["Rain", "0.2"], ["Dry", "0.8"]]] } },
+    { section: "Section B: Dependent events", question: "Two counters are taken from a bag without replacement. Why are the second-pick probabilities different on each branch?", type: "choice", marks: 1,
+      options: ["The first counter isn't put back, so what's left depends on it", "The bag gets shaken", "Probabilities always change", "They aren't different"],
+      answer: "The first counter isn't put back, so what's left depends on it" },
+    { section: "Section B: Dependent events", question: "For the bag with 5 red and 3 blue (no replacement), Mia writes P(two red) = 5/8 × 5/8. Explain Mia's mistake.", type: "explain", marks: 1,
+      answer: "After one red is taken there are only 4 red out of 7 left, so the second fraction should be 4/7: P = 5/8 × 4/7 = 5/14. Mia treated it as if the counter was put back." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Probability: conditional probability algebra",
+  title: "Conditional Probability with Algebra",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "P(B given A) = P(A and B) ÷ P(A). With an unknown number of items, write each branch as an algebraic fraction (taking one away for 'without replacement'), multiply, set equal to the given probability and solve.",
+  questions: [
+    { section: "Section A: The formula", question: "P(A) = 0.4 and P(B given A) = 0.5. Find P(A and B).", marks: 1, answer: "0.2" },
+    { section: "Section A: The formula", question: "P(A and B) = 0.12 and P(A) = 0.3. Find P(B given A).", marks: 2, answer: "0.4" },
+    { section: "Section A: The formula", question: "P(A) = 0.5, P(B) = 0.4 and P(A and B) = 0.2. Are A and B independent?", type: "choice", marks: 1, options: ["Yes", "No"], answer: "Yes" },
+    { section: "Section A: The formula", question: "Which formula is correct?", type: "choice", marks: 1,
+      options: ["P(B given A) = P(A and B) ÷ P(A)", "P(B given A) = P(A) × P(B)", "P(B given A) = P(A) + P(B)", "P(B given A) = P(A) ÷ P(A and B)"],
+      answer: "P(B given A) = P(A and B) ÷ P(A)" },
+
+    { section: "Section B: Unknown amounts", text: "A bag has x red counters and 3 blue counters. Two are taken without replacement.", question: "Write an expression for the probability that both are red.", type: "expression", marks: 2,
+      answer: "x(x − 1)/((x + 3)(x + 2))" },
+    { section: "Section B: Unknown amounts", text: "A bag has x red counters and 3 blue counters. Two are taken without replacement. P(both red) = 5/14.", question: "Find x.", marks: 4, answer: "5" },
+    { section: "Section B: Unknown amounts", text: "A bag has n sweets and 6 of them are orange. Two are eaten without replacement. P(both orange) = 1/3.", question: "Find n.", marks: 4, answer: "10" },
+    { section: "Section B: Unknown amounts", text: "x red counters and 3 blue counters; P(two red, no replacement) = 5/14.", question: "Which equation does this give?", type: "choice", marks: 1,
+      options: ["3x² − 13x − 10 = 0", "x² − 5x + 6 = 0", "3x² + 13x − 10 = 0", "x² − 13x − 10 = 0"], answer: "3x² − 13x − 10 = 0" },
+    { section: "Section B: Unknown amounts", question: "Solving for the number of red counters gives x = 5 or x = −2/3. Explain which answer to use.", type: "explain", marks: 1,
+      answer: "x = 5. The number of counters must be a positive whole number, so x = −2/3 is impossible." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Venn diagrams: \"given that\" questions",
+  title: "Venn Diagrams: Given That",
+  type: "fraction",
+  questionsPerSet: 10,
+  tip: "'Given that' narrows down who you are choosing from. The denominator is only the people in the given set; the numerator is how many of them also have the other property.",
+  questions: [
+    { section: "Section A: Reading conditional probabilities", text: "The Venn diagram shows the sports 40 pupils play.", question: "A pupil who plays football is chosen at random. Find the probability they also play tennis.", simplest: true, marks: 2, answer: "2/5",
+      venn: { labels: ["Football", "Tennis"], left: ["12"], both: ["8"], right: ["10"], box: true, outside: ["10"] } },
+    { section: "Section A: Reading conditional probabilities", text: "The Venn diagram shows the sports 40 pupils play.", question: "Find the probability that a pupil plays football, given that they play tennis.", simplest: true, marks: 2, answer: "4/9",
+      venn: { labels: ["Football", "Tennis"], left: ["12"], both: ["8"], right: ["10"], box: true, outside: ["10"] } },
+    { section: "Section A: Reading conditional probabilities", text: "The Venn diagram shows the sports 40 pupils play.", question: "Find the probability that a pupil plays football, given that they do not play tennis.", simplest: true, marks: 2, answer: "6/11",
+      venn: { labels: ["Football", "Tennis"], left: ["12"], both: ["8"], right: ["10"], box: true, outside: ["10"] } },
+    { section: "Section A: Reading conditional probabilities", text: "The Venn diagram shows the sports 40 pupils play.", question: "A pupil is chosen at random from all 40. Find the probability they play both.", simplest: true, marks: 1, answer: "1/5",
+      venn: { labels: ["Football", "Tennis"], left: ["12"], both: ["8"], right: ["10"], box: true, outside: ["10"] } },
+
+    { section: "Section B: Set notation", text: "The Venn diagram shows sets A and B in a group of 20.", question: "Find P(A | B), the probability of A given B.", simplest: true, marks: 2, answer: "3/10",
+      venn: { labels: ["A", "B"], left: ["5"], both: ["3"], right: ["7"], box: true, outside: ["5"] } },
+    { section: "Section B: Set notation", text: "The Venn diagram shows sets A and B in a group of 20.", question: "Find P(B′ | A), the probability of not B given A.", simplest: true, marks: 2, answer: "5/8",
+      venn: { labels: ["A", "B"], left: ["5"], both: ["3"], right: ["7"], box: true, outside: ["5"] } },
+    { section: "Section B: Set notation", question: "What does P(A | B) mean?", type: "choice", marks: 1,
+      options: ["The probability of A, given that B has happened", "The probability of A or B", "The probability of A and B", "The probability of B, given that A has happened"],
+      answer: "The probability of A, given that B has happened" },
+    { section: "Section B: Set notation", text: "Using the football and tennis diagram (12 football only, 8 both, 10 tennis only, 10 neither).", question: "Ravi says P(tennis given football) = 8/40. Explain Ravi's mistake.", type: "explain", marks: 1,
+      answer: "'Given football' means you only choose from the 20 football players, so the denominator is 20, not 40: P = 8/20 = 2/5." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Surds",
+  title: "Surds",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "Simplify √n by taking out the largest square factor: √50 = √25 × √2 = 5√2. To rationalise, multiply top and bottom by the surd (or by the bracket with the sign changed). Use the √ button; type 5√2 for 5 times root 2.",
+  questions: [
+    { section: "Section A: Simplifying", question: "Simplify √50", simplest: true, marks: 1, answer: "5√2" },
+    { section: "Section A: Simplifying", question: "Simplify √12", simplest: true, marks: 1, answer: "2√3" },
+    { section: "Section A: Simplifying", question: "Simplify √72", simplest: true, marks: 2, answer: "6√2" },
+    { section: "Section A: Simplifying", question: "Simplify √8 + √18", simplest: true, marks: 2, answer: "5√2" },
+    { section: "Section A: Simplifying", question: "Work out √3 × √12", simplest: true, marks: 1, answer: "6" },
+    { section: "Section A: Simplifying", question: "Which of these is a surd?", type: "choice", marks: 1, options: ["√2", "√9", "√16", "√25"], answer: "√2" },
+
+    { section: "Section B: Expanding and rationalising", question: "Expand and simplify (1 + √2)²", simplest: true, marks: 2, answer: "3 + 2√2" },
+    { section: "Section B: Expanding and rationalising", question: "Expand and simplify (2 + √3)(2 − √3)", simplest: true, marks: 2, answer: "1" },
+    { section: "Section B: Expanding and rationalising", question: "Rationalise the denominator of 6/√3, giving your answer in its simplest form.", simplest: true, marks: 2, answer: "2√3" },
+    { section: "Section B: Expanding and rationalising", question: "Rationalise the denominator of 1/√5", simplest: true, marks: 2, answer: "√5/5" },
+    { section: "Section B: Expanding and rationalising", question: "Rationalise the denominator of 2/(3 − √5) and simplify.", marks: 3, answer: "(3 + √5)/2" },
+    { section: "Section B: Expanding and rationalising", question: "Ana says √9 + √16 = √25. Explain Ana's mistake.", type: "explain", marks: 1,
+      answer: "You can't add the numbers under the roots. √9 + √16 = 3 + 4 = 7, but √25 = 5. Only multiplying works that way: √a × √b = √(ab)." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Factorising harder quadratics",
+  title: "Factorising Harder Quadratics",
+  type: "factorise",
+  questionsPerSet: 10,
+  tip: "For ax² + bx + c, find two numbers that multiply to a × c and add to b, split the middle term, then factorise in pairs. Always check for a common factor first, and expand your answer to check it.",
+  questions: [
+    { section: "Section A: ax² + bx + c", question: "Factorise 3x² + 10x + 8", marks: 2, answer: "(3x + 4)(x + 2)" },
+    { section: "Section A: ax² + bx + c", question: "Factorise 2x² − 5x − 3", marks: 2, answer: "(2x + 1)(x − 3)" },
+    { section: "Section A: ax² + bx + c", question: "Factorise 6x² + 7x + 2", marks: 3, answer: "(2x + 1)(3x + 2)" },
+    { section: "Section A: ax² + bx + c", question: "Factorise 5x² − 13x + 6", marks: 3, answer: "(5x − 3)(x − 2)" },
+    { section: "Section A: ax² + bx + c", question: "Factorise 4x² + 4x − 3", marks: 3, answer: "(2x + 3)(2x − 1)" },
+
+    { section: "Section B: Special cases and solving", question: "Factorise 4x² − 9", marks: 2, answer: "(2x + 3)(2x − 3)" },
+    { section: "Section B: Special cases and solving", question: "Factorise fully 2x² + 12x + 18", marks: 3, answer: "2(x + 3)²" },
+    { section: "Section B: Special cases and solving", question: "Solve 2x² + 5x − 3 = 0", type: "solutions", marks: 3, answer: "1/2, −3" },
+    { section: "Section B: Special cases and solving", question: "To factorise 3x² + 10x + 8 by splitting the middle term, which two numbers do you need?", type: "choice", marks: 1,
+      options: ["6 and 4", "2 and 8", "3 and 8", "1 and 24"], answer: "6 and 4" },
+    { section: "Section B: Special cases and solving", question: "Tom factorises 2x² + 7x + 3 as (2x + 3)(x + 1). Explain Tom's mistake.", type: "explain", marks: 1,
+      answer: "Expanding (2x + 3)(x + 1) gives 2x² + 5x + 3, not 2x² + 7x + 3. The right answer is (2x + 1)(x + 3), which expands to 2x² + 6x + x + 3." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Direct and inverse proportion",
+  title: "Direct and Inverse Proportion",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Write the relationship with a constant k: y = kx, y = kx², y = k√x, y = k/x or y = k/x². Substitute the values you're given to find k, then use the formula.",
+  questions: [
+    { section: "Section A: Direct proportion", question: "y is directly proportional to x. When x = 4, y = 12. Find y when x = 10.", marks: 2, answer: "30" },
+    { section: "Section A: Direct proportion", question: "y is directly proportional to x². When x = 2, y = 20. Find y when x = 3.", marks: 3, answer: "45" },
+    { section: "Section A: Direct proportion", question: "y is directly proportional to x². When x = 2, y = 20. Write a formula for y in terms of x.", type: "expression", marks: 2, answer: "y = 5x²" },
+    { section: "Section A: Direct proportion", question: "y is directly proportional to √x. When x = 9, y = 12. Find y when x = 25.", marks: 3, answer: "20" },
+
+    { section: "Section B: Inverse proportion", question: "y is inversely proportional to x. When x = 4, y = 6. Find y when x = 8.", marks: 2, answer: "3" },
+    { section: "Section B: Inverse proportion", question: "y is inversely proportional to x. When x = 4, y = 6. Write a formula for y in terms of x.", type: "expression", marks: 2, answer: "y = 24/x" },
+    { section: "Section B: Inverse proportion", question: "y is inversely proportional to x². When x = 2, y = 10. Find y when x = 4.", marks: 3, answer: "2.5" },
+    { section: "Section B: Inverse proportion", question: "4 builders take 6 days to build a wall. How many days would 3 builders take, working at the same rate?", marks: 2, answer: "8" },
+    { section: "Section B: Inverse proportion", question: "Which graph shows y directly proportional to x?", type: "choice", marks: 1,
+      options: ["A straight line through the origin", "A curve that gets closer to the axes", "A horizontal line", "A straight line that doesn't go through the origin"],
+      answer: "A straight line through the origin" },
+    { section: "Section B: Inverse proportion", question: "y is inversely proportional to x. Zac says that when x doubles, y doubles too. Explain Zac's mistake.", type: "explain", marks: 1,
+      answer: "In inverse proportion, y = k/x, so when x doubles, y halves. Doubling together is direct proportion." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Bounds",
+  title: "Upper and Lower Bounds",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Bounds are half a unit either side of the rounded value. For the biggest answer: add or multiply upper bounds, subtract a lower bound, divide by a lower bound. For the smallest answer, do the opposite.",
+  questions: [
+    { section: "Section A: Single bounds", question: "A length is 12 cm to the nearest cm. What is its upper bound?", marks: 1, answer: "12.5 cm" },
+    { section: "Section A: Single bounds", question: "A mass is 3.4 kg to 1 decimal place. What is its lower bound?", marks: 1, answer: "3.35 kg" },
+    { section: "Section A: Single bounds", question: "A mass is 3.4 kg to 1 decimal place. Write the error interval for the mass m.", type: "interval", marks: 2, answer: "3.35 ≤ m < 3.45" },
+
+    { section: "Section B: Calculations with bounds", question: "A rectangle is 8 cm by 5 cm, each to the nearest cm. Find the upper bound of its area.", marks: 2, answer: "46.75 cm²" },
+    { section: "Section B: Calculations with bounds", question: "A rectangle is 8 cm by 5 cm, each to the nearest cm. Find the lower bound of its perimeter.", marks: 2, answer: "24 cm" },
+    { section: "Section B: Calculations with bounds", question: "a = 50 to the nearest 10 and b = 12 to the nearest whole number. Find the upper bound of a − b.", marks: 2, answer: "43.5" },
+    { section: "Section B: Calculations with bounds", question: "a = 20 to the nearest 10 and b = 4 to the nearest whole number. Find the upper bound of a ÷ b, to 2 decimal places.", tolerance: 0.01, marks: 3, answer: "7.14" },
+    { section: "Section B: Calculations with bounds", question: "A runner covers 100 m (to the nearest metre) in 12.5 s (to 1 decimal place). Find the upper bound of her speed, to 2 decimal places.", tolerance: 0.01, marks: 3, answer: "8.07 m/s" },
+    { section: "Section B: Calculations with bounds", question: "To find the upper bound of a ÷ b, which do you use?", type: "choice", marks: 1,
+      options: ["Upper bound of a ÷ lower bound of b", "Upper bound of a ÷ upper bound of b", "Lower bound of a ÷ upper bound of b", "Lower bound of a ÷ lower bound of b"],
+      answer: "Upper bound of a ÷ lower bound of b" },
+    { section: "Section B: Calculations with bounds", question: "Lily finds the upper bound of a − b by doing (upper bound of a) − (upper bound of b). Explain her mistake.", type: "explain", marks: 1,
+      answer: "Taking away a bigger number makes the answer smaller. For the largest a − b, subtract the smallest possible b: upper bound of a − lower bound of b." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Other graphs: trig and exponential",
+  title: "Trig and Exponential Graphs",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "y = sin x starts at 0, peaks at 1 at 90°; y = cos x starts at 1. Both repeat every 360°, and the graph's symmetry gives a second solution. y = tan x repeats every 180° and has no value at 90°. Exponential graphs y = aˣ pass through (0, 1).",
+  questions: [
+    { section: "Section A: Recognising graphs", question: "Which equation does the graph show?", marks: 1, options: ["y = sin x", "y = cos x", "y = tan x", "y = 2ˣ"], answer: "y = sin x",
+      graph: { x: [0, 360], xstep: 30, y: [-1.5, 1.5], ystep: 0.5, curves: ["sin(x)"] } },
+    { section: "Section A: Recognising graphs", question: "Which equation does the graph show?", marks: 1, options: ["y = sin x", "y = cos x", "y = tan x", "y = 2ˣ"], answer: "y = cos x",
+      graph: { x: [0, 360], xstep: 30, y: [-1.5, 1.5], ystep: 0.5, curves: ["cos(x)"] } },
+    { section: "Section A: Recognising graphs", question: "Which equation does the graph show?", marks: 1, options: ["y = 2ˣ", "y = x²", "y = 1/x", "y = sin x"], answer: "y = 2ˣ",
+      graph: { x: [-3, 3], y: [0, 8], curves: ["2^x"] } },
+    { section: "Section A: Recognising graphs", question: "At which angle does y = tan x have no value (between 0° and 180°)?", marks: 1, options: ["90°", "0°", "45°", "180°"], answer: "90°" },
+
+    { section: "Section B: Using the graphs", text: "The graph shows y = sin x.", question: "One solution of sin x = 0.5 is x = 30°. Find the other solution between 0° and 360°.", type: "number", marks: 2, answer: "150°",
+      graph: { x: [0, 360], xstep: 30, y: [-1.5, 1.5], ystep: 0.5, curves: ["sin(x)"], dashed: [[[0, 0.5], [360, 0.5]]] } },
+    { section: "Section B: Using the graphs", text: "The graph shows y = cos x.", question: "One solution of cos x = 0.5 is x = 60°. Find the other solution between 0° and 360°.", type: "number", marks: 2, answer: "300°",
+      graph: { x: [0, 360], xstep: 30, y: [-1.5, 1.5], ystep: 0.5, curves: ["cos(x)"], dashed: [[[0, 0.5], [360, 0.5]]] } },
+    { section: "Section B: Using the graphs", question: "What is the largest value y = sin x can take?", type: "number", marks: 1, answer: "1" },
+    { section: "Section B: Using the graphs", question: "After how many degrees does the graph of y = cos x repeat?", type: "number", marks: 1, answer: "360°" },
+    { section: "Section B: Using the graphs", question: "Explain why the equation sin x = 2 has no solutions.", type: "explain", marks: 1,
+      answer: "The graph of y = sin x only goes between −1 and 1, so it never reaches a height of 2." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Exponential functions and exponential growth",
+  title: "Exponential Functions and Growth",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "An exponential function is y = abˣ: a is the starting value (when x = 0) and b is the multiplier each step. b > 1 means growth, 0 < b < 1 means decay.",
+  questions: [
+    { section: "Section A: Exponential functions", question: "y = 3 × 2ˣ. Find y when x = 4.", marks: 1, answer: "48" },
+    { section: "Section A: Exponential functions", text: "The curve y = abˣ passes through (0, 5) and (1, 15).", question: "Find a.", marks: 1, answer: "5" },
+    { section: "Section A: Exponential functions", text: "The curve y = abˣ passes through (0, 5) and (1, 15).", question: "Find b.", marks: 2, answer: "3" },
+    { section: "Section A: Exponential functions", text: "The graph shows y = 2ˣ.", question: "Use the graph to estimate the value of 2^2.5.", tolerance: 0.3, marks: 1, answer: "5.7",
+      graph: { x: [-3, 3], y: [0, 8], curves: ["2^x"], dashed: [[[2.5, 0], [2.5, 5.657]]] } },
+    { section: "Section A: Exponential functions", question: "Which equation shows exponential decay?", type: "choice", marks: 1, options: ["y = 0.8ˣ", "y = 1.2ˣ", "y = 2ˣ", "y = x²"], answer: "y = 0.8ˣ" },
+
+    { section: "Section B: Growth and decay in context", question: "A population of 2000 grows by 5% each year. Write a formula for the population P after t years.", type: "expression", marks: 2, answer: "P = 2000 × 1.05^t" },
+    { section: "Section B: Growth and decay in context", question: "A population of 2000 grows by 5% each year. Find the population after 3 years, to the nearest whole number.", tolerance: 0.5, marks: 2, answer: "2315" },
+    { section: "Section B: Growth and decay in context", question: "800 g of a radioactive substance halves every 10 years. How much is left after 30 years?", marks: 2, answer: "100 g" },
+    { section: "Section B: Growth and decay in context", question: "Explain why the graph of y = 2ˣ never touches the x-axis.", type: "explain", marks: 1,
+      answer: "2ˣ is always positive: as x gets more negative it halves again and again (1/2, 1/4, 1/8, …), getting closer to 0 but never reaching it." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Algebraic fractions",
+  title: "Algebraic Fractions",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "Factorise first, then cancel common brackets (never single terms). To add or subtract, use a common denominator. To divide, flip the second fraction and multiply. Type answers like (x + 2)/(x − 1).",
+  questions: [
+    { section: "Section A: Simplifying", question: "Simplify (x² − 9)/(x + 3)", simplest: true, marks: 2, answer: "x − 3" },
+    { section: "Section A: Simplifying", question: "Simplify (x² + 5x + 6)/(x² + 2x − 3)", simplest: true, marks: 3, answer: "(x + 2)/(x − 1)" },
+    { section: "Section A: Simplifying", question: "Simplify (2x² + x − 3)/(4x² − 9)", simplest: true, marks: 3, answer: "(x − 1)/(2x − 3)" },
+
+    { section: "Section B: The four operations", question: "Write 1/x + 1/(x + 1) as a single fraction.", simplest: true, marks: 3, answer: "(2x + 1)/(x(x + 1))" },
+    { section: "Section B: The four operations", question: "Write 3/(x + 2) − 1/(x − 1) as a single fraction.", simplest: true, marks: 3, answer: "(2x − 5)/((x + 2)(x − 1))" },
+    { section: "Section B: The four operations", question: "Simplify x/3 × 6/x²", simplest: true, marks: 2, answer: "2/x" },
+    { section: "Section B: The four operations", question: "Simplify (x + 1)/4 ÷ (x + 1)/8", simplest: true, marks: 2, answer: "2" },
+    { section: "Section B: The four operations", question: "Solve 2/x + 3/(x + 1) = 2", type: "solutions", marks: 4, answer: "2, −1/2" },
+    { section: "Section B: The four operations", question: "What is the first step to add 1/x + 1/(x + 1)?", type: "choice", marks: 1,
+      options: ["Write both over the common denominator x(x + 1)", "Add the tops and add the bottoms", "Cancel the x's", "Multiply both fractions"],
+      answer: "Write both over the common denominator x(x + 1)" },
+    { section: "Section B: The four operations", question: "Sam simplifies (x + 3)/(x + 5) to 3/5 by cancelling the x's. Explain Sam's mistake.", type: "explain", marks: 1,
+      answer: "You can only cancel common factors, not terms that are being added. x is not a factor of the whole top and bottom, so (x + 3)/(x + 5) can't be simplified." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Re-arranging harder formulae",
+  title: "Rearranging Harder Formulae",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "If the letter you want appears twice, get all those terms on one side, factorise it out, then divide. Clear fractions first by multiplying. Undo a square with √. Type the right-hand side, e.g. (3y + 2)/(y − 1).",
+  questions: [
+    { section: "Section A: The letter appears twice", question: "Make x the subject of ax + b = cx + d", marks: 3, answer: "x = (d − b)/(a − c)" },
+    { section: "Section A: The letter appears twice", question: "Make x the subject of 3x + 2y = 5 − ax", marks: 3, answer: "x = (5 − 2y)/(3 + a)" },
+    { section: "Section A: The letter appears twice", question: "Make x the subject of y = (x + 2)/(x − 3)", marks: 4, answer: "x = (3y + 2)/(y − 1)" },
+    { section: "Section A: The letter appears twice", question: "What is the first step to make x the subject of y = (x + 2)/(x − 3)?", type: "choice", marks: 1,
+      options: ["Multiply both sides by (x − 3)", "Subtract 2 from both sides", "Square both sides", "Divide both sides by y"], answer: "Multiply both sides by (x − 3)" },
+
+    { section: "Section B: Powers and roots", question: "Make r the subject of A = πr²", marks: 2, answer: "r = √(A/π)" },
+    { section: "Section B: Powers and roots", question: "Make a the subject of v² = u² + 2as", marks: 2, answer: "a = (v² − u²)/(2s)" },
+    { section: "Section B: Powers and roots", question: "Make l the subject of T = 2π√(l/g)", marks: 3, answer: "l = gT²/(4π²)" },
+    { section: "Section B: Powers and roots", question: "Jess makes x the subject of y = x² + 4 and writes x = √y + 2. Explain her mistake.", type: "explain", marks: 1,
+      answer: "She must subtract 4 before square rooting, and the square root covers the whole of y − 4: x = √(y − 4). √y + 2 is not the same thing." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Functions: inverse and composite",
+  title: "Inverse and Composite Functions",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "fg(x) means do g first, then put the answer into f. For the inverse f⁻¹(x), write y = f(x), rearrange to make x the subject, then swap y for x.",
+  questions: [
+    { section: "Section A: Composite functions", text: "f(x) = 2x − 1 and g(x) = x².", question: "Find fg(3).", marks: 2, answer: "17" },
+    { section: "Section A: Composite functions", text: "f(x) = 2x − 1 and g(x) = x².", question: "Find gf(3).", marks: 2, answer: "25" },
+    { section: "Section A: Composite functions", text: "f(x) = 2x − 1 and g(x) = x².", question: "Find fg(x).", marks: 2, answer: "2x² − 1" },
+    { section: "Section A: Composite functions", text: "f(x) = 2x − 1 and g(x) = x².", question: "Find gf(x).", marks: 2, answer: "(2x − 1)²" },
+    { section: "Section A: Composite functions", question: "What does fg(x) mean?", type: "choice", marks: 1,
+      options: ["Do g first, then f", "Do f first, then g", "Multiply f(x) by g(x)", "Add f(x) and g(x)"], answer: "Do g first, then f" },
+
+    { section: "Section B: Inverse functions", question: "f(x) = 3x + 2. Find f⁻¹(x).", marks: 2, answer: "f⁻¹(x) = (x − 2)/3" },
+    { section: "Section B: Inverse functions", question: "f(x) = (x + 4)/5. Find f⁻¹(x).", marks: 2, answer: "f⁻¹(x) = 5x − 4" },
+    { section: "Section B: Inverse functions", question: "f(x) = 2/(x − 1). Find f⁻¹(x).", marks: 3, answer: "f⁻¹(x) = 2/x + 1" },
+    { section: "Section B: Inverse functions", question: "f(x) = 3x + 2. Kim says f⁻¹(x) = 1/(3x + 2). Explain Kim's mistake.", type: "explain", marks: 1,
+      answer: "The inverse function undoes f; it isn't 1 over f. Undoing 'times 3 then add 2' means 'subtract 2 then divide by 3': f⁻¹(x) = (x − 2)/3." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Iteration",
+  title: "Iteration",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Put the starting value x₀ into the formula to get x₁, then put x₁ in to get x₂, and so on. Use your calculator's ANS key. A sign change in f(x) between two values shows a root lies between them.",
+  questions: [
+    { section: "Section A: Using an iteration formula", text: "Use xₙ₊₁ = √(2xₙ + 5) with x₀ = 3.", question: "Find x₁, to 3 decimal places.", tolerance: 0.0005, marks: 1, answer: "3.317" },
+    { section: "Section A: Using an iteration formula", text: "Use xₙ₊₁ = √(2xₙ + 5) with x₀ = 3.", question: "Find x₃, to 3 decimal places.", tolerance: 0.0005, marks: 2, answer: "3.438" },
+    { section: "Section A: Using an iteration formula", text: "Use xₙ₊₁ = ∛(5 − xₙ) with x₀ = 1.5.", question: "Find x₁, to 4 decimal places.", tolerance: 0.00005, marks: 1, answer: "1.5183" },
+    { section: "Section A: Using an iteration formula", text: "Use xₙ₊₁ = ∛(5 − xₙ) with x₀ = 1.5.", question: "Find x₂, to 3 decimal places.", tolerance: 0.0005, marks: 2, answer: "1.516" },
+    { section: "Section A: Using an iteration formula", text: "Use xₙ₊₁ = 3 + 1/xₙ with x₀ = 3.", question: "Find x₂ exactly, as a decimal.", tolerance: 0.0001, marks: 2, answer: "3.3" },
+
+    { section: "Section B: Roots and rearranging", question: "f(x) = x³ + x − 5. f(1) = −3 and f(2) = 5. What does this show?", type: "choice", marks: 1,
+      options: ["There is a root between 1 and 2", "There is a root at x = 1.5", "There is no root", "The root is x = 2"], answer: "There is a root between 1 and 2" },
+    { section: "Section B: Roots and rearranging", question: "Which iteration formula comes from rearranging x² − 3x − 1 = 0?", type: "choice", marks: 1,
+      options: ["x = 3 + 1/x", "x = 3 − 1/x", "x = x² − 1", "x = 1/(x − 3) + 1"], answer: "x = 3 + 1/x" },
+    { section: "Section B: Roots and rearranging", question: "What does it mean when the values from an iteration formula get closer and closer together?", type: "explain", marks: 1,
+      answer: "The iteration is converging: the values are approaching a solution (root) of the equation, so after enough steps they give that root to the accuracy you need." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Sine & cosine rule",
+  title: "The Sine and Cosine Rules",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Sine rule (opposite pairs): a/sin A = b/sin B. Cosine rule (two sides and the angle between, or all three sides): a² = b² + c² − 2bc cos A. Give lengths and angles to 1 decimal place.",
+  questions: [
+    { section: "Section A: Sine rule", question: "Find the length x, to 1 decimal place.", tolerance: 0.1, marks: 3, answer: "11.3 cm",
+      outline: { points: [[0, 0], [12.02, 0], [8.64, 7.25]], angles: [[0, "40°"], [1, "65°"]], text: { 0: "", 1: "8 cm", 2: "x" } } },
+    { section: "Section A: Sine rule", question: "Find the angle x, to 1 decimal place.", tolerance: 0.1, marks: 3, answer: "43.6°",
+      outline: { points: [[0, 0], [8.46, 0], [1.215, 6.894]], angles: [[0, "80°"], [1, "x"]], text: { 0: "", 1: "10 cm", 2: "7 cm" } } },
+
+    { section: "Section B: Cosine rule", question: "Find the length x, to 1 decimal place.", tolerance: 0.1, marks: 3, answer: "6.2 cm",
+      outline: { points: [[0, 0], [7, 0], [2.5, 4.33]], angles: [[0, "60°"]], text: { 0: "7 cm", 1: "x", 2: "5 cm" } } },
+    { section: "Section B: Cosine rule", question: "Find the angle x, to 1 decimal place.", tolerance: 0.1, marks: 3, answer: "92.9°",
+      outline: { points: [[0, 0], [8, 0], [3.3125, 3.745]], angles: [[2, "x"]], text: { 0: "8 cm", 1: "6 cm", 2: "5 cm" } } },
+    { section: "Section B: Cosine rule", question: "Find the length x, to 1 decimal place.", tolerance: 0.1, marks: 3, answer: "17.3 cm",
+      outline: { points: [[0, 0], [9, 0], [-4.104, 11.276]], angles: [[0, "110°"]], text: { 0: "9 cm", 1: "x", 2: "12 cm" } } },
+    { section: "Section B: Cosine rule", question: "You know two sides and the angle between them. Which rule finds the third side?", type: "choice", marks: 1,
+      options: ["The cosine rule", "The sine rule", "SOHCAHTOA", "Pythagoras"], answer: "The cosine rule" },
+    { section: "Section B: Cosine rule", question: "Ella works out a² = 5² + 7² − 2 × 5 × 7 × cos 60° as 74 − 70 × cos 60° = 4 × cos 60° = 2. Explain her mistake.", type: "explain", marks: 1,
+      answer: "She subtracted 70 from 74 before multiplying by cos 60°. Multiplication comes first: 70 × cos 60° = 35, so a² = 74 − 35 = 39 and a = 6.2." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Area of any triangle",
+  title: "Area of Any Triangle",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Area = ½ab sin C, where a and b are two sides and C is the angle between them. Give answers to 1 decimal place unless they are exact.",
+  questions: [
+    { section: "Section A: ½ab sin C", question: "Find the area of the triangle.", tolerance: 0.05, marks: 2, answer: "12 cm²",
+      outline: { points: [[0, 0], [8, 0], [5.196, 3]], angles: [[0, "30°"]], text: { 0: "8 cm", 1: "", 2: "6 cm" } } },
+    { section: "Section A: ½ab sin C", question: "Find the area of the triangle, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "26.8 cm²",
+      outline: { points: [[0, 0], [10, 0], [4.5, 5.362]], angles: [[0, "50°"]], text: { 0: "10 cm", 1: "", 2: "7 cm" } } },
+    { section: "Section A: ½ab sin C", question: "Find the area of the triangle, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "19.5 cm²",
+      outline: { points: [[0, 0], [9, 0], [-2.5, 4.33]], angles: [[0, "120°"]], text: { 0: "9 cm", 1: "", 2: "5 cm" } } },
+    { section: "Section A: ½ab sin C", question: "Find the area of an equilateral triangle with sides of 6 cm, to 1 decimal place.", tolerance: 0.1, marks: 2, answer: "15.6 cm²" },
+
+    { section: "Section B: Working backwards", question: "A triangle has sides 8 cm and 10 cm with an acute angle between them. Its area is 20 cm². Find the angle.", tolerance: 0.1, marks: 3, answer: "30°" },
+    { section: "Section B: Working backwards", question: "Which formula gives the area of a triangle with sides a and b and included angle C?", type: "choice", marks: 1,
+      options: ["½ab sin C", "ab sin C", "½ab cos C", "½(a + b) sin C"], answer: "½ab sin C" },
+    { section: "Section B: Working backwards", question: "Why must C be the angle between the two sides you use in ½ab sin C?", type: "explain", marks: 1,
+      answer: "b sin C is the perpendicular height of the triangle when a is the base. That only works when C is the angle between a and b, so it's just ½ × base × height." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "3D Pythagoras",
+  title: "3D Pythagoras and Trigonometry",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Use Pythagoras twice: first across the base (e² = l² + w²), then up the diagonal (d² = e² + h²). In one go: d² = l² + w² + h². For an angle with the base, use the right-angled triangle made by e, h and d.",
+  questions: [
+    { section: "Section A: Diagonals", question: "Find the length of the base diagonal e.", marks: 2, answer: "10 cm",
+      cuboid: { l: "8 cm", w: "6 cm", h: "5 cm", baseDiagonal: "e" } },
+    { section: "Section A: Diagonals", question: "Find the length of the diagonal d.", marks: 3, answer: "13 cm",
+      cuboid: { l: "12 cm", w: "4 cm", h: "3 cm", diagonal: "d" } },
+    { section: "Section A: Diagonals", question: "Find the length of the diagonal d.", marks: 3, answer: "7 cm",
+      cuboid: { l: "6 cm", w: "2 cm", h: "3 cm", diagonal: "d" } },
+    { section: "Section A: Diagonals", question: "Find the length of the diagonal d, to 2 decimal places.", tolerance: 0.01, marks: 3, answer: "7.07 cm",
+      cuboid: { l: "5 cm", w: "4 cm", h: "3 cm", diagonal: "d" } },
+
+    { section: "Section B: Problems", question: "Find the angle between the diagonal d and the base, to 1 decimal place.", tolerance: 0.1, marks: 3, answer: "26.6°",
+      cuboid: { l: "8 cm", w: "6 cm", h: "5 cm", diagonal: "d", baseDiagonal: "" } },
+    { section: "Section B: Problems", question: "A box is 30 cm by 20 cm by 10 cm. Will a 38 cm rod fit inside it?", type: "choice", marks: 2,
+      options: ["No, the longest diagonal is about 37.4 cm", "Yes, the longest diagonal is about 38.4 cm", "Yes, because 30 + 20 > 38", "No, because 38 > 30"], answer: "No, the longest diagonal is about 37.4 cm" },
+    { section: "Section B: Problems", question: "Why do you need two steps of Pythagoras to find the diagonal of a cuboid?", type: "explain", marks: 1,
+      answer: "The diagonal isn't in a face. First find the base diagonal (in the bottom face), then use it with the height in a vertical right-angled triangle to get the space diagonal." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Rates of change and tangents to curves",
+  title: "Rates of Change and Tangents",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "The gradient of a curve at a point is the gradient of the tangent there: pick two points on the tangent and work out change in y ÷ change in x. The gradient of a chord gives the average rate of change between two points.",
+  questions: [
+    { section: "Section A: Tangents", text: "The graph shows y = x² with the tangent at x = 2.", question: "Estimate the gradient of the curve at x = 2.", tolerance: 0.3, marks: 2, answer: "4",
+      graph: { x: [-1, 4], y: [-4, 12], ystep: 2, curves: ["x^2"], lines: [[[0, -4], [4, 12]]] } },
+    { section: "Section A: Tangents", text: "The graph shows y = x² − 4x + 5 with the tangent at x = 3.", question: "Estimate the gradient of the curve at x = 3.", tolerance: 0.3, marks: 2, answer: "2",
+      graph: { x: [0, 5], y: [0, 10], curves: ["x^2 - 4x + 5"], lines: [[[2, 0], [5, 6]]] } },
+    { section: "Section A: Tangents", text: "The distance-time graph shows a ball rolling down a slope, with the tangent at t = 4.", question: "Estimate the speed of the ball at 4 seconds, in m/s.", tolerance: 0.4, marks: 2, answer: "4",
+      graph: { x: [0, 6], y: [0, 18], ystep: 2, xlabel: "Time (s)", ylabel: "Distance (m)", curves: ["x^2/2"], lines: [[[2, 0], [6, 16]]] } },
+
+    { section: "Section B: Average rate of change", text: "The graph shows y = x².", question: "Find the average rate of change of y between x = 1 and x = 3.", marks: 2, answer: "4",
+      graph: { x: [0, 4], y: [0, 16], ystep: 2, curves: ["x^2"], dashed: [[[1, 1], [3, 9]]] } },
+    { section: "Section B: Average rate of change", question: "What does the gradient of a distance-time graph represent?", type: "choice", marks: 1,
+      options: ["Speed", "Acceleration", "Distance", "Time"], answer: "Speed" },
+    { section: "Section B: Average rate of change", question: "What does the gradient of a velocity-time graph represent?", type: "choice", marks: 1,
+      options: ["Acceleration", "Distance", "Speed", "Time"], answer: "Acceleration" },
+    { section: "Section B: Average rate of change", question: "Explain the difference between the gradient of a chord and the gradient of a tangent on a curve.", type: "explain", marks: 1,
+      answer: "A chord joins two points on the curve and gives the average rate of change between them. A tangent just touches the curve at one point and gives the rate of change at that instant." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Histograms",
+  title: "Histograms",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Histograms with unequal class widths plot frequency density = frequency ÷ class width. To read a frequency back, use frequency = frequency density × class width (the area of the bar).",
+  questions: [
+    { section: "Section A: Frequency density", text: "The table shows the times 120 people took to finish a task.",
+      table: { headings: ["Time, t (minutes)", "Frequency", "Frequency density"], rows: [["0 < t ≤ 10", "20", "?"], ["10 < t ≤ 15", "30", "?"], ["15 < t ≤ 20", "40", "?"], ["20 < t ≤ 40", "30", "?"]] }, parts: [
+      { question: "Frequency density for 0 < t ≤ 10", marks: 1, answer: "2" },
+      { question: "Frequency density for 10 < t ≤ 15", marks: 1, answer: "6" },
+      { question: "Frequency density for 15 < t ≤ 20", marks: 1, answer: "8" },
+      { question: "Frequency density for 20 < t ≤ 40", marks: 1, answer: "1.5" }
+    ] },
+    { section: "Section A: Frequency density", question: "How do you work out frequency density?", type: "choice", marks: 1,
+      options: ["Frequency ÷ class width", "Class width ÷ frequency", "Frequency × class width", "Frequency ÷ total"], answer: "Frequency ÷ class width" },
+
+    { section: "Section B: Reading histograms", text: "The histogram shows the times people took to finish a task.", question: "How many people took between 10 and 15 minutes?", marks: 2, answer: "30",
+      graph: { x: [0, 40], xstep: 5, y: [0, 9], ystep: 1, xlabel: "Time (minutes)", ylabel: "Frequency density",
+        shade: [[[0, 0], [0, 2], [10, 2], [10, 0]], [[10, 0], [10, 6], [15, 6], [15, 0]], [[15, 0], [15, 8], [20, 8], [20, 0]], [[20, 0], [20, 1.5], [40, 1.5], [40, 0]]],
+        lines: [[[0, 0], [0, 2], [10, 2], [10, 0]], [[10, 0], [10, 6], [15, 6], [15, 0]], [[15, 0], [15, 8], [20, 8], [20, 0]], [[20, 0], [20, 1.5], [40, 1.5], [40, 0]]] } },
+    { section: "Section B: Reading histograms", text: "The histogram shows the times people took to finish a task.", question: "How many people took longer than 20 minutes?", marks: 2, answer: "30",
+      graph: { x: [0, 40], xstep: 5, y: [0, 9], ystep: 1, xlabel: "Time (minutes)", ylabel: "Frequency density",
+        shade: [[[0, 0], [0, 2], [10, 2], [10, 0]], [[10, 0], [10, 6], [15, 6], [15, 0]], [[15, 0], [15, 8], [20, 8], [20, 0]], [[20, 0], [20, 1.5], [40, 1.5], [40, 0]]],
+        lines: [[[0, 0], [0, 2], [10, 2], [10, 0]], [[10, 0], [10, 6], [15, 6], [15, 0]], [[15, 0], [15, 8], [20, 8], [20, 0]], [[20, 0], [20, 1.5], [40, 1.5], [40, 0]]] } },
+    { section: "Section B: Reading histograms", text: "The histogram shows the times people took to finish a task.", question: "Estimate how many people took longer than 30 minutes.", marks: 2, answer: "15",
+      graph: { x: [0, 40], xstep: 5, y: [0, 9], ystep: 1, xlabel: "Time (minutes)", ylabel: "Frequency density",
+        shade: [[[0, 0], [0, 2], [10, 2], [10, 0]], [[10, 0], [10, 6], [15, 6], [15, 0]], [[15, 0], [15, 8], [20, 8], [20, 0]], [[20, 0], [20, 1.5], [40, 1.5], [40, 0]]],
+        lines: [[[0, 0], [0, 2], [10, 2], [10, 0]], [[10, 0], [10, 6], [15, 6], [15, 0]], [[15, 0], [15, 8], [20, 8], [20, 0]], [[20, 0], [20, 1.5], [40, 1.5], [40, 0]]] } },
+    { section: "Section B: Reading histograms", question: "On a histogram, Noah says the tallest bar always has the most people in it. Explain why he could be wrong.", type: "explain", marks: 1,
+      answer: "The frequency is the area of the bar (frequency density × width), not its height. A short, wide bar can hold more people than a tall, narrow one." }
   ]
 });

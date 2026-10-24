@@ -1351,7 +1351,8 @@
       s += `<polyline class="shape" points="${line.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`;
     });
     // shade: [[x, y], ...] fills a region (for example the region an inequality describes); dashed: lines drawn dashed.
-    if (g.shade) s += `<polygon class="region" points="${g.shade.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`;
+    // (shade can also be a list of polygons, for example the bars of a histogram)
+    (g.shade ? (Array.isArray(g.shade[0][0]) ? g.shade : [g.shade]) : []).forEach(poly => { s += `<polygon class="region" points="${poly.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`; });
     (g.dashed || []).forEach(line => { s += `<polyline class="shape dashed" points="${line.map(([x, y]) => px(x) + "," + py(y)).join(" ")}"/>`; });
     // curves: ["x^2 - 2x - 3", "6/x"] draws the graph of y = each expression, broken where it leaves the grid.
     (g.curves || []).forEach(expr => {
@@ -1872,16 +1873,31 @@
   // Only single letters are variables; π, √ and powers are allowed.
   function expressionFn(raw) {
     let s = String(raw ?? "").toLowerCase().replace(/[−–]/g, "-").replace(/×/g, "*").replace(/÷/g, "/").replace(/·/g, "*");
-    s = unsuper(s).replace(/π/g, "P").replace(/√/g, "R");
-    if (/[^0-9a-zPR+\-*/^().\s]/.test(s)) return null;
+    // sin, cos and tan take degrees, as on a GCSE calculator.
+    s = unsuper(s).replace(/π/g, "P").replace(/√/g, "R").replace(/sin/g, "S").replace(/cos/g, "C").replace(/tan/g, "T");
+    if (/[^0-9a-zPRSCT+\-*/^().\s]/.test(s)) return null;
     s = s.replace(/\s+/g, "");
     s = s.replace(/R(\d+(?:\.\d+)?|[a-z])/g, "Q($1)").replace(/R\(/g, "Q(");
     if (/R/.test(s)) return null;
-    s = s.replace(/(\d|\)|[a-z]|P)(?=[a-z(QP])/g, "$1*").replace(/\^/g, "**");
+    s = s.replace(/(\d|\)|[a-z]|P)(?=[a-z(QPSCT])/g, "$1*").replace(/\^/g, "**");
     const vars = [...new Set(s.match(/[a-z]/g) || [])];
-    try { return { fn: Function("P", "Q", ...vars, `return (${s});`), vars }; } catch (e) { return null; }
+    const D = Math.PI / 180;
+    try {
+      const inner = Function("P", "Q", "S", "C", "T", ...vars, `return (${s});`);
+      return { fn: (p, q, ...v) => inner(p, q, a => Math.sin(a * D), a => Math.cos(a * D), a => Math.tan(a * D), ...v), vars };
+    } catch (e) { return null; }
   }
-  function markExpression(value, answer) {
+  // An expression is "not simplest" if it still has a square factor under a root (√50), a root on the bottom
+  // of a fraction (3/√2), more fractions than the answer, or is clearly longer than the answer.
+  function notSimplest(value, answer) {
+    const norm = t => String(t).replace(/\s+/g, "").replace(/[−–]/g, "-");
+    const g = norm(value), w = norm(answer);
+    const squareFactor = [...g.matchAll(/√\(?(\d+)/g)].some(m => { for (let k = 2; k * k <= +m[1]; k++) if (+m[1] % (k * k) === 0) return true; return false; });
+    const rootBelow = /\/[^+\-]*√/.test(g) && !/\/[^+\-]*√/.test(w);
+    const slashes = (g.match(/\//g) || []).length > (w.match(/\//g) || []).length;
+    return squareFactor || rootBelow || slashes || g.length > w.length + 3;
+  }
+  function markExpression(value, answer, simplest) {
     const target = String(answer).includes("=") ? String(answer).split("=").pop() : answer;
     const v = String(value).includes("=") ? String(value).split("=").pop() : value;
     const want = expressionFn(target), got = expressionFn(v);
@@ -1894,6 +1910,7 @@
       try { a = want.fn(Math.PI, Math.sqrt, ...pick(want.vars)); b = got.fn(Math.PI, Math.sqrt, ...pick(got.vars)); } catch (e) { return { correct: false, message: "I couldn't read that. Check your brackets." }; }
       if (!Number.isFinite(b) || Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) return { correct: false, message: "Not quite. Try again." };
     }
+    if (simplest && notSimplest(v, target)) return { correct: false, message: "Right value, but it isn't in its simplest form yet." };
     return { correct: true, message: "Correct!" };
   }
 
@@ -2371,7 +2388,15 @@
       <polygon class="sf-side" points="190,70 250,25 250,125 190,170"/>
       <text class="o-label" x="110" y="190" text-anchor="middle">${esc(c.l || "")}</text>
       <text class="o-label" x="22" y="124" text-anchor="end">${esc(c.h || "")}</text>
-      <text class="o-label" x="226" y="160" text-anchor="start">${esc(c.w || "")}</text></svg>`;
+      <text class="o-label" x="226" y="160" text-anchor="start">${esc(c.w || "")}</text>${cuboidDiagonals(c)}</svg>`;
+  }
+  // 3D Pythagoras: diagonal: "d" draws the space diagonal (front bottom left to back top right) dashed,
+  // baseDiagonal: "e" the diagonal across the base. Give "" for a line with no label.
+  function cuboidDiagonals(c) {
+    let s = "";
+    if (c.baseDiagonal != null) s += `<line class="o-dashed" x1="30" y1="170" x2="250" y2="125"/><text class="o-label" x="150" y="160" text-anchor="middle">${esc(c.baseDiagonal)}</text>`;
+    if (c.diagonal != null) s += `<line class="o-dashed" x1="30" y1="170" x2="250" y2="25"/><text class="o-label" x="128" y="96" text-anchor="end">${esc(c.diagonal)}</text>`;
+    return s;
   }
   function cylinderSVG(c) {
     return `<svg class="solid" viewBox="0 0 290 230" width="290" role="img" aria-label="Cylinder">
@@ -2764,7 +2789,7 @@
     if (spec.kind === "filltree") return markFillTree(saved.value, spec.trees);
     if (spec.kind === "stdform") return markStdForm(saved.value, spec.answer);
     if (spec.kind === "solutions") return markSolutions(saved.value, spec.answer, spec.tolerance);
-    if (spec.kind === "expression") return markExpression(saved.value, spec.answer);
+    if (spec.kind === "expression") return markExpression(saved.value, spec.answer, spec.simplest);
     if (spec.kind === "factorise") return markFactorised(saved.value, spec.answer);
     if (spec.kind === "bearing") {
       return Number(saved.value) === readNumber(spec.answer) ? { correct: true, message: "Correct!" }
