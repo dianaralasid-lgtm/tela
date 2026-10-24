@@ -3671,7 +3671,10 @@
   // Tutor details and notes save as they're typed.
   $("drawerBody").addEventListener("input", e => {
     if (!["tutorName", "tutorEmail", "tutorNotes"].includes(e.target.id)) return;
-    saveTutor({ name: $("tutorName").value, email: $("tutorEmail").value.trim(), notes: $("tutorNotes").value });
+    // notesUpdated lets the tutor page show when the notes last changed.
+    const before = loadTutor(), notes = $("tutorNotes").value;
+    saveTutor({ name: $("tutorName").value, email: $("tutorEmail").value.trim(), notes,
+      notesUpdated: notes !== (before.notes || "") ? Date.now() : before.notesUpdated });
   });
 
   // ---------- Keyboard shortcuts ----------
