@@ -686,6 +686,32 @@
   .d-field input:focus, .d-field textarea:focus, .d-field select:focus { outline: none; border-color: var(--green-600); }
   .d-field input[readonly] { background: var(--grey-bg); color: var(--muted); }
   .d-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* Messages: a conversation that scrolls, with the message box at the bottom */
+  .drawer-body.chat-mode { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 16px; }
+  .chat { display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+  .chat-with { display: flex; align-items: center; gap: 10px; }
+  .chat-with .d-field { flex: 1; margin-bottom: 0; }
+  .chat-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--green-100); color: var(--green-800); display: grid; place-items: center; font-weight: 700; flex: none; }
+  .chat-list {
+    flex: 1; min-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+    background: var(--green-50); border-radius: 12px; padding: 12px;
+  }
+  .chat-empty { margin: auto; text-align: center; color: var(--muted); font-size: 14px; max-width: 260px; }
+  .bubble { max-width: 82%; padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.45; box-shadow: 0 1px 1px rgba(10,61,44,.06); }
+  .bubble.mine { align-self: flex-end; background: var(--green-700); color: var(--white); border-bottom-right-radius: 4px; }
+  .bubble.theirs { align-self: flex-start; background: var(--white); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+  .bubble-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .bubble-time { font-size: 11px; opacity: .7; text-align: right; margin-top: 2px; }
+  .chat-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip-btn { border: 1px solid var(--line); background: var(--white); border-radius: 99px; padding: 4px 10px; font-size: 12px; color: var(--green-800); }
+  .chip-btn:hover { border-color: var(--green-600); background: var(--green-50); }
+  .composer { display: flex; gap: 8px; align-items: flex-end; }
+  .composer textarea {
+    flex: 1; font: inherit; font-size: 14px; border: 1.5px solid var(--line); border-radius: 12px; padding: 9px 12px;
+    resize: none; max-height: 120px; color: var(--ink);
+  }
+  .composer textarea:focus { outline: none; border-color: var(--green-600); }
   .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .btn-line { background: var(--white); color: var(--ink); border: 1.5px solid var(--line); }
   .btn-line:hover { border-color: var(--green-600); }
@@ -737,9 +763,10 @@
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
     <span>Progress</span>
   </button>
-  <button type="button" class="side-btn" data-view="tutor">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
-    <span>Tutor</span>
+  <button type="button" class="side-btn" data-view="messages">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>
+    <span>Messages</span>
+    <b class="side-badge" id="msgBadge" hidden></b>
   </button>
   <button type="button" class="side-btn" data-view="settings">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
@@ -897,6 +924,7 @@
 </script>
 <script src="questions.js"></script>
 <script src="catalog.js"></script>
+<script src="messages.js"></script>
 <script>
   const SESSION_KEY = "tela.session";
   let currentUser = null, account = null;
@@ -3465,27 +3493,55 @@
   const PRACTICE_PREFIX = STORAGE_KEY + ".practice.";
   let drawerView = null;
 
-  // ---------- Notes to tutors ----------
-  // A student can only write to the tutors they've been added to (their account's tutors list; older
-  // accounts made by a tutor have just addedBy). Notes are kept per tutor: { tutorUsername: { text, updated } }.
-  const NOTES_KEY = STORAGE_KEY + ".notes";
-  const readJSON = (key, fallback) => { try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch (e) { return fallback; } };
+  // ---------- Messages with tutors ----------
+  // A student can only message the tutors they've been added to. Conversations are stored by messages.js.
   function myTutors() {
-    const acc = readJSON("tela.accounts", {})[currentUser] || {}, tutorAccounts = readJSON("tela.tutors", {});
-    const ids = Array.isArray(acc.tutors) ? acc.tutors : acc.addedBy ? [acc.addedBy] : [];
-    return ids.filter(id => tutorAccounts[id]).map(id => ({ id, name: tutorAccounts[id].displayName || id }));
+    let tutorAccounts = {};
+    try { tutorAccounts = JSON.parse(localStorage.getItem("tela.tutors")) || {}; } catch (e) {}
+    return TelaMessages.tutorsOf(currentUser).filter(id => tutorAccounts[id]).map(id => ({ id, name: tutorAccounts[id].displayName || id }));
   }
-  function loadNotes() {
-    const notes = readJSON(NOTES_KEY, {});
-    // A note written before notes were per tutor goes to the student's tutor, if they have exactly one.
-    const old = readJSON(STORAGE_KEY + ".tutor", null), tutors = myTutors();
-    if (old && old.notes && tutors.length === 1 && !notes[tutors[0].id]) {
-      notes[tutors[0].id] = { text: old.notes, updated: old.notesUpdated || Date.now() };
-      try { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); localStorage.removeItem(STORAGE_KEY + ".tutor"); } catch (e) {}
-    }
-    return notes;
+  let chatTutor = null;   // the tutor whose conversation is open
+  const unreadMessages = () => myTutors().reduce((n, t) => n + TelaMessages.unread(currentUser, t.id, "student"), 0);
+  function renderMsgBadge() {
+    const n = unreadMessages();
+    $("msgBadge").textContent = n;
+    $("msgBadge").hidden = !n;
+    $("msgBadge").setAttribute("aria-label", `${n} unread`);
   }
-  let noteTutor = null;   // the tutor picked in the dropdown
+  function bubblesHTML(list, mine, theirName) {
+    if (!list.length) return `<p class="chat-empty">No messages yet. Ask ${esc(theirName)} about anything you're stuck on.</p>`;
+    return list.map(m => `<div class="bubble ${m.from === mine ? "mine" : "theirs"}">
+      <div class="bubble-text">${esc(m.text)}</div><div class="bubble-time">${TelaMessages.when(m.at)}</div></div>`).join("");
+  }
+  function renderMessages() {
+    const tutors = myTutors();
+    if (!tutors.length) return `<p class="d-note">You haven't been added to a tutor yet. Once a tutor adds you, you'll be able to message them here.</p>`;
+    if (!tutors.some(t => t.id === chatTutor)) chatTutor = tutors[0].id;
+    const tutor = tutors.find(t => t.id === chatTutor);
+    const review = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).slice(0, 4);
+    return `<div class="chat">
+      <div class="chat-with">${tutors.length > 1
+        ? `<label class="d-field">Conversation with<select id="chatTutor">${tutors.map(t => {
+            const n = TelaMessages.unread(currentUser, t.id, "student");
+            return `<option value="${esc(t.id)}"${t.id === chatTutor ? " selected" : ""}>${esc(t.name)}${n && t.id !== chatTutor ? ` (${n} new)` : ""}</option>`; }).join("")}</select></label>`
+        : `<span class="chat-avatar">${esc(tutor.name.charAt(0).toUpperCase())}</span><strong>${esc(tutor.name)}</strong>`}</div>
+      <div class="chat-list" id="chatList" aria-live="polite">${bubblesHTML(TelaMessages.thread(currentUser, chatTutor), "student", tutor.name)}</div>
+      ${review.length ? `<div class="chat-chips">${review.map(t => `<button type="button" class="chip-btn" data-ask="${esc(t.title)}">Ask about ${esc(t.title)}</button>`).join("")}</div>` : ""}
+      <form class="composer" id="composer">
+        <textarea id="msgInput" rows="2" placeholder="Message ${esc(tutor.name)}…" aria-label="Message ${esc(tutor.name)}"></textarea>
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+    </div>`;
+  }
+  // Shows the latest messages, marks the conversation read and updates the badge.
+  function refreshChat() {
+    if (drawerView !== "messages" || !chatTutor || !$("chatList")) return;
+    const tutor = myTutors().find(t => t.id === chatTutor);
+    $("chatList").innerHTML = bubblesHTML(TelaMessages.thread(currentUser, chatTutor), "student", tutor ? tutor.name : "your tutor");
+    $("chatList").scrollTop = $("chatList").scrollHeight;
+    TelaMessages.markRead(currentUser, chatTutor, "student");
+    renderMsgBadge();
+  }
   function practisedCount() {
     let n = 0;
     try { for (let i = 0; i < localStorage.length; i++) if (localStorage.key(i).startsWith(PRACTICE_PREFIX)) n++; } catch (e) {}
@@ -3549,25 +3605,6 @@
       </div>`;
   }
 
-  function renderTutor() {
-    const tutors = myTutors(), notes = loadNotes();
-    const review = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]);
-    if (!tutors.some(t => t.id === noteTutor)) noteTutor = tutors.length ? tutors[0].id : null;
-    const note = noteTutor && notes[noteTutor];
-    const notesSection = !tutors.length
-      ? `<p class="d-note">You haven't been added to a tutor yet. Once a tutor adds you, you'll be able to send them notes here.</p>`
-      : `<label class="d-field">Send notes to
-          <select id="noteTutor">${tutors.map(t => `<option value="${esc(t.id)}"${t.id === noteTutor ? " selected" : ""}>${esc(t.name)}</option>`).join("")}</select></label>
-        <label class="d-field"><span class="visually-hidden">Your note</span>
-          <textarea id="tutorNotes" placeholder="Questions you're stuck on, topics you want to go over…">${esc(note ? note.text : "")}</textarea></label>
-        <p class="d-note"><span id="noteStatus">${note && note.updated ? `Saved · last changed ${shortDate(note.updated)}.` : "Your note saves automatically as you type."}</span> Only ${esc(tutors.find(t => t.id === noteTutor).name)} can see it.</p>`;
-    return `
-      <div class="d-section"><h3>Notes for my tutor${tutors.length > 1 ? "s" : ""}</h3>${notesSection}</div>
-      <div class="d-section"><h3>Topics to go over (${review.length})</h3>
-        ${topicButtons(review, "No topics in progress. Topics you've started but aren't confident in yet will show here.")}
-      </div>`;
-  }
-
   function renderSettings() {
     return `
       <div class="d-section"><h3>Account</h3>
@@ -3585,7 +3622,7 @@
       </div>`;
   }
 
-  const DRAWER_VIEWS = { homework: ["Homework", homeworkHTML], tutor: ["Tutor", renderTutor], settings: ["Settings", renderSettings] };
+  const DRAWER_VIEWS = { homework: ["Homework", homeworkHTML], messages: ["Messages", renderMessages], settings: ["Settings", renderSettings] };
 
   // Progress opens as a pop-up in the middle of the screen rather than a side panel.
   function openProgress() {
@@ -3614,12 +3651,16 @@
     $("drawerTitle").textContent = DRAWER_VIEWS[view][0];
     $("drawerBody").innerHTML = DRAWER_VIEWS[view][1]();
     $("drawerBody").scrollTop = 0;
+    // Messages fill the panel: the conversation scrolls and the message box stays at the bottom.
+    $("drawerBody").classList.toggle("chat-mode", view === "messages" && !!$("chatList"));
     $("drawerOverlay").classList.add("open");
     document.querySelectorAll(".side-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
+    if (view === "messages" && $("chatList")) { refreshChat(); $("msgInput").focus(); }
   }
   function closeDrawer() {
     drawerView = null;
     $("drawerOverlay").classList.remove("open");
+    $("drawerBody").classList.remove("chat-mode");
     document.querySelectorAll(".side-btn").forEach(b => b.classList.remove("active"));
   }
 
@@ -3672,20 +3713,39 @@
     }
     if (id === "setLogout") $("logoutBtn").click();
   });
-  // Picking another tutor shows the note written to them; notes save as they're typed, to the picked tutor only.
+  // ---------- Messages: switching conversation, sending, quick "Ask about" buttons ----------
   $("drawerBody").addEventListener("change", e => {
-    if (e.target.id !== "noteTutor") return;
-    noteTutor = e.target.value;
-    $("drawerBody").innerHTML = renderTutor();
+    if (e.target.id !== "chatTutor") return;
+    chatTutor = e.target.value;
+    $("drawerBody").innerHTML = renderMessages();
+    refreshChat();
+    $("msgInput").focus();
   });
-  $("drawerBody").addEventListener("input", e => {
-    if (e.target.id !== "tutorNotes" || !myTutors().some(t => t.id === noteTutor)) return;
-    const notes = loadNotes(), text = e.target.value;
-    if (text.trim()) notes[noteTutor] = { text, updated: Date.now() };
-    else delete notes[noteTutor];
-    try { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); } catch (err) {}
-    $("noteStatus").textContent = text.trim() ? "Saved." : "Note cleared.";
+  function sendMessage() {
+    const text = $("msgInput").value;
+    if (!text.trim() || !myTutors().some(t => t.id === chatTutor)) return;
+    if (!TelaMessages.send(currentUser, chatTutor, "student", text)) return toast("Couldn't send: browser storage is unavailable.");
+    $("msgInput").value = "";
+    refreshChat();
+    $("msgInput").focus();
+  }
+  $("drawerBody").addEventListener("submit", e => { if (e.target.id === "composer") { e.preventDefault(); sendMessage(); } });
+  // Enter sends; Shift+Enter starts a new line.
+  $("drawerBody").addEventListener("keydown", e => {
+    if (e.target.id === "msgInput" && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
+  $("drawerBody").addEventListener("click", e => {
+    const ask = e.target.closest("[data-ask]");
+    if (!ask) return;
+    $("msgInput").value = `Can we go over ${ask.dataset.ask}? `;
+    $("msgInput").focus();
+  });
+  // A tutor's reply (from another tab) shows up straight away.
+  window.addEventListener("storage", e => {
+    if (!TelaMessages.isMessagesKey(e.key) && e.key !== "tela.accounts") return;
+    if (drawerView === "messages") refreshChat(); else renderMsgBadge();
+  });
+  renderMsgBadge();
 
   // ---------- Keyboard shortcuts ----------
   document.addEventListener("keydown", e => {

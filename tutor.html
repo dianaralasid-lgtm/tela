@@ -201,18 +201,41 @@
   .icon-btn { width: 36px; height: 36px; border: none; background: none; border-radius: 10px; color: var(--muted); display: grid; place-items: center; }
   .icon-btn:hover { background: var(--green-50); color: var(--ink); }
   .drawer-body { padding: 18px 24px 32px; overflow-y: auto; flex: 1; }
-  .note-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-  .note-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
-  .note-card.new { border-color: var(--green-600); box-shadow: 0 0 0 3px rgba(25,135,84,.1); }
-  .note-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .note-top h3 { font-size: 15px; }
-  .note-top small { color: var(--muted); font-size: 12px; display: block; }
-  .new-pill { margin-left: auto; background: var(--green-700); color: var(--white); font-size: 11px; font-weight: 700; border-radius: 99px; padding: 2px 8px; }
-  .note-when { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
-  .new-pill + .note-when { margin-left: 8px; }
-  .note-card .notes { margin-bottom: 0; }
-  .note-actions { margin-top: 10px; display: flex; gap: 8px; }
-  .drawer-note { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .new-pill { background: var(--green-700); color: var(--white); font-size: 11px; font-weight: 700; border-radius: 99px; padding: 2px 8px; margin-left: 6px; letter-spacing: 0; text-transform: none; vertical-align: 1px; }
+  .msg-preview { font-size: 14px; overflow-wrap: anywhere; }
+  .msg-preview small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .s-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* Conversation list */
+  .convo-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .convo {
+    width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; border: 1px solid var(--line);
+    background: var(--white); border-radius: 12px; padding: 10px 12px; color: var(--ink);
+  }
+  .convo:hover { border-color: var(--green-600); background: var(--green-50); }
+  .convo.unread { border-color: var(--green-600); }
+  .convo-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .convo-top { display: flex; justify-content: space-between; gap: 8px; }
+  .convo-top small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .convo-preview { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .convo.unread .convo-preview { color: var(--ink); font-weight: 600; }
+
+  /* One conversation: it scrolls, with the message box at the bottom */
+  .drawer-body.chat-mode { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 16px; }
+  .chat { display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+  .chat-head { display: flex; align-items: center; gap: 10px; }
+  .chat-head small { display: block; color: var(--muted); font-size: 12px; }
+  .chat-head .chat-hw { margin-left: auto; padding: 7px 12px; }
+  .chat-list { flex: 1; min-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: var(--green-50); border-radius: 12px; padding: 12px; }
+  .chat-empty { margin: auto; text-align: center; color: var(--muted); font-size: 14px; max-width: 260px; }
+  .bubble { max-width: 82%; padding: 8px 12px; border-radius: 16px; font-size: 14px; line-height: 1.45; box-shadow: 0 1px 1px rgba(10,61,44,.06); }
+  .bubble.mine { align-self: flex-end; background: var(--green-700); color: var(--white); border-bottom-right-radius: 4px; }
+  .bubble.theirs { align-self: flex-start; background: var(--white); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+  .bubble-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .bubble-time { font-size: 11px; opacity: .7; text-align: right; margin-top: 2px; }
+  .composer { display: flex; gap: 8px; align-items: flex-end; }
+  .composer textarea { flex: 1; font: inherit; font-size: 14px; border: 1.5px solid var(--line); border-radius: 12px; padding: 9px 12px; resize: none; max-height: 120px; color: var(--ink); }
+  .composer textarea:focus { outline: none; border-color: var(--green-600); }
 
   @media (max-width: 720px) {
     /* On phones the sidebar becomes a bar along the bottom. */
@@ -231,7 +254,7 @@
 </head>
 <body>
 
-<!-- Sidebar: Students (the main page) and Notes (what students have written for their tutor) -->
+<!-- Sidebar: Students (the main page) and Messages (conversations with each student) -->
 <nav class="sidebar" aria-label="Menu">
   <div class="side-top">
     <div class="side-label">Menu</div>
@@ -243,18 +266,18 @@
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-.5A5.5 5.5 0 0 1 8 14h2a5.5 5.5 0 0 1 5.5 5.5v.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14a4.5 4.5 0 0 1 4.5 4.5v.5"/></svg>
     <span>Students</span>
   </button>
-  <button type="button" class="side-btn" data-view="notes">
+  <button type="button" class="side-btn" data-view="messages">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>
-    <span>Notes</span>
-    <b class="side-badge" id="notesBadge" hidden></b>
+    <span>Messages</span>
+    <b class="side-badge" id="msgBadge" hidden></b>
   </button>
 </nav>
 
 <div class="drawer-overlay" id="drawerOverlay">
   <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
     <div class="drawer-head">
-      <h2 id="drawerTitle">Notes from students</h2>
-      <button type="button" class="icon-btn" id="drawerClose" aria-label="Close notes">
+      <h2 id="drawerTitle">Messages</h2>
+      <button type="button" class="icon-btn" id="drawerClose" aria-label="Close messages">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
       </button>
     </div>
@@ -280,7 +303,7 @@
     <div class="stats">
       <div class="stat"><div class="stat-num" id="statStudents">0</div><div class="stat-label">Students</div></div>
       <div class="stat"><div class="stat-num" id="statAverage">0%</div><div class="stat-label">Average confident</div></div>
-      <div class="stat"><div class="stat-num" id="statNotes">0</div><div class="stat-label">Students with notes for you</div></div>
+      <div class="stat"><div class="stat-num" id="statUnread">0</div><div class="stat-label">Unread messages</div></div>
     </div>
   </div>
 </header>
@@ -355,6 +378,7 @@
 <script src="questions.js"></script>
 <script src="auth.js"></script>
 <script src="catalog.js"></script>
+<script src="messages.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -364,29 +388,20 @@
   const tutor = read("tela.tutors", {})[tutorUser] || { displayName: tutorUser };
   $("greeting").textContent = `${tutor.displayName}'s students`;
 
-  // Each student's topics, statuses and notes come from what their dashboard saved in this browser.
+  // Each student's topics, statuses and messages come from what their dashboard saved in this browser.
   // A student's tutors: the account's tutors list (older accounts made by a tutor only have addedBy).
   const tutorsOf = acc => Array.isArray(acc.tutors) ? acc.tutors : acc.addedBy ? [acc.addedBy] : [];
-  // Only this tutor's own students are shown, and only the notes they've written to this tutor.
-  function noteFor(username, acc) {
-    const note = read("tela.topics." + username + ".notes", {})[tutorUser];
-    if (note) return { text: (note.text || "").trim(), updated: note.updated || 0 };
-    // A note from before notes were per tutor belongs to the student's only tutor.
-    const old = read("tela.topics." + username + ".tutor", {});
-    const list = tutorsOf(acc);
-    return list.length === 1 && list[0] === tutorUser && old.notes ? { text: old.notes.trim(), updated: old.notesUpdated || 0 } : { text: "", updated: 0 };
-  }
+  // Only this tutor's own students are shown, with this tutor's conversation with each (see messages.js).
   let students = [];
   const loadStudents = () => Object.entries(read("tela.accounts", {})).filter(([, acc]) => tutorsOf(acc).includes(tutorUser)).map(([username, acc]) => {
     const topics = read("tela.topics." + username, null);
     const list = Array.isArray(topics) ? topics : [];
     const count = s => list.filter(t => t.status === s).length;
-    const note = noteFor(username, acc);
-    const notes = note.text, notesUpdated = note.updated;
     return {
       username, name: acc.displayName || username, opened: Array.isArray(topics), total: list.length,
       done: count("done"), doing: count("doing"), todo: count("todo"),
-      working: list.filter(t => t.status === "doing").map(t => t.title), notes, notesUpdated,
+      working: list.filter(t => t.status === "doing").map(t => t.title),
+      lastMessage: TelaMessages.last(username, tutorUser), unread: TelaMessages.unread(username, tutorUser, "tutor"),
       homework: read("tela.topics." + username + ".homework", []),
       statusOf: title => (list.find(t => t.title.trim().toLowerCase() === title.trim().toLowerCase()) || {}).status || "todo"
     };
@@ -420,8 +435,13 @@
       ${summary}
       ${st.working.length ? `<div class="s-section"><h3>Working on</h3><div class="tags">${st.working.slice(0, 8).map(t => `<span class="tag">${esc(t)}</span>`).join("")}${more}</div></div>` : ""}
       <div class="s-section"><h3>Homework</h3>${homeworkRows(st, false)}</div>
-      <div class="s-section"><h3>Notes for you</h3>${st.notes ? `<div class="notes">${esc(st.notes)}</div>` : `<p class="muted">No notes yet.</p>`}</div>
-      <div class="s-actions"><button type="button" class="btn btn-primary" data-homework="${esc(st.username)}">Set homework</button></div>
+      <div class="s-section"><h3>Messages${st.unread ? ` <span class="new-pill">${st.unread} new</span>` : ""}</h3>${st.lastMessage
+        ? `<p class="msg-preview"><strong>${st.lastMessage.from === "tutor" ? "You" : esc(st.name.split(" ")[0])}:</strong> ${esc(st.lastMessage.text.length > 90 ? st.lastMessage.text.slice(0, 90) + "…" : st.lastMessage.text)} <small>${TelaMessages.when(st.lastMessage.at)}</small></p>`
+        : `<p class="muted">No messages yet.</p>`}</div>
+      <div class="s-actions">
+        <button type="button" class="btn btn-primary" data-homework="${esc(st.username)}">Set homework</button>
+        <button type="button" class="btn btn-ghost" data-chat="${esc(st.username)}">Message</button>
+      </div>
     </article>`;
   }
 
@@ -439,72 +459,126 @@
     const withTopics = students.filter(s => s.total);
     $("statStudents").textContent = students.length;
     $("statAverage").textContent = (withTopics.length ? Math.round(withTopics.reduce((a, s) => a + s.done / s.total, 0) / withTopics.length * 100) : 0) + "%";
-    $("statNotes").textContent = students.filter(s => s.notes).length;
+    $("statUnread").textContent = students.reduce((n, s) => n + s.unread, 0);
     render();
-    renderNotesBadge();
-    if (notesOpen()) $("drawerBody").innerHTML = notesHTML();
+    renderMsgBadge();
+    if (messagesOpen() && !chatStudent) $("drawerBody").innerHTML = conversationsHTML();
   }
   $("search").addEventListener("input", render);
 
-  // ---------- Sidebar: Notes from students ----------
-  // This tutor's "already read" record: the notes text last seen for each student. A student whose notes
-  // differ from it has something new.
-  const READ_KEY = "tela.tutorNotesRead." + tutorUser;
-  const isNew = st => st.notes && read(READ_KEY, {})[st.username] !== st.notes;
-  const notesOpen = () => $("drawerOverlay").classList.contains("open");
+  // ---------- Sidebar: Messages with students ----------
+  // The panel shows either the list of conversations or one conversation (chatStudent).
+  let chatStudent = null;
+  const messagesOpen = () => $("drawerOverlay").classList.contains("open");
+  const firstName = st => esc(st.name.split(" ")[0]);
 
-  function renderNotesBadge() {
-    const n = students.filter(isNew).length;
-    $("notesBadge").textContent = n;
-    $("notesBadge").hidden = !n;
-    $("notesBadge").setAttribute("aria-label", `${n} new`);
+  function renderMsgBadge() {
+    const n = students.reduce((sum, s) => sum + s.unread, 0);
+    $("msgBadge").textContent = n;
+    $("msgBadge").hidden = !n;
+    $("msgBadge").setAttribute("aria-label", `${n} unread`);
   }
-  function notesHTML() {
-    const withNotes = students.filter(s => s.notes)
-      .sort((a, b) => isNew(b) - isNew(a) || (b.notesUpdated || 0) - (a.notesUpdated || 0) || a.name.localeCompare(b.name));
-    if (!withNotes.length) return `<p class="muted">No notes yet. When students write in the Tutor panel on their dashboard, their notes appear here.</p>`;
-    const without = students.length - withNotes.length;
-    return `<p class="drawer-note">${withNotes.length} student${withNotes.length === 1 ? " has" : "s have"} written to you${without ? ` · ${without} haven't yet` : ""}.</p>
-      <ul class="note-list">${withNotes.map(st => `<li class="note-card${isNew(st) ? " new" : ""}">
-        <div class="note-top"><span class="avatar">${esc(st.name.charAt(0).toUpperCase())}</span>
-          <div><h3>${esc(st.name)}</h3><small>@${esc(st.username)}</small></div>
-          ${isNew(st) ? `<span class="new-pill">New</span>` : ""}
-          ${st.notesUpdated ? `<span class="note-when">${new Date(st.notesUpdated).toLocaleDateString(undefined, { day: "numeric", month: "short" })}</span>` : ""}</div>
-        <div class="notes">${esc(st.notes)}</div>
-        <div class="note-actions"><button type="button" class="btn btn-ghost" data-homework="${esc(st.username)}">Set homework</button></div>
-      </li>`).join("")}</ul>`;
+  // Conversations with the newest message first; students who haven't messaged yet come after.
+  function conversationsHTML() {
+    if (!students.length) return `<p class="muted">Add a student to start messaging them.</p>`;
+    const sorted = students.slice().sort((a, b) => (b.lastMessage ? b.lastMessage.at : 0) - (a.lastMessage ? a.lastMessage.at : 0) || a.name.localeCompare(b.name));
+    return `<ul class="convo-list">${sorted.map(st => `<li><button type="button" class="convo${st.unread ? " unread" : ""}" data-chat="${esc(st.username)}">
+        <span class="avatar">${esc(st.name.charAt(0).toUpperCase())}</span>
+        <span class="convo-main"><span class="convo-top"><strong>${esc(st.name)}</strong>${st.lastMessage ? `<small>${TelaMessages.when(st.lastMessage.at)}</small>` : ""}</span>
+          <span class="convo-preview">${st.lastMessage ? `${st.lastMessage.from === "tutor" ? "You: " : ""}${esc(st.lastMessage.text)}` : "No messages yet"}</span></span>
+        ${st.unread ? `<span class="side-badge">${st.unread}</span>` : ""}
+      </button></li>`).join("")}</ul>`;
   }
-  function openNotes() {
-    $("drawerBody").innerHTML = notesHTML();        // drawn before marking read, so "New" tags show this time
-    $("drawerBody").scrollTop = 0;
+  function bubblesHTML(list, st) {
+    if (!list.length) return `<p class="chat-empty">No messages with ${firstName(st)} yet. Say hello, or reply when they message you.</p>`;
+    return list.map(m => `<div class="bubble ${m.from === "tutor" ? "mine" : "theirs"}">
+      <div class="bubble-text">${esc(m.text)}</div><div class="bubble-time">${TelaMessages.when(m.at)}</div></div>`).join("");
+  }
+  function chatHTML(st) {
+    return `<div class="chat">
+      <div class="chat-head">
+        <button type="button" class="icon-btn" id="chatBack" aria-label="Back to all conversations">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <span class="avatar">${esc(st.name.charAt(0).toUpperCase())}</span>
+        <div><strong>${esc(st.name)}</strong><small>@${esc(st.username)}</small></div>
+        <button type="button" class="btn btn-ghost chat-hw" data-homework="${esc(st.username)}">Set homework</button>
+      </div>
+      <div class="chat-list" id="chatList" aria-live="polite">${bubblesHTML(TelaMessages.thread(st.username, tutorUser), st)}</div>
+      <form class="composer" id="composer">
+        <textarea id="msgInput" rows="2" placeholder="Message ${firstName(st)}…" aria-label="Message ${esc(st.name)}"></textarea>
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form></div>`;
+  }
+  function showConversations() {
+    chatStudent = null;
+    $("drawerTitle").textContent = "Messages";
+    $("drawerBody").classList.remove("chat-mode");
+    $("drawerBody").innerHTML = conversationsHTML();
+  }
+  function showChat(username) {
+    const st = students.find(s => s.username === username);
+    if (!st) return showConversations();
+    chatStudent = username;
+    $("drawerTitle").textContent = "Messages";
+    $("drawerBody").classList.add("chat-mode");
+    $("drawerBody").innerHTML = chatHTML(st);
+    refreshChat();
+    $("msgInput").focus();
+  }
+  // Shows the latest messages, marks the conversation read and updates the counts.
+  function refreshChat() {
+    const st = students.find(s => s.username === chatStudent);
+    if (!st || !$("chatList")) return;
+    $("chatList").innerHTML = bubblesHTML(TelaMessages.thread(st.username, tutorUser), st);
+    $("chatList").scrollTop = $("chatList").scrollHeight;
+    TelaMessages.markRead(st.username, tutorUser, "tutor");
+    refresh();
+  }
+  function openMessages(username) {
     $("drawerOverlay").classList.add("open");
-    setActive("notes");
-    try {
-      const seen = read(READ_KEY, {});
-      students.forEach(st => { if (st.notes) seen[st.username] = st.notes; });
-      localStorage.setItem(READ_KEY, JSON.stringify(seen));
-    } catch (e) {}
-    renderNotesBadge();
-    $("drawerClose").focus();
+    setActive("messages");
+    if (username) showChat(username); else { showConversations(); $("drawerClose").focus(); }
   }
-  function closeNotes() {
+  function closeMessages() {
+    chatStudent = null;
     $("drawerOverlay").classList.remove("open");
+    $("drawerBody").classList.remove("chat-mode");
     setActive("students");
+  }
+  function sendMessage() {
+    const text = $("msgInput").value;
+    if (!text.trim() || !chatStudent) return;
+    if (!TelaMessages.send(chatStudent, tutorUser, "tutor", text)) return toast("Couldn't send: browser storage is unavailable.");
+    $("msgInput").value = "";
+    refreshChat();
+    $("msgInput").focus();
   }
   const setActive = view => document.querySelectorAll(".side-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
 
   document.querySelectorAll(".side-btn").forEach(b => b.addEventListener("click", () => {
-    if (b.dataset.view === "notes") { if (notesOpen()) closeNotes(); else openNotes(); }
-    else { closeNotes(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+    if (b.dataset.view === "messages") { if (messagesOpen()) closeMessages(); else openMessages(); }
+    else { closeMessages(); window.scrollTo({ top: 0, behavior: "smooth" }); }
   }));
-  $("drawerClose").addEventListener("click", closeNotes);
+  $("drawerClose").addEventListener("click", closeMessages);
   $("drawerOverlay").addEventListener("click", e => {
-    if (e.target === $("drawerOverlay")) return closeNotes();
+    if (e.target === $("drawerOverlay")) return closeMessages();
+    if (e.target.closest("#chatBack")) return showConversations();
+    const chat = e.target.closest("[data-chat]");
+    if (chat) return showChat(chat.dataset.chat);
     const setHw = e.target.closest("[data-homework]");
-    if (setHw) { closeNotes(); openHomework(setHw.dataset.homework); }
+    if (setHw) { closeMessages(); openHomework(setHw.dataset.homework); }
   });
-  // Notes a student writes in another tab arrive without a reload.
-  window.addEventListener("storage", e => { if (e.key && e.key.startsWith("tela.topics.")) refresh(); });
+  $("drawerBody").addEventListener("submit", e => { if (e.target.id === "composer") { e.preventDefault(); sendMessage(); } });
+  // Enter sends; Shift+Enter starts a new line.
+  $("drawerBody").addEventListener("keydown", e => {
+    if (e.target.id === "msgInput" && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+  $("grid").addEventListener("click", e => { const chat = e.target.closest("[data-chat]"); if (chat) openMessages(chat.dataset.chat); });
+  // Messages (and progress) from a student in another tab arrive without a reload.
+  window.addEventListener("storage", e => {
+    if (!e.key || !(e.key.startsWith("tela.topics.") || e.key === "tela.accounts")) return;
+    if (chatStudent && messagesOpen()) refreshChat(); else refresh();
+  });
 
   // Collapse or expand the sidebar; the choice is remembered in this browser.
   function setSidebarCollapsed(collapsed) {
@@ -546,7 +620,7 @@
     $("newFields").hidden = mode !== "new";
     $("existingFields").hidden = mode !== "existing";
     $("addLead").textContent = mode === "new" ? "Create their account, then give them the username and password to sign in."
-      : "Add a student who already has an account. They'll be able to send you notes and you'll see their progress.";
+      : "Add a student who already has an account. You'll be able to message each other and you'll see their progress.";
     $("addError").classList.remove("show");
     document.querySelectorAll("#addForm .invalid").forEach(el => el.classList.remove("invalid"));
     $(mode === "new" ? "stName" : "exUser").focus();
@@ -720,7 +794,7 @@
   document.addEventListener("keydown", e => {
     if (e.key !== "Escape") return;
     if ($("addOverlay").classList.contains("open") || $("hwOverlay").classList.contains("open")) { closeAdd(); closeHomework(); }
-    else if (notesOpen()) closeNotes();
+    else if (messagesOpen()) closeMessages();
   });
   document.querySelectorAll("#addForm input").forEach(el => el.addEventListener("input", () => el.classList.remove("invalid")));
 
