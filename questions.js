@@ -191,6 +191,7 @@
                 (points are placed round the circle at those angles; marks are written inside the named point)
      boxplot: { min: 10, q1: 18, median: 25, q3: 31, max: 40, from: 0, to: 50, step: 5, label: "Time (minutes)" }
                 (or a list of these, each with a name, to compare)
+     graph equal: true uses the same scale on both axes (for circles).
      graph curves can use sin(x), cos(x), tan(x) (in degrees) and powers like 2^x.
      graph shade can also be a list of polygons, e.g. the bars of a histogram.
      cuboid extras: diagonal: "d" (dashed space diagonal), baseDiagonal: "e" (across the base)
@@ -5527,5 +5528,303 @@ QUESTION_BANK.add({
         lines: [[[0, 0], [0, 2], [10, 2], [10, 0]], [[10, 0], [10, 6], [15, 6], [15, 0]], [[15, 0], [15, 8], [20, 8], [20, 0]], [[20, 0], [20, 1.5], [40, 1.5], [40, 0]]] } },
     { section: "Section B: Reading histograms", question: "On a histogram, Noah says the tallest bar always has the most people in it. Explain why he could be wrong.", type: "explain", marks: 1,
       answer: "The frequency is the area of the bar (frequency density × width), not its height. A short, wide bar can hold more people than a tall, narrow one." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Quadratic simultaneous equations",
+  title: "Quadratic Simultaneous Equations",
+  type: "solutions",
+  questionsPerSet: 10,
+  tip: "Rearrange the linear equation (y = … or x = …) and substitute it into the quadratic one. Solve the quadratic, then put each x back into the linear equation to find its y. There are usually two pairs of answers.",
+  questions: [
+    { section: "Section A: Solving algebraically", question: "Solve y = x + 1 and y = x² − 1. Give both pairs, e.g. x = 2, y = 3, x = −1, y = 0.", marks: 4, answer: "x = 2, y = 3, x = −1, y = 0" },
+    { section: "Section A: Solving algebraically", question: "Solve y = 2x − 1 and y = x² − 2x + 2. Give both pairs.", marks: 4, answer: "x = 1, y = 1, x = 3, y = 5" },
+    { section: "Section A: Solving algebraically", text: "To solve x² + y² = 25 and y = x + 1, substitute y = x + 1.", question: "Which quadratic do you get after simplifying?", type: "choice", marks: 1,
+      options: ["x² + x − 12 = 0", "x² + 1 = 25", "2x² + 1 = 25", "x² − x − 12 = 0"], answer: "x² + x − 12 = 0" },
+    { section: "Section A: Solving algebraically", question: "What is the first step to solve y = x + 1 and x² + y² = 25?", type: "choice", marks: 1,
+      options: ["Substitute y = x + 1 into x² + y² = 25", "Add the two equations", "Square root both sides of x² + y² = 25", "Make x² the subject"],
+      answer: "Substitute y = x + 1 into x² + y² = 25" },
+
+    { section: "Section B: Lines and circles", text: "The graph shows the circle x² + y² = 25 and the line y = x + 1.", question: "Plot both points where the line meets the circle.", type: "plot", marks: 3,
+      answer: "(3, 4); (−4, −3)",
+      graph: { equal: true, x: [-6, 6], y: [-6, 6], curves: ["√(25 - x^2)", "-√(25 - x^2)"], lines: [[[-6, -5], [5, 6]]] } },
+    { section: "Section B: Lines and circles", text: "The graph shows the circle x² + y² = 10 and the line y = 2x − 5.", question: "Plot both points where the line meets the circle.", type: "plot", marks: 3,
+      answer: "(1, −3); (3, 1)",
+      graph: { equal: true, x: [-5, 5], y: [-5, 5], curves: ["√(10 - x^2)", "-√(10 - x^2)"], lines: [[[0, -5], [5, 5]]] } },
+    { section: "Section B: Lines and circles", question: "What is the greatest number of points where a straight line can meet a circle?", type: "number", marks: 1, answer: "2" },
+    { section: "Section B: Lines and circles", question: "Solving x² + y² = 25 with y = x + 1, Leo writes x² + x² + 1 = 25. Explain Leo's mistake.", type: "explain", marks: 1,
+      answer: "(x + 1)² is not x² + 1. It expands to x² + 2x + 1, so the equation is 2x² + 2x + 1 = 25, which gives x² + x − 12 = 0." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Area of shapes with algebra",
+  title: "Area Problems with Algebra",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Write the area as an expression, set it equal to the area you're given, and rearrange to a quadratic = 0. Factorise and solve, then reject any answer that would make a length negative.",
+  questions: [
+    { section: "Section A: Rectangles and squares", question: "Write an expression for the area of the rectangle. Expand and simplify.", type: "algebra", marks: 2, answer: "x² + 2x − 3",
+      outline: { points: [[0, 0], [8, 0], [8, 4], [0, 4]], text: { 0: "x + 3", 1: "x − 1", 2: "", 3: "" } } },
+    { section: "Section A: Rectangles and squares", question: "The area of the rectangle is 21 cm². Find x.", marks: 3, answer: "4",
+      outline: { points: [[0, 0], [8, 0], [8, 4], [0, 4]], text: { 0: "x + 3", 1: "x − 1", 2: "", 3: "" } } },
+    { section: "Section A: Rectangles and squares", question: "A square has sides of (x + 2) cm and an area of 49 cm². Find x.", marks: 2, answer: "5" },
+
+    { section: "Section B: Triangles and trapeziums", question: "The triangle has an area of 24 cm². Find x.", marks: 3, answer: "3",
+      outline: { points: [[0, 0], [7, 0], [3, 5]], extra: [{ from: [3, 0], to: [3, 5], label: "x + 5" }], text: { 0: "2x", 1: "", 2: "" } } },
+    { section: "Section B: Triangles and trapeziums", question: "A right-angled triangle has shorter sides x cm and (x + 7) cm, and a hypotenuse of 13 cm. Find x.", marks: 4, answer: "5",
+      outline: { points: [[0, 0], [12, 0], [0, 5]], rightAngle: [0], text: { 0: "x + 7", 1: "13 cm", 2: "x" } } },
+    { section: "Section B: Triangles and trapeziums", question: "A trapezium has parallel sides x cm and (x + 2) cm and a height of x cm. Its area is 12 cm². Find x.", marks: 4, answer: "3" },
+    { section: "Section B: Triangles and trapeziums", question: "Solving for x in the rectangle gives x = 4 or x = −6. Explain why x = −6 is rejected.", type: "explain", marks: 1,
+      answer: "With x = −6 the sides would be −3 cm and −7 cm. Lengths can't be negative, so only x = 4 works." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Sine/cosine rule with algebra",
+  title: "Sine and Cosine Rules with Algebra",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Substitute the algebraic sides into the rule, use exact values (cos 60° = ½, cos 120° = −½, sin 30° = ½), and simplify to a quadratic. Solve it and keep the positive answer.",
+  questions: [
+    { section: "Section A: Cosine rule", question: "Find x.", marks: 4, answer: "5",
+      outline: { points: [[0, 0], [8, 0], [2.5, 4.33]], angles: [[0, "60°"]], text: { 0: "x + 3", 1: "7 cm", 2: "x" } } },
+    { section: "Section A: Cosine rule", question: "Find x.", marks: 4, answer: "3",
+      outline: { points: [[0, 0], [5, 0], [-1.5, 2.6]], angles: [[0, "120°"]], text: { 0: "x + 2", 1: "7 cm", 2: "x" } } },
+    { section: "Section A: Cosine rule", question: "A triangle has sides 3 cm, 5 cm and 7 cm. Find its largest angle exactly.", marks: 3, answer: "120°" },
+    { section: "Section A: Cosine rule", question: "Which is the cosine rule rearranged to find an angle?", type: "choice", marks: 1,
+      options: ["cos A = (b² + c² − a²) ÷ 2bc", "cos A = (a² + b² − c²) ÷ 2ab", "cos A = a ÷ (2bc)", "cos A = (b² − c²) ÷ a²"], answer: "cos A = (b² + c² − a²) ÷ 2bc" },
+
+    { section: "Section B: Sine rule and area", question: "In triangle ABC, angle A = 30°, angle B = 45° and a = 4 cm. Find b exactly.", type: "expression", marks: 3, answer: "4√2" },
+    { section: "Section B: Sine rule and area", question: "A triangle has sides x cm and (x + 4) cm with an angle of 30° between them. Its area is 15 cm². Find x.", marks: 4, answer: "6" },
+    { section: "Section B: Sine rule and area", question: "Using the cosine rule with the 60° angle, Ana writes 49 = x² + (x + 3)² − 2x(x + 3) × 60. Explain her mistake.", type: "explain", marks: 1,
+      answer: "She used 60 instead of cos 60°. It should be − 2x(x + 3) × cos 60° = − x(x + 3), giving 49 = x² + 3x + 9." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Ratio with algebra",
+  title: "Ratio Problems with Algebra",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Turn a ratio into an equation: if a : b = 2 : 3 then 3a = 2b. For 'before and after' problems, use 2k and 3k for the starting amounts, write the new ratio as an equation and solve for k.",
+  questions: [
+    { section: "Section A: Ratio equations", question: "x : y = 3 : 4 and x + y = 35. Find x.", marks: 2, answer: "15" },
+    { section: "Section A: Ratio equations", question: "(x + 3) : (2x − 1) = 2 : 3. Find x.", marks: 3, answer: "11" },
+    { section: "Section A: Ratio equations", question: "a : b = 2 : 5 and b : c = 3 : 4. Write a : b : c in its simplest form.", type: "ratio", simplest: true, marks: 2, answer: "6:15:20" },
+    { section: "Section A: Ratio equations", question: "y : x = 3 : 2. Write y in terms of x.", type: "expression", marks: 1, answer: "y = 3x/2" },
+
+    { section: "Section B: Before and after", question: "A bag has red and blue counters in the ratio 3 : 5. After 4 more red counters are added, the ratio is 1 : 1. How many counters were in the bag at first?", marks: 4, answer: "16" },
+    { section: "Section B: Before and after", question: "Ann's and Ben's ages are in the ratio 2 : 3. In 5 years' time they will be in the ratio 3 : 4. How old is Ann now?", marks: 4, answer: "10" },
+    { section: "Section B: Before and after", question: "For a : b = 2 : 3, which equation is correct?", type: "choice", marks: 1, options: ["3a = 2b", "2a = 3b", "a + b = 5", "a = 2, b = 3"], answer: "3a = 2b" },
+    { section: "Section B: Before and after", question: "For red : blue = 3 : 5, Raj says there must be 3 red and 5 blue counters. Explain Raj's mistake.", type: "explain", marks: 1,
+      answer: "A ratio compares amounts; it doesn't give the actual numbers. There could be 6 and 10, 9 and 15 and so on, so use 3k and 5k." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Transforming curves",
+  title: "Transforming Graphs",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "f(x) + a moves the graph up a; f(x + a) moves it LEFT a (inside the bracket does the opposite). −f(x) reflects in the x-axis; f(−x) reflects in the y-axis.",
+  questions: [
+    { section: "Section A: Describing transformations", question: "Describe the transformation that maps y = f(x) onto y = f(x) + 3.", marks: 1,
+      options: ["Translation 3 units up", "Translation 3 units right", "Translation 3 units left", "Stretch by 3"], answer: "Translation 3 units up" },
+    { section: "Section A: Describing transformations", question: "Describe the transformation that maps y = f(x) onto y = f(x − 2).", marks: 1,
+      options: ["Translation 2 units right", "Translation 2 units left", "Translation 2 units down", "Reflection in the y-axis"], answer: "Translation 2 units right" },
+    { section: "Section A: Describing transformations", question: "Describe the transformation that maps y = f(x) onto y = −f(x).", marks: 1,
+      options: ["Reflection in the x-axis", "Reflection in the y-axis", "Translation 1 unit down", "Rotation of 90°"], answer: "Reflection in the x-axis" },
+    { section: "Section A: Describing transformations", question: "Describe the transformation that maps y = f(x) onto y = f(−x).", marks: 1,
+      options: ["Reflection in the y-axis", "Reflection in the x-axis", "Translation 1 unit left", "Enlargement scale factor −1"], answer: "Reflection in the y-axis" },
+    { section: "Section A: Describing transformations", text: "Curve A is y = f(x), where f(x) = x². Curve B is a transformation of A.", question: "Which equation is curve B?", marks: 1,
+      options: ["y = f(x − 3) + 1", "y = f(x + 3) + 1", "y = f(x) + 3", "y = f(x − 1) + 3"], answer: "y = f(x − 3) + 1",
+      graph: { x: [-3, 6], y: [-1, 8], curves: ["x^2", "(x - 3)^2 + 1"], labels: [["A", -2.4, 3], ["B", 5.4, 4.6]] } },
+
+    { section: "Section B: Moving points", text: "The point (2, 5) lies on the curve y = f(x).", question: "Write the point it moves to on y = f(x) + 3.", type: "coordinates", marks: 1, answer: "(2, 8)" },
+    { section: "Section B: Moving points", text: "The point (2, 5) lies on the curve y = f(x).", question: "Write the point it moves to on y = f(x + 1).", type: "coordinates", marks: 1, answer: "(1, 5)" },
+    { section: "Section B: Moving points", text: "The point (2, 5) lies on the curve y = f(x).", question: "Write the point it moves to on y = −f(x).", type: "coordinates", marks: 1, answer: "(2, −5)" },
+    { section: "Section B: Moving points", text: "The point (2, 5) lies on the curve y = f(x).", question: "Write the point it moves to on y = f(−x).", type: "coordinates", marks: 1, answer: "(−2, 5)" },
+    { section: "Section B: Moving points", question: "Write the turning point of y = (x − 3)² + 1.", type: "coordinates", marks: 1, answer: "(3, 1)" },
+    { section: "Section B: Moving points", question: "Mo says y = f(x + 2) is the graph of y = f(x) moved 2 to the right. Explain Mo's mistake.", type: "explain", marks: 1,
+      answer: "Changes inside the bracket work the opposite way: f(x + 2) moves the graph 2 units to the LEFT. The value that used to happen at x now happens at x − 2." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Proof: circle theorems, sine & cosine rule",
+  title: "Proof: Circle Theorems and Trig Rules",
+  type: "choice",
+  questionsPerSet: 10,
+  tip: "A proof gives every step with a reason. For circle theorems, use the fact that radii are equal (isosceles triangles) and angles in a triangle add to 180°. For trig rules, drop a perpendicular height and use SOHCAHTOA or Pythagoras.",
+  questions: [
+    { section: "Section A: Circle theorem proofs", text: "To prove the angle at the centre is twice the angle at the circumference, draw the line from C through O.", question: "Which fact is the key to the proof?", marks: 1,
+      options: ["OA = OB = OC, so triangles OAC and OBC are isosceles", "The tangent meets the radius at 90°", "Opposite angles in a cyclic quadrilateral add to 180°", "Angles on a straight line add to 360°"],
+      answer: "OA = OB = OC, so triangles OAC and OBC are isosceles",
+      circleFig: { points: { A: 210, B: 330, C: 90 }, centre: true, lines: ["AC", "BC", "OA", "OB", "OC"] } },
+    { section: "Section A: Circle theorem proofs", text: "O is the centre. Angle OAC = 25°.", question: "Find angle AOC.", type: "number", marks: 2, answer: "130°",
+      circleFig: { points: { A: 210, C: 90 }, centre: true, lines: ["AC", "OA", "OC"], marks: { A: "25°" } } },
+    { section: "Section A: Circle theorem proofs", question: "Prove that the angle in a semicircle is 90°.", type: "explain", marks: 3,
+      answer: "The diameter makes a straight angle of 180° at the centre. The angle at the circumference is half the angle at the centre, so it is 180° ÷ 2 = 90°. (Or: join the centre to the point; the two isosceles triangles have angles a, a, b, b with 2a + 2b = 180°, so a + b = 90°.)" },
+    { section: "Section A: Circle theorem proofs", question: "Prove that opposite angles of a cyclic quadrilateral add up to 180°.", type: "explain", marks: 3,
+      answer: "Join both opposite corners to the centre. If the angles at the circumference are x and y, the angles at the centre are 2x and 2y, which make a full turn: 2x + 2y = 360°, so x + y = 180°." },
+
+    { section: "Section B: Trig rule proofs", question: "To prove Area = ½ab sin C, you draw the perpendicular height h from A onto side a. Which expression gives h?", marks: 1,
+      options: ["h = b sin C", "h = b cos C", "h = a sin C", "h = ab"], answer: "h = b sin C" },
+    { section: "Section B: Trig rule proofs", question: "Why does the cosine rule a² = b² + c² − 2bc cos A become Pythagoras when A = 90°?", marks: 1,
+      options: ["cos 90° = 0, so the last term disappears", "sin 90° = 1", "The triangle is isosceles", "cos 90° = 1"], answer: "cos 90° = 0, so the last term disappears" },
+    { section: "Section B: Trig rule proofs", question: "Prove the sine rule a/sin A = b/sin B, using the height h from C.", type: "explain", marks: 3,
+      answer: "The height h from C splits the triangle into two right-angled triangles. In one, h = b sin A; in the other, h = a sin B. So b sin A = a sin B, and dividing by sin A sin B gives a/sin A = b/sin B." },
+    { section: "Section B: Trig rule proofs", question: "In a proof, Kai writes 'angle OAC = angle OCA because they look the same'. Explain what's missing.", type: "explain", marks: 1,
+      answer: "A proof needs a reason, not an appearance: OA and OC are both radii, so triangle OAC is isosceles and its base angles are equal." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Completing the square",
+  title: "Completing the Square",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "x² + bx + c = (x + b/2)² − (b/2)² + c. With a number in front of x², take it out of the x terms first. From (x + p)² + q, the turning point is (−p, q). Type answers like (x + 3)² − 7.",
+  questions: [
+    { section: "Section A: Writing in completed-square form", question: "Write x² + 6x + 2 in the form (x + p)² + q.", simplest: "square", marks: 2, answer: "(x + 3)² − 7" },
+    { section: "Section A: Writing in completed-square form", question: "Write x² − 8x + 10 in the form (x + p)² + q.", simplest: "square", marks: 2, answer: "(x − 4)² − 6" },
+    { section: "Section A: Writing in completed-square form", question: "Write x² + 5x + 1 in the form (x + p)² + q.", simplest: "square", marks: 3, answer: "(x + 5/2)² − 21/4" },
+    { section: "Section A: Writing in completed-square form", question: "Write 2x² + 12x + 5 in the form a(x + p)² + q.", simplest: "square", marks: 3, answer: "2(x + 3)² − 13" },
+
+    { section: "Section B: Using completed-square form", question: "Write down the turning point of y = x² − 8x + 10.", type: "coordinates", marks: 2, answer: "(4, −6)" },
+    { section: "Section B: Using completed-square form", question: "What is the minimum value of x² − 8x + 10?", type: "number", marks: 1, answer: "−6" },
+    { section: "Section B: Using completed-square form", question: "Solve x² + 6x + 2 = 0 by completing the square. Give your answers to 2 decimal places.", type: "solutions", tolerance: 0.01, marks: 3, answer: "−0.35, −5.65" },
+    { section: "Section B: Using completed-square form", question: "x² + 6x + 2 = (x + 3)² − 7. What are the exact solutions of x² + 6x + 2 = 0?", type: "choice", marks: 1,
+      options: ["x = −3 ± √7", "x = 3 ± √7", "x = −3 ± 7", "x = 7 ± √3"], answer: "x = −3 ± √7" },
+    { section: "Section B: Using completed-square form", question: "Bea writes x² + 6x + 2 = (x + 6)² + 2. Explain her mistake.", type: "explain", marks: 1,
+      answer: "The number in the bracket is half the x coefficient, so it's (x + 3)². That bracket expands to x² + 6x + 9, so subtract 9 and add 2: (x + 3)² − 7." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "nth term of a quadratic sequence",
+  title: "nth Term of Quadratic Sequences",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "Find the second difference: half of it is the number in front of n². Subtract that n² part from each term, then find the nth term of what's left (a linear or constant sequence) and add it on. Type answers like 2n² + 1 (or 2n^2 + 1).",
+  questions: [
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 2, 5, 10, 17, 26, …", marks: 2, answer: "n² + 1" },
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 4, 7, 12, 19, 28, …", marks: 2, answer: "n² + 3" },
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 3, 9, 19, 33, 51, …", marks: 3, answer: "2n² + 1" },
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 1, 7, 17, 31, 49, …", marks: 3, answer: "2n² − 1" },
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 2, 6, 12, 20, 30, …", marks: 3, answer: "n² + n" },
+    { section: "Section A: Finding the nth term", question: "Find the nth term of 0, 5, 12, 21, 32, …", marks: 3, answer: "n² + 2n − 3" },
+
+    { section: "Section B: Using the nth term", question: "The nth term is n² + 1. Find the 10th term.", type: "number", marks: 1, answer: "101" },
+    { section: "Section B: Using the nth term", question: "A quadratic sequence has a second difference of 6. What is the coefficient of n²?", type: "choice", marks: 1, options: ["3", "6", "12", "2"], answer: "3" },
+    { section: "Section B: Using the nth term", question: "For 2, 5, 10, 17, …, Ella says the nth term is 3n − 1 because it 'goes up by 3 first'. Explain her mistake.", type: "explain", marks: 1,
+      answer: "The differences are 3, 5, 7, … so they aren't constant: it's quadratic, not linear. 3n − 1 only works for the first two terms; the nth term is n² + 1." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Quadratic inequalities",
+  title: "Quadratic Inequalities",
+  type: "interval",
+  questionsPerSet: 10,
+  tip: "Solve the equation = 0 to find the critical values, then sketch the curve. For '< 0' you want the part below the x-axis (between the roots); for '> 0' the parts above (outside the roots). Type answers like −3 < x < 3.",
+  questions: [
+    { section: "Section A: Between the roots", question: "Solve x² − 9 < 0", marks: 2, answer: "−3 < x < 3" },
+    { section: "Section A: Between the roots", question: "Solve x² − 5x + 6 ≤ 0", marks: 3, answer: "2 ≤ x ≤ 3" },
+    { section: "Section A: Between the roots", question: "Solve x² + x − 12 < 0", marks: 3, answer: "−4 < x < 3" },
+    { section: "Section A: Between the roots", question: "Solve 2x² − 7x + 3 ≤ 0", marks: 3, answer: "0.5 ≤ x ≤ 3" },
+    { section: "Section A: Between the roots", text: "The graph shows y = x² − 2x − 3.", question: "Use the graph to solve x² − 2x − 3 < 0.", marks: 2, answer: "−1 < x < 3",
+      graph: { x: [-3, 5], y: [-5, 6], curves: ["x^2 - 2x - 3"] } },
+
+    { section: "Section B: Outside the roots", question: "Solve x² − 4x − 5 > 0", type: "choice", marks: 3,
+      options: ["x < −1 or x > 5", "−1 < x < 5", "x > 5", "x < −5 or x > 1"], answer: "x < −1 or x > 5" },
+    { section: "Section B: Outside the roots", question: "List all the integers that satisfy x² < 10.", type: "solutions", marks: 2, answer: "−3, −2, −1, 0, 1, 2, 3" },
+    { section: "Section B: Outside the roots", question: "Finn solves x² > 9 and writes x > 3. Explain what he has missed.", type: "explain", marks: 1,
+      answer: "Negative numbers also have squares bigger than 9 (e.g. (−4)² = 16). The full answer is x < −3 or x > 3." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Velocity time graphs",
+  title: "Velocity-Time Graphs",
+  type: "number",
+  questionsPerSet: 10,
+  tip: "Gradient = acceleration; area under the graph = distance travelled. For a curve, estimate the area with trapeziums (strips) and the gradient with a tangent.",
+  questions: [
+    { section: "Section A: Straight-line graphs", text: "The velocity-time graph shows a train between two stations.", question: "Find the acceleration in the first 5 seconds, in m/s².", marks: 2, answer: "2",
+      graph: { x: [0, 20], xstep: 2, y: [0, 12], ystep: 2, xlabel: "Time (s)", ylabel: "Velocity (m/s)", lines: [[[0, 0], [5, 10], [15, 10], [20, 0]]] } },
+    { section: "Section A: Straight-line graphs", text: "The velocity-time graph shows a train between two stations.", question: "Find the total distance travelled.", marks: 3, answer: "150 m",
+      graph: { x: [0, 20], xstep: 2, y: [0, 12], ystep: 2, xlabel: "Time (s)", ylabel: "Velocity (m/s)", lines: [[[0, 0], [5, 10], [15, 10], [20, 0]]] } },
+    { section: "Section A: Straight-line graphs", text: "The velocity-time graph shows a train between two stations.", question: "Find the deceleration in the last 5 seconds, in m/s².", marks: 2, answer: "2",
+      graph: { x: [0, 20], xstep: 2, y: [0, 12], ystep: 2, xlabel: "Time (s)", ylabel: "Velocity (m/s)", lines: [[[0, 0], [5, 10], [15, 10], [20, 0]]] } },
+
+    { section: "Section B: Curved graphs", text: "The graph shows v = t² for the first 4 seconds of a journey.", question: "Use 4 strips of equal width (trapeziums) to estimate the distance travelled.", marks: 3, answer: "22 m",
+      graph: { x: [0, 4], y: [0, 16], ystep: 2, xlabel: "Time (s)", ylabel: "Velocity (m/s)", curves: ["x^2"], dashed: [[[1, 0], [1, 1]], [[2, 0], [2, 4]], [[3, 0], [3, 9]]] } },
+    { section: "Section B: Curved graphs", text: "The graph shows v = t² for the first 4 seconds.", question: "Is the trapezium estimate an overestimate or an underestimate?", type: "choice", marks: 1,
+      options: ["Overestimate", "Underestimate"], answer: "Overestimate" },
+    { section: "Section B: Curved graphs", text: "The graph shows v = t² with the tangent at t = 3.", question: "Estimate the acceleration at t = 3, in m/s².", tolerance: 0.5, marks: 2, answer: "6",
+      graph: { x: [0, 4], y: [0, 16], ystep: 2, xlabel: "Time (s)", ylabel: "Velocity (m/s)", curves: ["x^2"], lines: [[[1.5, 0], [4, 15]]] } },
+    { section: "Section B: Curved graphs", question: "Explain why the trapezium estimate for v = t² is too big.", type: "explain", marks: 1,
+      answer: "The curve bends upwards, so each straight trapezium top lies above the curve. The trapeziums include a bit of extra area, so they overestimate the distance." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Equation of a tangent",
+  title: "Equation of a Tangent to a Circle",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "For a circle centred at O, find the gradient of the radius to the point, then the tangent's gradient is the negative reciprocal. Use y − y₁ = m(x − x₁) and rearrange to y = mx + c. Type answers in the form y = …",
+  questions: [
+    { section: "Section A: Gradients", text: "The circle x² + y² = 25 passes through P(3, 4).", question: "Find the gradient of the radius OP.", marks: 1, answer: "4/3",
+      graph: { equal: true, x: [-6, 6], y: [-6, 6], curves: ["√(25 - x^2)", "-√(25 - x^2)"], lines: [[[0, 0], [3, 4]]], dots: [[3, 4]], labels: [["P", 3.5, 4.6]] } },
+    { section: "Section A: Gradients", text: "The circle x² + y² = 25 passes through P(3, 4).", question: "Find the gradient of the tangent at P.", marks: 1, answer: "−3/4",
+      graph: { equal: true, x: [-6, 6], y: [-6, 6], curves: ["√(25 - x^2)", "-√(25 - x^2)"], lines: [[[0, 0], [3, 4]], [[0.5, 5.875], [6, 1.75]]], dots: [[3, 4]], labels: [["P", 3.5, 4.6]] } },
+    { section: "Section A: Gradients", question: "What is the radius of the circle x² + y² = 49?", type: "number", marks: 1, answer: "7" },
+
+    { section: "Section B: Equations", text: "The circle x² + y² = 25 passes through P(3, 4).", question: "Find the equation of the tangent at P.", marks: 3, answer: "y = −3x/4 + 25/4",
+      graph: { equal: true, x: [-6, 6], y: [-6, 6], curves: ["√(25 - x^2)", "-√(25 - x^2)"], lines: [[[0.5, 5.875], [6, 1.75]]], dots: [[3, 4]], labels: [["P", 3.5, 4.6]] } },
+    { section: "Section B: Equations", question: "Find the equation of the tangent to x² + y² = 10 at the point (1, 3).", marks: 3, answer: "y = −x/3 + 10/3" },
+    { section: "Section B: Equations", question: "Find the equation of the tangent to x² + y² = 20 at the point (2, −4).", marks: 3, answer: "y = x/2 − 5" },
+    { section: "Section B: Equations", question: "Where does the tangent y = −3x/4 + 25/4 cross the y-axis?", type: "number", marks: 1, answer: "6.25" },
+    { section: "Section B: Equations", question: "For the tangent at (3, 4) on x² + y² = 25, Zoe uses gradient 4/3. Explain her mistake.", type: "explain", marks: 1,
+      answer: "4/3 is the gradient of the radius. The tangent is perpendicular to the radius, so its gradient is the negative reciprocal: −3/4." }
+  ]
+});
+
+
+QUESTION_BANK.add({
+  topic: "Vector proof questions",
+  title: "Vector Proofs",
+  type: "expression",
+  questionsPerSet: 10,
+  tip: "Write every route as a journey along known vectors: AB = AO + OB = −a + b. Midpoints are halfway; a point dividing a line in a ratio uses that fraction. Vectors are parallel if one is a multiple of the other. Type vectors like b − a or a/2 + b/2.",
+  questions: [
+    { section: "Section A: Writing vectors", text: "OA = a and OB = b. M is the midpoint of AB.", question: "Write AB in terms of a and b.", marks: 1, answer: "b − a",
+      graph: { x: [-1, 5], y: [-1, 5], arrows: [[0, 0, 4, 1, "a"], [0, 0, 1, 4, "b"]], dashed: [[[4, 1], [1, 4]]], dots: [[2.5, 2.5]], labels: [["O", -0.45, 0.45], ["A", 4.4, 1], ["B", 1, 4.4], ["M", 2.9, 2.9]] } },
+    { section: "Section A: Writing vectors", text: "OA = a and OB = b. M is the midpoint of AB.", question: "Write OM in terms of a and b.", marks: 2, answer: "a/2 + b/2",
+      graph: { x: [-1, 5], y: [-1, 5], arrows: [[0, 0, 4, 1, "a"], [0, 0, 1, 4, "b"]], dashed: [[[4, 1], [1, 4]]], dots: [[2.5, 2.5]], labels: [["O", -0.45, 0.45], ["A", 4.4, 1], ["B", 1, 4.4], ["M", 2.9, 2.9]] } },
+    { section: "Section A: Writing vectors", text: "OA = a and OB = b. P lies on AB with AP : PB = 1 : 2.", question: "Write OP in terms of a and b.", marks: 3, answer: "2a/3 + b/3" },
+
+    { section: "Section B: Proofs", text: "OA = a, OB = b, OC = 3a and OD = 3b.", question: "CD is a multiple of AB. How many times longer than AB is CD?", type: "number", marks: 2, answer: "3" },
+    { section: "Section B: Proofs", question: "Which vector is parallel to a + 2b?", type: "choice", marks: 1, options: ["2a + 4b", "2a + b", "a − 2b", "4a + 2b"], answer: "2a + 4b" },
+    { section: "Section B: Proofs", question: "PQ = 2a + b and QR = 6a + 3b. What does this show about P, Q and R?", type: "choice", marks: 1,
+      options: ["They lie on a straight line (QR = 3 × PQ and they share Q)", "They form a right angle", "PQ and QR are the same length", "Nothing"],
+      answer: "They lie on a straight line (QR = 3 × PQ and they share Q)" },
+    { section: "Section B: Proofs", question: "To prove three points are collinear, Jay shows AB = 2a + b and CD = 4a + 2b are parallel. Explain why this isn't enough.", type: "explain", marks: 1,
+      answer: "Parallel vectors could be on two separate parallel lines. To show points are collinear, the two vectors must also share a point (e.g. AB and BC, both through B)." }
   ]
 });

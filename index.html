@@ -1106,7 +1106,8 @@
           options: Array.isArray(p.options) ? p.options.map(String)
             : Array.isArray(p.range) ? Array.from({ length: p.range[1] - p.range[0] + 1 }, (_, k) => String(p.range[0] + k)) : null,
           labels: Array.isArray(p.labels) ? p.labels.map(String) : null,
-          simplest: p.simplest === true,
+          // simplest: true needs the simplest form; simplest: "square" needs completed-square form, a(x + p)² + q.
+          simplest: p.simplest === "square" ? "square" : p.simplest === true,
           // tolerance: how far off a number answer may be (e.g. 0.1 so π and 3.14 both count).
           tolerance: Number(p.tolerance) > 0 ? Number(p.tolerance) : 0,
           // Shading and pictogram questions keep their picture inside the part so it can be tapped.
@@ -1315,7 +1316,9 @@
   function graphSVG(g, plot) {
     const [x0, x1] = g.x || [-5, 5], [y0, y1] = g.y || [-5, 5];
     const xs = g.xstep || 1, ys = g.ystep || 1, nx = (x1 - x0) / xs, ny = (y1 - y0) / ys;
-    const ux = Math.min(30, 360 / nx), uy = Math.min(30, 300 / ny), m = 28;
+    // equal: true uses the same scale on both axes (so circles look round).
+    const fx = Math.min(30, 360 / nx), fy = Math.min(30, 300 / ny), m = 28;
+    const ux = g.equal ? Math.min(fx * xs, fy * ys) / xs : fx, uy = g.equal ? Math.min(fx * xs, fy * ys) / ys : fy;
     const named = g.xlabel || g.ylabel, extra = named ? 18 : 0;
     const W = nx * ux + 2 * m + extra, H = ny * uy + 2 * m + extra;
     const px = x => m + extra + (x - x0) / xs * ux, py = y => m + (y1 - y) / ys * uy;
@@ -1360,11 +1363,20 @@
       if (!f) return;
       let seg = [];
       const flush = () => { if (seg.length > 1) s += `<polyline class="shape curve" points="${seg.join(" ")}"/>`; seg = []; };
+      const at = x => { try { return f.fn(Math.PI, Math.sqrt, ...f.vars.map(() => x)); } catch (e) { return NaN; } };
+      const inside = y => Number.isFinite(y) && y >= y0 - 1e-9 && y <= y1 + 1e-9;
+      // Where the curve stops (the edge of a circle, or leaving the grid), home in on the exact end point.
+      const edge = (good, bad) => {
+        for (let i = 0; i < 30; i++) { const mid = (good + bad) / 2; if (inside(at(mid))) good = mid; else bad = mid; }
+        return px(good) + "," + py(at(good));
+      };
+      let prevX = null, prevIn = false;
       for (let k = 0; k <= 240; k++) {
-        const x = x0 + (x1 - x0) * k / 240;
-        let y;
-        try { y = f.fn(Math.PI, Math.sqrt, ...f.vars.map(() => x)); } catch (e) { y = NaN; }
-        if (Number.isFinite(y) && y >= y0 - 1e-9 && y <= y1 + 1e-9) seg.push(px(x) + "," + py(y)); else flush();
+        const x = x0 + (x1 - x0) * k / 240, y = at(x), ok = inside(y);
+        if (ok && !prevIn && prevX !== null) seg.push(edge(x, prevX));
+        if (ok) seg.push(px(x) + "," + py(y));
+        else { if (prevIn) seg.push(edge(prevX, x)); flush(); }
+        prevX = x; prevIn = ok;
       }
       flush();
     });
@@ -1910,7 +1922,10 @@
       try { a = want.fn(Math.PI, Math.sqrt, ...pick(want.vars)); b = got.fn(Math.PI, Math.sqrt, ...pick(got.vars)); } catch (e) { return { correct: false, message: "I couldn't read that. Check your brackets." }; }
       if (!Number.isFinite(b) || Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) return { correct: false, message: "Not quite. Try again." };
     }
-    if (simplest && notSimplest(v, target)) return { correct: false, message: "Right value, but it isn't in its simplest form yet." };
+    if (simplest === "square" && !/^-?[\d.]*\(x[+-][\d./]+\)\^2([+-][\d./]+)?$/.test(unsuper(String(v)).replace(/[−–]/g, "-").replace(/\s+/g, "").toLowerCase())) {
+      return { correct: false, message: "That has the right value, but write it in completed-square form, like (x + 3)² − 7." };
+    }
+    if (simplest === true && notSimplest(v, target)) return { correct: false, message: "Right value, but it isn't in its simplest form yet." };
     return { correct: true, message: "Correct!" };
   }
 
