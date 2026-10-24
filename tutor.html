@@ -214,6 +214,9 @@
     <p class="lead" id="hwLead"></p>
     <div class="error" id="hwError" role="alert"></div>
     <label class="field">Topic<select id="hwTopic"></select></label>
+    <label class="field">Number of questions
+      <input id="hwCount" type="number" min="1" step="1" inputmode="numeric" disabled>
+      <small id="hwCountHint">Choose a topic first.</small></label>
     <label class="field"><span>Due date <span class="opt">(optional)</span></span><input id="hwDue" type="date"></label>
     <label class="field"><span>Note for the student <span class="opt">(optional)</span></span><textarea id="hwNote" maxlength="300" placeholder="e.g. Do the whole set and try the explain questions."></textarea></label>
     <div class="modal-actions">
@@ -226,6 +229,11 @@
 
 <div class="toast" id="toast" role="status"></div>
 
+<script>
+  // questions.js adds each topic's questions with QUESTION_BANK.add({...}); here it's only used to count them.
+  window.QUESTION_BANK = { topics: {}, add(t) { const k = String(t && t.topic).trim().toLowerCase(); (this.topics[k] = this.topics[k] || []).push(t); } };
+</script>
+<script src="questions.js"></script>
 <script src="auth.js"></script>
 <script src="catalog.js"></script>
 <script>
@@ -349,7 +357,7 @@
     if (!Array.isArray(st.homework) || !st.homework.length) return `<p class="muted">No homework set.</p>`;
     return `<ul class="hw-rows">${st.homework.map(hw => {
       const status = st.statusOf(hw.title);
-      return `<li><span>${esc(hw.title)}</span>
+      return `<li><span>${esc(hw.title)}${hw.questions ? ` <small>· ${hw.questions} Q</small>` : ""}</span>
         <small>${hw.due ? "Due " + shortDate(hw.due + "T12:00") : "Set " + shortDate(hw.setAt)}</small>
         <span class="pill ${status}">${STATUS_LABEL[status]}</span>
         ${editable ? `<button type="button" class="hw-remove" data-unset="${esc(hw.id)}" aria-label="Cancel ${esc(hw.title)}">Cancel</button>` : ""}</li>`;
@@ -368,13 +376,35 @@
     $("hwTopic").innerHTML = html;
   })();
 
+  // How many questions a topic has (its bank) and how many make its usual set.
+  function questionInfo(title) {
+    const blocks = QUESTION_BANK.topics[String(title).trim().toLowerCase()] || [];
+    const total = blocks.reduce((n, b) => n + (Array.isArray(b.questions) ? b.questions.length : 0), 0);
+    const per = blocks[0] && Number(blocks[0].questionsPerSet) > 0 ? Math.floor(blocks[0].questionsPerSet) : total;
+    return { total, usual: Math.min(per, total) };
+  }
+  function updateCountField() {
+    const title = $("hwTopic").value.split("|")[1];
+    const info = title ? questionInfo(title) : null;
+    $("hwCount").disabled = !info || !info.total;
+    if (!info || !info.total) {
+      $("hwCount").value = "";
+      $("hwCountHint").textContent = title ? "This topic has no questions yet." : "Choose a topic first.";
+      return;
+    }
+    $("hwCount").max = info.total;
+    $("hwCount").value = info.usual;
+    $("hwCountHint").textContent = `Between 1 and ${info.total} (the usual set is ${info.usual}).`;
+  }
+
   let hwStudent = null;
   function openHomework(username) {
     hwStudent = students.find(s => s.username === username);
     if (!hwStudent) return;
     $("hwForm").reset();
+    updateCountField();
     $("hwError").classList.remove("show");
-    $("hwTopic").classList.remove("invalid");
+    document.querySelectorAll("#hwForm .invalid").forEach(el => el.classList.remove("invalid"));
     $("hwTitle").textContent = `Set homework for ${hwStudent.name}`;
     $("hwLead").textContent = `Choose a topic. It will appear in the Homework section of ${hwStudent.name}'s dashboard.`;
     $("hwDue").min = new Date().toISOString().slice(0, 10);
@@ -403,25 +433,31 @@
     renderCurrentHomework();
     toast(`Cancelled "${hw.title}".`);
   });
-  $("hwTopic").addEventListener("change", () => { $("hwTopic").classList.remove("invalid"); $("hwError").classList.remove("show"); });
+  $("hwTopic").addEventListener("change", () => { $("hwTopic").classList.remove("invalid"); $("hwError").classList.remove("show"); updateCountField(); });
+  $("hwCount").addEventListener("input", () => $("hwCount").classList.remove("invalid"));
 
   $("hwForm").addEventListener("submit", e => {
     e.preventDefault();
     const [subject, title] = $("hwTopic").value.split("|");
-    const showErr = msg => { $("hwError").textContent = msg; $("hwError").classList.add("show"); $("hwTopic").classList.add("invalid"); $("hwTopic").focus(); };
+    const showErr = (msg, field = "hwTopic") => { $("hwError").textContent = msg; $("hwError").classList.add("show"); $(field).classList.add("invalid"); $(field).focus(); };
     if (!title) return showErr("Choose a topic to set.");
+    const info = questionInfo(title), count = Number($("hwCount").value);
+    if (info.total && (!Number.isInteger(count) || count < 1 || count > info.total)) return showErr(`Choose between 1 and ${info.total} questions.`, "hwCount");
     const list = Array.isArray(hwStudent.homework) ? hwStudent.homework : [];
     if (list.some(h => h.title === title && hwStudent.statusOf(h.title) !== "done")) return showErr(`${hwStudent.name} already has "${title}" as homework.`);
     const grade = subject === "Maths" ? GRADES.find(g => MATHS_BY_GRADE[g].some(e => e.slice(2) === title)) : "";
     const item = {
       id: "hw" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title, subject, grade,
       setBy: tutorUser, setByName: tutor.displayName || tutorUser, setAt: Date.now(),
-      due: $("hwDue").value || "", note: $("hwNote").value.trim()
+      due: $("hwDue").value || "", note: $("hwNote").value.trim(), questions: info.total ? count : 0
     };
     try { saveHomework([...list.filter(h => h.title !== title), item]); } catch (err) { return toast("Couldn't save: browser storage is unavailable."); }
     $("hwForm").reset();
+    updateCountField();
+    $("hwError").classList.remove("show");
+    document.querySelectorAll("#hwForm .invalid").forEach(el => el.classList.remove("invalid"));
     renderCurrentHomework();
-    toast(`Set "${title}" for ${hwStudent.name}.`);
+    toast(`Set "${title}" (${item.questions} question${item.questions === 1 ? "" : "s"}) for ${hwStudent.name}.`);
   });
 
   // ---------- Remove a student ----------

@@ -1116,6 +1116,11 @@
   const shortDate = ms => new Date(ms).toLocaleDateString(undefined, { day: "numeric", month: "short" });
 
   const homeworkStatus = hw => (findTopicByTitle(hw.title) || {}).status || "todo";
+  // How many questions the tutor asked for, if this topic is unfinished homework with a set number.
+  function homeworkQuestionCount(topic) {
+    const hw = loadHomework().find(h => h.questions > 0 && h.title.trim().toLowerCase() === topic.title.trim().toLowerCase() && topic.status !== "done");
+    return hw ? hw.questions : 0;
+  }
 
   // The Homework panel opened from the sidebar.
   function homeworkHTML() {
@@ -1128,7 +1133,7 @@
       return `<li class="hw-item${status === "done" ? " hw-done" : ""}">
         <div class="hw-main">
           <div class="hw-title">${esc(hw.title)}</div>
-          <div class="hw-meta">${esc(hw.grade || hw.subject || "")} · Set by <strong>${esc(hw.setByName || hw.setBy)}</strong> on ${shortDate(hw.setAt)}${hw.due ? ` · <span class="${late ? "hw-late" : ""}">Due ${shortDate(hw.due + "T12:00")}</span>` : ""}</div>
+          <div class="hw-meta">${esc(hw.grade || hw.subject || "")}${hw.questions ? ` · ${hw.questions} question${hw.questions === 1 ? "" : "s"}` : ""} · Set by <strong>${esc(hw.setByName || hw.setBy)}</strong> on ${shortDate(hw.setAt)}${hw.due ? ` · <span class="${late ? "hw-late" : ""}">Due ${shortDate(hw.due + "T12:00")}</span>` : ""}</div>
           ${hw.note ? `<div class="hw-note">${esc(hw.note)}</div>` : ""}
         </div>
         <span class="status ${status}">${label}</span>
@@ -1341,7 +1346,7 @@
   // practiceSaved holds this session's answers; they're only written to storage when the student saves.
   // practicePicked lists the ids of the questions chosen for this student's current set.
   let practiceOpen = null, practiceSaved = {}, practiceSpecs = {}, practiceDirty = false, practicePicked = [];
-  let practiceTopicId = null, practiceStatusAtOpen = null;
+  let practiceTopicId = null, practiceStatusAtOpen = null, practicePerSet = 0;
 
   // Reads an expression like "3a − 2b + a²" into like terms. Returns null if it can't be read.
   // "simplified" is false if a like term appears twice or a term is zero.
@@ -3166,17 +3171,25 @@
   function openPractice(topic) {
     practiceOpen = practiceKey(topic);
     const set = PRACTICE[practiceOpen];
+    // Homework can ask for a particular number of questions; otherwise the topic's usual set size is used.
+    practicePerSet = Math.min(homeworkQuestionCount(topic) || set.perSet, set.items.length);
     const data = loadPractice();
     practiceSaved = data.answers || {};
     practiceDirty = false;
-    // Keep the student's saved set, dropping questions since deleted from questions.js and topping up if it's short.
+    // Keep the student's saved set, dropping questions since deleted from questions.js, then trim or top it up
+    // to the size wanted (questions marked "always" stay in).
     practicePicked = data.picked.filter(id => set.items.some(it => it.id === id));
-    const wanted = Math.min(set.perSet, set.items.length);
+    const wanted = practicePerSet;
+    if (practicePicked.length > wanted) {
+      const always = practicePicked.filter(id => set.items.find(it => it.id === id).always);
+      const rest = practicePicked.filter(id => !always.includes(id)).slice(0, Math.max(0, wanted - always.length));
+      practicePicked = set.items.filter(it => always.includes(it.id) || rest.includes(it.id)).map(it => it.id);
+    }
     if (practicePicked.length < wanted) {
       const extra = drawQuestions(set.items.filter(it => !practicePicked.includes(it.id)), wanted - practicePicked.length);
       practicePicked = set.items.filter(it => practicePicked.includes(it.id) || extra.includes(it.id)).map(it => it.id);
     }
-    $("practiceNew").style.display = set.perSet < set.items.length ? "" : "none";
+    $("practiceNew").style.display = practicePerSet < set.items.length ? "" : "none";
     practiceTopicId = topic.id;
     practiceStatusAtOpen = topic.status;
     $("practiceTitle").textContent = PRACTICE[practiceOpen].title;
@@ -3393,7 +3406,7 @@
   $("practiceNew").addEventListener("click", () => {
     if (Object.keys(practiceSaved).length && !confirm("Get a new set of questions? Your answers to these ones will be cleared.")) return;
     const set = PRACTICE[practiceOpen];
-    practicePicked = drawQuestions(set.items, set.perSet);
+    practicePicked = drawQuestions(set.items, practicePerSet);
     practiceSaved = {};
     practiceDirty = true;
     renderPractice();
