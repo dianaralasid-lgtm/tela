@@ -2108,13 +2108,19 @@
     const want = expressionFn(target), got = expressionFn(v);
     if (!got) return { correct: false, message: "I couldn't read that. Use letters, numbers, + − × ÷ and brackets, e.g. (v − u)/t." };
     const vars = [...new Set([...want.vars, ...got.vars])];
-    for (let trial = 0; trial < 5; trial++) {
-      const vals = vars.map((_, i) => 1.3 + ((trial * 7 + i * 3) % 11) * 0.37);
+    // Compare the two at 5 sets of test values. Values where the model answer has no value (dividing by
+    // zero, e.g. x = 5 in 1/(x − 5)) are skipped, and the values are nudged off whole numbers.
+    let checked = 0;
+    for (let trial = 0; trial < 25 && checked < 5; trial++) {
+      const vals = vars.map((_, i) => 1.3 + ((trial * 7 + i * 3) % 11) * 0.37 + trial * 0.013);
       const pick = names => names.map(n => vals[vars.indexOf(n)]);
       let a, b;
       try { a = want.fn(Math.PI, Math.sqrt, ...pick(want.vars)); b = got.fn(Math.PI, Math.sqrt, ...pick(got.vars)); } catch (e) { return { correct: false, message: "I couldn't read that. Check your brackets." }; }
+      if (!Number.isFinite(a)) continue;
       if (!Number.isFinite(b) || Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) return { correct: false, message: "Not quite. Try again." };
+      checked++;
     }
+    if (!checked) return { correct: false, message: "Not quite. Try again." };
     if (simplest === "square" && !/^-?[\d.]*\(x[+-][\d./]+\)\^2([+-][\d./]+)?$/.test(unsuper(String(v)).replace(/[−–]/g, "-").replace(/\s+/g, "").toLowerCase())) {
       return { correct: false, message: "That has the right value, but write it in completed-square form, like (x + 3)² − 7." };
     }
