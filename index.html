@@ -662,6 +662,20 @@
   }
   .donut-cell strong { font-size: 14px; margin-top: 4px; }
   .donut-cell span { font-size: 12px; color: var(--muted); }
+  button.donut-cell { font: inherit; color: inherit; background: var(--white); cursor: pointer; }
+  button.donut-cell:hover { border-color: var(--green-600); background: var(--green-50); }
+  button.donut-cell[aria-expanded="true"] { border-color: var(--green-600); background: var(--green-50); box-shadow: 0 0 0 1px var(--green-600); }
+  .donut-cell .chev { display: inline-block; width: 8px; height: 8px; margin-left: 6px; border: solid currentColor;
+    border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; color: var(--muted); }
+  .donut-cell[aria-expanded="true"] .chev { transform: translateY(1px) rotate(-135deg); color: var(--green-700); }
+  .grade-drop { grid-column: 1 / -1; border: 1px solid var(--green-600); border-radius: 12px; background: var(--white);
+    box-shadow: 0 8px 24px rgba(16, 60, 40, .08); padding: 12px; animation: gradeDrop .15s ease-out; }
+  @keyframes gradeDrop { from { opacity: 0; transform: translateY(-4px); } }
+  .grade-drop-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0 2px 10px; }
+  .grade-drop-head strong { font-size: 14px; }
+  .grade-drop-head small { color: var(--muted); font-size: 12px; }
+  .grade-drop .d-list { max-height: 320px; overflow-y: auto; }
+  .grade-drop .d-list .status { flex: none; padding: 3px 10px; font-size: 11px; }
   .d-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
   .d-list button {
     width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left;
@@ -3567,11 +3581,39 @@ TelaDB.start("student").then(() => {
       ${size > 120 ? `<text x="50" y="66" text-anchor="middle" class="c-sub">confident</text>` : ""}
     </svg>`;
   }
-  function donutGrid(groups) {
+  // With openable set, each cell is a button that drops down the list of that group's topics.
+  function donutGrid(groups, openable) {
     return `<div class="donut-grid">${groups.map(([name, list]) => {
       const done = list.filter(t => t.status === "done").length;
-      return `<div class="donut-cell">${donutSVG(list, 92, name)}<strong>${esc(name)}</strong><span>${done} of ${list.length}</span></div>`;
+      const inner = `${donutSVG(list, 92, name)}<strong>${esc(name)}${openable ? `<i class="chev"></i>` : ""}</strong><span>${done} of ${list.length}</span>`;
+      return openable
+        ? `<button type="button" class="donut-cell" data-grade="${esc(name)}" aria-expanded="false" title="Show ${esc(name)} topics">${inner}</button>`
+        : `<div class="donut-cell">${inner}</div>`;
     }).join("")}</div>`;
+  }
+  // The dropdown under a grade: every topic in it with its status; clicking one opens its practice.
+  function gradeDropHTML(grade) {
+    const list = topics.filter(t => t.grade === grade);
+    const done = list.filter(t => t.status === "done").length;
+    return `<div class="grade-drop" id="gradeDrop" role="region" aria-label="${esc(grade)} topics">
+      <div class="grade-drop-head"><strong>${esc(grade)} topics</strong><small>${done} of ${list.length} confident</small></div>
+      <ul class="d-list">${list.map(t => `<li><button type="button" data-open="${esc(t.id)}">
+        <span>${esc(t.title)}</span><span class="status ${t.status}">${STATUS[t.status].label}</span></button></li>`).join("")}</ul>
+    </div>`;
+  }
+  // Opens (or closes) a grade's dropdown, placing it straight after the last cell on that grade's row.
+  function toggleGradeDrop(cell) {
+    const wasOpen = cell.getAttribute("aria-expanded") === "true";
+    const old = $("gradeDrop");
+    if (old) old.remove();
+    cell.parentNode.querySelectorAll("[data-grade]").forEach(c => c.setAttribute("aria-expanded", "false"));
+    if (wasOpen) return;
+    const row = [...cell.parentNode.querySelectorAll("[data-grade]")].filter(c => c.offsetTop === cell.offsetTop);
+    row[row.length - 1].insertAdjacentHTML("afterend", gradeDropHTML(cell.dataset.grade));
+    cell.setAttribute("aria-expanded", "true");
+    const drop = $("gradeDrop"), box = $("progressBody");
+    const below = drop.getBoundingClientRect().bottom - box.getBoundingClientRect().bottom;
+    if (below > 0) box.scrollBy({ top: below + 16, behavior: "smooth" });
   }
   function topicButtons(list, empty) {
     if (!list.length) return `<p class="d-note">${empty}</p>`;
@@ -3598,7 +3640,8 @@ TelaDB.start("student").then(() => {
         ${donutGrid(allSubjects().map(sub => [sub, topics.filter(t => t.subject === sub)]))}
       </div>
       ${grades.length ? `<div class="d-section"><h3>Maths by grade</h3>
-        ${donutGrid(grades.map(g => [g, topics.filter(t => t.grade === g)]))}</div>` : ""}
+        <p class="d-note">Click a grade to see its topics.</p>
+        ${donutGrid(grades.map(g => [g, topics.filter(t => t.grade === g)]), true)}</div>` : ""}
       <div class="d-section"><h3>Carry on with</h3>
         ${topicButtons(doing, "Nothing in progress yet. Open any topic tile to start practising.")}
       </div>`;
@@ -3639,6 +3682,8 @@ TelaDB.start("student").then(() => {
   $("progressClose").addEventListener("click", closeProgress);
   $("progressOverlay").addEventListener("click", e => {
     if (e.target === $("progressOverlay")) { closeProgress(); return; }
+    const grade = e.target.closest("[data-grade]");
+    if (grade) return toggleGradeDrop(grade);
     const open = e.target.closest("[data-open]");
     if (!open) return;
     const topic = topics.find(t => t.id === open.dataset.open);
