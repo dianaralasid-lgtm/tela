@@ -660,6 +660,14 @@
     display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0,0,0,.3); animation: pop .2s ease;
   }
   .tree-wrap { background: linear-gradient(var(--white), var(--brown-50)); border: 1px solid var(--line); border-radius: 14px; padding: 8px 8px 0; }
+  .tree-wrap { position: relative; }
+  .tree-tip {
+    position: absolute; z-index: 2; transform: translate(-50%, calc(-100% - 6px)); pointer-events: none;
+    background: var(--brown-900); color: var(--white); border-radius: 8px; padding: 6px 10px;
+    font-size: 13px; line-height: 1.3; white-space: nowrap; box-shadow: 0 4px 14px rgba(0,0,0,.18);
+  }
+  .tree-tip strong { display: block; font-weight: 600; }
+  .tree-tip span { font-size: 12px; opacity: .8; }
   .tree { display: block; width: 100%; height: auto; }
   .tree text { font-family: "Inter", sans-serif; }
   .tree .wood { fill: var(--brown-700); }
@@ -3745,7 +3753,7 @@ TelaDB.start("student").then(() => {
         const a = dir(t) + side * (last ? -.3 : k % 2 ? .8 : -.95), len = last ? 20 : 22;
         const ex = px + Math.cos(a) * len, ey = py + Math.sin(a) * len;
         const label = `${topic.title}: ${STATUS[topic.status].label}`;
-        twigs += `<g class="twig" data-open="${esc(topic.id)}" tabindex="0" role="button" aria-label="${esc(label)}"><title>${esc(label)}</title>
+        twigs += `<g class="twig" data-open="${esc(topic.id)}" tabindex="0" role="button" aria-label="${esc(label)}">
           <circle class="twig-hit" cx="${num((px + ex) / 2)}" cy="${num((py + ey) / 2)}" r="14"/>
           <path class="twig-stem" d="M${num(px)} ${num(py)}L${num(ex)} ${num(ey)}"/>${twigDecor(topic.status, ex, ey, a, Math.min(n++ * 8, 1200))}</g>`;
       });
@@ -3775,7 +3783,7 @@ TelaDB.start("student").then(() => {
     const key = (status, name, count) => `<li>${treeKeyIcon(status)}<span>${name}</span><strong>${count}</strong><small>${Math.round(count / n * 100)}%</small></li>`;
     return `
       <div class="d-section"><h3>Your tree</h3>
-        <div class="tree-wrap">${treeSVG()}</div>
+        <div class="tree-wrap">${treeSVG()}<div class="tree-tip" hidden></div></div>
         <ul class="tree-key">
           ${key("done", "Confident", s.done || 0)}${key("doing", "In progress", s.doing || 0)}${key("todo", "Not started", s.todo || 0)}
         </ul>
@@ -3875,6 +3883,30 @@ TelaDB.start("student").then(() => {
     document.querySelector('.side-btn[data-view="progress"]').classList.remove("active");
   }
   $("progressClose").addEventListener("click", closeProgress);
+  // Hovering over (or tabbing to) a twig shows its topic's name and status just above it.
+  function showTreeTip(twig) {
+    const wrap = twig.closest(".tree-wrap"), tip = wrap && wrap.querySelector(".tree-tip");
+    const topic = topics.find(t => t.id === twig.dataset.open);
+    if (!tip || !topic) return;
+    tip.innerHTML = `<strong>${esc(topic.title)}</strong><span>${STATUS[topic.status].label}</span>`;
+    tip.hidden = false;
+    const box = twig.getBoundingClientRect(), outer = wrap.getBoundingClientRect(), half = tip.offsetWidth / 2 + 4;
+    // Kept inside the tree's box, so names near the edge aren't cut off
+    tip.style.left = `${Math.min(Math.max(box.left + box.width / 2 - outer.left, half), outer.width - half)}px`;
+    tip.style.top = `${box.top - outer.top}px`;
+  }
+  function hideTreeTip() {
+    const tip = $("progressBody").querySelector(".tree-tip");
+    if (tip) tip.hidden = true;
+  }
+  ["mouseover", "focusin"].forEach(type => $("progressBody").addEventListener(type, e => {
+    const twig = e.target.closest(".twig");
+    if (twig) showTreeTip(twig);
+  }));
+  ["mouseout", "focusout"].forEach(type => $("progressBody").addEventListener(type, e => {
+    const twig = e.target.closest(".twig");
+    if (twig && !twig.contains(e.relatedTarget)) hideTreeTip();
+  }));
   // Enter or Space on a focused twig opens its topic, like a click.
   $("progressBody").addEventListener("keydown", e => {
     const twig = e.target.closest(".twig");
