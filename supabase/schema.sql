@@ -10,7 +10,7 @@
 drop table if exists public.account_invites, public.reads, public.group_messages, public.group_members, public.groups,
   public.messages, public.homework, public.student_kv, public.student_data, public.tutor_students, public.profiles cascade;
 drop function if exists public.handle_new_user, public.is_admin, public.teaches, public.is_tutor,
-  public.in_group, public.delete_student, public.admin_delete_account, public.guard_account_changes, public.admin_update_account cascade;
+  public.in_group, public.delete_student, public.admin_delete_account, public.guard_account_changes, public.admin_update_account, public.can_see_profile cascade;
 
 -- ---------- Accounts ----------
 -- One row per person, made automatically when they sign up (see handle_new_user).
@@ -133,6 +133,17 @@ create function public.in_group(g text) returns boolean language sql stable secu
                  where m.group_id = g and m.student_id = auth.uid())
 $$;
 
+-- Can the signed-in person see this profile? Their own; their students or tutors; people in their group chats;
+-- anyone, for an admin.
+create function public.can_see_profile(p uuid) returns boolean language sql stable security definer set search_path = public as $$
+  select p = auth.uid()
+      or public.is_admin()
+      or exists (select 1 from tutor_students
+                 where (tutor_id = auth.uid() and student_id = p) or (student_id = auth.uid() and tutor_id = p))
+      or exists (select 1 from group_members m where m.student_id = p and public.in_group(m.group_id))
+      or exists (select 1 from groups g where g.tutor_id = p and public.in_group(g.id))
+$$;
+
 -- ---------- Access rules (row level security) ----------
 alter table public.profiles enable row level security;
 alter table public.tutor_students enable row level security;
@@ -145,9 +156,9 @@ alter table public.group_members enable row level security;
 alter table public.group_messages enable row level security;
 alter table public.reads enable row level security;
 
--- Names and usernames are visible to signed-in people (to add a student by username, and to show who wrote what).
+-- Names and usernames are only visible to people who need them (see can_see_profile).
 -- Nobody edits profiles directly: only admins change names and usernames, through admin_update_account.
-create policy "read profiles" on public.profiles for select to authenticated using (true);
+create policy "read profiles" on public.profiles for select to authenticated using (public.can_see_profile(id));
 
 create policy "see own links" on public.tutor_students for select to authenticated
   using (tutor_id = auth.uid() or student_id = auth.uid() or public.is_admin());
