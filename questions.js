@@ -2001,6 +2001,16 @@ QUESTION_BANK.add({
     { section: "Making angles", question: "Drag the orange arm to make an obtuse angle.", type: "drawangle", marks: 1, answer: "obtuse" },
     { section: "Making angles", question: "Drag the orange arm to make a reflex angle.", type: "drawangle", marks: 1, answer: "reflex" },
 
+    { section: "Section C: More practice", question: "What type of angle is this?", angle: 20, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "acute" },
+    { section: "Section C: More practice", question: "What type of angle is this?", angle: 140, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "obtuse" },
+    { section: "Section C: More practice", question: "What type of angle is this?", angle: 210, marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "reflex" },
+    { section: "Section C: More practice", question: "An angle measures 270°. What type of angle is it?", marks: 1,
+      options: ["acute", "right", "obtuse", "straight", "reflex"], answer: "reflex" },
+    { section: "Section C: More practice", question: "Which of these angles is obtuse?", marks: 1, options: ["45°", "90°", "120°", "190°"], answer: "120°" },
+    { section: "Section C: More practice", question: "How many right angles make a full turn?", type: "number", marks: 1, answer: "4" },
     { section: "Making angles", question: "Sam says an angle of 180° is obtuse. Explain why Sam is wrong.", type: "explain", marks: 1,
       answer: "Obtuse angles are bigger than 90° but less than 180°. An angle of exactly 180° makes a straight line, so it is a straight angle." }
   ]
@@ -2071,6 +2081,14 @@ QUESTION_BANK.add({
 
     { section: "Problem solving", question: "A football crowd is 23 481 people. Write this number to the nearest thousand.", marks: 1, answer: "23000" },
     { section: "Problem solving", question: "A bag of sweets weighs 247 g. Write this to the nearest 10 g.", marks: 1, answer: "250 g" },
+    { section: "Section C: More practice", question: "Round 83 to the nearest 10.", marks: 1, answer: "80" },
+    { section: "Section C: More practice", question: "Round 1450 to the nearest 100.", marks: 1, answer: "1500" },
+    { section: "Section C: More practice", question: "Round 26 499 to the nearest 1000.", marks: 1, answer: "26000" },
+    { section: "Section C: More practice", question: "Round 9.4 to the nearest whole number.", marks: 1, answer: "9" },
+    { section: "Section C: More practice", question: "Round 7.96 to 1 decimal place.", marks: 1, answer: "8" },
+    { section: "Section C: More practice", question: "Round 5.278 to 2 decimal places.", marks: 1, answer: "5.28" },
+    { section: "Section C: More practice", question: "A car costs £12 785. Write this to the nearest £100.", marks: 1, answer: "£12800" },
+    { section: "Section C: More practice", question: "Which number rounds to 400 to the nearest 100?", type: "choice", marks: 1, options: ["349", "451", "362", "450"], answer: "362" },
     { section: "Problem solving", question: "Kai rounds 3.45 to 1 decimal place and gets 3.4. Explain Kai's mistake.", type: "explain", marks: 1,
       answer: "The digit after the first decimal place is 5, so you round up. 3.45 rounded to 1 decimal place is 3.5." }
   ]
@@ -2104,6 +2122,14 @@ QUESTION_BANK.add({
       items: ["2 + 3 × 4", "(2 + 3) × 4", "2 × 3 + 4", "2 + 3 + 4"],
       answer: "2 + 3 + 4, 2 × 3 + 4, 2 + 3 × 4, (2 + 3) × 4", labels: ["smallest answer", "largest answer"] },
 
+    { section: "Section C: More practice", question: "Work out 5 + 3 × 4", marks: 1, answer: "17" },
+    { section: "Section C: More practice", question: "Work out (5 + 3) × 4", marks: 1, answer: "32" },
+    { section: "Section C: More practice", question: "Work out 24 ÷ 6 + 2", marks: 1, answer: "6" },
+    { section: "Section C: More practice", question: "Work out 24 ÷ (6 + 2)", marks: 1, answer: "3" },
+    { section: "Section C: More practice", question: "Work out 3 × 4 − 2 × 5", marks: 1, answer: "2" },
+    { section: "Section C: More practice", question: "Work out 2 + 4²", marks: 1, answer: "18" },
+    { section: "Section C: More practice", question: "Work out (2 + 4)²", marks: 1, answer: "36" },
+    { section: "Section C: More practice", question: "Work out 30 − (4 + 2) × 3", marks: 2, answer: "12" },
     { section: "Brackets and choices", question: "Ali works out 3 + 5 × 2 and gets 16. Explain Ali's mistake.", type: "explain", marks: 1,
       answer: "Ali added first. In BIDMAS, multiplication comes before addition, so work out 5 × 2 = 10 first, then 3 + 10 = 13." }
   ]
@@ -2136,6 +2162,13 @@ QUESTION_BANK.add({
     { section: "Section D: Problem Solving", question: "Kim has £20. She spends £7.85. How much money does she have left?", marks: 2, answer: "£12.15" },
     { section: "Section D: Problem Solving", question: "A plank is 3.2 m long. A piece 1.45 m long is cut off. How long is the piece that is left?", marks: 2, answer: "1.75 m" },
     { section: "Section D: Problem Solving", question: "The temperature was 14.5 °C. It fell by 6.8 °C. What is the temperature now?", marks: 2, answer: "7.7 °C" },
+    { section: "Section C: More practice", question: "Use the column method to work out 932 − 457.", type: "column", sum: "932 − 457", marks: 2 },
+    { section: "Section C: More practice", question: "Work out 91 − 46", marks: 1, answer: "45" },
+    { section: "Section C: More practice", question: "Work out 700 − 382", marks: 1, answer: "318" },
+    { section: "Section C: More practice", question: "Work out 7.3 − 4.8", marks: 1, answer: "2.5" },
+    { section: "Section C: More practice", question: "Work out 10 − 2.75", marks: 1, answer: "7.25" },
+    { section: "Section C: More practice", question: "A jug holds 2 litres of juice. 0.65 litres are poured out. How much juice is left?", marks: 2, answer: "1.35 litres" },
+    { section: "Section C: More practice", question: "Find the missing number: ? − 28 = 45", marks: 1, answer: "73" },
     { section: "Section D: Problem Solving", question: "Raj says 6.3 − 2.8 = 4.5. Explain Raj's mistake and give the correct answer.", type: "explain", marks: 2,
       answer: "You can't take 8 tenths from 3 tenths, so exchange 1 one for 10 tenths: 13 − 8 = 5 tenths, then 5 − 2 = 3 ones. The answer is 3.5. Raj did 8 − 3 instead of exchanging." }
   ]
@@ -2170,6 +2203,13 @@ QUESTION_BANK.add({
     { section: "Section D: Problem Solving", question: "One cinema ticket costs £4.75. How much do 6 tickets cost?", marks: 2, answer: "£28.50" },
     { section: "Section D: Problem Solving", question: "A recipe uses 0.25 kg of flour for each cake. How much flour is needed for 8 cakes?", marks: 2, answer: "2 kg" },
     { section: "Section D: Problem Solving", question: "A rectangle is 3.5 cm long and 6 cm wide. Work out its area in cm².", marks: 2, answer: "21" },
+    { section: "Section C: More practice", question: "Use the column method to work out 438 × 6.", type: "column", sum: "438 × 6", marks: 2 },
+    { section: "Section C: More practice", question: "Work out 52 × 8", marks: 1, answer: "416" },
+    { section: "Section C: More practice", question: "Work out 45 × 12", marks: 1, answer: "540" },
+    { section: "Section C: More practice", question: "Work out 0.6 × 5", marks: 1, answer: "3" },
+    { section: "Section C: More practice", question: "Work out 4.2 × 3", marks: 1, answer: "12.6" },
+    { section: "Section C: More practice", question: "Work out 0.08 × 1000", marks: 1, answer: "80" },
+    { section: "Section C: More practice", question: "Pencils cost £0.35 each. How much do 9 pencils cost?", marks: 2, answer: "£3.15" },
     { section: "Section D: Problem Solving", question: "Zoe says 0.3 × 0.2 = 0.6. Explain Zoe's mistake.", type: "explain", marks: 1,
       answer: "3 × 2 = 6, but tenths × tenths make hundredths, so 0.3 × 0.2 has two decimal places in total. The answer is 0.06." }
   ]
@@ -2258,6 +2298,15 @@ QUESTION_BANK.add({
       items: ["2/3", "1/2", "5/6", "7/12"], answer: "1/2, 7/12, 2/3, 5/6" },
     { section: "Section C: Ordering fractions", question: "Which fraction is bigger?", type: "choice", marks: 1,
       options: ["3/5", "2/3"], answer: "2/3" },
+    { section: "Section C: More practice", question: "What fraction of the shape is shaded?", marks: 1, answer: "2/5", shape: { style: "bar", parts: 5, shaded: 2 } },
+    { section: "Section C: More practice", question: "What fraction of the grid is shaded?", marks: 1, answer: "7/10", shape: { style: "grid", rows: 2, cols: 5, shaded: 7 } },
+    { section: "Section C: More practice", question: "Shade 5/6 of the shape.", type: "shade", marks: 1, answer: "5/6", shape: { style: "bar", parts: 6 } },
+    { section: "Section C: More practice", question: "Write 9/12 in its simplest form.", marks: 1, answer: "3/4" },
+    { section: "Section C: More practice", question: "Write 18/24 in its simplest form.", marks: 1, answer: "3/4" },
+    { section: "Section C: More practice", question: "Write 8/20 in its simplest form.", marks: 1, answer: "2/5" },
+    { section: "Section C: More practice", question: "Find the missing number: 2/7 = ?/21", type: "number", marks: 1, answer: "6" },
+    { section: "Section C: More practice", question: "Put these fractions in order, starting with the smallest.", type: "order", marks: 2,
+      items: ["3/5", "1/2", "7/10", "2/5"], answer: "2/5, 1/2, 3/5, 7/10" },
     { section: "Section C: Ordering fractions", question: "Ben says 1/5 is bigger than 1/3 because 5 is bigger than 3. Explain why Ben is wrong.", type: "explain", marks: 1,
       answer: "The bottom number tells you how many equal parts the whole is split into. Splitting into 5 parts makes each part smaller than splitting into 3, so 1/5 is smaller than 1/3." }
   ]
@@ -2290,6 +2339,14 @@ QUESTION_BANK.add({
     { section: "Section C: Changing numbers", question: "What is 1000 less than 20 450?", marks: 1, answer: "19450" },
     { section: "Section C: Changing numbers", question: "Work out 3.6 × 100", marks: 1, answer: "360" },
     { section: "Section C: Changing numbers", question: "Work out 52 ÷ 10", marks: 1, answer: "5.2" },
+    { section: "Section C: More practice", question: "What is the value of the 9 in 59 204?", marks: 1, answer: "9000" },
+    { section: "Section C: More practice", question: "What is the value of the 6 in 0.46?", marks: 1, answer: "0.06" },
+    { section: "Section C: More practice", question: "Write down the digit in the hundredths column of 3.507.", marks: 1, answer: "0" },
+    { section: "Section C: More practice", question: "Write six thousand and forty in figures.", marks: 1, answer: "6040" },
+    { section: "Section C: More practice", question: "Write 2 hundreds, 5 ones and 3 tenths as a number.", marks: 1, answer: "205.3" },
+    { section: "Section C: More practice", question: "What is 100 less than 3050?", marks: 1, answer: "2950" },
+    { section: "Section C: More practice", question: "Work out 74 ÷ 100", marks: 1, answer: "0.74" },
+    { section: "Section C: More practice", question: "Which number is the biggest?", type: "choice", marks: 1, options: ["0.8", "0.75", "0.09", "0.709"], answer: "0.8" },
     { section: "Section C: Changing numbers", question: "Amy says the 5 in 2.05 is worth 5 tenths. Explain why Amy is wrong.", type: "explain", marks: 1,
       answer: "The 5 is in the second column after the decimal point, which is the hundredths column, so it is worth 5 hundredths (0.05). The tenths digit is 0." }
   ]
@@ -2327,6 +2384,16 @@ QUESTION_BANK.add({
       options: ["all its angles equal", "four sides", "a right angle", "parallel sides"], answer: "all its angles equal" },
     { section: "Section B: Sides and properties", question: "Tap all the shapes that are quadrilaterals.", type: "select", marks: 2,
       options: ["square", "triangle", "rectangle", "kite", "pentagon", "trapezium", "hexagon"], answer: "square, rectangle, kite, trapezium" },
+    { section: "Section C: More practice", question: "What is the name of this polygon?", polygon: { sides: 6, irregular: true }, marks: 1,
+      options: ["pentagon", "hexagon", "heptagon", "octagon"], answer: "hexagon" },
+    { section: "Section C: More practice", question: "What is the name of this polygon?", polygon: { sides: 5, irregular: true }, marks: 1,
+      options: ["quadrilateral", "pentagon", "hexagon", "triangle"], answer: "pentagon" },
+    { section: "Section C: More practice", question: "How many sides does a hexagon have?", type: "number", marks: 1, answer: "6" },
+    { section: "Section C: More practice", question: "How many sides does a nonagon have?", type: "number", marks: 1, answer: "9" },
+    { section: "Section C: More practice", question: "What is the name of a polygon with 4 sides?", marks: 1,
+      options: ["triangle", "quadrilateral", "pentagon", "hexagon"], answer: "quadrilateral" },
+    { section: "Section C: More practice", question: "How many sides do a pentagon and an octagon have altogether?", type: "number", marks: 1, answer: "13" },
+    { section: "Section C: More practice", question: "Which of these is NOT a polygon?", marks: 1, options: ["square", "triangle", "semicircle", "hexagon"], answer: "semicircle" },
     { section: "Section B: Sides and properties", question: "Is a circle a polygon? Explain your answer.", type: "explain", marks: 1,
       answer: "No. A polygon is a flat shape made only of straight sides. A circle has one curved edge, so it is not a polygon." }
   ]
@@ -2362,6 +2429,22 @@ QUESTION_BANK.add({
       options: ["To make them easier to count in fives", "To show the fifth one is bigger", "Because the fifth one doesn't count", "To make the chart look neat"],
       answer: "To make them easier to count in fives" },
     { section: "Section C: Understanding tallies", question: "Cars has a frequency of 23 in a tally chart. How many complete groups of five tally marks are there?", marks: 1, answer: "4" },
+    { section: "Section C: More practice", text: "The tally chart shows how pupils travel to school.", question: "How many pupils walk?", marks: 1, answer: "14",
+      tally: { rows: [["Walk", 14], ["Car", 8], ["Bus", 11], ["Bike", 3]], headings: ["Travel", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section C: More practice", text: "The tally chart shows how pupils travel to school.", question: "How many pupils come by bus?", marks: 1, answer: "11",
+      tally: { rows: [["Walk", 14], ["Car", 8], ["Bus", 11], ["Bike", 3]], headings: ["Travel", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section C: More practice", text: "The tally chart shows how pupils travel to school.", question: "Which way of travelling is the least popular?", type: "choice", marks: 1,
+      options: ["Walk", "Car", "Bus", "Bike"], answer: "Bike",
+      tally: { rows: [["Walk", 14], ["Car", 8], ["Bus", 11], ["Bike", 3]], headings: ["Travel", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section C: More practice", text: "The tally chart shows how pupils travel to school.", question: "How many pupils are in the survey altogether?", marks: 2, answer: "36",
+      tally: { rows: [["Walk", 14], ["Car", 8], ["Bus", 11], ["Bike", 3]], headings: ["Travel", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section C: More practice", text: "The tally chart shows how pupils travel to school.", question: "How many more pupils walk than come by car?", marks: 1, answer: "6",
+      tally: { rows: [["Walk", 14], ["Car", 8], ["Bus", 11], ["Bike", 3]], headings: ["Travel", "Tally", "Frequency"], show: "tally" } },
+    { section: "Section C: More practice", question: "What number do these tally marks show?", marks: 1, answer: "22",
+      tally: { rows: [["Goals", 22]], headings: ["", "Tally", ""], show: "tally" } },
+    { section: "Section C: More practice", question: "Draw the tally marks for 6.", type: "tally", marks: 1, answer: "6" },
+    { section: "Section C: More practice", question: "Draw the tally marks for 17.", type: "tally", marks: 1, answer: "17" },
+    { section: "Section C: More practice", question: "A tally has 7 complete groups of five and 3 more marks. What number does it show?", marks: 1, answer: "38" },
     { section: "Section C: Understanding tallies", question: "Sita draws five upright lines next to each other to show 5. Explain what she should have drawn.", type: "explain", marks: 1,
       answer: "Four upright lines with the fifth line drawn across them, like a gate. This makes groups of five that are easy to count." }
   ]
@@ -2400,6 +2483,23 @@ QUESTION_BANK.add({
     { section: "Section C: Using the key", question: "Why does a pictogram need a key?", type: "choice", marks: 1,
       options: ["To show how many each symbol stands for", "To make it colourful", "To show the title", "To count the rows"],
       answer: "To show how many each symbol stands for" },
+    { section: "Section C: More practice", text: "The pictogram shows how many cups of tea a café sold.", question: "How many cups were sold on Saturday?", marks: 1, answer: "25",
+      pictogram: { key: 10, item: "cups", rows: [["Friday", 1.5], ["Saturday", 2.5], ["Sunday", 4]] } },
+    { section: "Section C: More practice", text: "The pictogram shows how many cups of tea a café sold.", question: "How many cups were sold on Sunday?", marks: 1, answer: "40",
+      pictogram: { key: 10, item: "cups", rows: [["Friday", 1.5], ["Saturday", 2.5], ["Sunday", 4]] } },
+    { section: "Section C: More practice", text: "The pictogram shows how many cups of tea a café sold.", question: "How many cups were sold altogether?", marks: 2, answer: "80",
+      pictogram: { key: 10, item: "cups", rows: [["Friday", 1.5], ["Saturday", 2.5], ["Sunday", 4]] } },
+    { section: "Section C: More practice", text: "The pictogram shows how many cups of tea a café sold.", question: "How many more cups were sold on Sunday than on Friday?", marks: 1, answer: "25",
+      pictogram: { key: 10, item: "cups", rows: [["Friday", 1.5], ["Saturday", 2.5], ["Sunday", 4]] } },
+    { section: "Section C: More practice", text: "The pictogram shows the number of emails Ana got.", question: "How many emails did Ana get on Tuesday?", marks: 1, answer: "6",
+      pictogram: { key: 8, item: "emails", rows: [["Monday", 2], ["Tuesday", 0.75], ["Wednesday", 1.5]] } },
+    { section: "Section C: More practice", text: "The pictogram shows the number of emails Ana got.", question: "How many emails did Ana get on Wednesday?", marks: 1, answer: "12",
+      pictogram: { key: 8, item: "emails", rows: [["Monday", 2], ["Tuesday", 0.75], ["Wednesday", 1.5]] } },
+    { section: "Section C: More practice", question: "A shop sold 30 cakes on Monday. Complete the pictogram for Monday.", type: "pictogram", marks: 1, answer: "30",
+      pictogram: { key: 12, item: "cakes", rows: [["Saturday", 2], ["Sunday", 1.5]], ask: "Monday" } },
+    { section: "Section C: More practice", question: "12 children went to the park on Friday. Complete the pictogram for Friday.", type: "pictogram", marks: 1, answer: "12",
+      pictogram: { key: 8, item: "children", rows: [["Wednesday", 1], ["Thursday", 2.5]], ask: "Friday" } },
+    { section: "Section C: More practice", question: "In a pictogram, one symbol stands for 20 cars. How many cars do 3 and a half symbols stand for?", marks: 1, answer: "70" },
     { section: "Section C: Using the key", question: "The key says one symbol stands for 8 people. Leo says a quarter of a symbol is 1 person. Explain Leo's mistake.", type: "explain", marks: 1,
       answer: "A quarter of a symbol is a quarter of 8 people, and 8 ÷ 4 = 2. So a quarter of a symbol stands for 2 people, not 1." }
   ]
@@ -2434,6 +2534,14 @@ QUESTION_BANK.add({
 
     { section: "Section C: Problem solving", question: "The temperature is −4 °C. It rises by 9 °C. What is the new temperature?", marks: 1, answer: "5 °C" },
     { section: "Section C: Problem solving", question: "What is the difference between −6 °C and 5 °C?", marks: 2, answer: "11 °C" },
+    { section: "Section C: More practice", question: "Work out −5 + 2", marks: 1, answer: "−3" },
+    { section: "Section C: More practice", question: "Work out 3 − 10", marks: 1, answer: "−7" },
+    { section: "Section C: More practice", question: "Work out −4 − 5", marks: 1, answer: "−9" },
+    { section: "Section C: More practice", question: "Work out −6 × −2", marks: 1, answer: "12" },
+    { section: "Section C: More practice", question: "Work out 5 − −3", marks: 1, answer: "8" },
+    { section: "Section C: More practice", question: "The temperature is 2 °C. It falls by 7 °C. What is the new temperature?", marks: 1, answer: "−5 °C" },
+    { section: "Section C: More practice", question: "Put these temperatures in order, starting with the coldest.", type: "order", marks: 1,
+      items: ["3 °C", "−2 °C", "−8 °C", "0 °C"], answer: "−8 °C, −2 °C, 0 °C, 3 °C" },
     { section: "Section C: Problem solving", question: "Max says −8 is bigger than −3 because 8 is bigger than 3. Explain why Max is wrong.", type: "explain", marks: 1,
       answer: "Negative numbers get smaller the further they are from zero. −8 is further left on the number line than −3, so −8 is smaller than −3." }
   ]
@@ -2465,6 +2573,14 @@ QUESTION_BANK.add({
       options: ["4", "9", "12", "16", "20", "25", "30", "36"], answer: "4, 9, 16, 25, 36" },
     { section: "Section C: Comparing", question: "Put these in order of size, starting with the smallest.", type: "order", marks: 2,
       items: ["3²", "2³", "√100", "1⁵"], answer: "1⁵, 2³, 3², √100" },
+    { section: "Section C: More practice", question: "Work out 7²", marks: 1, answer: "49" },
+    { section: "Section C: More practice", question: "Work out 12²", marks: 1, answer: "144" },
+    { section: "Section C: More practice", question: "Work out 5³", marks: 1, answer: "125" },
+    { section: "Section C: More practice", question: "Work out √81", marks: 1, answer: "9" },
+    { section: "Section C: More practice", question: "Work out ∛27", marks: 1, answer: "3" },
+    { section: "Section C: More practice", question: "Work out 6² − √25", marks: 2, answer: "31" },
+    { section: "Section C: More practice", question: "Tap all the cube numbers.", type: "select", marks: 2,
+      options: ["1", "6", "8", "9", "27", "30", "64", "100"], answer: "1; 8; 27; 64" },
     { section: "Section C: Comparing", question: "Jo says 3² = 6. Explain Jo's mistake.", type: "explain", marks: 1,
       answer: "3² means 3 × 3, not 3 × 2. So 3² = 9." }
   ]
@@ -2494,6 +2610,17 @@ QUESTION_BANK.add({
 
     { section: "Section C: Prime numbers", question: "Tap all the prime numbers.", marks: 2, range: [1, 20], answer: "2, 3, 5, 7, 11, 13, 17, 19" },
     { section: "Section C: Prime numbers", question: "Is 1 a prime number?", type: "choice", marks: 1, options: ["Yes", "No"], answer: "No" },
+    { section: "Section C: More practice", question: "Tap all the factors of 18.", marks: 2,
+      options: ["1", "2", "3", "4", "5", "6", "8", "9", "12", "18"], answer: "1; 2; 3; 6; 9; 18" },
+    { section: "Section C: More practice", question: "Tap all the factors of 30.", marks: 2,
+      options: ["1", "2", "3", "4", "5", "6", "7", "10", "12", "15", "20", "30"], answer: "1; 2; 3; 5; 6; 10; 15; 30" },
+    { section: "Section C: More practice", question: "Tap all the multiples of 6.", marks: 2,
+      options: ["3", "6", "10", "12", "16", "18", "26", "30", "34", "36"], answer: "6; 12; 18; 30; 36" },
+    { section: "Section C: More practice", question: "How many factors does 24 have?", type: "number", marks: 1, answer: "8" },
+    { section: "Section C: More practice", question: "What is the 9th multiple of 7?", type: "number", marks: 1, answer: "63" },
+    { section: "Section C: More practice", question: "What is the highest common factor of 16 and 24?", type: "number", marks: 1, answer: "8" },
+    { section: "Section C: More practice", question: "What is the smallest number that is a multiple of both 3 and 5?", type: "number", marks: 1, answer: "15" },
+    { section: "Section C: More practice", question: "Which number is NOT a factor of 36?", type: "choice", marks: 1, options: ["4", "9", "8", "12"], answer: "8" },
     { section: "Section C: Prime numbers", question: "Ella says 2 is not a prime number because it is even. Explain why Ella is wrong.", type: "explain", marks: 1,
       answer: "A prime number has exactly two factors, 1 and itself. 2 has exactly two factors, 1 and 2, so it is prime. It is the only even prime number." }
   ]
