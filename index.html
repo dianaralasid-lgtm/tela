@@ -181,6 +181,15 @@
   }
   .chip .count { opacity: .65; margin-left: 4px; font-weight: 400; }
   .chip.small { padding: 4px 12px; font-size: 12px; }
+  .chip-soon {
+    border: 1.5px dashed var(--brown-200); background: var(--brown-50); color: var(--muted);
+    border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: default;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chip-soon small {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+    background: var(--brown-200); color: var(--brown-800); border-radius: 99px; padding: 1px 7px;
+  }
 
   .results-row {
     display: flex; justify-content: space-between; align-items: center;
@@ -221,11 +230,6 @@
   .meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
   .tier { font-size: 12px; color: var(--muted); }
   .tier b { color: var(--ink); font-weight: 600; }
-  .boards { display: flex; gap: 4px; flex-wrap: wrap; }
-  .board {
-    font-size: 11px; font-weight: 600; color: var(--brown-800);
-    border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px;
-  }
 
   .card-foot {
     display: flex; justify-content: space-between; align-items: center;
@@ -885,10 +889,6 @@
         <div class="filter-label">Subject</div>
         <div class="chips" id="subjectChips"></div>
       </div>
-      <div class="filter-group">
-        <div class="filter-label">Exam board</div>
-        <div class="chips" id="boardChips"></div>
-      </div>
       <div class="filter-group" id="gradeGroup">
         <div class="filter-label">Grade</div>
         <div class="chips" id="gradeChips"></div>
@@ -996,6 +996,8 @@ TelaDB.start("student").then(() => {
   // These subjects always get a filter button, even before they have topics.
   // (Subjects in HIDDEN_SUBJECTS, from catalog.js, are left out.)
   const SUBJECTS = ["Physics", "Chemistry", "Biology", "Maths"].filter(isShownSubject);
+  // Subjects on the way: shown greyed out next to the subject filters, not clickable.
+  const COMING_SOON = [...HIDDEN_SUBJECTS, "Computer Science"];
   const BOARDS = ["AQA", "Edexcel", "OCR"];
 
   function buildSamples(subjects = SUBJECTS) {
@@ -1032,7 +1034,7 @@ TelaDB.start("student").then(() => {
   topics = topics.filter(t => isShownSubject(t.subject));
   if (firstVisit) save();
 
-  const state = { query: "", subject: "All", board: "All", grade: "All", category: "All", status: "All", sort: "category" };
+  const state = { query: "", subject: "All", grade: "All", category: "All", status: "All", sort: "category" };
 
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -1052,27 +1054,22 @@ TelaDB.start("student").then(() => {
     if (state.subject !== "All" && !subjects.includes(state.subject)) state.subject = "All";
     $("subjectChips").innerHTML =
       chipHTML("All", "All subjects", state.subject === "All") +
-      subjects.map(s => chipHTML(s, s, state.subject === s)).join("");
+      subjects.map(s => chipHTML(s, s, state.subject === s)).join("") +
+      COMING_SOON.filter(s => !subjects.includes(s))
+        .map(s => `<span class="chip-soon" title="${esc(s)} is coming soon">${esc(s)}<small>Soon</small></span>`).join("");
 
-    // Exam boards
-    $("boardChips").innerHTML =
-      chipHTML("All", "All boards", state.board === "All") +
-      BOARDS.map(b => chipHTML(b, b, state.board === b)).join("");
-
-    // Grades within the selected subject and board (hidden when none of those topics have a grade)
-    const inBoard = topics.filter(t =>
-      (state.subject === "All" || t.subject === state.subject) &&
-      (state.board === "All" || t.boards.includes(state.board)));
-    const grades = GRADES.filter(g => inBoard.some(t => t.grade === g));
+    // Grades within the selected subject (hidden when none of those topics have a grade)
+    const inScope = topics.filter(t => state.subject === "All" || t.subject === state.subject);
+    const grades = GRADES.filter(g => inScope.some(t => t.grade === g));
     if (state.grade !== "All" && !grades.includes(state.grade)) state.grade = "All";
-    const gradeCounts = countBy(inBoard, "grade");
+    const gradeCounts = countBy(inScope, "grade");
     $("gradeChips").innerHTML =
       chipHTML("All", "All grades", state.grade === "All", null, "small") +
       grades.map(g => chipHTML(g, g, state.grade === g, gradeCounts[g], "small")).join("");
     $("gradeGroup").style.display = grades.length ? "" : "none";
 
-    // Categories within the selected subject, board and grade
-    const inSubject = inBoard.filter(t => state.grade === "All" || t.grade === state.grade);
+    // Categories within the selected subject and grade
+    const inSubject = inScope.filter(t => state.grade === "All" || t.grade === state.grade);
     const cats = uniq(inSubject.map(t => t.category));
     if (state.category !== "All" && !cats.includes(state.category)) state.category = "All";
     const catCounts = countBy(inSubject, "category");
@@ -1093,7 +1090,6 @@ TelaDB.start("student").then(() => {
     const q = state.query.trim().toLowerCase();
     const list = topics.filter(t =>
       (state.subject === "All" || t.subject === state.subject) &&
-      (state.board === "All" || t.boards.includes(state.board)) &&
       (state.grade === "All" || t.grade === state.grade) &&
       (state.category === "All" || t.category === state.category) &&
       (state.status === "All" || t.status === state.status) &&
@@ -1128,7 +1124,6 @@ TelaDB.start("student").then(() => {
         <h3>${esc(t.title)}</h3>
         <div class="meta">
           ${t.tier ? `<div class="tier">Tier: <b>${esc(t.tier)}</b></div>` : "<span></span>"}
-          <div class="boards">${t.boards.map(b => `<span class="board">${esc(b)}</span>`).join("")}</div>
         </div>
         <div class="card-foot">
           <button class="status ${t.status}" data-action="status" title="Click to change status">${STATUS[t.status].label}</button>
@@ -4036,7 +4031,6 @@ TelaDB.start("student").then(() => {
     });
   }
   bindChips("subjectChips", "subject");
-  bindChips("boardChips", "board");
   bindChips("gradeChips", "grade");
   bindChips("categoryChips", "category");
   bindChips("statusChips", "status");
