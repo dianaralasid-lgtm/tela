@@ -1062,47 +1062,10 @@ QUESTION_BANK.add({
       answer: "(7, 9)"
     },
     {
-      text: "The diagram shows two identical right-angled triangles. The right angle of each triangle is at its bottom-left corner.",
-      diagram: `<svg viewBox="0 0 340 260" width="340" role="img" aria-label="Two identical right-angled triangles">
-        <line x1="120" y1="255" x2="120" y2="8" style="stroke:currentColor;stroke-width:1.6;fill:none"/><line x1="5" y1="120" x2="332" y2="120" style="stroke:currentColor;stroke-width:1.6;fill:none"/><text x="112" y="136" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">O</text><text x="334" y="136" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">x</text><text x="128" y="16" style="fill:currentColor;stroke:none;font-size:13px">y</text>
-        <polygon points="50,30 50,80 175,80" style="stroke:currentColor;stroke-width:2;fill:none"/>
-        <polyline points="50,72 58,72 58,80" style="stroke:currentColor;stroke-width:1;fill:none"/>
-        <circle cx="50" cy="30" r="3" style="fill:currentColor;stroke:none"/><circle cx="175" cy="80" r="3" style="fill:currentColor;stroke:none"/>
-        <text x="42" y="30" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">A</text>
-        <text x="182" y="84" style="fill:currentColor;stroke:none;font-size:13px">(3, 6)</text>
-        <polygon points="160,150 160,200 285,200" style="stroke:currentColor;stroke-width:2;fill:none"/>
-        <polyline points="160,192 168,192 168,200" style="stroke:currentColor;stroke-width:1;fill:none"/>
-        <circle cx="160" cy="150" r="3" style="fill:currentColor;stroke:none"/><circle cx="160" cy="200" r="3" style="fill:currentColor;stroke:none"/><circle cx="285" cy="200" r="3" style="fill:currentColor;stroke:none"/>
-        <text x="168" y="150" style="fill:currentColor;stroke:none;font-size:13px">(5, −2)</text>
-        <text x="160" y="220" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">(5, −7)</text>
-        <text x="285" y="220" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">(12, −7)</text>
-      </svg>`,
-      question: "Work out the coordinates of the point A.",
-      marks: 3,
-      answer: "(−4, 11). The triangle is 7 wide and 5 tall, so the right angle is at (3 − 7, 6) = (−4, 6), and A is 5 above it."
-    },
-    {
       text: "Calculator allowed.",
       question: "Work out the midpoint of the line AB joining A (−6, 5) and B (−2, 17).",
       marks: 2,
       answer: "(−4, 11)"
-    },
-    {
-      text: "Four identical squares are shown. The sides of the squares are parallel to the axes. A is (5, 2) and C is (53, 38).",
-      diagram: `<svg viewBox="0 0 300 260" width="300" role="img" aria-label="Four identical squares in a staircase from A to C">
-        <line x1="25" y1="255" x2="25" y2="8" style="stroke:currentColor;stroke-width:1.6;fill:none"/><line x1="5" y1="235" x2="292" y2="235" style="stroke:currentColor;stroke-width:1.6;fill:none"/><text x="17" y="251" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">O</text><text x="294" y="251" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">x</text><text x="33" y="16" style="fill:currentColor;stroke:none;font-size:13px">y</text>
-        <rect x="50" y="170" width="45" height="45" style="stroke:currentColor;stroke-width:2;fill:none"/>
-        <rect x="95" y="170" width="45" height="45" style="stroke:currentColor;stroke-width:2;fill:none"/>
-        <rect x="140" y="125" width="45" height="45" style="stroke:currentColor;stroke-width:2;fill:none"/>
-        <rect x="185" y="80" width="45" height="45" style="stroke:currentColor;stroke-width:2;fill:none"/>
-        <circle cx="50" cy="215" r="3" style="fill:currentColor;stroke:none"/><circle cx="140" cy="170" r="3" style="fill:currentColor;stroke:none"/><circle cx="230" cy="80" r="3" style="fill:currentColor;stroke:none"/>
-        <text x="54" y="230" style="fill:currentColor;stroke:none;font-size:13px">A (5, 2)</text>
-        <text x="146" y="186" style="fill:currentColor;stroke:none;font-size:13px">B</text>
-        <text x="236" y="76" style="fill:currentColor;stroke:none;font-size:13px">C (53, 38)</text>
-      </svg>`,
-      question: "Work out the coordinates of point B.",
-      marks: 4,
-      answer: "(29, 14). From A to C is 4 sides across (48 ÷ 4 = 12) and 3 sides up (36 ÷ 3 = 12), so each side is 12. B is 2 sides across and 1 side up from A."
     },
     {
       text: "M is the midpoint of AB.",
@@ -1182,22 +1145,6 @@ QUESTION_BANK.add({
       marks: 2,
       answer: "(−1, 5)"
     },
-    {
-      text: "Three identical squares are placed side by side in a row. The sides of the squares are parallel to the axes. P is (7, 4) and Q is (34, 13).",
-      diagram: `<svg viewBox="0 0 310 170" width="310" role="img" aria-label="Three identical squares in a row with corners P, R and Q">
-        <line x1="25" y1="165" x2="25" y2="8" style="stroke:currentColor;stroke-width:1.6;fill:none"/><line x1="5" y1="145" x2="302" y2="145" style="stroke:currentColor;stroke-width:1.6;fill:none"/><text x="17" y="161" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">O</text><text x="304" y="161" text-anchor="end" style="fill:currentColor;stroke:none;font-size:13px">x</text><text x="33" y="16" style="fill:currentColor;stroke:none;font-size:13px">y</text>
-        <rect x="55" y="55" width="55" height="55" style="stroke:currentColor;stroke-width:2;fill:none"/>
-        <rect x="110" y="55" width="55" height="55" style="stroke:currentColor;stroke-width:2;fill:none"/>
-        <rect x="165" y="55" width="55" height="55" style="stroke:currentColor;stroke-width:2;fill:none"/>
-        <circle cx="55" cy="110" r="3" style="fill:currentColor;stroke:none"/><circle cx="220" cy="55" r="3" style="fill:currentColor;stroke:none"/><circle cx="110" cy="55" r="3" style="fill:currentColor;stroke:none"/>
-        <text x="55" y="128" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">P (7, 4)</text>
-        <text x="226" y="50" style="fill:currentColor;stroke:none;font-size:13px">Q (34, 13)</text>
-        <text x="110" y="47" text-anchor="middle" style="fill:currentColor;stroke:none;font-size:13px">R</text>
-      </svg>`,
-      question: "Work out the coordinates of R.",
-      marks: 3,
-      answer: "(16, 13). Each square has side 27 ÷ 3 = 9, so R is 9 right of P and 9 up."
-    }
   ]
 });
 
@@ -8054,7 +8001,7 @@ QUESTION_BANK.add({
     { section: "Section B: Unknown amounts", text: "A bag has x red counters and 3 blue counters. Two are taken without replacement.", question: "Write an expression for the probability that both are red.", type: "expression", marks: 2,
       answer: "x(x − 1)/((x + 3)(x + 2))" },
     { section: "Section B: Unknown amounts", text: "A bag has x red counters and 3 blue counters. Two are taken without replacement. P(both red) = 5/14.", question: "Find x.", marks: 4, answer: "5" },
-    { section: "Section B: Unknown amounts", text: "A bag has n sweets and 6 of them are orange. Two are eaten without replacement. P(both orange) = 1/3.", question: "Find n.", marks: 4, answer: "10" },
+    { section: "Section B: Unknown amounts", text: "A drawer has n socks and 5 of them are black. Two socks are taken without replacement. P(both black) = 5/18.", question: "Find n.", marks: 4, answer: "9" },
     { section: "Section B: Unknown amounts", text: "x red counters and 3 blue counters; P(two red, no replacement) = 5/14.", question: "Which equation does this give?", type: "choice", marks: 1,
       options: ["3x² − 13x − 10 = 0", "x² − 5x + 6 = 0", "3x² + 13x − 10 = 0", "x² − 13x − 10 = 0"], answer: "3x² − 13x − 10 = 0" },
     { section: "Section C: More practice", question: "P(A) = 0.6 and P(B given A) = 0.3. Find P(A and B).", marks: 1, answer: "0.18" },
@@ -8067,7 +8014,7 @@ QUESTION_BANK.add({
       answer: "5x/((x + 5)(x + 4))" },
     { section: "Section C: More practice", text: "A bag has n counters and 2 of them are green. Two are taken without replacement.", question: "Write an expression for the probability that both are green.", type: "expression", marks: 2,
       answer: "2/(n(n − 1))" },
-    { section: "Section C: More practice", text: "A bag has n sweets and 3 of them are orange. Two are eaten without replacement. P(both orange) = 1/15.", question: "Find n.", marks: 4, answer: "10" },
+    { section: "Section C: More practice", text: "A box has n tiles and 3 of them are blue. Two tiles are taken without replacement. P(both blue) = 1/15.", question: "Find n.", marks: 4, answer: "10" },
     { section: "Section C: More practice", text: "A bag has x red counters and 4 blue counters. Two are taken without replacement. P(both red) = 1/3.", question: "Find x.", marks: 4, answer: "6" },
     { section: "Section C: More practice", text: "A box has 7 white balls and n black balls. Two are taken without replacement. P(both white) = 7/15.", question: "Find n.", marks: 4, answer: "3" },
     { section: "Section C: More practice", question: "P(A) = 0.7 and P(B given A) = 0.4. Find P(A and B).", marks: 1, answer: "0.28" },
@@ -8077,7 +8024,7 @@ QUESTION_BANK.add({
     { section: "Section C: More practice", question: "P(A) = 0.4, P(B) = 0.5 and P(A and B) = 0.2. Are A and B independent?", type: "choice", marks: 1, options: ["Yes", "No"], answer: "Yes" },
     { section: "Section C: More practice", question: "P(A) = 0.6, P(B) = 0.3 and P(A and B) = 0.2. Are A and B independent?", type: "choice", marks: 1, options: ["Yes", "No"], answer: "No" },
     { section: "Section C: More practice", text: "A bag has x red counters and 2 blue counters. Two are taken without replacement. P(both red) = 10/21.", question: "Find x.", marks: 4, answer: "5" },
-    { section: "Section C: More practice", text: "A bag has n sweets and 4 of them are orange. Two are eaten without replacement. P(both orange) = 2/15.", question: "Find n.", marks: 4, answer: "10" },
+    { section: "Section C: More practice", text: "A box has n tiles and 4 of them are blue. Two tiles are taken without replacement. P(both blue) = 2/15.", question: "Find n.", marks: 4, answer: "10" },
     { section: "Section C: More practice", text: "A bag has x red counters and 2 blue counters. Two are taken without replacement.", question: "Write an expression for the probability that both are blue.", type: "expression", marks: 2,
       answer: "2/((x + 2)(x + 1))" },
     { section: "Section C: More practice", text: "A box has 9 white balls and n black balls. Two are taken without replacement. P(both white) = 6/11.", question: "Find n.", marks: 4, answer: "3" },
