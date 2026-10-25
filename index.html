@@ -124,6 +124,16 @@
   .hw-meta { font-size: 13px; color: var(--muted); }
   .hw-meta strong { color: var(--ink); font-weight: 600; }
   .hw-late { color: var(--danger); font-weight: 600; }
+  .hw-item.hw-overdue { border-color: var(--bad-line); border-left-color: var(--danger); background: var(--bad-bg); }
+  .status.overdue { background: var(--danger); color: #fff; }
+  .hw-count-late { color: var(--danger); }
+  .hw-tabs { display: flex; gap: 4px; background: var(--grey-bg); border-radius: 10px; padding: 4px; margin-bottom: 14px; }
+  .hw-tab { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; background: transparent;
+    border-radius: 8px; padding: 8px; font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
+  .hw-tab[aria-selected="true"] { background: var(--white); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .hw-tab-count { min-width: 22px; padding: 1px 7px; border-radius: 99px; background: var(--line); color: var(--ink); font-size: 12px; }
+  .hw-tab.has-overdue { color: var(--danger); }
+  .hw-tab.has-overdue .hw-tab-count { background: var(--danger); color: #fff; }
   .hw-note { font-size: 13px; margin-top: 4px; color: var(--ink); background: var(--green-50); border-radius: 8px; padding: 6px 10px; white-space: pre-wrap; }
   .hw-item .status { cursor: default; }
   .hw-start { white-space: nowrap; }
@@ -1155,27 +1165,45 @@ TelaDB.start("student").then(() => {
     return hw ? hw.questions : 0;
   }
 
-  // The Homework panel opened from the sidebar.
+  // Today's date on the student's own clock, written like a due date ("2026-10-25").
+  function localToday() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+  // Unfinished homework whose due date has passed. It moves to the Overdue tab until it's finished.
+  const isOverdue = hw => !!hw.due && hw.due < localToday() && homeworkStatus(hw) !== "done";
+
+  // The Homework panel opened from the sidebar: "Must do" holds homework still in time (and finished
+  // homework); "Overdue" holds anything late. hwTab is kept while the page is open.
+  let hwTab = "must";
   function homeworkHTML() {
-    const list = loadHomework().sort((a, b) => (a.due || "9999").localeCompare(b.due || "9999") || a.setAt - b.setAt);
-    const today = new Date().toISOString().slice(0, 10);
+    const all = loadHomework().sort((a, b) => (a.due || "9999").localeCompare(b.due || "9999") || a.setAt - b.setAt);
+    const overdue = all.filter(isOverdue), must = all.filter(hw => !isOverdue(hw));
+    const list = hwTab === "overdue" ? overdue : must;
     const rows = list.map(hw => {
-      const status = (findTopicByTitle(hw.title) || {}).status || "todo";
-      const late = hw.due && hw.due < today && status !== "done";
+      const status = homeworkStatus(hw), late = isOverdue(hw);
       const label = status === "done" ? "Complete" : STATUS[status].label;
-      return `<li class="hw-item${status === "done" ? " hw-done" : ""}">
+      return `<li class="hw-item${status === "done" ? " hw-done" : ""}${late ? " hw-overdue" : ""}">
         <div class="hw-main">
           <div class="hw-title">${esc(hw.title)}</div>
-          <div class="hw-meta">${esc(hw.grade || hw.subject || "")}${hw.questions ? ` · ${hw.questions} question${hw.questions === 1 ? "" : "s"}` : ""} · Set by <strong>${esc(TelaMessages.properName(hw.setByName || hw.setBy))}</strong> on ${shortDate(hw.setAt)}${hw.due ? ` · <span class="${late ? "hw-late" : ""}">Due ${shortDate(hw.due + "T12:00")}</span>` : ""}</div>
+          <div class="hw-meta">${esc(hw.grade || hw.subject || "")}${hw.questions ? ` · ${hw.questions} question${hw.questions === 1 ? "" : "s"}` : ""} · Set by <strong>${esc(TelaMessages.properName(hw.setByName || hw.setBy))}</strong> on ${shortDate(hw.setAt)}${hw.due ? ` · <span class="${late ? "hw-late" : ""}">${late ? "Was due" : "Due"} ${shortDate(hw.due + "T12:00")}</span>` : ""}</div>
           ${hw.note ? `<div class="hw-note">${esc(hw.note)}</div>` : ""}
         </div>
-        <span class="status ${status}">${label}</span>
+        <span class="status ${late ? "overdue" : status}">${late ? "Overdue" : label}</span>
         <button type="button" class="btn ${status === "done" ? "btn-ghost" : "btn-primary"} hw-start" data-hw="${esc(hw.id)}">${status === "done" ? "Review" : status === "doing" ? "Continue" : "Start"}</button>
       </li>`;
     });
-    const left = list.filter(hw => homeworkStatus(hw) !== "done").length;
-    return `${list.length ? `<p class="hw-count">${left ? `${left} to do` : "All done. Nice work!"}</p>` : ""}
-      ${rows.length ? `<ul class="hw-list">${rows.join("")}</ul>` : `<p class="hw-empty">No homework set right now. When your tutor sets a topic, it will appear here.</p>`}`;
+    const left = must.filter(hw => homeworkStatus(hw) !== "done").length;
+    const tab = (id, name, n) => `<button type="button" class="hw-tab${id === "overdue" && n ? " has-overdue" : ""}" role="tab" data-hw-tab="${id}"
+      aria-selected="${hwTab === id}">${name}<span class="hw-tab-count">${n}</span></button>`;
+    const note = hwTab === "overdue"
+      ? (list.length ? `<p class="hw-count hw-count-late">${list.length} overdue. Finish ${list.length === 1 ? "it" : "these"} as soon as you can.</p>` : "")
+      : (list.length ? `<p class="hw-count">${left ? `${left} to do` : "All done. Nice work!"}</p>` : "");
+    const empty = hwTab === "overdue" ? "Nothing overdue. Well done for keeping up!"
+      : overdue.length ? "Nothing else to do right now. Check the Overdue tab." : "No homework set right now. When your tutor sets a topic, it will appear here.";
+    return `<div class="hw-tabs" role="tablist">${tab("must", "Must do", left)}${tab("overdue", "Overdue", overdue.length)}</div>
+      ${note}
+      ${rows.length ? `<ul class="hw-list">${rows.join("")}</ul>` : `<p class="hw-empty">${empty}</p>`}`;
   }
 
   // Keeps the sidebar badge (homework still to do) up to date, and the panel if it's open.
@@ -3861,6 +3889,8 @@ TelaDB.start("student").then(() => {
   $("drawerOverlay").addEventListener("click", e => { if (e.target === $("drawerOverlay")) closeDrawer(); });
 
   $("drawerBody").addEventListener("click", e => {
+    const hwTabBtn = e.target.closest("[data-hw-tab]");
+    if (hwTabBtn) { hwTab = hwTabBtn.dataset.hwTab; $("drawerBody").innerHTML = homeworkHTML(); return; }
     const hwBtn = e.target.closest("[data-hw]");
     if (hwBtn) { closeDrawer(); startHomework(hwBtn.dataset.hw); return; }
     const mara = e.target.closest("[data-marathon]");

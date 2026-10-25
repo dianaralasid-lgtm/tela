@@ -126,6 +126,9 @@
   .pill { font-size: 12px; font-weight: 600; border-radius: 99px; padding: 2px 9px; white-space: nowrap; background: #eef1f0; color: var(--muted); }
   .pill.doing { background: #fdf3e1; color: #9a6510; }
   .pill.done { background: var(--green-100); color: var(--green-800); }
+  .pill.overdue { background: #b42318; color: #fff; }
+  .hw-rows li.overdue { background: #fdeaea; border-color: #f2b2b2; border-left: 4px solid #b42318; }
+  .hw-rows li.overdue small { color: #b42318; }
   .hw-remove { border: none; background: none; color: #b42318; font-size: 13px; font-weight: 600; padding: 2px 4px; border-radius: 6px; }
   .hw-remove:hover { background: #fdecea; }
   .s-actions { margin-top: auto; }
@@ -944,13 +947,20 @@ TelaDB.start("tutor").then(() => {
   const STATUS_LABEL = { todo: "Not started", doing: "In progress", done: "Complete" };
   const shortDate = ms => new Date(ms).toLocaleDateString(undefined, { day: "numeric", month: "short" });
 
+  // Today's date on this computer's clock, written like a due date ("2026-10-25").
+  function localToday() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+
+  // Unfinished homework past its due date is shown in red as Overdue.
   function homeworkRows(st, editable) {
     if (!Array.isArray(st.homework) || !st.homework.length) return `<p class="muted">No homework set.</p>`;
     return `<ul class="hw-rows">${st.homework.map(hw => {
-      const status = st.statusOf(hw.title);
-      return `<li><span>${esc(hw.title)}${hw.questions ? ` <small>· ${hw.questions} Q</small>` : ""}</span>
-        <small>${hw.due ? "Due " + shortDate(hw.due + "T12:00") : "Set " + shortDate(hw.setAt)}</small>
-        <span class="pill ${status}">${STATUS_LABEL[status]}</span>
+      const status = st.statusOf(hw.title), late = !!hw.due && hw.due < localToday() && status !== "done";
+      return `<li${late ? ` class="overdue"` : ""}><span>${esc(hw.title)}${hw.questions ? ` <small>· ${hw.questions} Q</small>` : ""}</span>
+        <small>${hw.due ? (late ? "Was due " : "Due ") + shortDate(hw.due + "T12:00") : "Set " + shortDate(hw.setAt)}</small>
+        <span class="pill ${late ? "overdue" : status}">${late ? "Overdue" : STATUS_LABEL[status]}</span>
         ${editable && (!hw.setBy || hw.setBy === tutorUser) ? `<button type="button" class="hw-remove" data-unset="${esc(hw.id)}" aria-label="Cancel ${esc(hw.title)}">Cancel</button>` : editable && hw.setByName ? `<small>by ${esc(hw.setByName)}</small>` : ""}</li>`;
     }).join("")}</ul>`;
   }
