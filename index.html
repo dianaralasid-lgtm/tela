@@ -683,6 +683,17 @@
   }
   .d-list button:hover { border-color: var(--green-600); background: var(--green-50); }
   .d-list small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .mara-intro { margin-bottom: 14px; }
+  .mara-filters { display: grid; grid-template-columns: 1fr 150px; gap: 10px; }
+  .mara-filters .d-field { margin-bottom: 14px; }
+  .mara-list button { padding: 10px 12px; }
+  .mara-name { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .mara-name small { white-space: normal; }
+  .mara-state { display: flex; align-items: center; gap: 8px; flex: none; }
+  .mara-state .status { padding: 3px 10px; font-size: 11px; }
+  .mara-bar { width: 56px; height: 6px; border-radius: 999px; background: #e3e9e6; overflow: hidden; }
+  .mara-bar i { display: block; height: 100%; background: var(--green-600); border-radius: inherit; }
+  @media (max-width: 420px) { .mara-filters { grid-template-columns: 1fr; gap: 0; } }
   .d-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; font-size: 14px; font-weight: 600; }
   .d-field input, .d-field textarea, .d-field select {
     font: inherit; font-weight: 400; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 12px; color: var(--ink); background: var(--white);
@@ -777,6 +788,10 @@
   <button type="button" class="side-btn" data-view="progress">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
     <span>Progress</span>
+  </button>
+  <button type="button" class="side-btn" data-view="marathon">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="8"/><path d="M12 10v4l2.5 2.5M10 2h4M12 2v4M19 6l1.5-1.5"/></svg>
+    <span>Marathon</span>
   </button>
   <button type="button" class="side-btn" data-view="messages">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>
@@ -1362,6 +1377,8 @@ TelaDB.start("student").then(() => {
   // practicePicked lists the ids of the questions chosen for this student's current set.
   let practiceOpen = null, practiceSaved = {}, practiceSpecs = {}, practiceDirty = false, practicePicked = [];
   let practiceTopicId = null, practiceStatusAtOpen = null, practicePerSet = 0;
+  // Marathon mode gives every question in the topic, kept apart from the student's usual set.
+  let practiceMarathon = false;
 
   // Reads an expression like "3a − 2b + a²" into like terms. Returns null if it can't be read.
   // "simplified" is false if a like term appears twice or a term is zero.
@@ -1400,7 +1417,8 @@ TelaDB.start("student").then(() => {
     return { correct: true, message: "Correct!" };
   }
 
-  const practiceStoreKey = () => STORAGE_KEY + ".practice." + practiceOpen.replace(/[^a-z0-9]+/g, "-");
+  const practiceStoreKey = () => (practiceMarathon ? MARATHON_PREFIX : STORAGE_KEY + ".practice.") + practiceOpen.replace(/[^a-z0-9]+/g, "-");
+  const MARATHON_PREFIX = STORAGE_KEY + ".marathon.";
   function loadPractice() {
     const data = TelaDB.kvGet(practiceStoreKey()) || {};
     return Array.isArray(data.picked) ? data : { picked: [], answers: {} };
@@ -3029,7 +3047,9 @@ TelaDB.start("student").then(() => {
     const set = PRACTICE[practiceOpen];
     practiceSpecs = {};
     const items = currentItems();
-    const picked = items.length < set.items.length
+    const picked = practiceMarathon
+      ? ` <b>Marathon:</b> all ${items.length} questions in this topic. Save as you go and carry on later from where you stopped.`
+      : items.length < set.items.length
       ? ` These are ${items.length} questions picked at random from ${set.items.length}. Click <b>New questions</b> for a different set.`
       : "";
     let html = `<div class="practice-tip">${set.tip || "Type your answer and press <b>Enter</b> or <b>Check</b>."}${picked}</div>`;
@@ -3219,14 +3239,24 @@ TelaDB.start("student").then(() => {
     }, 400);
   }
 
-  function openPractice(topic) {
+  function openPractice(topic, marathon = false) {
     practiceOpen = practiceKey(topic);
+    practiceMarathon = marathon;
     const set = PRACTICE[practiceOpen];
     // Homework can ask for a particular number of questions; otherwise the topic's usual set size is used.
-    practicePerSet = Math.min(homeworkQuestionCount(topic) || set.perSet, set.items.length);
+    practicePerSet = marathon ? set.items.length : Math.min(homeworkQuestionCount(topic) || set.perSet, set.items.length);
     const data = loadPractice();
     practiceSaved = data.answers || {};
     practiceDirty = false;
+    if (marathon) {
+      // Every question, in the order they're written in questions.js.
+      practicePicked = set.items.map(it => it.id);
+      $("practiceNew").style.display = "none";
+      practiceTopicId = topic.id;
+      practiceStatusAtOpen = topic.status;
+      $("practiceTitle").textContent = "Marathon: " + set.title;
+      return showPractice();
+    }
     // Keep the student's saved set, dropping questions since deleted from questions.js, then trim or top it up
     // to the size wanted (questions marked "always" stay in).
     practicePicked = data.picked.filter(id => set.items.some(it => it.id === id));
@@ -3245,6 +3275,9 @@ TelaDB.start("student").then(() => {
     practiceTopicId = topic.id;
     practiceStatusAtOpen = topic.status;
     $("practiceTitle").textContent = PRACTICE[practiceOpen].title;
+    showPractice();
+  }
+  function showPractice() {
     renderPractice();
     $("practiceOverlay").classList.add("open");
     document.body.style.overflow = "hidden";
@@ -3268,6 +3301,7 @@ TelaDB.start("student").then(() => {
     document.body.style.overflow = "";
     practiceOpen = null;
     practiceDirty = false;
+    practiceMarathon = false;
   }
   function savePracticeProgress() {
     savePractice();
@@ -3664,7 +3698,58 @@ TelaDB.start("student").then(() => {
       </div>`;
   }
 
-  const DRAWER_VIEWS = { homework: ["Homework", homeworkHTML], messages: ["Messages", renderMessages], settings: ["Settings", renderSettings] };
+  // ---------- Marathon: every question in one topic ----------
+  // The filters are kept while the page is open, so coming back shows the same list.
+  const marathonFilter = { q: "", group: "" };
+  // Grades for Maths, and the subject for any other subject's topics.
+  const marathonGroup = t => t.grade || t.subject;
+  const marathonTopics = () => topics.filter(t => PRACTICE[practiceKey(t)]);
+  // How far the student has got with a topic's marathon: answered and correct parts, out of all of them.
+  function marathonState(t) {
+    const set = PRACTICE[practiceKey(t)];
+    const data = TelaDB.kvGet(MARATHON_PREFIX + practiceKey(t).replace(/[^a-z0-9]+/g, "-")) || {};
+    const answers = data.answers || {};
+    let parts = 0, answered = 0, correct = 0;
+    set.items.forEach(item => item.parts.forEach(p => {
+      parts++;
+      const result = answers[p.id] ? markPart(p, answers[p.id]) : null;
+      if (result) answered++;
+      if (result && result.correct) correct++;
+    }));
+    return { parts, answered, correct };
+  }
+  function marathonListHTML() {
+    const q = marathonFilter.q.trim().toLowerCase();
+    const list = marathonTopics().filter(t => (!marathonFilter.group || marathonGroup(t) === marathonFilter.group)
+      && (!q || t.title.toLowerCase().includes(q) || String(t.category).toLowerCase().includes(q)));
+    if (!list.length) return `<p class="d-note">No topics match.</p>`;
+    return `<ul class="d-list mara-list">${list.map(t => {
+      const n = PRACTICE[practiceKey(t)].items.length, s = marathonState(t);
+      const state = !s.answered ? `<small>Not started</small>`
+        : s.correct === s.parts ? `<span class="status done">Finished</span>`
+        : `<span class="mara-bar" title="${s.answered} of ${s.parts} answered"><i style="width:${Math.round(s.answered / s.parts * 100)}%"></i></span><small>${s.answered} / ${s.parts}</small>`;
+      return `<li><button type="button" data-marathon="${esc(t.id)}">
+        <span class="mara-name"><span>${esc(t.title)}</span><small>${esc(marathonGroup(t))} · ${n} question${n === 1 ? "" : "s"}</small></span>
+        <span class="mara-state">${state}</span></button></li>`;
+    }).join("")}</ul>`;
+  }
+  function renderMarathon() {
+    const groups = [...new Set(marathonTopics().map(marathonGroup))]
+      .sort((a, b) => (GRADES.indexOf(a) + 1 || 99) - (GRADES.indexOf(b) + 1 || 99) || a.localeCompare(b));
+    return `
+      <p class="d-note mara-intro">Pick a topic and work through <b>every</b> question it has, one after another.
+        Save as you go: your marathon answers are kept separately from your usual practice sets.</p>
+      <div class="mara-filters">
+        <label class="d-field">Search<input type="search" id="maraSearch" value="${esc(marathonFilter.q)}" placeholder="Search topics…" autocomplete="off"></label>
+        <label class="d-field">Show<select id="maraGroup">
+          <option value="">All topics</option>
+          ${groups.map(g => `<option value="${esc(g)}"${g === marathonFilter.group ? " selected" : ""}>${esc(g)}</option>`).join("")}
+        </select></label>
+      </div>
+      <div id="maraList">${marathonListHTML()}</div>`;
+  }
+
+  const DRAWER_VIEWS = { homework: ["Homework", homeworkHTML], marathon: ["Marathon", renderMarathon], messages: ["Messages", renderMessages], settings: ["Settings", renderSettings] };
 
   // Progress opens as a pop-up in the middle of the screen rather than a side panel.
   function openProgress() {
@@ -3738,6 +3823,13 @@ TelaDB.start("student").then(() => {
   $("drawerBody").addEventListener("click", e => {
     const hwBtn = e.target.closest("[data-hw]");
     if (hwBtn) { closeDrawer(); startHomework(hwBtn.dataset.hw); return; }
+    const mara = e.target.closest("[data-marathon]");
+    if (mara) {
+      const topic = topics.find(t => t.id === mara.dataset.marathon);
+      closeDrawer();
+      if (topic) openPractice(topic, true);
+      return;
+    }
     const open = e.target.closest("[data-open]");
     if (open) {
       const topic = topics.find(t => t.id === open.dataset.open);
@@ -3748,13 +3840,23 @@ TelaDB.start("student").then(() => {
     const id = e.target.id;
     if (id === "setReset" && confirm("Set every topic back to Not started and clear all your saved practice answers? This can't be undone.")) {
       topics.forEach(t => { t.status = "todo"; });
-      TelaDB.kvKeys().filter(k => k.startsWith(PRACTICE_PREFIX) || k.startsWith(STORAGE_KEY + ".seen.")).forEach(TelaDB.kvRemove);
+      TelaDB.kvKeys().filter(k => k.startsWith(PRACTICE_PREFIX) || k.startsWith(MARATHON_PREFIX) || k.startsWith(STORAGE_KEY + ".seen.")).forEach(TelaDB.kvRemove);
       save(); render(); toast("Progress reset");
     }
     if (id === "setLogout") $("logoutBtn").click();
   });
   // ---------- Messages: switching conversation, sending, quick "Ask about" buttons ----------
+  $("drawerBody").addEventListener("input", e => {
+    if (e.target.id !== "maraSearch") return;
+    marathonFilter.q = e.target.value;
+    $("maraList").innerHTML = marathonListHTML();
+  });
   $("drawerBody").addEventListener("change", e => {
+    if (e.target.id === "maraGroup") {
+      marathonFilter.group = e.target.value;
+      $("maraList").innerHTML = marathonListHTML();
+      return;
+    }
     if (e.target.id !== "chatTutor") return;
     chatTutor = e.target.value;
     $("drawerBody").innerHTML = renderMessages();
