@@ -3792,7 +3792,7 @@ TelaDB.start("student").then(() => {
       </div>
       <div class="d-section"><h3>Time active</h3>
         ${TelaActivity.tilesHTML(TelaActivity.mine())}
-        <p class="d-note">Counted while you're using tela. Weeks start on Monday.</p>
+        <p class="d-note">Counted while you have a topic open. Weeks start on Monday.</p>
       </div>
       <div class="d-section"><h3>Carry on with</h3>
         ${topicButtons(doing, "Nothing in progress yet. Open any topic tile to start practising.")}
@@ -4123,8 +4123,9 @@ TelaDB.start("student").then(() => {
     toastTimer = setTimeout(() => el.classList.remove("show"), 2000);
   }
 
-  // Count time active on the account, and on the open practice set until every answer in it is right.
+  // Count time active while a topic is open, both on the account and on that practice set until every answer in it is right.
   TelaActivity.track({
+    counting: () => !!practiceOpen,
     onTick: ms => { if (practiceOpen && practiceTime.doneIn === null) practiceTime.ms += ms; },
     onSave: saveTopicTime
   });

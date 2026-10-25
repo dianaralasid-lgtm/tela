@@ -1,5 +1,5 @@
 // Time a student spends active on tela, saved with their data (db.js) under the key "activity" as seconds per
-// day: { "2026-10-25": 1830, ... }. The student's dashboard adds to it while they're using the page; their
+// day: { "2026-10-25": 1830, ... }. The student's dashboard adds to it while they have a topic open; their
 // tutors' page and their own Progress pop-up show it as totals for today, this week, this month and this year.
 const TelaActivity = (() => {
   const KEY = "activity";
@@ -56,7 +56,8 @@ const TelaActivity = (() => {
     saveHooks.forEach(fn => fn());
   }
   // Starts counting. onTick(ms) gets each bit of active time; onSave runs whenever the count is saved.
-  function track({ onTick, onSave } = {}) {
+  // With counting given, time only counts while counting() is true.
+  function track({ onTick, onSave, counting } = {}) {
     if (onSave) saveHooks.push(onSave);
     let last = Date.now(), lastInput = Date.now(), sinceSave = 0;
     ["pointerdown", "pointermove", "keydown", "wheel", "scroll", "touchstart"].forEach(ev =>
@@ -64,7 +65,7 @@ const TelaActivity = (() => {
     setInterval(() => {
       const now = Date.now(), step = Math.min(now - last, TICK * 2);   // a sleeping computer doesn't count
       last = now;
-      if (document.visibilityState !== "visible" || now - lastInput > IDLE) return;
+      if (document.visibilityState !== "visible" || now - lastInput > IDLE || (counting && !counting())) return;
       unsaved += step; sinceSave += step;
       if (onTick) onTick(step);
       if (sinceSave >= SAVE_EVERY) { sinceSave = 0; save(); }
