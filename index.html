@@ -3248,6 +3248,17 @@ TelaDB.start("student").then(() => {
       score = updatePracticeScore();
     }
     syncPracticeStatus(score);
+    // Getting every question right saves the answers straight away, without waiting for Save.
+    if (score.correct === score.parts && practiceDirty) {
+      savePractice();
+      practiceDirty = false;
+      // Discarding later changes now goes back to this saved, all-correct state.
+      const topic = topics.find(t => t.id === practiceTopicId);
+      if (topic) practiceStatusAtOpen = topic.status;
+      practiceDoneAtOpen = practiceTime.doneIn;
+      updatePracticeScore();
+      toast("All correct! Your answers have been saved");
+    }
     if (result) moveToNext(partEl);
   }
 
