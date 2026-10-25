@@ -709,6 +709,11 @@
   .bubble.theirs { align-self: flex-start; background: var(--white); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
   .bubble-text { white-space: pre-wrap; overflow-wrap: anywhere; }
   .bubble-time { font-size: 11px; opacity: .7; text-align: right; margin-top: 2px; }
+  .chat-avatar.group { background: var(--green-700); color: var(--white); }
+  .chat-group-name { min-width: 0; }
+  .chat-group-name strong { display: block; }
+  .chat-group-name small { display: block; color: var(--muted); font-size: 12px; }
+  .bubble-from { font-size: 11px; font-weight: 700; opacity: .8; margin-bottom: 2px; }
   .chat-chips { display: flex; gap: 6px; flex-wrap: wrap; }
   .chip-btn { border: 1px solid var(--line); background: var(--white); border-radius: 99px; padding: 4px 10px; font-size: 12px; color: var(--green-800); }
   .chip-btn:hover { border-color: var(--green-600); background: var(--green-50); }
@@ -3521,9 +3526,18 @@
     try { tutorAccounts = JSON.parse(localStorage.getItem("tela.tutors")) || {}; } catch (e) {}
     return TelaMessages.tutorsOf(currentUser).filter(id => tutorAccounts[id]).map(id => ({ id, name: tutorAccounts[id].displayName || id }));
   }
-  let chatTutor = null;   // the tutor whose conversation is open
+  // Every conversation the student can open: one with each tutor, then the group chats tutors have put them in.
+  // key is the tutor's username, or "g:" + the group's id.
+  function myConversations() {
+    const tutors = myTutors();
+    return tutors.map(t => ({ key: t.id, name: t.name, unread: TelaMessages.unread(currentUser, t.id, "student") }))
+      .concat(TelaMessages.groupsFor(currentUser, "student").map(g => ({ key: "g:" + g.id, group: g, name: g.name,
+        tutorName: (tutors.find(t => t.id === g.tutor) || {}).name || g.tutor, unread: TelaMessages.groupUnread(g.id, currentUser, "student") })));
+  }
+  let chatTutor = null;   // the key of the open conversation (see myConversations)
   const CHAT_NOTICE = `<p class="chat-notice" role="note"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>All messages are recorded and can be viewed by admins.</p>`;
-  const unreadMessages = () => myTutors().reduce((n, t) => n + TelaMessages.unread(currentUser, t.id, "student"), 0);
+  const GROUP_NOTICE = CHAT_NOTICE.replace("All messages", "Everyone in the group sees these messages. All messages");
+  const unreadMessages = () => myConversations().reduce((n, c) => n + c.unread, 0);
   function renderMsgBadge() {
     const n = unreadMessages();
     $("msgBadge").textContent = n;
@@ -3535,23 +3549,41 @@
     return list.map(m => `<div class="bubble ${m.from === mine ? "mine" : "theirs"}">
       <div class="bubble-text">${esc(m.text)}</div><div class="bubble-time">${TelaMessages.when(m.at)}</div></div>`).join("");
   }
+  // In a group, everyone else's messages show who sent them.
+  function groupBubblesHTML(list) {
+    if (!list.length) return `<p class="chat-empty">No messages in this group yet. Say hello to everyone.</p>`;
+    return list.map(m => {
+      const mine = m.role === "student" && m.from === currentUser;
+      return `<div class="bubble ${mine ? "mine" : "theirs"}">${mine ? "" : `<div class="bubble-from">${esc(TelaMessages.senderName(m))}${m.role === "tutor" ? " · tutor" : ""}</div>`}
+        <div class="bubble-text">${esc(m.text)}</div><div class="bubble-time">${TelaMessages.when(m.at)}</div></div>`;
+    }).join("");
+  }
+  function chatBubbles(c) {
+    return c.group ? groupBubblesHTML(TelaMessages.groupThread(c.group.id)) : bubblesHTML(TelaMessages.thread(currentUser, c.key), "student", c.name);
+  }
   function renderMessages() {
-    const tutors = myTutors();
-    if (!tutors.length) return `<p class="d-note">You haven't been added to a tutor yet. Once a tutor adds you, you'll be able to message them here.</p>`;
-    if (!tutors.some(t => t.id === chatTutor)) chatTutor = tutors[0].id;
-    const tutor = tutors.find(t => t.id === chatTutor);
-    const review = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).slice(0, 4);
+    const convos = myConversations();
+    if (!convos.length) return `<p class="d-note">You haven't been added to a tutor yet. Once a tutor adds you, you'll be able to message them here.</p>`;
+    if (!convos.some(c => c.key === chatTutor)) chatTutor = convos[0].key;
+    const c = convos.find(x => x.key === chatTutor);
+    const option = x => `<option value="${esc(x.key)}"${x.key === chatTutor ? " selected" : ""}>${esc(x.name)}${x.unread && x.key !== chatTutor ? ` (${x.unread} new)` : ""}</option>`;
+    const tutorsList = convos.filter(x => !x.group), groupsList = convos.filter(x => x.group);
+    let accounts = {};
+    try { accounts = JSON.parse(localStorage.getItem("tela.accounts")) || {}; } catch (e) {}
+    const members = c.group ? c.group.members.map(m => m === currentUser ? "You" : (accounts[m] || {}).displayName || m) : [];
+    const review = c.group ? [] : topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).slice(0, 4);
     return `<div class="chat">
-      <div class="chat-with">${tutors.length > 1
-        ? `<label class="d-field">Conversation with<select id="chatTutor">${tutors.map(t => {
-            const n = TelaMessages.unread(currentUser, t.id, "student");
-            return `<option value="${esc(t.id)}"${t.id === chatTutor ? " selected" : ""}>${esc(t.name)}${n && t.id !== chatTutor ? ` (${n} new)` : ""}</option>`; }).join("")}</select></label>`
-        : `<span class="chat-avatar">${esc(tutor.name.charAt(0).toUpperCase())}</span><strong>${esc(tutor.name)}</strong>`}</div>
-      ${CHAT_NOTICE}
-      <div class="chat-list" id="chatList" aria-live="polite">${bubblesHTML(TelaMessages.thread(currentUser, chatTutor), "student", tutor.name)}</div>
+      ${convos.length > 1 ? `<div class="chat-with"><label class="d-field">Conversation with<select id="chatTutor">${groupsList.length
+        ? `<optgroup label="Tutors">${tutorsList.map(option).join("")}</optgroup><optgroup label="Group chats">${groupsList.map(option).join("")}</optgroup>`
+        : tutorsList.map(option).join("")}</select></label></div>` : ""}
+      ${c.group ? `<div class="chat-with"><span class="chat-avatar group" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-.5A5.5 5.5 0 0 1 8 14h2a5.5 5.5 0 0 1 5.5 5.5v.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14a4.5 4.5 0 0 1 4.5 4.5v.5"/></svg></span>
+           <div class="chat-group-name"><strong>${esc(c.name)}</strong><small>${esc(c.tutorName)} (tutor), ${esc(members.join(", "))}</small></div></div>`
+        : convos.length > 1 ? "" : `<div class="chat-with"><span class="chat-avatar">${esc(c.name.charAt(0).toUpperCase())}</span><strong>${esc(c.name)}</strong></div>`}
+      ${c.group ? GROUP_NOTICE : CHAT_NOTICE}
+      <div class="chat-list" id="chatList" aria-live="polite">${chatBubbles(c)}</div>
       ${review.length ? `<div class="chat-chips">${review.map(t => `<button type="button" class="chip-btn" data-ask="${esc(t.title)}">Ask about ${esc(t.title)}</button>`).join("")}</div>` : ""}
       <form class="composer" id="composer">
-        <textarea id="msgInput" rows="2" placeholder="Message ${esc(tutor.name)}…" aria-label="Message ${esc(tutor.name)}"></textarea>
+        <textarea id="msgInput" rows="2" placeholder="Message ${esc(c.name)}…" aria-label="Message ${esc(c.name)}"></textarea>
         <button type="submit" class="btn btn-primary">Send</button>
       </form>
     </div>`;
@@ -3559,10 +3591,13 @@
   // Shows the latest messages, marks the conversation read and updates the badge.
   function refreshChat() {
     if (drawerView !== "messages" || !chatTutor || !$("chatList")) return;
-    const tutor = myTutors().find(t => t.id === chatTutor);
-    $("chatList").innerHTML = bubblesHTML(TelaMessages.thread(currentUser, chatTutor), "student", tutor ? tutor.name : "your tutor");
+    const c = myConversations().find(x => x.key === chatTutor);
+    // The group was deleted, or the student was taken out of it: show the conversations that are left.
+    if (!c) { $("drawerBody").innerHTML = renderMessages(); $("drawerBody").classList.toggle("chat-mode", !!$("chatList")); if (!$("chatList")) return renderMsgBadge(); return refreshChat(); }
+    $("chatList").innerHTML = chatBubbles(c);
     $("chatList").scrollTop = $("chatList").scrollHeight;
-    TelaMessages.markRead(currentUser, chatTutor, "student");
+    if (c.group) TelaMessages.groupMarkRead(c.group.id, currentUser, "student");
+    else TelaMessages.markRead(currentUser, chatTutor, "student");
     renderMsgBadge();
   }
   function practisedCount() {
@@ -3746,8 +3781,10 @@
   });
   function sendMessage() {
     const text = $("msgInput").value;
-    if (!text.trim() || !myTutors().some(t => t.id === chatTutor)) return;
-    if (!TelaMessages.send(currentUser, chatTutor, "student", text)) return toast("Couldn't send: browser storage is unavailable.");
+    const c = myConversations().find(x => x.key === chatTutor);
+    if (!text.trim() || !c) return;
+    const sent = c.group ? TelaMessages.groupSend(c.group.id, currentUser, "student", text) : TelaMessages.send(currentUser, chatTutor, "student", text);
+    if (!sent) return toast("Couldn't send: browser storage is unavailable.");
     $("msgInput").value = "";
     refreshChat();
     $("msgInput").focus();

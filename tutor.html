@@ -219,6 +219,22 @@
   .convo-top small { color: var(--muted); font-size: 12px; white-space: nowrap; }
   .convo-preview { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .convo.unread .convo-preview { color: var(--ink); font-weight: 600; }
+  /* Group chats: their own list above the students, and the form for making or editing one */
+  .convo-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0 8px; }
+  .convo-head h3 { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .convo-head .btn { padding: 6px 12px; font-size: 13px; color: var(--green-800); }
+  .convo-list + .convo-head, .muted + .convo-head { margin-top: 20px; }
+  .avatar.group { background: var(--green-700); color: var(--white); }
+  .group-form { display: flex; flex-direction: column; }
+  .group-form .chat-head { margin-bottom: 14px; }
+  .member-list { list-style: none; display: flex; flex-direction: column; gap: 4px; max-height: 300px; overflow-y: auto; border: 1.5px solid var(--line); border-radius: 10px; padding: 6px; }
+  .member-list label { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px; font-weight: 500; font-size: 14px; cursor: pointer; }
+  .member-list label:hover { background: var(--green-50); }
+  .member-list input { flex: none; width: 17px; height: 17px; padding: 0; margin: 0; accent-color: var(--green-700); box-shadow: none; }
+  .member-list small { color: var(--muted); font-weight: 400; }
+  .group-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  .group-actions .btn-danger { margin-right: auto; background: transparent; color: #b42318; }
+  .group-actions .btn-danger:hover { background: #fdecea; }
 
   /* One conversation: it scrolls, with the message box at the bottom */
   .drawer-body.chat-mode { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 16px; }
@@ -473,30 +489,52 @@
     const withTopics = students.filter(s => s.total);
     $("statStudents").textContent = students.length;
     $("statAverage").textContent = (withTopics.length ? Math.round(withTopics.reduce((a, s) => a + s.done / s.total, 0) / withTopics.length * 100) : 0) + "%";
-    $("statUnread").textContent = students.reduce((n, s) => n + s.unread, 0);
+    $("statUnread").textContent = totalUnread();
     render();
     renderMsgBadge();
-    if (messagesOpen() && panelMode === "messages" && !chatStudent) $("drawerBody").innerHTML = conversationsHTML();
+    if (messagesOpen() && panelMode === "messages" && !chatStudent && !chatGroup && !groupEdit) $("drawerBody").innerHTML = conversationsHTML();
   }
   $("search").addEventListener("input", render);
 
   // ---------- Sidebar: Messages with students ----------
-  // The panel shows either the list of conversations or one conversation (chatStudent).
-  let chatStudent = null;
+  // The panel shows the list of conversations, one conversation (chatStudent), one group chat (chatGroup)
+  // or the form for making or editing a group (groupEdit: "new" or the group's id).
+  let chatStudent = null, chatGroup = null, groupEdit = null;
   const messagesOpen = () => $("drawerOverlay").classList.contains("open");
   const firstName = st => esc(st.name.split(" ")[0]);
+  const myGroups = () => TelaMessages.groupsFor(tutorUser, "tutor");
+  const totalUnread = () => students.reduce((n, s) => n + s.unread, 0) + myGroups().reduce((n, g) => n + TelaMessages.groupUnread(g.id, tutorUser, "tutor"), 0);
+  // A group's members who are still this tutor's students.
+  const groupMembers = g => students.filter(s => g.members.includes(s.username));
+  const GROUP_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-.5A5.5 5.5 0 0 1 8 14h2a5.5 5.5 0 0 1 5.5 5.5v.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14a4.5 4.5 0 0 1 4.5 4.5v.5"/></svg>`;
+  const BACK_ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>`;
 
   function renderMsgBadge() {
-    const n = students.reduce((sum, s) => sum + s.unread, 0);
+    const n = totalUnread();
     $("msgBadge").textContent = n;
     $("msgBadge").hidden = !n;
     $("msgBadge").setAttribute("aria-label", `${n} unread`);
   }
-  // Conversations with the newest message first; students who haven't messaged yet come after.
+  function groupsHTML() {
+    const groups = myGroups();
+    const rows = groups.length ? `<ul class="convo-list">${groups.map(g => {
+      const last = TelaMessages.groupLast(g.id), n = TelaMessages.groupUnread(g.id, tutorUser, "tutor"), members = groupMembers(g);
+      const preview = last ? `${last.role === "tutor" && last.from === tutorUser ? "You" : esc(TelaMessages.senderName(last).split(" ")[0])}: ${esc(last.text)}`
+        : `${members.length} student${members.length === 1 ? "" : "s"} · no messages yet`;
+      return `<li><button type="button" class="convo${n ? " unread" : ""}" data-group="${esc(g.id)}">
+        <span class="avatar group">${GROUP_ICON}</span>
+        <span class="convo-main"><span class="convo-top"><strong>${esc(g.name)}</strong>${last ? `<small>${TelaMessages.when(last.at)}</small>` : ""}</span>
+          <span class="convo-preview">${preview}</span></span>
+        ${n ? `<span class="side-badge">${n}</span>` : ""}
+      </button></li>`; }).join("")}</ul>`
+      : `<p class="muted">Make a group to message several students at once.</p>`;
+    return `<div class="convo-head"><h3>Group chats</h3><button type="button" class="btn btn-ghost" id="newGroup">+ New group</button></div>${rows}`;
+  }
+  // Group chats first, then each student, with the newest message first; students who haven't messaged yet come after.
   function conversationsHTML() {
     if (!students.length) return `<p class="muted">Add a student to start messaging them.</p>`;
     const sorted = students.slice().sort((a, b) => (b.lastMessage ? b.lastMessage.at : 0) - (a.lastMessage ? a.lastMessage.at : 0) || a.name.localeCompare(b.name));
-    return `<ul class="convo-list">${sorted.map(st => `<li><button type="button" class="convo${st.unread ? " unread" : ""}" data-chat="${esc(st.username)}">
+    return `${groupsHTML()}<div class="convo-head"><h3>Students</h3></div><ul class="convo-list">${sorted.map(st => `<li><button type="button" class="convo${st.unread ? " unread" : ""}" data-chat="${esc(st.username)}">
         <span class="avatar">${esc(st.name.charAt(0).toUpperCase())}</span>
         <span class="convo-main"><span class="convo-top"><strong>${esc(st.name)}</strong>${st.lastMessage ? `<small>${TelaMessages.when(st.lastMessage.at)}</small>` : ""}</span>
           <span class="convo-preview">${st.lastMessage ? `${st.lastMessage.from === "tutor" ? "You: " : ""}${esc(st.lastMessage.text)}` : "No messages yet"}</span></span>
@@ -525,7 +563,7 @@
       </form></div>`;
   }
   function showConversations() {
-    chatStudent = null;
+    chatStudent = null; chatGroup = null; groupEdit = null;
     $("drawerTitle").textContent = "Messages";
     $("drawerBody").classList.remove("chat-mode");
     $("drawerBody").innerHTML = conversationsHTML();
@@ -533,7 +571,7 @@
   function showChat(username) {
     const st = students.find(s => s.username === username);
     if (!st) return showConversations();
-    chatStudent = username;
+    chatStudent = username; chatGroup = null; groupEdit = null;
     $("drawerTitle").textContent = "Messages";
     $("drawerBody").classList.add("chat-mode");
     $("drawerBody").innerHTML = chatHTML(st);
@@ -549,6 +587,107 @@
     TelaMessages.markRead(st.username, tutorUser, "tutor");
     refresh();
   }
+  // ---------- Group chats ----------
+  // A tutor's group chats with some of their students (stored by messages.js). Everyone in the group sees
+  // every message; only the tutor who made the group can rename it, change who's in it or delete it.
+  function groupBubbles(list) {
+    if (!list.length) return `<p class="chat-empty">No messages in this group yet. Say hello to everyone.</p>`;
+    return list.map(m => {
+      const mine = m.role === "tutor" && m.from === tutorUser;
+      return `<div class="bubble ${mine ? "mine" : "theirs"}">${mine ? "" : `<div class="bubble-from">${esc(TelaMessages.senderName(m))}</div>`}
+        <div class="bubble-text">${esc(m.text)}</div><div class="bubble-time">${TelaMessages.when(m.at)}</div></div>`;
+    }).join("");
+  }
+  function showGroupChat(id) {
+    const g = TelaMessages.group(id);
+    if (!g || g.tutor !== tutorUser) return showConversations();
+    chatGroup = id; chatStudent = null; groupEdit = null;
+    const members = groupMembers(g);
+    $("drawerTitle").textContent = "Messages";
+    $("drawerBody").classList.add("chat-mode");
+    $("drawerBody").innerHTML = `<div class="chat">
+      <div class="chat-head">
+        <button type="button" class="icon-btn" id="chatBack" aria-label="Back to all conversations">${BACK_ICON}</button>
+        <span class="avatar group">${GROUP_ICON}</span>
+        <div><strong>${esc(g.name)}</strong><small>${members.length ? members.map(s => esc(s.name)).join(", ") : "No students in this group"}</small></div>
+        <button type="button" class="btn btn-ghost chat-hw" data-edit-group="${esc(g.id)}">Edit group</button>
+      </div>
+      <p class="chat-notice" role="note"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Everyone in the group sees these messages. All messages are recorded and can be viewed by admins.</p>
+      <div class="chat-list" id="chatList" aria-live="polite"></div>
+      <form class="composer" id="composer">
+        <textarea id="msgInput" rows="2" placeholder="Message ${esc(g.name)}…" aria-label="Message the group ${esc(g.name)}"></textarea>
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form></div>`;
+    refreshGroupChat();
+    $("msgInput").focus();
+  }
+  function refreshGroupChat() {
+    if (!chatGroup || !$("chatList")) return;
+    if (!TelaMessages.group(chatGroup)) return showConversations();
+    $("chatList").innerHTML = groupBubbles(TelaMessages.groupThread(chatGroup));
+    $("chatList").scrollTop = $("chatList").scrollHeight;
+    TelaMessages.groupMarkRead(chatGroup, tutorUser, "tutor");
+    refresh();
+  }
+  // Making a new group (id "new") or editing one: its name and which of this tutor's students are in it.
+  function showGroupForm(id) {
+    const g = id === "new" ? null : TelaMessages.group(id);
+    if (id !== "new" && (!g || g.tutor !== tutorUser)) return showConversations();
+    groupEdit = id; chatGroup = null; chatStudent = null;
+    $("drawerTitle").textContent = g ? "Edit group" : "New group chat";
+    $("drawerBody").classList.remove("chat-mode");
+    const sorted = students.slice().sort((a, b) => a.name.localeCompare(b.name));
+    $("drawerBody").innerHTML = `<form class="group-form" id="groupForm" novalidate>
+      <div class="chat-head">
+        <button type="button" class="icon-btn" id="groupCancelBack" aria-label="${g ? "Back to the group" : "Back to all conversations"}">${BACK_ICON}</button>
+        <div><strong>${g ? esc(g.name) : "Make a group chat"}</strong><small>Everyone you add can read and send messages in the group.</small></div>
+      </div>
+      <div class="error" id="groupError" role="alert"></div>
+      <label class="field">Group name<input id="groupName" maxlength="40" autocomplete="off" placeholder="e.g. Tuesday maths group" value="${g ? esc(g.name) : ""}"></label>
+      <div class="field" role="group" aria-labelledby="membersLabel"><span id="membersLabel">Students</span>
+        <ul class="member-list">${sorted.map(st => `<li><label><input type="checkbox" name="member" value="${esc(st.username)}"${g && g.members.includes(st.username) ? " checked" : ""}>
+          <span>${esc(st.name)} <small>@${esc(st.username)}</small></span></label></li>`).join("")}</ul>
+        <small id="memberCount"></small></div>
+      <div class="group-actions">
+        ${g ? `<button type="button" class="btn btn-danger" id="groupDelete">Delete group</button>` : ""}
+        <button type="button" class="btn btn-ghost" id="groupCancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">${g ? "Save changes" : "Create group"}</button>
+      </div></form>`;
+    updateMemberCount();
+    $("groupName").focus();
+  }
+  function updateMemberCount() {
+    const n = document.querySelectorAll("#groupForm [name=member]:checked").length;
+    $("memberCount").textContent = n ? `${n} student${n === 1 ? "" : "s"} chosen.` : "Choose who's in the group.";
+  }
+  function saveGroupForm() {
+    const showErr = (msg, field) => { $("groupError").textContent = msg; $("groupError").classList.add("show"); if (field) { $(field).classList.add("invalid"); $(field).focus(); } };
+    const name = $("groupName").value.trim();
+    const members = [...document.querySelectorAll("#groupForm [name=member]:checked")].map(c => c.value);
+    if (!name) return showErr("Give the group a name.", "groupName");
+    if (myGroups().some(g => g.id !== groupEdit && g.name.toLowerCase() === name.toLowerCase())) return showErr(`You already have a group called "${name}".`, "groupName");
+    if (!members.length) return showErr("Choose at least one student for the group.");
+    let g;
+    if (groupEdit === "new") g = TelaMessages.createGroup(tutorUser, name, members);
+    else {
+      const old = TelaMessages.group(groupEdit);
+      g = old && TelaMessages.saveGroup({ ...old, name, members });
+    }
+    if (!g) return toast("Couldn't save: browser storage is unavailable.");
+    toast(groupEdit === "new" ? `Made the group "${g.name}" with ${members.length} student${members.length === 1 ? "" : "s"}.` : `Saved "${g.name}".`);
+    showGroupChat(g.id);
+  }
+  function deleteGroup() {
+    const g = TelaMessages.group(groupEdit);
+    if (!g || !confirm(`Delete the group "${g.name}"? Its messages will be deleted for everyone. This can't be undone.`)) return;
+    if (!TelaMessages.deleteGroup(g.id)) return toast("Couldn't delete: browser storage is unavailable.");
+    toast(`Deleted "${g.name}".`);
+    showConversations();
+    refresh();
+  }
+  // Cancel goes back to the group being edited, or to the list when making a new one.
+  const cancelGroupForm = () => groupEdit && groupEdit !== "new" ? showGroupChat(groupEdit) : showConversations();
+
   function openMessages(username) {
     adminChat = null; panelMode = "messages";
     $("drawerOverlay").classList.add("open");
@@ -556,17 +695,18 @@
     if (username) showChat(username); else { showConversations(); $("drawerClose").focus(); }
   }
   function closeMessages() {
-    chatStudent = null; adminChat = null; panelMode = "messages";
+    chatStudent = null; chatGroup = null; groupEdit = null; adminChat = null; panelMode = "messages";
     $("drawerOverlay").classList.remove("open");
     $("drawerBody").classList.remove("chat-mode");
     setActive("students");
   }
   function sendMessage() {
     const text = $("msgInput").value;
-    if (!text.trim() || !chatStudent) return;
-    if (!TelaMessages.send(chatStudent, tutorUser, "tutor", text)) return toast("Couldn't send: browser storage is unavailable.");
+    if (!text.trim() || !(chatStudent || chatGroup)) return;
+    const sent = chatGroup ? TelaMessages.groupSend(chatGroup, tutorUser, "tutor", text) : TelaMessages.send(chatStudent, tutorUser, "tutor", text);
+    if (!sent) return toast("Couldn't send: browser storage is unavailable.");
     $("msgInput").value = "";
-    refreshChat();
+    if (chatGroup) refreshGroupChat(); else refreshChat();
     $("msgInput").focus();
   }
   const setActive = view => document.querySelectorAll(".side-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
@@ -585,13 +725,24 @@
       const list = TelaMessages.thread(student, tutor);
       return { student, tutor, studentName: accounts[student].displayName || student,
         tutorName: (tutorAccounts[tutor] || {}).displayName || tutor, count: list.length, last: list[list.length - 1] };
-    })).sort((a, b) => b.last.at - a.last.at);
+    })).concat(Object.values(TelaMessages.allGroups()).map(g => {
+      // Group chats are listed with the tutor who made them; group stands in for the student.
+      const list = TelaMessages.groupThread(g.id);
+      return { group: g.id, student: g.name, tutor: g.tutor, studentName: g.name, tutorName: (tutorAccounts[g.tutor] || {}).displayName || g.tutor,
+        members: g.members.map(m => (accounts[m] || {}).displayName || m), count: list.length, last: list[list.length - 1] };
+    }).filter(c => c.count)).sort((a, b) => b.last.at - a.last.at);
   }
   function adminListHTML() {
     const all = allConversations();
     const q = ($("adminSearch") ? $("adminSearch").value : "").trim().toLowerCase();
-    const shown = all.filter(c => !q || [c.studentName, c.tutorName, c.student, c.tutor].some(s => s.toLowerCase().includes(q)));
-    const rows = shown.length ? `<ul class="convo-list">${shown.map(c => `<li><button type="button" class="convo" data-admin-chat="${esc(c.student + "|" + c.tutor)}">
+    const shown = all.filter(c => !q || [c.studentName, c.tutorName, c.student, c.tutor, ...(c.members || [])].some(s => s.toLowerCase().includes(q)));
+    const rows = shown.length ? `<ul class="convo-list">${shown.map(c => c.group
+      ? `<li><button type="button" class="convo" data-admin-group="${esc(c.group)}">
+        <span class="avatar group">${GROUP_ICON}</span>
+        <span class="convo-main"><span class="convo-top"><strong>${esc(c.studentName)} · group of ${esc(c.tutorName)}</strong><small>${TelaMessages.when(c.last.at)}</small></span>
+          <span class="convo-preview">${esc(TelaMessages.senderName(c.last))}: ${esc(c.last.text)}</span></span>
+        <span class="msg-count">${c.count}</span></button></li>`
+      : `<li><button type="button" class="convo" data-admin-chat="${esc(c.student + "|" + c.tutor)}">
         <span class="avatar">${esc(c.studentName.charAt(0).toUpperCase())}</span>
         <span class="convo-main"><span class="convo-top"><strong>${esc(c.studentName)} ↔ ${esc(c.tutorName)}</strong><small>${TelaMessages.when(c.last.at)}</small></span>
           <span class="convo-preview">${esc(c.last.from === "tutor" ? c.tutorName : c.studentName)}: ${esc(c.last.text)}</span></span>
@@ -613,8 +764,25 @@
       <div class="bubble-from">${esc(m.from === "tutor" ? c.tutorName : c.studentName)}</div>
       <div class="bubble-text">${esc(m.text)}</div><div class="bubble-time">${TelaMessages.when(m.at)}</div></div>`).join("");
   }
+  function showAdminGroup(id) {
+    const c = allConversations().find(x => x.group === id);
+    if (!c) return showAdminList();
+    adminChat = { group: id };
+    $("drawerTitle").textContent = "All messages";
+    $("drawerBody").classList.add("chat-mode");
+    $("drawerBody").innerHTML = `<div class="chat">
+      <div class="chat-head">
+        <button type="button" class="icon-btn" id="adminBack" aria-label="Back to all conversations">${BACK_ICON}</button>
+        <div><strong>${esc(c.studentName)}</strong><small>Group of @${esc(c.tutor)} · ${c.members.length ? esc(c.members.join(", ")) : "no students"} · ${c.count} message${c.count === 1 ? "" : "s"}</small></div>
+      </div>
+      <p class="admin-note">Read-only admin view of a group chat. ${esc(c.tutorName)}'s messages are on the right.</p>
+      <div class="chat-list" id="chatList">${TelaMessages.groupThread(id).map(m => `<div class="bubble ${m.role === "tutor" && m.from === c.tutor ? "mine" : "theirs"}">
+        <div class="bubble-from">${esc(TelaMessages.senderName(m))}</div>
+        <div class="bubble-text">${esc(m.text)}</div><div class="bubble-time">${TelaMessages.when(m.at)}</div></div>`).join("")}</div></div>`;
+    $("chatList").scrollTop = $("chatList").scrollHeight;
+  }
   function showAdminChat(student, tutor) {
-    const c = allConversations().find(x => x.student === student && x.tutor === tutor);
+    const c = allConversations().find(x => !x.group && x.student === student && x.tutor === tutor);
     if (!c) return showAdminList();
     adminChat = { student, tutor };
     $("drawerTitle").textContent = "All messages";
@@ -630,14 +798,15 @@
     $("chatList").scrollTop = $("chatList").scrollHeight;
   }
   function openAdmin() {
-    chatStudent = null; panelMode = "admin";
+    chatStudent = null; chatGroup = null; groupEdit = null; panelMode = "admin";
     $("drawerOverlay").classList.add("open");
     setActive("admin");
     showAdminList();
     $("adminSearch").focus();
   }
   function refreshAdmin() {
-    if (adminChat) showAdminChat(adminChat.student, adminChat.tutor);
+    if (adminChat && adminChat.group) showAdminGroup(adminChat.group);
+    else if (adminChat) showAdminChat(adminChat.student, adminChat.tutor);
     else if ($("adminRows")) $("adminRows").innerHTML = adminListHTML();
   }
 
@@ -646,20 +815,36 @@
     else if (b.dataset.view === "admin" && isAdmin) { if (messagesOpen() && panelMode === "admin") closeMessages(); else openAdmin(); }
     else { closeMessages(); window.scrollTo({ top: 0, behavior: "smooth" }); }
   }));
-  $("drawerBody").addEventListener("input", e => { if (e.target.id === "adminSearch") $("adminRows").innerHTML = adminListHTML(); });
+  $("drawerBody").addEventListener("input", e => {
+    if (e.target.id === "adminSearch") $("adminRows").innerHTML = adminListHTML();
+    if (e.target.id === "groupName") e.target.classList.remove("invalid");
+    if (e.target.name === "member") { updateMemberCount(); $("groupError").classList.remove("show"); }
+  });
   $("drawerClose").addEventListener("click", closeMessages);
   $("drawerOverlay").addEventListener("click", e => {
     if (e.target === $("drawerOverlay")) return closeMessages();
     if (e.target.closest("#adminBack")) return showAdminList();
     const adminOpen = e.target.closest("[data-admin-chat]");
     if (adminOpen) { const [student, tutor] = adminOpen.dataset.adminChat.split("|"); return showAdminChat(student, tutor); }
+    const adminGroup = e.target.closest("[data-admin-group]");
+    if (adminGroup) return showAdminGroup(adminGroup.dataset.adminGroup);
     if (e.target.closest("#chatBack")) return showConversations();
+    if (e.target.closest("#newGroup")) return showGroupForm("new");
+    const openGroup = e.target.closest("[data-group]");
+    if (openGroup) return showGroupChat(openGroup.dataset.group);
+    const editGroup = e.target.closest("[data-edit-group]");
+    if (editGroup) return showGroupForm(editGroup.dataset.editGroup);
+    if (e.target.closest("#groupCancel, #groupCancelBack")) return cancelGroupForm();
+    if (e.target.closest("#groupDelete")) return deleteGroup();
     const chat = e.target.closest("[data-chat]");
     if (chat) return showChat(chat.dataset.chat);
     const setHw = e.target.closest("[data-homework]");
     if (setHw) { closeMessages(); openHomework(setHw.dataset.homework); }
   });
-  $("drawerBody").addEventListener("submit", e => { if (e.target.id === "composer") { e.preventDefault(); sendMessage(); } });
+  $("drawerBody").addEventListener("submit", e => {
+    if (e.target.id === "composer") { e.preventDefault(); sendMessage(); }
+    if (e.target.id === "groupForm") { e.preventDefault(); saveGroupForm(); }
+  });
   // Enter sends; Shift+Enter starts a new line.
   $("drawerBody").addEventListener("keydown", e => {
     if (e.target.id === "msgInput" && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
@@ -667,9 +852,10 @@
   $("grid").addEventListener("click", e => { const chat = e.target.closest("[data-chat]"); if (chat) openMessages(chat.dataset.chat); });
   // Messages (and progress) from a student in another tab arrive without a reload.
   window.addEventListener("storage", e => {
-    if (!e.key || !(e.key.startsWith("tela.topics.") || e.key === "tela.accounts")) return;
+    if (!e.key || !(e.key.startsWith("tela.topics.") || e.key.startsWith("tela.groups") || e.key === "tela.accounts")) return;
     if (panelMode === "admin" && messagesOpen()) { refresh(); refreshAdmin(); }
-    else if (chatStudent && messagesOpen()) refreshChat(); else refresh();
+    else if (chatStudent && messagesOpen()) refreshChat();
+    else if (chatGroup && messagesOpen()) refreshGroupChat(); else refresh();
   });
 
   // Collapse or expand the sidebar; the choice is remembered in this browser.
@@ -873,6 +1059,7 @@
         if (k === base || k.startsWith(base + ".")) keys.push(k);
       }
       keys.forEach(k => localStorage.removeItem(k));
+      TelaMessages.leaveAllGroups(username);
       if (localStorage.getItem("tela.session") === username) localStorage.removeItem("tela.session");
     } catch (err) {
       toast("Couldn't remove the account: browser storage is unavailable.");

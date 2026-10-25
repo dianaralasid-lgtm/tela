@@ -71,7 +71,73 @@ const TelaMessages = (() => {
     if (at >= day - 864e5) return "Yesterday " + time;
     return d.toLocaleDateString(undefined, { day: "numeric", month: "short" }) + " " + time;
   }
-  const isMessagesKey = key => /^tela\.(topics\.[^.]+\.(messages|msgRead)|tutorMsgRead\.)/.test(key || "");
+  const isMessagesKey = key => /^tela\.(topics\.[^.]+\.(messages|msgRead)|tutorMsgRead\.|groups($|\.)|groupRead\.)/.test(key || "");
 
-  return { tutorsOf, thread, send, unread, markRead, last, partners, when, isMessagesKey };
+  // ---------- Group chats ----------
+  // A tutor makes a group with some of their students; everyone in it sees every message.
+  //   tela.groups                   { groupId: { id, name, tutor, members: [student usernames], createdAt } }
+  //   tela.groups.<id>.messages     [{ id, from: username, role: "tutor" | "student", text, at }]
+  //   tela.groupRead.<role>.<user>  { groupId: time that person last read the group }
+  // (role is part of the key because a student and a tutor can have the same username.)
+  const GROUPS = "tela.groups";
+  const groupMsgKey = id => GROUPS + "." + id + ".messages";
+  const groupReadKey = (user, role) => "tela.groupRead." + role + "." + user;
+  const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const allGroups = () => read(GROUPS, {});
+
+  const group = id => allGroups()[id] || null;
+  const groupThread = id => read(groupMsgKey(id), []).slice().sort((a, b) => a.at - b.at);
+  const groupLast = id => groupThread(id).pop() || null;
+  // A tutor's own groups, or the groups a student is in (while that group's tutor still teaches them).
+  // Most recent activity first.
+  function groupsFor(user, role) {
+    const activity = g => (groupLast(g.id) || {}).at || g.createdAt;
+    return Object.values(allGroups())
+      .filter(g => role === "tutor" ? g.tutor === user : g.members.includes(user) && tutorsOf(user).includes(g.tutor))
+      .sort((a, b) => activity(b) - activity(a));
+  }
+  function saveGroup(g) {
+    const all = allGroups();
+    all[g.id] = g;
+    return write(GROUPS, all) ? g : null;
+  }
+  const createGroup = (tutor, name, members) => saveGroup({ id: "g" + newId(), name: String(name).trim(), tutor, members, createdAt: Date.now() });
+  function deleteGroup(id) {
+    const all = allGroups();
+    delete all[id];
+    try { localStorage.removeItem(groupMsgKey(id)); } catch (e) {}
+    return write(GROUPS, all);
+  }
+  // Takes a deleted student out of every group (their old messages stay).
+  function leaveAllGroups(student) {
+    const all = allGroups();
+    Object.values(all).forEach(g => { g.members = g.members.filter(m => m !== student); });
+    write(GROUPS, all);
+  }
+  function groupSend(id, from, role, text) {
+    const msg = { id: newId(), from, role, text: String(text).trim(), at: Date.now() };
+    if (!msg.text || !group(id)) return null;
+    const list = read(groupMsgKey(id), []);
+    list.push(msg);
+    return write(groupMsgKey(id), list) ? msg : null;
+  }
+  // Unread = messages from anyone else since this person last read the group.
+  function groupUnread(id, user, role) {
+    const since = read(groupReadKey(user, role), {})[id] || 0;
+    return groupThread(id).filter(m => !(m.from === user && m.role === role) && m.at > since).length;
+  }
+  function groupMarkRead(id, user, role) {
+    const key = groupReadKey(user, role), map = read(key, {});
+    map[id] = Date.now();
+    write(key, map);
+  }
+  // Display name of whoever sent a group message.
+  function senderName(m) {
+    const acc = read(m.role === "tutor" ? "tela.tutors" : "tela.accounts", {})[m.from];
+    return (acc && acc.displayName) || m.from;
+  }
+
+  return { tutorsOf, thread, send, unread, markRead, last, partners, when, isMessagesKey,
+    group, allGroups, groupsFor, groupThread, groupLast, saveGroup, createGroup, deleteGroup, leaveAllGroups,
+    groupSend, groupUnread, groupMarkRead, senderName };
 })();
