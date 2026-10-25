@@ -77,6 +77,10 @@
   .tag { background: var(--green-50); border: 1px solid var(--line); border-radius: 99px; padding: 3px 10px; font-size: 13px; }
   .notes { background: var(--green-50); border-left: 3px solid var(--green-600); border-radius: 8px; padding: 10px 12px; font-size: 14px; white-space: pre-wrap; }
   .muted { color: var(--muted); font-size: 14px; }
+  .time-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap: 8px; }
+  .time-tile { background: var(--green-50); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+  .time-tile strong { display: block; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .time-tile span { font-size: 12px; color: var(--muted); }
   .empty { text-align: center; color: var(--muted); padding: 48px 16px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
   .empty h3 { color: var(--ink); margin-bottom: 6px; }
 
@@ -425,6 +429,7 @@
 <script src="questions.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
 <script src="db.js"></script>
+<script src="activity.js"></script>
 <script src="catalog.js"></script>
 <script src="messages.js"></script>
 <script src="dropdown.js"></script>
@@ -452,6 +457,7 @@ TelaDB.start("tutor").then(() => {
       working: list.filter(t => t.status === "doing").map(t => t.title),
       lastMessage: TelaMessages.last(username, tutorUser), unread: TelaMessages.unread(username, tutorUser, "tutor"),
       homework: TelaDB.homeworkOf(username).filter(hw => isShownSubject(hw.subject)),
+      activity: TelaDB.activityOf(username),
       statusOf: title => (list.find(t => t.title.trim().toLowerCase() === title.trim().toLowerCase()) || {}).status || "todo"
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
@@ -482,6 +488,8 @@ TelaDB.start("tutor").then(() => {
         <div><h2>${esc(st.name)}</h2><small>@${esc(st.username)}</small></div>
         <button type="button" class="remove-btn" data-remove="${esc(st.username)}" aria-label="Remove ${esc(st.name)}">Remove</button></div>
       ${summary}
+      <div class="s-section"><h3>Time active</h3>${Object.keys(st.activity).length
+        ? TelaActivity.tilesHTML(st.activity) : `<p class="muted">No time recorded yet.</p>`}</div>
       ${st.working.length ? `<div class="s-section"><h3>Working on</h3><div class="tags">${st.working.slice(0, 8).map(t => `<span class="tag">${esc(t)}</span>`).join("")}${more}</div></div>` : ""}
       <div class="s-section"><h3>Homework</h3>${homeworkRows(st, false)}</div>
       <div class="s-section"><h3>Messages${st.unread ? ` <span class="new-pill">${st.unread} new</span>` : ""}</h3>${st.lastMessage

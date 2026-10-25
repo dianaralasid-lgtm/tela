@@ -655,6 +655,10 @@
   .donut-key i.c-doing { background: #e0a43a; }
   .donut-key i.c-track { background: #e3e9e6; }
   .donut-key small { color: var(--muted); font-size: 13px; text-align: right; }
+  .time-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+  .time-tile { background: var(--green-50); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .time-tile strong { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .time-tile span { font-size: 12px; color: var(--muted); }
   .donut-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 14px; }
   .donut-cell {
     display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
@@ -955,6 +959,7 @@
 <script src="questions.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
 <script src="db.js"></script>
+<script src="activity.js"></script>
 <script src="catalog.js"></script>
 <script src="messages.js"></script>
 <script src="dropdown.js"></script>
@@ -1379,6 +1384,8 @@ TelaDB.start("student").then(() => {
   let practiceTopicId = null, practiceStatusAtOpen = null, practicePerSet = 0;
   // Marathon mode gives every question in the topic, kept apart from the student's usual set.
   let practiceMarathon = false;
+  // Active time spent on the open set (activity.js counts it), and how long it took once every answer was right.
+  let practiceTime = { ms: 0, doneIn: null }, practiceDoneAtOpen = null;
 
   // Reads an expression like "3a − 2b + a²" into like terms. Returns null if it can't be read.
   // "simplified" is false if a like term appears twice or a term is zero.
@@ -1425,6 +1432,21 @@ TelaDB.start("student").then(() => {
   }
   function savePractice() {
     TelaDB.kvSet(practiceStoreKey(), { picked: practicePicked, answers: practiceSaved });
+  }
+  // The time spent on a topic's set is saved straight away, apart from the answers (which wait for Save).
+  const TIME_PREFIX = STORAGE_KEY + ".time.", MARATHON_TIME_PREFIX = STORAGE_KEY + ".maratime.";
+  const timeStoreKey = () => (practiceMarathon ? MARATHON_TIME_PREFIX : TIME_PREFIX) + practiceOpen.replace(/[^a-z0-9]+/g, "-");
+  function loadTopicTime() {
+    const data = TelaDB.kvGet(timeStoreKey()) || {};
+    return { ms: Number(data.ms) || 0, doneIn: data.doneIn ?? null };
+  }
+  function saveTopicTime() {
+    if (practiceOpen) TelaDB.kvSet(timeStoreKey(), practiceTime);
+  }
+  // A new set of questions (or clearing the answers) starts the clock again.
+  function restartTopicTime() {
+    practiceTime = { ms: 0, doneIn: null };
+    saveTopicTime();
   }
   // Which questions the student has been shown in this topic, oldest first, so new sets don't repeat them.
   // Kept separately from saved answers and updated whenever a set is shown, saved or not.
@@ -3158,7 +3180,7 @@ TelaDB.start("student").then(() => {
     }));
     $("practiceScore").textContent = `${correct} of ${parts} correct · ${earned} / ${marks} marks` + (practiceDirty ? " · Not saved yet" : "");
     $("practiceDone").textContent = correct === parts
-      ? "All correct! Great work."
+      ? "All correct! Great work." + (practiceTime.doneIn !== null ? ` You finished in ${TelaActivity.format(practiceTime.doneIn / 1000)}.` : "")
       : `You've answered ${answered} of ${parts}. Scroll up to retry any questions in red.`;
     return { parts, correct, answered };
   }
@@ -3188,7 +3210,14 @@ TelaDB.start("student").then(() => {
       const wrong = new Set(result && result.wrong || []);
       partEl.querySelectorAll(".col-cell, .tree-in").forEach(c => c.classList.toggle("bad", wrong.has(Number(c.dataset.i))));
     }
-    syncPracticeStatus(updatePracticeScore());
+    let score = updatePracticeScore();
+    // The answer that makes every question right stops the clock for this set.
+    if (score.correct === score.parts && practiceTime.doneIn === null) {
+      practiceTime.doneIn = practiceTime.ms;
+      saveTopicTime();
+      score = updatePracticeScore();
+    }
+    syncPracticeStatus(score);
     if (result) moveToNext(partEl);
   }
 
@@ -3248,6 +3277,8 @@ TelaDB.start("student").then(() => {
     const data = loadPractice();
     practiceSaved = data.answers || {};
     practiceDirty = false;
+    practiceTime = loadTopicTime();
+    practiceDoneAtOpen = practiceTime.doneIn;
     if (marathon) {
       // Every question, in the order they're written in questions.js.
       practicePicked = set.items.map(it => it.id);
@@ -3299,6 +3330,7 @@ TelaDB.start("student").then(() => {
     $("saveOverlay").classList.remove("open");
     $("practiceOverlay").classList.remove("open");
     document.body.style.overflow = "";
+    saveTopicTime();
     practiceOpen = null;
     practiceDirty = false;
     practiceMarathon = false;
@@ -3320,6 +3352,8 @@ TelaDB.start("student").then(() => {
       save();
       render();
     }
+    // ...and a finish time the thrown-away answers set (the time spent still counts).
+    if (practiceDoneAtOpen === null) practiceTime.doneIn = null;
     hidePractice();
   });
   $("saveCancel").addEventListener("click", () => $("saveOverlay").classList.remove("open"));
@@ -3497,6 +3531,7 @@ TelaDB.start("student").then(() => {
     noteSeen(practicePicked);
     practiceSaved = {};
     practiceDirty = true;
+    restartTopicTime();
     renderPractice();
     $("practiceBody").scrollTop = 0;
   });
@@ -3504,6 +3539,7 @@ TelaDB.start("student").then(() => {
     if (!confirm("Clear all your answers for these questions?")) return;
     practiceSaved = {};
     practiceDirty = true;
+    restartTopicTime();
     renderPractice();
     $("practiceBody").scrollTop = 0;
   });
@@ -3669,6 +3705,10 @@ TelaDB.start("student").then(() => {
           </ul>
           <p class="d-note">${topics.length} topics in total. You've saved practice answers in ${practisedCount()} topic${practisedCount() === 1 ? "" : "s"}.</p>
         </div>
+      </div>
+      <div class="d-section"><h3>Time active</h3>
+        ${TelaActivity.tilesHTML(TelaActivity.mine())}
+        <p class="d-note">Counted while you're using tela. Weeks start on Monday.</p>
       </div>
       <div class="d-section"><h3>By subject</h3>
         ${donutGrid(allSubjects().map(sub => [sub, topics.filter(t => t.subject === sub)]))}
@@ -3840,7 +3880,8 @@ TelaDB.start("student").then(() => {
     const id = e.target.id;
     if (id === "setReset" && confirm("Set every topic back to Not started and clear all your saved practice answers? This can't be undone.")) {
       topics.forEach(t => { t.status = "todo"; });
-      TelaDB.kvKeys().filter(k => k.startsWith(PRACTICE_PREFIX) || k.startsWith(MARATHON_PREFIX) || k.startsWith(STORAGE_KEY + ".seen.")).forEach(TelaDB.kvRemove);
+      TelaDB.kvKeys().filter(k => k.startsWith(PRACTICE_PREFIX) || k.startsWith(MARATHON_PREFIX) || k.startsWith(STORAGE_KEY + ".seen.")
+        || k.startsWith(TIME_PREFIX) || k.startsWith(MARATHON_TIME_PREFIX)).forEach(TelaDB.kvRemove);
       save(); render(); toast("Progress reset");
     }
     if (id === "setLogout") $("logoutBtn").click();
@@ -3960,6 +4001,7 @@ TelaDB.start("student").then(() => {
   window.addEventListener("pageshow", e => { if (e.persisted) location.reload(); });
 
   $("logoutBtn").addEventListener("click", async () => {
+    TelaActivity.save();
     await TelaDB.signOut();
     location.href = "login.html";
   });
@@ -3972,6 +4014,12 @@ TelaDB.start("student").then(() => {
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove("show"), 2000);
   }
+
+  // Count time active on the account, and on the open practice set until every answer in it is right.
+  TelaActivity.track({
+    onTick: ms => { if (practiceOpen && practiceTime.doneIn === null) practiceTime.ms += ms; },
+    onSave: saveTopicTime
+  });
 
   render();
 });
