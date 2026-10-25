@@ -1392,17 +1392,30 @@ TelaDB.start("student").then(() => {
   // Questions marked "always: true" are in every set; the rest of the places are filled at random.
   // Picks a set: "always" questions, then questions the student hasn't been given yet (in random order),
   // and only then ones they've already had, least recently seen first. `seen` lists ids, oldest first.
-  function drawQuestions(items, count, seen = []) {
-    const fixed = items.map((it, i) => (it.always ? i : -1)).filter(i => i >= 0);
-    const rest = items.map((_, i) => i).filter(i => !items[i].always);
-    const fresh = rest.filter(i => !seen.includes(items[i].id));
-    for (let i = fresh.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [fresh[i], fresh[j]] = [fresh[j], fresh[i]];
-    }
-    const used = rest.filter(i => seen.includes(items[i].id)).sort((a, b) => seen.indexOf(items[a].id) - seen.indexOf(items[b].id));
-    return fixed.concat(fresh.concat(used).slice(0, Math.max(0, count - fixed.length)))
-      .sort((a, b) => a - b).map(i => items[i].id);
+  // `previous` is the set being replaced (New questions): none of it comes back unless the topic is too small
+  // to fill a set without it. An "always" question from it is swapped for another of the same kind (another
+  // column-method sum, say) if the topic has one, and is back in the set after.
+  function drawQuestions(items, count, seen = [], previous = []) {
+    const kindOf = i => items[i].parts.map(p => p.kind).join("+");
+    const rank = list => {
+      const fresh = list.filter(i => !seen.includes(items[i].id));
+      for (let i = fresh.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [fresh[i], fresh[j]] = [fresh[j], fresh[i]];
+      }
+      const used = list.filter(i => seen.includes(items[i].id)).sort((a, b) => seen.indexOf(items[a].id) - seen.indexOf(items[b].id));
+      return fresh.concat(used);
+    };
+    const all = items.map((_, i) => i), wasLast = i => previous.includes(items[i].id);
+    const always = all.filter(i => items[i].always);
+    const picked = always.filter(i => !wasLast(i));
+    const pool = rank(all.filter(i => !items[i].always && !wasLast(i)));
+    always.filter(wasLast).forEach(a => {
+      const swap = pool.find(i => !picked.includes(i) && kindOf(i) === kindOf(a));
+      if (swap !== undefined && picked.length < count) picked.push(swap);
+    });
+    pool.concat(rank(all.filter(wasLast))).forEach(i => { if (picked.length < count && !picked.includes(i)) picked.push(i); });
+    return picked.sort((a, b) => a - b).map(i => items[i].id);
   }
 
   const practiceKey = t => t.title.trim().toLowerCase();
@@ -3554,11 +3567,13 @@ TelaDB.start("student").then(() => {
   $("practiceNew").addEventListener("click", () => {
     if (Object.keys(practiceSaved).length && !confirm("Get a new set of questions? Your answers to these ones will be cleared.")) return;
     const set = PRACTICE[practiceOpen];
-    // The current set was just noted as most recently seen, so it only comes back once everything else has been used.
-    practicePicked = drawQuestions(set.items, practicePerSet, loadSeen());
+    // Nothing from the current set comes back (see drawQuestions). The new set is saved straight away, so closing
+    // and reopening the topic never brings the old one back.
+    practicePicked = drawQuestions(set.items, practicePerSet, loadSeen(), practicePicked);
     noteSeen(practicePicked);
     practiceSaved = {};
-    practiceDirty = true;
+    savePractice();
+    practiceDirty = false;
     restartTopicTime();
     renderPractice();
     $("practiceBody").scrollTop = 0;
