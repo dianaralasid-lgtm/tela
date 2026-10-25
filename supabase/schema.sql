@@ -10,7 +10,7 @@
 drop table if exists public.account_invites, public.reads, public.group_messages, public.group_members, public.groups,
   public.messages, public.homework, public.student_kv, public.student_data, public.tutor_students, public.profiles cascade;
 drop function if exists public.handle_new_user, public.is_admin, public.teaches, public.is_tutor,
-  public.in_group, public.delete_student, public.admin_delete_account cascade;
+  public.in_group, public.delete_student, public.admin_delete_account, public.guard_account_changes, public.admin_update_account cascade;
 
 -- ---------- Accounts ----------
 -- One row per person, made automatically when they sign up (see handle_new_user).
@@ -133,19 +133,6 @@ create function public.in_group(g text) returns boolean language sql stable secu
                  where m.group_id = g and m.student_id = auth.uid())
 $$;
 
--- A tutor removing a student: if the student has other tutors only this tutor's link goes;
--- if this was their only tutor, the whole account (and everything saved for it) is deleted.
-create function public.delete_student(student uuid) returns text language plpgsql security definer set search_path = public as $$
-begin
-  if not public.teaches(student) then raise exception 'not your student'; end if;
-  delete from tutor_students where tutor_id = auth.uid() and student_id = student;
-  if exists (select 1 from tutor_students where student_id = student) then return 'unlinked'; end if;
-  delete from auth.users where id = student;
-  return 'deleted';
-end $$;
-revoke all on function public.delete_student from public, anon;
-grant execute on function public.delete_student to authenticated;
-
 -- ---------- Access rules (row level security) ----------
 alter table public.profiles enable row level security;
 alter table public.tutor_students enable row level security;
@@ -159,15 +146,11 @@ alter table public.group_messages enable row level security;
 alter table public.reads enable row level security;
 
 -- Names and usernames are visible to signed-in people (to add a student by username, and to show who wrote what).
+-- Nobody edits profiles directly: only admins change names and usernames, through admin_update_account.
 create policy "read profiles" on public.profiles for select to authenticated using (true);
-create policy "edit own name" on public.profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
 
 create policy "see own links" on public.tutor_students for select to authenticated
   using (tutor_id = auth.uid() or student_id = auth.uid() or public.is_admin());
-create policy "tutor adds student" on public.tutor_students for insert to authenticated
-  with check (tutor_id = auth.uid() and public.is_tutor()
-              and exists (select 1 from public.profiles p where p.id = student_id and p.role = 'student'));
-create policy "tutor removes student" on public.tutor_students for delete to authenticated using (tutor_id = auth.uid());
 
 create policy "student owns data" on public.student_data for all to authenticated
   using (student_id = auth.uid()) with check (student_id = auth.uid());
@@ -235,17 +218,9 @@ begin
   return new;
 end $$;
 
--- Admins can put any student with any tutor (and take them off).
+-- Only admins put students with tutors (and take them off): tutors can't change who they teach.
 drop policy if exists "admin manages links" on public.tutor_students;
 create policy "admin manages links" on public.tutor_students for all to authenticated using (public.is_admin()) with check (public.is_admin());
-
--- A tutor removing a student now only takes the student off their own list; the account stays.
-create or replace function public.delete_student(student uuid) returns text language plpgsql security definer set search_path = public as $$
-begin
-  if not public.teaches(student) then raise exception 'not your student'; end if;
-  delete from tutor_students where tutor_id = auth.uid() and student_id = student;
-  return 'unlinked';
-end $$;
 
 -- Admins delete accounts (a student's or a tutor's, with everything saved for it). Not their own.
 create or replace function public.admin_delete_account(target uuid) returns void language plpgsql security definer set search_path = public as $$
@@ -259,3 +234,54 @@ grant execute on function public.admin_delete_account to authenticated;
 
 -- The first admin's invite, so the admin account can be signed up before anyone can make invites.
 insert into public.account_invites (username, role, display_name) values ('dayan', 'tutor', 'Dayan') on conflict do nothing;
+
+-- ---------- Only admins change accounts ----------
+-- (The same as lock-accounts.sql, which updates a database made before this was added.)
+-- Refuses password and email changes made any other way (for example supabase.auth.updateUser in the console).
+create or replace function public.guard_account_changes() returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if (new.encrypted_password is distinct from old.encrypted_password or new.email is distinct from old.email)
+     and coalesce(current_setting('tela.admin_edit', true), '') <> 'on' then
+    raise exception 'Only an admin can change account details';
+  end if;
+  return new;
+end $$;
+drop trigger if exists guard_account_changes on auth.users;
+create trigger guard_account_changes before update on auth.users for each row execute function public.guard_account_changes();
+
+-- Admins change an account's name, username and (when new_password isn't empty) password.
+-- A new password also signs the account out everywhere. Admins' own usernames can't change, since they
+-- decide who is an admin (see is_admin).
+create or replace function public.admin_update_account(target uuid, new_username text, new_name text, new_password text)
+returns void language plpgsql security definer set search_path = public, extensions as $$
+declare
+  p public.profiles;
+  new_email text;
+begin
+  if not public.is_admin() then raise exception 'only an admin can change accounts'; end if;
+  select * into p from public.profiles where id = target;
+  if not found then raise exception 'no such account'; end if;
+  new_username := lower(trim(coalesce(new_username, p.username)));
+  new_name := trim(coalesce(new_name, p.display_name));
+  if new_username <> p.username then
+    if p.role = 'tutor' and p.username in ('dayan', 'ilham') then raise exception 'an admin''s username can''t change'; end if;
+    if exists (select 1 from public.profiles where username = new_username and role = p.role) then raise exception 'username taken'; end if;
+  end if;
+  if coalesce(new_password, '') <> '' and length(new_password) < 6 then raise exception 'password too short'; end if;
+
+  perform set_config('tela.admin_edit', 'on', true);
+  update public.profiles set username = new_username, display_name = new_name where id = target;
+  if new_username <> p.username then
+    new_email := p.role || '.' || new_username || '@tela.example.com';
+    update auth.users set email = new_email where id = target;
+    update auth.identities set identity_data = identity_data || jsonb_build_object('email', new_email)
+     where user_id = target and provider = 'email';
+  end if;
+  if coalesce(new_password, '') <> '' then
+    update auth.users set encrypted_password = crypt(new_password, gen_salt('bf')) where id = target;
+    delete from auth.sessions where user_id = target;
+  end if;
+  perform set_config('tela.admin_edit', 'off', true);
+end $$;
+revoke all on function public.admin_update_account from public, anon;
+grant execute on function public.admin_update_account to authenticated;

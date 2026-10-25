@@ -220,23 +220,31 @@ const TelaDB = (() => {
     if (error) throw error;
     await refresh();
   }
-  // A tutor adding a student who already has an account. Resolves to null or a message.
-  async function linkStudent(username) {
-    const { data: p, error } = await client.from("profiles").select("*").eq("role", "student").eq("username", username).maybeSingle();
-    if (error) return "Couldn't look up that student: " + error.message;
-    if (!p) return "missing";
-    if (S.links.some(l => l.tutor_id === S.me.id && l.student_id === p.id)) return "already";
-    const res = await client.from("tutor_students").insert({ tutor_id: S.me.id, student_id: p.id, added_at: Date.now() });
-    if (res.error) return "Couldn't add the student: " + res.error.message;
+  // Admins only: changes an account's name and username, and its password when one is given (which also
+  // signs the account out everywhere). Resolves to null, "taken" or an error message.
+  async function updateAccount(role, username, { newUsername, name, password }) {
+    const { error } = await client.rpc("admin_update_account",
+      { target: idOf(role, username), new_username: newUsername, new_name: name, new_password: password || "" });
+    if (error) return /taken/.test(error.message) ? "taken" : "Couldn't save the changes: " + error.message;
     await refresh();
     return null;
   }
-  // Takes a student off the signed-in tutor's list (their account stays). Resolves to "unlinked" or throws.
-  async function removeStudent(username) {
-    const { data, error } = await client.rpc("delete_student", { student: idOf("student", username) });
-    if (error) throw error;
+  // Admins only: puts a student with exactly these tutors (usernames), taking them off any others.
+  // Resolves to null or an error message.
+  async function setTutors(student, tutors) {
+    const sid = idOf("student", student), want = tutors.map(u => idOf("tutor", u)).filter(Boolean);
+    const have = S.links.filter(l => l.student_id === sid).map(l => l.tutor_id);
+    const add = want.filter(id => !have.includes(id)), drop = have.filter(id => !want.includes(id));
+    if (add.length) {
+      const res = await client.from("tutor_students").insert(add.map(tutor_id => ({ tutor_id, student_id: sid, added_at: Date.now() })));
+      if (res.error) return "Couldn't change their tutors: " + res.error.message;
+    }
+    if (drop.length) {
+      const res = await client.from("tutor_students").delete().eq("student_id", sid).in("tutor_id", drop);
+      if (res.error) { await refresh(); return "Couldn't change their tutors: " + res.error.message; }
+    }
     await refresh();
-    return data;
+    return null;
   }
 
   // ---------- A student's topics and saved answers ----------
@@ -303,7 +311,7 @@ const TelaDB = (() => {
   return {
     client, S, track, start, refresh, onChange: fn => listeners.push(fn), onError: fn => errorListeners.push(fn), emit, flush,
     signIn, signOut, signedInRole, me, isAdmin, idOf, usernameOf, profile, studentAccounts, tutorAccounts,
-    createAccount, deleteAccount, linkStudent, removeStudent, topicsOf, saveMyTopics, kvGet, kvSet, kvKeys, kvRemove, activityOf,
+    createAccount, deleteAccount, updateAccount, setTutors, topicsOf, saveMyTopics, kvGet, kvSet, kvKeys, kvRemove, activityOf,
     homeworkOf, addHomework, removeHomework, lastRead, markRead
   };
 })();
