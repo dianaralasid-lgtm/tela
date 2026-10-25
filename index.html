@@ -956,7 +956,8 @@
   };
 
   // These subjects always get a filter button, even before they have topics.
-  const SUBJECTS = ["Physics", "Chemistry", "Biology", "Maths"];
+  // (Subjects in HIDDEN_SUBJECTS, from catalog.js, are left out.)
+  const SUBJECTS = ["Physics", "Chemistry", "Biology", "Maths"].filter(isShownSubject);
   const SCIENCES = ["Physics", "Chemistry", "Biology"];
   const BOARDS = ["AQA", "Edexcel", "OCR"];
   const SCIENCE_FLAG = STORAGE_KEY + ".sciences";
@@ -1024,11 +1025,14 @@
   const allSubjects = () => [...SUBJECTS, ...uniq(topics.map(t => t.subject).filter(s => !SUBJECTS.includes(s)))];
 
   function save() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(topics)); }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(topics.concat(hiddenTopics))); }
     catch (e) { toast("Couldn't save — browser storage is unavailable"); }
   }
 
+  // Topics in hidden subjects are set aside (and saved back unchanged) so they come back if the subject does.
   let topics = load();
+  const hiddenTopics = topics.filter(t => !isShownSubject(t.subject));
+  topics = topics.filter(t => isShownSubject(t.subject));
   save();
 
   const state = { query: "", subject: "All", board: "All", grade: "All", category: "All", status: "All", sort: "category" };
@@ -1159,7 +1163,8 @@
   // An item is complete once its topic is Confident.
   const HOMEWORK_KEY = STORAGE_KEY + ".homework";
   function loadHomework() {
-    try { const list = JSON.parse(localStorage.getItem(HOMEWORK_KEY)); return Array.isArray(list) ? list : []; } catch (e) { return []; }
+    // Homework in a hidden subject isn't shown.
+    try { const list = JSON.parse(localStorage.getItem(HOMEWORK_KEY)); return Array.isArray(list) ? list.filter(hw => isShownSubject(hw.subject)) : []; } catch (e) { return []; }
   }
   const findTopicByTitle = title => topics.find(t => t.title.trim().toLowerCase() === String(title).trim().toLowerCase());
   const shortDate = ms => new Date(ms).toLocaleDateString(undefined, { day: "numeric", month: "short" });
@@ -1182,7 +1187,7 @@
       return `<li class="hw-item${status === "done" ? " hw-done" : ""}">
         <div class="hw-main">
           <div class="hw-title">${esc(hw.title)}</div>
-          <div class="hw-meta">${esc(hw.grade || hw.subject || "")}${hw.questions ? ` · ${hw.questions} question${hw.questions === 1 ? "" : "s"}` : ""} · Set by <strong>${esc(hw.setByName || hw.setBy)}</strong> on ${shortDate(hw.setAt)}${hw.due ? ` · <span class="${late ? "hw-late" : ""}">Due ${shortDate(hw.due + "T12:00")}</span>` : ""}</div>
+          <div class="hw-meta">${esc(hw.grade || hw.subject || "")}${hw.questions ? ` · ${hw.questions} question${hw.questions === 1 ? "" : "s"}` : ""} · Set by <strong>${esc(TelaMessages.properName(hw.setByName || hw.setBy))}</strong> on ${shortDate(hw.setAt)}${hw.due ? ` · <span class="${late ? "hw-late" : ""}">Due ${shortDate(hw.due + "T12:00")}</span>` : ""}</div>
           ${hw.note ? `<div class="hw-note">${esc(hw.note)}</div>` : ""}
         </div>
         <span class="status ${status}">${label}</span>
@@ -3523,7 +3528,7 @@
   function myTutors() {
     let tutorAccounts = {};
     try { tutorAccounts = JSON.parse(localStorage.getItem("tela.tutors")) || {}; } catch (e) {}
-    return TelaMessages.tutorsOf(currentUser).filter(id => tutorAccounts[id]).map(id => ({ id, name: tutorAccounts[id].displayName || id }));
+    return TelaMessages.tutorsOf(currentUser).filter(id => tutorAccounts[id]).map(id => ({ id, name: TelaMessages.properName(tutorAccounts[id].displayName || id) }));
   }
   // Every conversation the student can open: one with each tutor, then the group chats tutors have put them in.
   // key is the tutor's username, or "g:" + the group's id.
@@ -3569,7 +3574,7 @@
     const tutorsList = convos.filter(x => !x.group), groupsList = convos.filter(x => x.group);
     let accounts = {};
     try { accounts = JSON.parse(localStorage.getItem("tela.accounts")) || {}; } catch (e) {}
-    const members = c.group ? c.group.members.map(m => m === currentUser ? "You" : (accounts[m] || {}).displayName || m) : [];
+    const members = c.group ? c.group.members.map(m => m === currentUser ? "You" : TelaMessages.properName((accounts[m] || {}).displayName || m)) : [];
     const review = c.group ? [] : topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).slice(0, 4);
     return `<div class="chat">
       ${convos.length > 1 ? `<div class="chat-with"><label class="d-field">Conversation with<select id="chatTutor">${groupsList.length

@@ -131,13 +131,16 @@ const TelaMessages = (() => {
     map[id] = Date.now();
     write(key, map);
   }
+  // Names as shown in messages: each word starts with a capital ("sam lee" -> "Sam Lee", "o'neil-smith" -> "O'Neil-Smith").
+  // Only first letters change, so names like "McKay" keep their own capitals.
+  const properName = name => String(name ?? "").trim().replace(/(^|[\s'’-])(\p{Ll})/gu, (m, before, ch) => before + ch.toUpperCase());
   // Display name of whoever sent a group message.
   function senderName(m) {
     const acc = read(m.role === "tutor" ? "tela.tutors" : "tela.accounts", {})[m.from];
-    return (acc && acc.displayName) || m.from;
+    return properName((acc && acc.displayName) || m.from);
   }
 
   return { tutorsOf, thread, send, unread, markRead, last, partners, when, isMessagesKey,
     group, allGroups, groupsFor, groupThread, groupLast, saveGroup, createGroup, deleteGroup, leaveAllGroups,
-    groupSend, groupUnread, groupMarkRead, senderName };
+    groupSend, groupUnread, groupMarkRead, senderName, properName };
 })();

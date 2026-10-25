@@ -117,3 +117,9 @@ const tierForGrade = grade => {
 };
 SAMPLE_TOPICS.Maths = Object.entries(MATHS_BY_GRADE).flatMap(([grade, entries]) =>
   entries.map(entry => [entry.slice(2), MATHS_AREAS[entry[0]], tierForGrade(grade), "", "todo", grade]));
+
+// Subjects switched off for now: they don't show anywhere in the app (dashboard, filters, homework picker,
+// tutor progress), but their topics, questions and everyone's saved progress are kept.
+// Take a subject out of this list to bring it back.
+const HIDDEN_SUBJECTS = ["Physics", "Chemistry", "Biology"];
+const isShownSubject = subject => !HIDDEN_SUBJECTS.includes(subject);

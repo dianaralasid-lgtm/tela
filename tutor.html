@@ -426,14 +426,14 @@
   let students = [];
   const loadStudents = () => Object.entries(read("tela.accounts", {})).filter(([, acc]) => tutorsOf(acc).includes(tutorUser)).map(([username, acc]) => {
     const topics = read("tela.topics." + username, null);
-    const list = Array.isArray(topics) ? topics : [];
+    const list = Array.isArray(topics) ? topics.filter(t => isShownSubject(t.subject)) : [];   // hidden subjects (catalog.js) left out
     const count = s => list.filter(t => t.status === s).length;
     return {
-      username, name: acc.displayName || username, opened: Array.isArray(topics), total: list.length,
+      username, name: TelaMessages.properName(acc.displayName || username), opened: Array.isArray(topics), total: list.length,
       done: count("done"), doing: count("doing"), todo: count("todo"),
       working: list.filter(t => t.status === "doing").map(t => t.title),
       lastMessage: TelaMessages.last(username, tutorUser), unread: TelaMessages.unread(username, tutorUser, "tutor"),
-      homework: read("tela.topics." + username + ".homework", []),
+      homework: [].concat(read("tela.topics." + username + ".homework", [])).filter(hw => isShownSubject(hw.subject)),
       statusOf: title => (list.find(t => t.title.trim().toLowerCase() === title.trim().toLowerCase()) || {}).status || "todo"
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
@@ -724,13 +724,13 @@
     const accounts = read("tela.accounts", {}), tutorAccounts = read("tela.tutors", {});
     return Object.keys(accounts).flatMap(student => TelaMessages.partners(student).map(tutor => {
       const list = TelaMessages.thread(student, tutor);
-      return { student, tutor, studentName: accounts[student].displayName || student,
-        tutorName: (tutorAccounts[tutor] || {}).displayName || tutor, count: list.length, last: list[list.length - 1] };
+      return { student, tutor, studentName: TelaMessages.properName(accounts[student].displayName || student),
+        tutorName: TelaMessages.properName((tutorAccounts[tutor] || {}).displayName || tutor), count: list.length, last: list[list.length - 1] };
     })).concat(Object.values(TelaMessages.allGroups()).map(g => {
       // Group chats are listed with the tutor who made them; group stands in for the student.
       const list = TelaMessages.groupThread(g.id);
-      return { group: g.id, student: g.name, tutor: g.tutor, studentName: g.name, tutorName: (tutorAccounts[g.tutor] || {}).displayName || g.tutor,
-        members: g.members.map(m => (accounts[m] || {}).displayName || m), count: list.length, last: list[list.length - 1] };
+      return { group: g.id, student: g.name, tutor: g.tutor, studentName: g.name, tutorName: TelaMessages.properName((tutorAccounts[g.tutor] || {}).displayName || g.tutor),
+        members: g.members.map(m => TelaMessages.properName((accounts[m] || {}).displayName || m)), count: list.length, last: list[list.length - 1] };
     }).filter(c => c.count)).sort((a, b) => b.last.at - a.last.at);
   }
   function adminListHTML() {
@@ -939,10 +939,10 @@
     }).join("")}</ul>`;
   }
 
-  // The topic picker lists every topic: sciences by subject, then Maths grade by grade.
+  // The topic picker lists every topic: sciences by subject (unless hidden), then Maths grade by grade.
   (function fillTopicPicker() {
     let html = `<option value="">Choose a topic…</option>`;
-    ["Physics", "Chemistry", "Biology"].forEach(subject => {
+    ["Physics", "Chemistry", "Biology"].filter(isShownSubject).forEach(subject => {
       html += `<optgroup label="${subject}">${SAMPLE_TOPICS[subject].map(r => `<option value="${esc(subject + "|" + r[0])}">${esc(r[0])}</option>`).join("")}</optgroup>`;
     });
     GRADES.forEach(grade => {
@@ -992,7 +992,9 @@
   }
   const closeHomework = () => $("hwOverlay").classList.remove("open");
   function saveHomework(list) {
-    localStorage.setItem(hwKey(hwStudent.username), JSON.stringify(list));
+    // Homework in hidden subjects isn't in the list shown here, so it's saved back as it was.
+    const hidden = [].concat(read(hwKey(hwStudent.username), [])).filter(hw => !isShownSubject(hw.subject));
+    localStorage.setItem(hwKey(hwStudent.username), JSON.stringify(list.concat(hidden)));
     refresh();
     hwStudent = students.find(s => s.username === hwStudent.username);
   }
