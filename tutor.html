@@ -227,6 +227,12 @@
   .group-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
   .group-actions .btn-danger { margin-right: auto; background: transparent; color: #b42318; }
   .group-actions .btn-danger:hover { background: #fdecea; }
+  /* Admin: every account, with buttons to make new ones */
+  .acc-new { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .acc-row { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: var(--white); }
+  .acc-row .avatar.tutor { background: var(--green-700); color: var(--white); }
+  .acc-row small { color: var(--muted); font-size: 12px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .acc-row .you { font-size: 12px; color: var(--muted); font-weight: 600; }
 
   /* One conversation: it scrolls, with the message box at the bottom */
   .drawer-body.chat-mode { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 16px; }
@@ -293,6 +299,11 @@
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
     <span>All messages</span>
   </button>
+  <!-- Admins only: make and delete student and tutor accounts -->
+  <button type="button" class="side-btn" data-view="accounts" id="accountsBtn" hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-.5A5.5 5.5 0 0 1 8 14h2a5.5 5.5 0 0 1 5.5 5.5v.5"/><path d="M19 8v6M16 11h6"/></svg>
+    <span>Accounts</span>
+  </button>
 </nav>
 
 <div class="drawer-overlay" id="drawerOverlay">
@@ -337,36 +348,50 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" id="search" placeholder="Search students by name or username…" autocomplete="off" aria-label="Search students">
       </label>
-      <p class="note">Shows your students. Use <strong>Add student</strong> to create an account or add a student who already has one.</p>
+      <p class="note">Shows your students. Use <strong>Add student</strong> to add a student by their username.</p>
     </div>
     <div class="grid" id="grid"></div>
   </div>
 </main>
 
-<!-- Add a student account -->
+<!-- Add an existing student to this tutor's list (accounts themselves are made by an admin) -->
 <div class="overlay" id="addOverlay">
   <form class="modal" id="addForm" role="dialog" aria-modal="true" aria-labelledby="addTitle" novalidate>
     <h2 id="addTitle">Add a student</h2>
-    <div class="mode-tabs" role="tablist">
-      <button type="button" class="mode-tab active" data-addmode="new" role="tab">New account</button>
-      <button type="button" class="mode-tab" data-addmode="existing" role="tab">Existing student</button>
-    </div>
-    <p class="lead" id="addLead">Create their account, then give them the username and password to sign in.</p>
+    <p class="lead">Add a student by their username. You'll be able to message each other and you'll see their progress. New student accounts are made by the admin.</p>
     <div class="error" id="addError" role="alert"></div>
-    <div id="newFields">
-      <label class="field">Student's name<input id="stName" maxlength="40" autocomplete="off" placeholder="e.g. Keyara"></label>
-      <label class="field">Username<input id="stUser" maxlength="20" autocomplete="off" autocapitalize="none" spellcheck="false">
-        <small>3–20 characters: letters, numbers, dots, dashes or underscores.</small></label>
-      <label class="field">Password<input id="stPass" type="password" autocomplete="new-password"><small>At least 6 characters.</small></label>
-      <label class="field">Confirm password<input id="stConfirm" type="password" autocomplete="new-password"></label>
-    </div>
-    <div id="existingFields" hidden>
-      <label class="field">Student's username<input id="exUser" maxlength="20" autocomplete="off" autocapitalize="none" spellcheck="false">
-        <small>The username they sign in with.</small></label>
-    </div>
+    <label class="field">Student's username<input id="exUser" maxlength="20" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <small>The username they sign in with.</small></label>
     <div class="modal-actions">
       <button type="button" class="btn btn-ghost" id="addCancel">Cancel</button>
       <button type="submit" class="btn btn-primary">Add student</button>
+    </div>
+  </form>
+</div>
+
+<!-- Admins only: make a student or tutor account -->
+<div class="overlay" id="accOverlay">
+  <form class="modal" id="accForm" role="dialog" aria-modal="true" aria-labelledby="accTitle" novalidate>
+    <h2 id="accTitle">New account</h2>
+    <div class="mode-tabs" role="tablist">
+      <button type="button" class="mode-tab active" data-accrole="student" role="tab">Student</button>
+      <button type="button" class="mode-tab" data-accrole="tutor" role="tab">Tutor</button>
+    </div>
+    <p class="lead" id="accLead"></p>
+    <div class="error" id="accError" role="alert"></div>
+    <label class="field">Name<input id="accName" maxlength="40" autocomplete="off" placeholder="e.g. Keyara"></label>
+    <label class="field">Username<input id="accUser" maxlength="20" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <small>3–20 characters: letters, numbers, dots, dashes or underscores.</small></label>
+    <label class="field">Password<input id="accPass" type="password" autocomplete="new-password"><small>At least 6 characters.</small></label>
+    <label class="field">Confirm password<input id="accConfirm" type="password" autocomplete="new-password"></label>
+    <div class="field" id="accTutorsField" role="group" aria-labelledby="accTutorsLabel">
+      <span id="accTutorsLabel">Tutors <span class="opt">(optional)</span></span>
+      <ul class="member-list" id="accTutors"></ul>
+      <small>They'll see this student's progress and can message them and set homework.</small>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="accCancel">Cancel</button>
+      <button type="submit" class="btn btn-primary" id="accSubmit">Create account</button>
     </div>
   </form>
 </div>
@@ -474,7 +499,7 @@ TelaDB.start("tutor").then(() => {
     const shown = students.filter(s => !q || s.name.toLowerCase().includes(q) || s.username.includes(q));
     $("grid").innerHTML = shown.length ? shown.map(card).join("")
       : `<div class="empty"><h3>${students.length ? "No students match your search" : "No students yet"}</h3>
-         <p>${students.length ? "Try a different name." : "Add a student to create their account."}</p>
+         <p>${students.length ? "Try a different name." : "Add a student by their username to see their progress here."}</p>
          ${students.length ? "" : `<button type="button" class="btn btn-primary" id="emptyAdd" style="margin-top:14px">+ Add student</button>`}</div>`;
   }
 
@@ -807,6 +832,7 @@ TelaDB.start("tutor").then(() => {
   document.querySelectorAll(".side-btn").forEach(b => b.addEventListener("click", () => {
     if (b.dataset.view === "messages") { if (messagesOpen() && panelMode === "messages") closeMessages(); else openMessages(); }
     else if (b.dataset.view === "admin" && isAdmin) { if (messagesOpen() && panelMode === "admin") closeMessages(); else openAdmin(); }
+    else if (b.dataset.view === "accounts" && isAdmin) { if (messagesOpen() && panelMode === "accounts") closeMessages(); else openAccounts(); }
     else { closeMessages(); window.scrollTo({ top: 0, behavior: "smooth" }); }
   }));
   $("drawerBody").addEventListener("input", e => {
@@ -847,7 +873,8 @@ TelaDB.start("tutor").then(() => {
   // Messages, progress and homework changed by someone else arrive without a reload (live updates in db.js).
   TelaDB.onError(toast);
   TelaDB.onChange(() => {
-    if (panelMode === "admin" && messagesOpen()) { refresh(); refreshAdmin(); }
+    if (panelMode === "accounts" && messagesOpen()) { refresh(); refreshAccounts(); }
+    else if (panelMode === "admin" && messagesOpen()) { refresh(); refreshAdmin(); }
     else if (chatStudent && messagesOpen()) refreshChat();
     else if (chatGroup && messagesOpen()) refreshGroupChat(); else refresh();
   });
@@ -884,24 +911,13 @@ TelaDB.start("tutor").then(() => {
     document.querySelectorAll("#addForm .invalid").forEach(el => el.classList.remove("invalid"));
     if (field) { $(field).classList.add("invalid"); $(field).focus(); }
   }
-  // The form either creates a new student account or adds an existing student to this tutor.
-  let addMode = "new";
-  function setAddMode(mode) {
-    addMode = mode;
-    document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.addmode === mode));
-    $("newFields").hidden = mode !== "new";
-    $("existingFields").hidden = mode !== "existing";
-    $("addLead").textContent = mode === "new" ? "Create their account, then give them the username and password to sign in."
-      : "Add a student who already has an account. You'll be able to message each other and you'll see their progress.";
-    $("addError").classList.remove("show");
-    document.querySelectorAll("#addForm .invalid").forEach(el => el.classList.remove("invalid"));
-    $(mode === "new" ? "stName" : "exUser").focus();
-  }
-  document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => setAddMode(t.dataset.addmode)));
+  // Tutors add a student who already has an account (only an admin makes accounts).
   function openAdd() {
     $("addForm").reset();
+    $("addError").classList.remove("show");
+    document.querySelectorAll("#addForm .invalid").forEach(el => el.classList.remove("invalid"));
     $("addOverlay").classList.add("open");
-    setAddMode("new");
+    $("exUser").focus();
   }
   const closeAdd = () => $("addOverlay").classList.remove("open");
 
@@ -1032,70 +1048,43 @@ TelaDB.start("tutor").then(() => {
   });
 
   // ---------- Remove a student ----------
-  // If the student has other tutors, this only takes them off this tutor's list. If this is their only tutor,
-  // the account and everything their dashboard saved (topics, practice answers, messages) is deleted.
+  // Only takes the student off this tutor's list: their account stays (accounts are deleted by an admin).
   async function removeStudent(username) {
     const acc = TelaDB.studentAccounts()[username];
     if (!acc) return;
-    const name = TelaMessages.properName(acc.displayName || username), others = tutorsOf(acc).filter(t => t !== tutorUser);
-    if (others.length) {
-      if (!confirm(`Remove ${name} (@${username}) from your students? They'll stay with their other tutor${others.length > 1 ? "s" : ""}, and their account isn't deleted.`)) return;
-    } else if (!confirm(`Remove ${name} (@${username})? You're their only tutor, so their account, progress and saved answers will be deleted. This can't be undone.`)) return;
-    let result;
-    try { result = await TelaDB.removeStudent(username); }
+    const name = TelaMessages.properName(acc.displayName || username);
+    if (!confirm(`Remove ${name} (@${username}) from your students? Their account isn't deleted; you can add them again by their username.`)) return;
+    try { await TelaDB.removeStudent(username); }
     catch (err) { return toast("Couldn't remove the student. Check your connection and try again."); }
-    if (result === "deleted") TelaMessages.leaveAllGroups(username);
     refresh();
-    toast(result === "deleted" ? `Removed ${name}.` : `Removed ${name} from your students.`);
+    toast(`Removed ${name} from your students.`);
   }
   $("addCancel").addEventListener("click", closeAdd);
   $("addOverlay").addEventListener("click", e => { if (e.target === $("addOverlay")) closeAdd(); });
   document.addEventListener("keydown", e => {
     if (e.key !== "Escape") return;
-    if ($("addOverlay").classList.contains("open") || $("hwOverlay").classList.contains("open")) { closeAdd(); closeHomework(); }
+    if (["addOverlay", "hwOverlay", "accOverlay"].some(id => $(id).classList.contains("open"))) { closeAdd(); closeHomework(); closeAccountForm(); }
     else if (messagesOpen()) closeMessages();
   });
-  document.querySelectorAll("#addForm input").forEach(el => el.addEventListener("input", () => el.classList.remove("invalid")));
+  document.querySelectorAll("#addForm input, #accForm input").forEach(el => el.addEventListener("input", () => el.classList.remove("invalid")));
 
-  // While the server is answering, the Add button can't be pressed again.
-  function addBusy(on) {
-    const btn = $("addForm").querySelector('button[type="submit"]');
+  // While the server is answering, a form's button can't be pressed again.
+  function busy(btn, on, label) {
     btn.disabled = on;
-    btn.textContent = on ? "Adding…" : "Add student";
+    if (on) { btn.dataset.label = btn.textContent; btn.textContent = label; }
+    else if (btn.dataset.label) btn.textContent = btn.dataset.label;
   }
   $("addForm").addEventListener("submit", async e => {
     e.preventDefault();
-    if (addMode === "existing") return addExisting();
-    const name = $("stName").value.trim();
-    const username = $("stUser").value.trim().toLowerCase();
-    const password = $("stPass").value;
-    if (!name) return addError("Enter the student's name.", "stName");
-    if (!USERNAME_RE.test(username)) return addError("Usernames must be 3–20 characters: letters, numbers, dots, dashes or underscores.", "stUser");
-    if (password.length < 6) return addError("The password needs at least 6 characters.", "stPass");
-    if (password !== $("stConfirm").value) return addError("Those passwords don't match.", "stConfirm");
-
-    addBusy(true);
-    let problem;
-    try { problem = await TelaDB.createStudent(username, name, password); }
-    catch (err) { problem = "Couldn't reach the server. Check your connection and try again."; }
-    addBusy(false);
-    if (problem === "taken") return addError("That username is already taken.", "stUser");
-    if (problem) return addError(problem);
-    closeAdd();
-    $("search").value = "";
-    refresh();
-    toast(`Added ${TelaMessages.properName(name)}. They can sign in as "${username}" with the password you chose.`);
-  });
-
-  async function addExisting() {
     const username = $("exUser").value.trim().toLowerCase();
     if (!username) return addError("Enter the student's username.", "exUser");
-    addBusy(true);
+    const btn = $("addForm").querySelector('button[type="submit"]');
+    busy(btn, true, "Adding…");
     let problem;
     try { problem = await TelaDB.linkStudent(username); }
     catch (err) { problem = "Couldn't reach the server. Check your connection and try again."; }
-    addBusy(false);
-    if (problem === "missing") return addError(`There's no student with the username "${username}".`, "exUser");
+    busy(btn, false);
+    if (problem === "missing") return addError(`There's no student with the username "${username}". Student accounts are made by the admin.`, "exUser");
     const acc = TelaDB.studentAccounts()[username], name = TelaMessages.properName((acc && acc.displayName) || username);
     if (problem === "already") return addError(`${name} is already one of your students.`, "exUser");
     if (problem) return addError(problem);
@@ -1103,7 +1092,123 @@ TelaDB.start("tutor").then(() => {
     $("search").value = "";
     refresh();
     toast(`Added ${name} to your students.`);
+  });
+
+  // ---------- Admin: accounts ----------
+  // Only admins make accounts, for students and tutors, and only admins delete them (with everything
+  // saved for the account). The panel lists every account; the New account form makes one.
+  $("accountsBtn").hidden = !isAdmin;
+  function accountsHTML() {
+    const q = ($("accSearch") ? $("accSearch").value : "").trim().toLowerCase();
+    const tutorsMap = TelaDB.tutorAccounts(), studentsMap = TelaDB.studentAccounts();
+    const match = (u, a) => !q || u.includes(q) || String(a.displayName).toLowerCase().includes(q);
+    const byName = ([, a], [, b]) => String(a.displayName).localeCompare(String(b.displayName));
+    const tutorList = Object.entries(tutorsMap).filter(([u, a]) => match(u, a)).sort(byName);
+    const studentList = Object.entries(studentsMap).filter(([u, a]) => match(u, a)).sort(byName);
+    const nameOf = u => TelaMessages.properName((tutorsMap[u] || {}).displayName || u);
+    const row = (role, u, a, detail) => `<li class="acc-row">
+        <span class="avatar${role === "tutor" ? " tutor" : ""}">${esc(String(a.displayName || u).charAt(0).toUpperCase())}</span>
+        <span class="convo-main"><strong>${esc(TelaMessages.properName(a.displayName || u))}</strong><small>@${esc(u)} · ${detail}</small></span>
+        ${role === "tutor" && u === tutorUser ? `<span class="you">You</span>`
+          : `<button type="button" class="remove-btn" data-delete-account="${esc(role + "|" + u)}" aria-label="Delete ${esc(a.displayName || u)}'s account">Delete</button>`}</li>`;
+    const taught = u => Object.values(studentsMap).filter(s => s.tutors.includes(u)).length;
+    return `<div class="convo-head"><h3>Tutors (${tutorList.length})</h3></div>
+      ${tutorList.length ? `<ul class="convo-list">${tutorList.map(([u, a]) => row("tutor", u, a, `${taught(u)} student${taught(u) === 1 ? "" : "s"}`)).join("")}</ul>` : `<p class="muted">No tutors match.</p>`}
+      <div class="convo-head"><h3>Students (${studentList.length})</h3></div>
+      ${studentList.length ? `<ul class="convo-list">${studentList.map(([u, a]) => row("student", u, a, a.tutors.length ? esc(a.tutors.map(nameOf).join(", ")) : "no tutor")).join("")}</ul>` : `<p class="muted">No students match.</p>`}`;
   }
+  function showAccounts() {
+    $("drawerTitle").textContent = "Accounts";
+    $("drawerBody").classList.remove("chat-mode");
+    $("drawerBody").innerHTML = `<p class="admin-note">Only admins can make or delete student and tutor accounts.</p>
+      <div class="acc-new">
+        <button type="button" class="btn btn-primary" data-new-account="student">+ New student</button>
+        <button type="button" class="btn btn-ghost" data-new-account="tutor">+ New tutor</button>
+      </div>
+      <label class="search admin-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="accSearch" placeholder="Search by name or username…" autocomplete="off" aria-label="Search accounts"></label>
+      <div id="accRows">${accountsHTML()}</div>`;
+  }
+  function openAccounts() {
+    chatStudent = null; chatGroup = null; groupEdit = null; adminChat = null; panelMode = "accounts";
+    $("drawerOverlay").classList.add("open");
+    setActive("accounts");
+    showAccounts();
+    $("accSearch").focus();
+  }
+  const refreshAccounts = () => { if ($("accRows")) $("accRows").innerHTML = accountsHTML(); };
+  $("drawerBody").addEventListener("input", e => { if (e.target.id === "accSearch") refreshAccounts(); });
+  $("drawerBody").addEventListener("click", async e => {
+    const make = e.target.closest("[data-new-account]");
+    if (make) return openAccountForm(make.dataset.newAccount);
+    const del = e.target.closest("[data-delete-account]");
+    if (!del) return;
+    const [role, username] = del.dataset.deleteAccount.split("|");
+    const acc = (role === "tutor" ? TelaDB.tutorAccounts() : TelaDB.studentAccounts())[username] || {};
+    const name = TelaMessages.properName(acc.displayName || username);
+    const what = role === "tutor" ? "their messages and group chats" : "their progress, saved answers, homework and messages";
+    if (!confirm(`Delete ${name}'s ${role} account (@${username})? This deletes ${what} for good. This can't be undone.`)) return;
+    del.disabled = true;
+    try { await TelaDB.deleteAccount(role, username); }
+    catch (err) { del.disabled = false; return toast("Couldn't delete the account. Check your connection and try again."); }
+    refresh();
+    refreshAccounts();
+    toast(`Deleted ${name}'s account.`);
+  });
+
+  // The New account form: a student (optionally put with some tutors) or a tutor.
+  let accRole = "student";
+  function setAccRole(role) {
+    accRole = role;
+    document.querySelectorAll("[data-accrole]").forEach(t => t.classList.toggle("active", t.dataset.accrole === role));
+    $("accTitle").textContent = role === "tutor" ? "New tutor account" : "New student account";
+    $("accLead").textContent = role === "tutor" ? "Make the account, then give the tutor their username and password. They sign in with Tutor sign in."
+      : "Make the account, then give the student their username and password. They start with an empty dashboard.";
+    $("accTutorsField").hidden = role !== "student";
+    $("accError").classList.remove("show");
+    document.querySelectorAll("#accForm .invalid").forEach(el => el.classList.remove("invalid"));
+  }
+  document.querySelectorAll("[data-accrole]").forEach(t => t.addEventListener("click", () => { setAccRole(t.dataset.accrole); $("accName").focus(); }));
+  function openAccountForm(role) {
+    $("accForm").reset();
+    const tutorsMap = TelaDB.tutorAccounts();
+    $("accTutors").innerHTML = Object.entries(tutorsMap).sort(([, a], [, b]) => String(a.displayName).localeCompare(String(b.displayName)))
+      .map(([u, a]) => `<li><label><input type="checkbox" name="accTutor" value="${esc(u)}"><span>${esc(TelaMessages.properName(a.displayName || u))} <small>@${esc(u)}</small></span></label></li>`).join("");
+    setAccRole(role);
+    $("accOverlay").classList.add("open");
+    $("accName").focus();
+  }
+  function closeAccountForm() { $("accOverlay").classList.remove("open"); }
+  function accError(msg, field) {
+    $("accError").textContent = msg;
+    $("accError").classList.add("show");
+    document.querySelectorAll("#accForm .invalid").forEach(el => el.classList.remove("invalid"));
+    if (field) { $(field).classList.add("invalid"); $(field).focus(); }
+  }
+  $("accCancel").addEventListener("click", closeAccountForm);
+  $("accOverlay").addEventListener("click", e => { if (e.target === $("accOverlay")) closeAccountForm(); });
+  $("accForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const name = $("accName").value.trim();
+    const username = $("accUser").value.trim().toLowerCase();
+    const password = $("accPass").value;
+    if (!name) return accError("Enter their name.", "accName");
+    if (!USERNAME_RE.test(username)) return accError("Usernames must be 3–20 characters: letters, numbers, dots, dashes or underscores.", "accUser");
+    if (password.length < 6) return accError("The password needs at least 6 characters.", "accPass");
+    if (password !== $("accConfirm").value) return accError("Those passwords don't match.", "accConfirm");
+    const tutors = accRole === "student" ? [...document.querySelectorAll("[name=accTutor]:checked")].map(c => c.value) : [];
+    busy($("accSubmit"), true, "Creating…");
+    let problem;
+    try { problem = await TelaDB.createAccount(accRole, username, name, password, tutors); }
+    catch (err) { problem = "Couldn't reach the server. Check your connection and try again."; }
+    busy($("accSubmit"), false);
+    if (problem === "taken") return accError(`There's already a ${accRole} with the username "${username}".`, "accUser");
+    if (problem) return accError(problem);
+    closeAccountForm();
+    refresh();
+    refreshAccounts();
+    toast(`Made ${accRole === "tutor" ? "a tutor" : "a student"} account for ${TelaMessages.properName(name)}. They sign in as "${username}" with the password you chose.`);
+  });
 
   $("logoutBtn").addEventListener("click", async () => {
     await TelaDB.signOut();

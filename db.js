@@ -150,13 +150,6 @@ const TelaDB = (() => {
     if (!me || me.role !== role) { await client.auth.signOut(); return "mismatch"; }
     return null;
   }
-  // Tutors make their own account on the sign-in page.
-  async function signUp(role, username, name, password) {
-    safe(() => localStorage.removeItem(REMEMBER));
-    const { error } = await client.auth.signUp({ email: emailFor(role, username), password, options: { data: { username, display_name: name, role } } });
-    if (error) return /already|registered|exists/i.test(error.message) ? "taken" : "Couldn't create the account: " + error.message;
-    return null;
-  }
   async function signOut() {
     await flush();
     await client.auth.signOut().catch(() => {});
@@ -188,19 +181,41 @@ const TelaDB = (() => {
     return Object.fromEntries(Object.values(S.profiles).filter(p => p.role === "tutor").map(p => [p.username, { displayName: p.display_name }]));
   }
 
-  // A tutor making a new student account. It's made with a separate connection that doesn't keep the
-  // sign-in, so the tutor stays signed in. Resolves to null, "taken" or an error message.
-  async function createStudent(username, name, password) {
-    const other = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false, storageKey: "tela.newStudent" } });
-    const { data, error } = await other.auth.signUp({ email: emailFor("student", username), password, options: { data: { username, display_name: name, role: "student" } } });
-    if (error) return /already|registered|exists/i.test(error.message) ? "taken" : "Couldn't create the account: " + error.message;
-    // New students start with an empty dashboard (no sample topics).
-    await other.from("student_data").insert({ student_id: data.user.id, topics: [] });
-    const link = { tutor_id: S.me.id, student_id: data.user.id, added_at: Date.now() };
-    const res = await client.from("tutor_students").insert(link);
-    if (res.error) return "Couldn't add the student: " + res.error.message;
+  // Only an admin makes accounts (students and tutors). The admin writes an invite, which the database needs
+  // before it accepts the new account (see supabase/admin-accounts.sql), then the account is signed up on a
+  // separate connection that doesn't keep the sign-in, so the admin stays signed in.
+  // A new student starts with an empty dashboard and is put with the given tutors (usernames).
+  // Resolves to null, "taken" or an error message.
+  async function createAccount(role, username, name, password, tutors = []) {
+    username = String(username).trim().toLowerCase();
+    const { data: existing, error: lookupError } = await client.from("profiles").select("id").eq("role", role).eq("username", username).maybeSingle();
+    if (lookupError) return "Couldn't check the username: " + lookupError.message;
+    if (existing) return "taken";
+    const invite = await client.from("account_invites").upsert({ username, role, display_name: name });
+    if (invite.error) return "Couldn't create the account: " + invite.error.message;
+    const other = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false, storageKey: "tela.newAccount" } });
+    const { data, error } = await other.auth.signUp({ email: emailFor(role, username), password, options: { data: { username, display_name: name, role } } });
+    if (error) {
+      await client.from("account_invites").delete().eq("username", username).eq("role", role);
+      return /already|registered|exists/i.test(error.message) ? "taken" : "Couldn't create the account: " + error.message;
+    }
+    if (role === "student") {
+      await other.from("student_data").insert({ student_id: data.user.id, topics: [] });
+      const links = tutors.map(idOf.bind(null, "tutor")).filter(Boolean).map(tutor_id => ({ tutor_id, student_id: data.user.id, added_at: Date.now() }));
+      if (links.length) {
+        const res = await client.from("tutor_students").insert(links);
+        if (res.error) { await refresh(); return "The account was made, but it couldn't be put with its tutors: " + res.error.message; }
+      }
+    }
+    await other.auth.signOut().catch(() => {});
     await refresh();
     return null;
+  }
+  // Admins only: deletes an account and everything saved for it.
+  async function deleteAccount(role, username) {
+    const { error } = await client.rpc("admin_delete_account", { target: idOf(role, username) });
+    if (error) throw error;
+    await refresh();
   }
   // A tutor adding a student who already has an account. Resolves to null or a message.
   async function linkStudent(username) {
@@ -213,7 +228,7 @@ const TelaDB = (() => {
     await refresh();
     return null;
   }
-  // Resolves to "unlinked" (they still have other tutors), "deleted" (account gone) or throws.
+  // Takes a student off the signed-in tutor's list (their account stays). Resolves to "unlinked" or throws.
   async function removeStudent(username) {
     const { data, error } = await client.rpc("delete_student", { student: idOf("student", username) });
     if (error) throw error;
@@ -282,8 +297,8 @@ const TelaDB = (() => {
 
   return {
     client, S, track, start, refresh, onChange: fn => listeners.push(fn), onError: fn => errorListeners.push(fn), emit, flush,
-    signIn, signUp, signOut, signedInRole, me, isAdmin, idOf, usernameOf, profile, studentAccounts, tutorAccounts,
-    createStudent, linkStudent, removeStudent, topicsOf, saveMyTopics, kvGet, kvSet, kvKeys, kvRemove,
+    signIn, signOut, signedInRole, me, isAdmin, idOf, usernameOf, profile, studentAccounts, tutorAccounts,
+    createAccount, deleteAccount, linkStudent, removeStudent, topicsOf, saveMyTopics, kvGet, kvSet, kvKeys, kvRemove,
     homeworkOf, addHomework, removeHomework, lastRead, markRead
   };
 })();

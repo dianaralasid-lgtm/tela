@@ -69,17 +69,6 @@
   .card h1 { font-size: 24px; letter-spacing: -.02em; }
   .card .lead { color: var(--muted); font-size: 14px; margin: 4px 0 22px; }
 
-  .tabs {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
-    background: var(--green-50); border-radius: 10px; padding: 4px; margin: 0 0 22px;
-  }
-  .tab {
-    border: none; background: transparent; border-radius: 8px; padding: 8px;
-    font-size: 14px; font-weight: 600; color: var(--muted);
-    transition: background .15s, color .15s;
-  }
-  .tab.active { background: var(--white); color: var(--green-800); box-shadow: 0 1px 3px rgba(10,61,44,.12); }
-
   .field { margin-bottom: 16px; }
   .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
   .input-wrap { position: relative; }
@@ -134,7 +123,7 @@
   }
   .tutor-mode .mode-badge { display: block; }
 
-  form[hidden], .tabs[hidden], .switch[hidden] { display: none; }
+  form[hidden], .switch[hidden] { display: none; }
   @media (max-width: 860px) {
     body { grid-template-columns: 1fr; }
     .side { padding: 28px 16px; }
@@ -166,12 +155,7 @@
     <h1 id="heading">Welcome back</h1>
     <p class="lead" id="lead">Sign in with the account your tutor set up for you.</p>
 
-    <!-- Only tutors can create accounts here; students are set up by their tutor. -->
-    <div class="tabs" id="tabs" role="tablist" hidden>
-      <button class="tab active" data-tab="signin" role="tab">Sign in</button>
-      <button class="tab" data-tab="signup" role="tab">Create account</button>
-    </div>
-
+    <!-- There's no sign-up here: student and tutor accounts are made by an admin (on the tutor page). -->
     <div class="error" id="error" role="alert"></div>
 
     <!-- Sign in -->
@@ -191,35 +175,7 @@
         <label class="check"><input type="checkbox" id="remember"> Keep me signed in</label>
       </div>
       <button type="submit" class="btn">Sign in</button>
-      <p class="switch" id="noAccount">New here? Ask your tutor to create your account.</p>
-      <p class="switch" id="tutorNew" hidden>New tutor? <button type="button" data-tab="signup">Create a tutor account</button></p>
-    </form>
-
-    <!-- Sign up -->
-    <form id="signup" novalidate hidden>
-      <div class="field">
-        <label for="suName">Your name</label>
-        <input id="suName" autocomplete="name" maxlength="40" placeholder="e.g. Sam">
-      </div>
-      <div class="field">
-        <label for="suUser">Username</label>
-        <input id="suUser" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="20">
-        <div class="hint">3–20 characters: letters, numbers, dots, dashes or underscores.</div>
-      </div>
-      <div class="field">
-        <label for="suPass">Password</label>
-        <div class="input-wrap has-toggle">
-          <input id="suPass" type="password" autocomplete="new-password">
-          <button type="button" class="toggle-pw" data-for="suPass">Show</button>
-        </div>
-        <div class="hint">At least 6 characters.</div>
-      </div>
-      <div class="field">
-        <label for="suConfirm">Confirm password</label>
-        <input id="suConfirm" type="password" autocomplete="new-password">
-      </div>
-      <button type="submit" class="btn">Create account</button>
-      <p class="switch">Already have an account? <button type="button" data-tab="signin">Sign in</button></p>
+      <p class="switch" id="noAccount">New here? Ask your tutor or the admin to create your account.</p>
     </form>
 
     <div class="mode-switch">
@@ -232,7 +188,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
 <script src="db.js"></script>
 <script>
-  const USERNAME_RE = /^[a-z0-9._-]{3,20}$/;
   // Students and tutors have separate accounts (see db.js) and land on different pages.
   const PAGES = { student: "index.html", tutor: "tutor.html" };
   let mode = "student";
@@ -266,22 +221,6 @@
     document.querySelectorAll(".invalid").forEach(el => el.classList.remove("invalid"));
   }
 
-  function switchTab(tab) {
-    clearError();
-    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
-    $("signin").hidden = tab !== "signin";
-    $("signup").hidden = tab !== "signup";
-    const tutor = mode === "tutor";
-    $("heading").textContent = tab === "signin" ? (tutor ? "Tutor sign in" : "Welcome back") : "Create a tutor account";
-    $("lead").textContent = tab === "signin"
-      ? (tutor ? "Sign in to see and add your students." : "Sign in with the account your tutor set up for you.")
-      : "Set up a tutor account, then add your students.";
-    $(tab === "signin" ? "liUser" : "suName").focus();
-  }
-
-  document.querySelectorAll("[data-tab]").forEach(el =>
-    el.addEventListener("click", () => switchTab(el.dataset.tab)));
-
   // ---------- Student / tutor switch ----------
   function switchMode(next) {
     mode = next;
@@ -290,12 +229,12 @@
     $("modeText").textContent = tutor ? "Are you a student?" : "Are you a tutor?";
     $("modeBtn").textContent = tutor ? "Student sign in" : "Tutor sign in";
     document.title = "TutorsElevateLearningApp — " + (tutor ? "Tutor sign in" : "Sign in");
-    $("tabs").hidden = !tutor;
-    $("noAccount").hidden = tutor;
-    $("tutorNew").hidden = !tutor;
+    $("heading").textContent = tutor ? "Tutor sign in" : "Welcome back";
+    $("lead").textContent = tutor ? "Sign in to see your students." : "Sign in with the account your tutor set up for you.";
+    $("noAccount").textContent = tutor ? "Need a tutor account? Ask the admin to create one." : "New here? Ask your tutor or the admin to create your account.";
     $("signin").reset();
-    $("signup").reset();
-    switchTab("signin");
+    clearError();
+    $("liUser").focus();
   }
   $("modeBtn").addEventListener("click", () => switchMode(mode === "tutor" ? "student" : "tutor"));
 
@@ -328,30 +267,6 @@
     }
     if (problem) return showError(problem);
     location.href = PAGES[mode];
-  });
-
-  // ---------- Sign up (tutors only: student accounts are added from the tutor page) ----------
-  $("signup").addEventListener("submit", async e => {
-    e.preventDefault();
-    if (mode !== "tutor") return;
-    const name = $("suName").value.trim();
-    const username = $("suUser").value.trim().toLowerCase();
-    const password = $("suPass").value;
-    const confirm = $("suConfirm").value;
-
-    if (!name) return showError("Please enter your name.", ["suName"]);
-    if (!USERNAME_RE.test(username)) return showError("Usernames must be 3–20 characters: letters, numbers, dots, dashes or underscores.", ["suUser"]);
-    if (password.length < 6) return showError("Your password needs at least 6 characters.", ["suPass"]);
-    if (password !== confirm) return showError("Those passwords don't match.", ["suConfirm"]);
-
-    busy($("signup"), true);
-    let problem;
-    try { problem = await TelaDB.signUp("tutor", username, name, password); }
-    catch (err) { problem = "Couldn't reach the server. Check your internet connection and try again."; }
-    busy($("signup"), false);
-    if (problem === "taken") return showError("That username is already taken.", ["suUser"]);
-    if (problem) return showError(problem);
-    location.href = PAGES.tutor;
   });
 
   // Browsers may restore this page from cache on Back without re-running the script,
