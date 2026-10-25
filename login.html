@@ -15,9 +15,16 @@
     --green-600: #198754;
     --green-100: #e3f2ea;
     --green-50:  #f2f8f5;
+    --brown-900: #3b2618;
+    --brown-800: #5c3d27;
+    --brown-700: #7a5235;
+    --brown-500: #a9805c;
+    --brown-200: #e8d9c4;
+    --brown-100: #f2e8da;
+    --brown-50:  #faf5ee;
     --ink: #13261e;
-    --muted: #5f7369;
-    --line: #dce7e1;
+    --muted: #6f6256;
+    --line: #e6d9c8;
     --white: #ffffff;
     --danger: #b42318;
     --danger-bg: #fdecea;
@@ -27,7 +34,7 @@
 
   body {
     font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    background: var(--green-50);
+    background: var(--brown-100);
     color: var(--ink);
     line-height: 1.5;
     min-height: 100vh;
@@ -39,7 +46,7 @@
 
   /* ---------- Brand panel ---------- */
   .side {
-    background: linear-gradient(135deg, var(--green-900), var(--green-700));
+    background: linear-gradient(135deg, var(--green-900), var(--brown-700));
     color: var(--white);
     padding: 48px;
     display: flex; flex-direction: column; justify-content: space-between;
@@ -85,7 +92,7 @@
     border: none; background: transparent; color: var(--muted);
     font-size: 12px; font-weight: 600; padding: 6px 8px; border-radius: 6px;
   }
-  .toggle-pw:hover { background: var(--green-50); color: var(--green-700); }
+  .toggle-pw:hover { background: var(--brown-50); color: var(--green-700); }
   .has-toggle input { padding-right: 60px; }
 
   .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; font-size: 14px; }
@@ -116,7 +123,7 @@
   .mode-switch { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); text-align: center; }
   .mode-switch p { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
   .btn-secondary { background: var(--white); color: var(--green-800); border: 1.5px solid var(--line); }
-  .btn-secondary:hover { background: var(--green-50); border-color: var(--green-600); }
+  .btn-secondary:hover { background: var(--brown-50); border-color: var(--green-600); }
   .mode-badge {
     display: none; width: fit-content; margin-bottom: 10px; padding: 3px 10px; border-radius: 99px;
     background: var(--green-100); color: var(--green-800); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
