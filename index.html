@@ -224,6 +224,7 @@
     display: flex; justify-content: space-between; align-items: center;
     border-top: 1px solid var(--line); padding-top: 12px; margin-top: auto;
   }
+  .q-count { font-size: 12px; color: var(--muted); font-weight: 500; }
   .status {
     border: none; border-radius: 999px; padding: 5px 12px;
     font-size: 12px; font-weight: 600;
@@ -1126,8 +1127,17 @@
         </div>
         <div class="card-foot">
           <button class="status ${t.status}" data-action="status" title="Click to change status">${STATUS[t.status].label}</button>
+          ${questionCount(t)}
         </div>
       </article>`).join("");
+  }
+
+  // How many practice questions the topic has altogether, shown in the tile's footer.
+  function questionCount(t) {
+    const set = PRACTICE[practiceKey(t)];
+    if (!set) return "";
+    const n = set.items.length;
+    return `<span class="q-count">${n} question${n === 1 ? "" : "s"}</span>`;
   }
 
   function renderStats() {
