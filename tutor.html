@@ -6,15 +6,7 @@
 <title>TutorsElevateLearningApp — Tutor</title>
 <link rel="icon" href="logo.png.svg" type="image/svg+xml">
 <script>
-  // Only a signed-in tutor can see this page.
-  (function () {
-    try {
-      const user = sessionStorage.getItem("tela.tutorSession") || localStorage.getItem("tela.tutorSession");
-      const tutors = JSON.parse(localStorage.getItem("tela.tutors")) || {};
-      if (user && tutors[user]) return;
-    } catch (e) {}
-    location.replace("login.html#tutor");
-  })();
+  // (Only a signed-in tutor can see this page: TelaDB.start("tutor") below sends anyone else to the sign-in page.)
   // Start with the sidebar collapsed if that was the last choice.
   try { if (localStorage.getItem("tela.tutorSidebarCollapsed") === "1") document.documentElement.classList.add("side-collapsed"); } catch (e) {}
 </script>
@@ -406,26 +398,27 @@
   window.QUESTION_BANK = { topics: {}, add(t) { const k = String(t && t.topic).trim().toLowerCase(); (this.topics[k] = this.topics[k] || []).push(t); } };
 </script>
 <script src="questions.js"></script>
-<script src="auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="db.js"></script>
 <script src="catalog.js"></script>
 <script src="messages.js"></script>
 <script src="dropdown.js"></script>
 <script>
+// The page starts once the signed-in tutor's students, homework and messages have loaded from Supabase (db.js).
+TelaDB.start("tutor").then(() => {
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const read = (key, fallback) => { try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch (e) { return fallback; } };
 
-  const tutorUser = sessionStorage.getItem("tela.tutorSession") || localStorage.getItem("tela.tutorSession");
-  const tutor = read("tela.tutors", {})[tutorUser] || { displayName: tutorUser };
-  $("greeting").textContent = `${tutor.displayName}'s students`;
+  const tutorUser = TelaDB.me().username;
+  const tutor = { displayName: TelaDB.me().displayName };
+  $("greeting").textContent = `${TelaMessages.properName(tutor.displayName)}'s students`;
 
-  // Each student's topics, statuses and messages come from what their dashboard saved in this browser.
-  // A student's tutors: the account's tutors list (older accounts made by a tutor only have addedBy).
-  const tutorsOf = acc => Array.isArray(acc.tutors) ? acc.tutors : acc.addedBy ? [acc.addedBy] : [];
+  // Each student's topics, statuses and messages come from what their dashboard saved (loaded by db.js).
+  const tutorsOf = acc => acc.tutors || [];
   // Only this tutor's own students are shown, with this tutor's conversation with each (see messages.js).
   let students = [];
-  const loadStudents = () => Object.entries(read("tela.accounts", {})).filter(([, acc]) => tutorsOf(acc).includes(tutorUser)).map(([username, acc]) => {
-    const topics = read("tela.topics." + username, null);
+  const loadStudents = () => Object.entries(TelaDB.studentAccounts()).filter(([, acc]) => tutorsOf(acc).includes(tutorUser)).map(([username, acc]) => {
+    const topics = TelaDB.topicsOf(username);
     const list = Array.isArray(topics) ? topics.filter(t => isShownSubject(t.subject)) : [];   // hidden subjects (catalog.js) left out
     const count = s => list.filter(t => t.status === s).length;
     return {
@@ -433,7 +426,7 @@
       done: count("done"), doing: count("doing"), todo: count("todo"),
       working: list.filter(t => t.status === "doing").map(t => t.title),
       lastMessage: TelaMessages.last(username, tutorUser), unread: TelaMessages.unread(username, tutorUser, "tutor"),
-      homework: [].concat(read("tela.topics." + username + ".homework", [])).filter(hw => isShownSubject(hw.subject)),
+      homework: TelaDB.homeworkOf(username).filter(hw => isShownSubject(hw.subject)),
       statusOf: title => (list.find(t => t.title.trim().toLowerCase() === title.trim().toLowerCase()) || {}).status || "todo"
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
@@ -674,14 +667,14 @@
       const old = TelaMessages.group(groupEdit);
       g = old && TelaMessages.saveGroup({ ...old, name, members });
     }
-    if (!g) return toast("Couldn't save: browser storage is unavailable.");
+    if (!g) return toast("Couldn't save the group. Please try again.");
     toast(groupEdit === "new" ? `Made the group "${g.name}" with ${members.length} student${members.length === 1 ? "" : "s"}.` : `Saved "${g.name}".`);
     showGroupChat(g.id);
   }
   function deleteGroup() {
     const g = TelaMessages.group(groupEdit);
     if (!g || !confirm(`Delete the group "${g.name}"? Its messages will be deleted for everyone. This can't be undone.`)) return;
-    if (!TelaMessages.deleteGroup(g.id)) return toast("Couldn't delete: browser storage is unavailable.");
+    if (!TelaMessages.deleteGroup(g.id)) return toast("Couldn't delete the group. Please try again.");
     toast(`Deleted "${g.name}".`);
     showConversations();
     refresh();
@@ -705,7 +698,7 @@
     const text = $("msgInput").value;
     if (!text.trim() || !(chatStudent || chatGroup)) return;
     const sent = chatGroup ? TelaMessages.groupSend(chatGroup, tutorUser, "tutor", text) : TelaMessages.send(chatStudent, tutorUser, "tutor", text);
-    if (!sent) return toast("Couldn't send: browser storage is unavailable.");
+    if (!sent) return toast("Couldn't send that message. Please try again.");
     $("msgInput").value = "";
     if (chatGroup) refreshGroupChat(); else refreshChat();
     $("msgInput").focus();
@@ -714,14 +707,14 @@
 
   // ---------- Admin: read-only view of every conversation ----------
   // Admin tutors (by username) get an "All messages" item in the sidebar. They can read every conversation
-  // between any student and any tutor in this browser, but can't send in them, and reading doesn't mark
+  // between any student and any tutor, but can't send in them, and reading doesn't mark
   // anything as read for the student or tutor.
   const ADMINS = ["dayan"];
   const isAdmin = ADMINS.includes(String(tutorUser).toLowerCase());
   $("adminBtn").hidden = !isAdmin;
   let panelMode = "messages", adminChat = null;   // adminChat: { student, tutor } when a conversation is open
   function allConversations() {
-    const accounts = read("tela.accounts", {}), tutorAccounts = read("tela.tutors", {});
+    const accounts = TelaDB.studentAccounts(), tutorAccounts = TelaDB.tutorAccounts();
     return Object.keys(accounts).flatMap(student => TelaMessages.partners(student).map(tutor => {
       const list = TelaMessages.thread(student, tutor);
       return { student, tutor, studentName: TelaMessages.properName(accounts[student].displayName || student),
@@ -755,7 +748,7 @@
     adminChat = null;
     $("drawerTitle").textContent = "All messages";
     $("drawerBody").classList.remove("chat-mode");
-    $("drawerBody").innerHTML = `<p class="admin-note">Admin view: every conversation between students and tutors in this browser. Read-only.</p>
+    $("drawerBody").innerHTML = `<p class="admin-note">Admin view: every conversation between students and tutors. Read-only.</p>
       <label class="search admin-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" id="adminSearch" placeholder="Search by student or tutor…" autocomplete="off" aria-label="Search conversations"></label>
       <div id="adminRows">${adminListHTML()}</div>`;
@@ -851,9 +844,9 @@
     if (e.target.id === "msgInput" && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
   $("grid").addEventListener("click", e => { const chat = e.target.closest("[data-chat]"); if (chat) openMessages(chat.dataset.chat); });
-  // Messages (and progress) from a student in another tab arrive without a reload.
-  window.addEventListener("storage", e => {
-    if (!e.key || !(e.key.startsWith("tela.topics.") || e.key.startsWith("tela.groups") || e.key === "tela.accounts")) return;
+  // Messages, progress and homework changed by someone else arrive without a reload (live updates in db.js).
+  TelaDB.onError(toast);
+  TelaDB.onChange(() => {
     if (panelMode === "admin" && messagesOpen()) { refresh(); refreshAdmin(); }
     else if (chatStudent && messagesOpen()) refreshChat();
     else if (chatGroup && messagesOpen()) refreshGroupChat(); else refresh();
@@ -922,11 +915,10 @@
   });
 
   // ---------- Homework ----------
-  // Each student's homework is saved with their data, as [{ id, title, subject, grade, setBy, setByName, setAt, due, note }].
+  // Each student's homework (saved in Supabase, see db.js), as [{ id, title, subject, grade, setBy, setByName, setAt, due, note, questions }].
   // An item counts as complete once the student has that topic at Confident.
   const STATUS_LABEL = { todo: "Not started", doing: "In progress", done: "Complete" };
   const shortDate = ms => new Date(ms).toLocaleDateString(undefined, { day: "numeric", month: "short" });
-  const hwKey = username => "tela.topics." + username + ".homework";
 
   function homeworkRows(st, editable) {
     if (!Array.isArray(st.homework) || !st.homework.length) return `<p class="muted">No homework set.</p>`;
@@ -991,10 +983,8 @@
     $("hwCurrent").innerHTML = `<h3>Current homework</h3>${homeworkRows(hwStudent, true)}`;
   }
   const closeHomework = () => $("hwOverlay").classList.remove("open");
-  function saveHomework(list) {
-    // Homework in hidden subjects isn't in the list shown here, so it's saved back as it was.
-    const hidden = [].concat(read(hwKey(hwStudent.username), [])).filter(hw => !isShownSubject(hw.subject));
-    localStorage.setItem(hwKey(hwStudent.username), JSON.stringify(list.concat(hidden)));
+  // Homework is saved to Supabase (db.js); afterwards the students and this form are redrawn.
+  function afterHomeworkChange() {
     refresh();
     hwStudent = students.find(s => s.username === hwStudent.username);
   }
@@ -1006,7 +996,8 @@
     if (!unset) return;
     const hw = hwStudent.homework.find(h => h.id === unset.dataset.unset);
     if (!hw || !confirm(`Cancel the homework "${hw.title}" for ${hwStudent.name}?`)) return;
-    try { saveHomework(hwStudent.homework.filter(h => h.id !== hw.id)); } catch (err) { return toast("Couldn't save: browser storage is unavailable."); }
+    TelaDB.removeHomework(hw.id);
+    afterHomeworkChange();
     renderCurrentHomework();
     toast(`Cancelled "${hw.title}".`);
   });
@@ -1028,7 +1019,10 @@
       setBy: tutorUser, setByName: tutor.displayName || tutorUser, setAt: Date.now(),
       due: $("hwDue").value || "", note: $("hwNote").value.trim(), questions: info.total ? count : 0
     };
-    try { saveHomework([...list.filter(h => h.title !== title), item]); } catch (err) { return toast("Couldn't save: browser storage is unavailable."); }
+    // Setting a topic again replaces the earlier (finished) homework for it.
+    list.filter(h => h.title === title).forEach(h => TelaDB.removeHomework(h.id));
+    TelaDB.addHomework(hwStudent.username, item);
+    afterHomeworkChange();
     $("hwForm").reset();
     updateCountField();
     $("hwError").classList.remove("show");
@@ -1039,37 +1033,20 @@
 
   // ---------- Remove a student ----------
   // If the student has other tutors, this only takes them off this tutor's list. If this is their only tutor,
-  // the account and everything their dashboard saved (topics, practice answers, notes) is deleted.
-  function removeStudent(username) {
-    const accounts = read("tela.accounts", {});
-    const acc = accounts[username];
+  // the account and everything their dashboard saved (topics, practice answers, messages) is deleted.
+  async function removeStudent(username) {
+    const acc = TelaDB.studentAccounts()[username];
     if (!acc) return;
-    const name = acc.displayName || username, others = tutorsOf(acc).filter(t => t !== tutorUser);
+    const name = TelaMessages.properName(acc.displayName || username), others = tutorsOf(acc).filter(t => t !== tutorUser);
     if (others.length) {
       if (!confirm(`Remove ${name} (@${username}) from your students? They'll stay with their other tutor${others.length > 1 ? "s" : ""}, and their account isn't deleted.`)) return;
-      acc.tutors = others;
-      try { localStorage.setItem("tela.accounts", JSON.stringify(accounts)); } catch (err) { return toast("Couldn't save: browser storage is unavailable."); }
-      refresh();
-      return toast(`Removed ${name} from your students.`);
-    }
-    if (!confirm(`Remove ${name} (@${username})? You're their only tutor, so their account, progress and saved answers will be deleted from this browser. This can't be undone.`)) return;
-    try {
-      delete accounts[username];
-      localStorage.setItem("tela.accounts", JSON.stringify(accounts));
-      const base = "tela.topics." + username, keys = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k === base || k.startsWith(base + ".")) keys.push(k);
-      }
-      keys.forEach(k => localStorage.removeItem(k));
-      TelaMessages.leaveAllGroups(username);
-      if (localStorage.getItem("tela.session") === username) localStorage.removeItem("tela.session");
-    } catch (err) {
-      toast("Couldn't remove the account: browser storage is unavailable.");
-      return;
-    }
+    } else if (!confirm(`Remove ${name} (@${username})? You're their only tutor, so their account, progress and saved answers will be deleted. This can't be undone.`)) return;
+    let result;
+    try { result = await TelaDB.removeStudent(username); }
+    catch (err) { return toast("Couldn't remove the student. Check your connection and try again."); }
+    if (result === "deleted") TelaMessages.leaveAllGroups(username);
     refresh();
-    toast(`Removed ${name}.`);
+    toast(result === "deleted" ? `Removed ${name}.` : `Removed ${name} from your students.`);
   }
   $("addCancel").addEventListener("click", closeAdd);
   $("addOverlay").addEventListener("click", e => { if (e.target === $("addOverlay")) closeAdd(); });
@@ -1080,7 +1057,13 @@
   });
   document.querySelectorAll("#addForm input").forEach(el => el.addEventListener("input", () => el.classList.remove("invalid")));
 
-  $("addForm").addEventListener("submit", e => {
+  // While the server is answering, the Add button can't be pressed again.
+  function addBusy(on) {
+    const btn = $("addForm").querySelector('button[type="submit"]');
+    btn.disabled = on;
+    btn.textContent = on ? "Adding…" : "Add student";
+  }
+  $("addForm").addEventListener("submit", async e => {
     e.preventDefault();
     if (addMode === "existing") return addExisting();
     const name = $("stName").value.trim();
@@ -1090,56 +1073,48 @@
     if (!USERNAME_RE.test(username)) return addError("Usernames must be 3–20 characters: letters, numbers, dots, dashes or underscores.", "stUser");
     if (password.length < 6) return addError("The password needs at least 6 characters.", "stPass");
     if (password !== $("stConfirm").value) return addError("Those passwords don't match.", "stConfirm");
-    const accounts = read("tela.accounts", {});
-    if (accounts[username]) return addError("That username is already taken.", "stUser");
 
-    const salt = randomSalt();
-    accounts[username] = { displayName: name, salt, hash: hashPassword(password, salt), created: Date.now(), addedBy: tutorUser, tutors: [tutorUser] };
-    try {
-      localStorage.setItem("tela.accounts", JSON.stringify(accounts));
-      // New students start with an empty dashboard: no sample topics, no science top-up.
-      const topicsKey = "tela.topics." + username;
-      localStorage.setItem(topicsKey, "[]");
-      localStorage.setItem(topicsKey + ".sciences", "1");
-      localStorage.setItem(topicsKey + ".grades", "1");
-    } catch (err) {
-      return addError("Couldn't save the account: browser storage is unavailable.");
-    }
+    addBusy(true);
+    let problem;
+    try { problem = await TelaDB.createStudent(username, name, password); }
+    catch (err) { problem = "Couldn't reach the server. Check your connection and try again."; }
+    addBusy(false);
+    if (problem === "taken") return addError("That username is already taken.", "stUser");
+    if (problem) return addError(problem);
     closeAdd();
     $("search").value = "";
     refresh();
-    toast(`Added ${name}. They can sign in as "${username}" with the password you chose.`);
+    toast(`Added ${TelaMessages.properName(name)}. They can sign in as "${username}" with the password you chose.`);
   });
 
-  function addExisting() {
+  async function addExisting() {
     const username = $("exUser").value.trim().toLowerCase();
     if (!username) return addError("Enter the student's username.", "exUser");
-    const accounts = read("tela.accounts", {}), acc = accounts[username];
-    if (!acc) return addError(`There's no student with the username "${username}" in this browser.`, "exUser");
-    const list = tutorsOf(acc);
-    if (list.includes(tutorUser)) return addError(`${acc.displayName || username} is already one of your students.`, "exUser");
-    acc.tutors = [...list, tutorUser];
-    try { localStorage.setItem("tela.accounts", JSON.stringify(accounts)); } catch (err) { return addError("Couldn't save: browser storage is unavailable."); }
+    addBusy(true);
+    let problem;
+    try { problem = await TelaDB.linkStudent(username); }
+    catch (err) { problem = "Couldn't reach the server. Check your connection and try again."; }
+    addBusy(false);
+    if (problem === "missing") return addError(`There's no student with the username "${username}".`, "exUser");
+    const acc = TelaDB.studentAccounts()[username], name = TelaMessages.properName((acc && acc.displayName) || username);
+    if (problem === "already") return addError(`${name} is already one of your students.`, "exUser");
+    if (problem) return addError(problem);
     closeAdd();
     $("search").value = "";
     refresh();
-    toast(`Added ${acc.displayName || username} to your students.`);
+    toast(`Added ${name} to your students.`);
   }
 
-  $("logoutBtn").addEventListener("click", () => {
-    try { sessionStorage.removeItem("tela.tutorSession"); localStorage.removeItem("tela.tutorSession"); } catch (e) {}
+  $("logoutBtn").addEventListener("click", async () => {
+    await TelaDB.signOut();
     location.href = "login.html#tutor";
   });
   // Draw the students once everything above is defined.
   refresh();
 
   // Coming back with Forward after signing out re-checks the sign-in.
-  window.addEventListener("pageshow", e => {
-    if (!e.persisted) return;
-    let user = null;
-    try { user = sessionStorage.getItem("tela.tutorSession") || localStorage.getItem("tela.tutorSession"); } catch (err) {}
-    if (user !== tutorUser) location.reload();
-  });
+  window.addEventListener("pageshow", e => { if (e.persisted) location.reload(); });
+});
 </script>
 </body>
 </html>

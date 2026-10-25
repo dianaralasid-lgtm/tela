@@ -117,6 +117,7 @@
   }
   .btn:hover { background: var(--green-800); }
   .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: .7; cursor: wait; }
 
   .switch { text-align: center; margin-top: 18px; font-size: 14px; color: var(--muted); }
   .switch button { border: none; background: none; color: var(--green-700); font-weight: 600; }
@@ -156,7 +157,7 @@
       <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Search and filter by subject or category</li>
     </ul>
   </div>
-  <small>Accounts are stored in this browser only.</small>
+  <small>Your account and progress are saved online, so you can sign in from any device.</small>
 </aside>
 
 <main class="main">
@@ -228,66 +229,29 @@
   </div>
 </main>
 
-<script src="auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="db.js"></script>
 <script>
   const USERNAME_RE = /^[a-z0-9._-]{3,20}$/;
-  // Students and tutors have separate accounts and sessions, and land on different pages.
-  const MODES = {
-    student: { accounts: "tela.accounts", session: "tela.session", page: "index.html" },
-    tutor:   { accounts: "tela.tutors",   session: "tela.tutorSession", page: "tutor.html" }
-  };
+  // Students and tutors have separate accounts (see db.js) and land on different pages.
+  const PAGES = { student: "index.html", tutor: "tutor.html" };
   let mode = "student";
 
   const $ = id => document.getElementById(id);
 
-  // ---------- Storage ----------
-  function loadAccounts(m = mode) {
-    try { return JSON.parse(localStorage.getItem(MODES[m].accounts)) || {}; }
-    catch (e) { return {}; }
-  }
-  function saveAccounts(accounts) {
-    localStorage.setItem(MODES[mode].accounts, JSON.stringify(accounts));
-  }
-  function startSession(username, remember) {
-    const key = MODES[mode].session;
-    try {
-      sessionStorage.setItem(key, username);
-      if (remember) localStorage.setItem(key, username);
-      else localStorage.removeItem(key);
-    } catch (e) { /* storage blocked — the next page will bounce back here */ }
-    location.href = MODES[mode].page;
-  }
-
-  function endSession() {
-    try {
-      Object.values(MODES).forEach(m => { sessionStorage.removeItem(m.session); localStorage.removeItem(m.session); });
-    } catch (e) {}
-  }
-
   // Arriving here with the browser's back button signs everyone out.
   // Otherwise, if a student or tutor is already signed in, go straight to their page.
   const navEntry = performance.getEntriesByType("navigation")[0];
-  if (navEntry && navEntry.type === "back_forward") {
-    endSession();
-  } else {
-    try {
-      for (const m of Object.keys(MODES)) {
-        const existing = sessionStorage.getItem(MODES[m].session) || localStorage.getItem(MODES[m].session);
-        if (existing && loadAccounts(m)[existing]) { location.replace(MODES[m].page); break; }
-      }
-    } catch (e) {}
-  }
+  if (navEntry && navEntry.type === "back_forward") TelaDB.signOut();
+  else TelaDB.signedInRole().then(role => { if (role) location.replace(PAGES[role]); }).catch(() => {});
 
-  // ---------- Demo account ----------
-  const DEMO = { username: "demo", password: "demo123", displayName: "Demo Student" };
-  try {
-    const accounts = loadAccounts();
-    if (!accounts[DEMO.username]) {
-      const salt = randomSalt();
-      accounts[DEMO.username] = { displayName: DEMO.displayName, salt, hash: hashPassword(DEMO.password, salt), created: Date.now() };
-      saveAccounts(accounts);
-    }
-  } catch (e) { /* storage unavailable — sign-in will report it */ }
+  // While the server is answering, the form's button can't be pressed again.
+  function busy(form, on) {
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = on;
+    if (on) { btn.dataset.label = btn.textContent; btn.textContent = "Please wait…"; }
+    else if (btn.dataset.label) btn.textContent = btn.dataset.label;
+  }
 
   // ---------- UI ----------
   function showError(msg, fields = []) {
@@ -347,22 +311,27 @@
     el.addEventListener("input", () => el.classList.remove("invalid")));
 
   // ---------- Sign in ----------
-  $("signin").addEventListener("submit", e => {
+  $("signin").addEventListener("submit", async e => {
     e.preventDefault();
     const username = $("liUser").value.trim().toLowerCase();
     const password = $("liPass").value;
     if (!username || !password) return showError("Enter your username and password.", [!username ? "liUser" : "liPass"]);
 
-    const account = loadAccounts()[username];
-    if (!account || hashPassword(password, account.salt) !== account.hash) {
+    busy($("signin"), true);
+    let problem;
+    try { problem = await TelaDB.signIn(mode, username, password, $("remember").checked); }
+    catch (err) { problem = "Couldn't reach the server. Check your internet connection and try again."; }
+    busy($("signin"), false);
+    if (problem === "mismatch") {
       $("liPass").value = "";
       return showError("That username and password don't match. Please try again.", ["liUser", "liPass"]);
     }
-    startSession(username, $("remember").checked);
+    if (problem) return showError(problem);
+    location.href = PAGES[mode];
   });
 
   // ---------- Sign up (tutors only: student accounts are added from the tutor page) ----------
-  $("signup").addEventListener("submit", e => {
+  $("signup").addEventListener("submit", async e => {
     e.preventDefault();
     if (mode !== "tutor") return;
     const name = $("suName").value.trim();
@@ -375,25 +344,21 @@
     if (password.length < 6) return showError("Your password needs at least 6 characters.", ["suPass"]);
     if (password !== confirm) return showError("Those passwords don't match.", ["suConfirm"]);
 
-    const accounts = loadAccounts();
-    if (accounts[username]) return showError("That username is already taken.", ["suUser"]);
-
-    const salt = randomSalt();
-    accounts[username] = { displayName: name, salt, hash: hashPassword(password, salt), created: Date.now() };
-
-    try {
-      saveAccounts(accounts);
-    } catch (err) {
-      return showError("Couldn't save your account — browser storage is unavailable.");
-    }
-    startSession(username, false);
+    busy($("signup"), true);
+    let problem;
+    try { problem = await TelaDB.signUp("tutor", username, name, password); }
+    catch (err) { problem = "Couldn't reach the server. Check your internet connection and try again."; }
+    busy($("signup"), false);
+    if (problem === "taken") return showError("That username is already taken.", ["suUser"]);
+    if (problem) return showError(problem);
+    location.href = PAGES.tutor;
   });
 
   // Browsers may restore this page from cache on Back without re-running the script,
   // so sign out and wipe the typed-in details here too.
   window.addEventListener("pageshow", e => {
     if (!e.persisted) return;
-    endSession();
+    TelaDB.signOut();
     switchMode("student");
     clearError();
   });

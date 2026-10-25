@@ -6,15 +6,7 @@
 <title>TutorsElevateLearningApp — Subjects</title>
 <link rel="icon" href="logo.png.svg" type="image/svg+xml">
 <script>
-  // Bounce to the login page before anything renders if no one is signed in.
-  (function () {
-    try {
-      const user = sessionStorage.getItem("tela.session") || localStorage.getItem("tela.session");
-      const accounts = JSON.parse(localStorage.getItem("tela.accounts")) || {};
-      if (user && accounts[user]) return;
-    } catch (e) {}
-    location.replace("login.html");
-  })();
+  // (Only a signed-in student can see this page: TelaDB.start("student") below sends anyone else to the sign-in page.)
   // Start with the sidebar collapsed if that was the last choice.
   try { if (localStorage.getItem("tela.sidebarCollapsed") === "1") document.documentElement.classList.add("side-collapsed"); } catch (e) {}
 </script>
@@ -878,7 +870,7 @@
 </main>
 
 <footer>
-  Saved automatically in this browser.
+  Saved automatically to your account.
 </footer>
 
 <!-- Practice questions -->
@@ -932,22 +924,17 @@
   });
 </script>
 <script src="questions.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="db.js"></script>
 <script src="catalog.js"></script>
 <script src="messages.js"></script>
 <script src="dropdown.js"></script>
 <script>
-  const SESSION_KEY = "tela.session";
-  let currentUser = null, account = null;
-  try {
-    currentUser = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-    account = currentUser && (JSON.parse(localStorage.getItem("tela.accounts")) || {})[currentUser];
-  } catch (e) {}
-  if (!account) {
-    location.replace("login.html");
-    throw new Error("Not signed in");
-  }
+// The page starts once the signed-in student's topics, answers, homework and messages have loaded from Supabase (db.js).
+TelaDB.start("student").then(() => {
+  const currentUser = TelaDB.me().username, account = { displayName: TelaMessages.properName(TelaDB.me().displayName) };
 
-  // Each student gets their own saved topics.
+  // Each student gets their own saved topics. (STORAGE_KEY is also the start of their saved-answer keys.)
   const STORAGE_KEY = "tela.topics." + currentUser;
   const STATUS = {
     todo:  { label: "Not started", next: "doing", rank: 0 },
@@ -958,11 +945,7 @@
   // These subjects always get a filter button, even before they have topics.
   // (Subjects in HIDDEN_SUBJECTS, from catalog.js, are left out.)
   const SUBJECTS = ["Physics", "Chemistry", "Biology", "Maths"].filter(isShownSubject);
-  const SCIENCES = ["Physics", "Chemistry", "Biology"];
   const BOARDS = ["AQA", "Edexcel", "OCR"];
-  const SCIENCE_FLAG = STORAGE_KEY + ".sciences";
-  const GRADES_FLAG = STORAGE_KEY + ".grades";
-  const GRADE_FIELD_FLAG = STORAGE_KEY + ".gradefield";
 
   function buildSamples(subjects = SUBJECTS) {
     const now = Date.now();
@@ -975,48 +958,10 @@
     }));
   }
 
+  // The student's saved topics. Someone who has never opened their dashboard (and whose account wasn't
+  // made by a tutor, who starts them on an empty one) gets the sample topics.
   function load() {
-    let list = null;
-    try {
-      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (Array.isArray(parsed)) list = parsed;
-    } catch (e) { /* storage unavailable or corrupt — fall back to samples */ }
-
-    try {
-      if (!list) {
-        list = buildSamples();
-      } else {
-        if (!localStorage.getItem(SCIENCE_FLAG)) {
-          // One-time top-up: dashboards made before the sciences existed get their sample topics.
-          const missing = SCIENCES.filter(s => !list.some(t => t.subject === s));
-          list = list.concat(buildSamples(missing));
-        }
-        if (list.length && !localStorage.getItem(GRADES_FLAG)) {
-          // One-time swap: the old Maths sample topics are replaced by the grade-by-grade list.
-          // Topics the student added themselves have random ids and are kept.
-          list = list.filter(t => !(t.subject === "Maths" && /^(s|mat)\d+-/.test(t.id)))
-                     .concat(buildSamples(["Maths"]));
-        }
-        if (!localStorage.getItem(GRADE_FIELD_FLAG)) {
-          // One-time move: topics that used their grade as the category get a separate grade.
-          // Sample topics are swapped for the new versions, keeping each one's status.
-          const statusByTitle = {};
-          list = list.filter(t => {
-            if (t.grade || !GRADES.includes(t.category)) return true;
-            if (t.subject === "Maths" && /^mat\d+-/.test(t.id)) { statusByTitle[t.title] = t.status; return false; }
-            t.grade = t.category;
-            t.category = "Other";
-            return true;
-          });
-          if (Object.keys(statusByTitle).length) {
-            list = list.concat(buildSamples(["Maths"]).map(t => ({ ...t, status: statusByTitle[t.title] || t.status })));
-          }
-        }
-      }
-      localStorage.setItem(SCIENCE_FLAG, "1");
-      localStorage.setItem(GRADES_FLAG, "1");
-      localStorage.setItem(GRADE_FIELD_FLAG, "1");
-    } catch (e) {}
+    const list = TelaDB.topicsOf(currentUser);
     // Topics saved before exam boards existed count as being on every board.
     return (list || buildSamples()).map(t => Array.isArray(t.boards) ? t : { ...t, boards: [...BOARDS] });
   }
@@ -1024,16 +969,17 @@
   // The four core subjects first, then any custom ones the student has added.
   const allSubjects = () => [...SUBJECTS, ...uniq(topics.map(t => t.subject).filter(s => !SUBJECTS.includes(s)))];
 
+  // Saved to Supabase a moment later (db.js), so a burst of changes is sent once.
   function save() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(topics.concat(hiddenTopics))); }
-    catch (e) { toast("Couldn't save — browser storage is unavailable"); }
+    TelaDB.saveMyTopics(topics.concat(hiddenTopics));
   }
 
   // Topics in hidden subjects are set aside (and saved back unchanged) so they come back if the subject does.
+  const firstVisit = !TelaDB.topicsOf(currentUser);
   let topics = load();
   const hiddenTopics = topics.filter(t => !isShownSubject(t.subject));
   topics = topics.filter(t => isShownSubject(t.subject));
-  save();
+  if (firstVisit) save();
 
   const state = { query: "", subject: "All", board: "All", grade: "All", category: "All", status: "All", sort: "category" };
 
@@ -1161,10 +1107,9 @@
   // ---------- Homework set by a tutor ----------
   // Tutors add items from tutor.html: { id, title, subject, grade, setBy, setByName, setAt, due, note }.
   // An item is complete once its topic is Confident.
-  const HOMEWORK_KEY = STORAGE_KEY + ".homework";
   function loadHomework() {
     // Homework in a hidden subject isn't shown.
-    try { const list = JSON.parse(localStorage.getItem(HOMEWORK_KEY)); return Array.isArray(list) ? list.filter(hw => isShownSubject(hw.subject)) : []; } catch (e) { return []; }
+    return TelaDB.homeworkOf(currentUser).filter(hw => isShownSubject(hw.subject));
   }
   const findTopicByTitle = title => topics.find(t => t.title.trim().toLowerCase() === String(title).trim().toLowerCase());
   const shortDate = ms => new Date(ms).toLocaleDateString(undefined, { day: "numeric", month: "short" });
@@ -1224,8 +1169,6 @@
     if (PRACTICE[practiceKey(topic)]) openPractice(topic);
     else toast("This topic doesn't have questions yet");
   }
-  // A tutor setting homework in another tab shows up here without a reload.
-  window.addEventListener("storage", e => { if (e.key === HOMEWORK_KEY) renderHomework(); });
 
   // ---------- Practice questions ----------
   // The questions themselves live in questions.js (QUESTION_BANK). Here each topic is turned into a list
@@ -1445,25 +1388,23 @@
 
   const practiceStoreKey = () => STORAGE_KEY + ".practice." + practiceOpen.replace(/[^a-z0-9]+/g, "-");
   function loadPractice() {
-    try {
-      const data = JSON.parse(localStorage.getItem(practiceStoreKey())) || {};
-      // Saves from before questions.js had no question list, so they start afresh.
-      return Array.isArray(data.picked) ? data : { picked: [], answers: {} };
-    } catch (e) { return { picked: [], answers: {} }; }
+    const data = TelaDB.kvGet(practiceStoreKey()) || {};
+    return Array.isArray(data.picked) ? data : { picked: [], answers: {} };
   }
   function savePractice() {
-    try { localStorage.setItem(practiceStoreKey(), JSON.stringify({ picked: practicePicked, answers: practiceSaved })); } catch (e) {}
+    TelaDB.kvSet(practiceStoreKey(), { picked: practicePicked, answers: practiceSaved });
   }
   // Which questions the student has been shown in this topic, oldest first, so new sets don't repeat them.
   // Kept separately from saved answers and updated whenever a set is shown, saved or not.
   const seenStoreKey = () => STORAGE_KEY + ".seen." + practiceOpen.replace(/[^a-z0-9]+/g, "-");
   function loadSeen() {
-    try { const list = JSON.parse(localStorage.getItem(seenStoreKey())); return Array.isArray(list) ? list : []; } catch (e) { return []; }
+    const list = TelaDB.kvGet(seenStoreKey());
+    return Array.isArray(list) ? list : [];
   }
   function noteSeen(ids) {
     const valid = new Set(PRACTICE[practiceOpen].items.map(it => it.id));
     const list = loadSeen().filter(id => valid.has(id) && !ids.includes(id)).concat(ids);
-    try { localStorage.setItem(seenStoreKey(), JSON.stringify(list)); } catch (e) {}
+    TelaDB.kvSet(seenStoreKey(), list);
   }
 
   const currentItems = () => {
@@ -3526,8 +3467,7 @@
   // ---------- Messages with tutors ----------
   // A student can only message the tutors they've been added to. Conversations are stored by messages.js.
   function myTutors() {
-    let tutorAccounts = {};
-    try { tutorAccounts = JSON.parse(localStorage.getItem("tela.tutors")) || {}; } catch (e) {}
+    const tutorAccounts = TelaDB.tutorAccounts();
     return TelaMessages.tutorsOf(currentUser).filter(id => tutorAccounts[id]).map(id => ({ id, name: TelaMessages.properName(tutorAccounts[id].displayName || id) }));
   }
   // Every conversation the student can open: one with each tutor, then the group chats tutors have put them in.
@@ -3572,8 +3512,7 @@
     const c = convos.find(x => x.key === chatTutor);
     const option = x => `<option value="${esc(x.key)}"${x.key === chatTutor ? " selected" : ""}>${esc(x.name)}${x.unread && x.key !== chatTutor ? ` (${x.unread} new)` : ""}</option>`;
     const tutorsList = convos.filter(x => !x.group), groupsList = convos.filter(x => x.group);
-    let accounts = {};
-    try { accounts = JSON.parse(localStorage.getItem("tela.accounts")) || {}; } catch (e) {}
+    const accounts = TelaDB.studentAccounts();
     const members = c.group ? c.group.members.map(m => m === currentUser ? "You" : TelaMessages.properName((accounts[m] || {}).displayName || m)) : [];
     const review = c.group ? [] : topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).slice(0, 4);
     return `<div class="chat">
@@ -3605,9 +3544,7 @@
     renderMsgBadge();
   }
   function practisedCount() {
-    let n = 0;
-    try { for (let i = 0; i < localStorage.length; i++) if (localStorage.key(i).startsWith(PRACTICE_PREFIX)) n++; } catch (e) {}
-    return n;
+    return TelaDB.kvKeys().filter(k => k.startsWith(PRACTICE_PREFIX)).length;
   }
 
   // A circle (donut) chart of a group of topics: confident, in progress and not started,
@@ -3766,11 +3703,7 @@
     const id = e.target.id;
     if (id === "setReset" && confirm("Set every topic back to Not started and clear all your saved practice answers? This can't be undone.")) {
       topics.forEach(t => { t.status = "todo"; });
-      try {
-        const keys = [];
-        for (let i = 0; i < localStorage.length; i++) if (localStorage.key(i).startsWith(PRACTICE_PREFIX) || localStorage.key(i).startsWith(STORAGE_KEY + ".seen.")) keys.push(localStorage.key(i));
-        keys.forEach(k => localStorage.removeItem(k));
-      } catch (err) {}
+      TelaDB.kvKeys().filter(k => k.startsWith(PRACTICE_PREFIX) || k.startsWith(STORAGE_KEY + ".seen.")).forEach(TelaDB.kvRemove);
       save(); render(); toast("Progress reset");
     }
     if (id === "setLogout") $("logoutBtn").click();
@@ -3788,7 +3721,7 @@
     const c = myConversations().find(x => x.key === chatTutor);
     if (!text.trim() || !c) return;
     const sent = c.group ? TelaMessages.groupSend(c.group.id, currentUser, "student", text) : TelaMessages.send(currentUser, chatTutor, "student", text);
-    if (!sent) return toast("Couldn't send: browser storage is unavailable.");
+    if (!sent) return toast("Couldn't send that message. Please try again.");
     $("msgInput").value = "";
     refreshChat();
     $("msgInput").focus();
@@ -3804,9 +3737,10 @@
     $("msgInput").value = `Can we go over ${ask.dataset.ask}? `;
     $("msgInput").focus();
   });
-  // A tutor's reply (from another tab) shows up straight away.
-  window.addEventListener("storage", e => {
-    if (!TelaMessages.isMessagesKey(e.key) && e.key !== "tela.accounts") return;
+  // A tutor's reply, new homework or a new group shows up straight away (live updates in db.js).
+  TelaDB.onError(toast);
+  TelaDB.onChange(() => {
+    renderHomework();
     if (drawerView === "messages") refreshChat(); else renderMsgBadge();
   });
   renderMsgBadge();
@@ -3876,18 +3810,10 @@
   $("avatar").textContent = account.displayName.charAt(0).toUpperCase();
   // If this page is restored from cache via Forward after signing out (or switching
   // student), reload so the sign-in check runs again.
-  window.addEventListener("pageshow", e => {
-    if (!e.persisted) return;
-    let user = null;
-    try { user = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY); } catch (err) {}
-    if (user !== currentUser) location.reload();
-  });
+  window.addEventListener("pageshow", e => { if (e.persisted) location.reload(); });
 
-  $("logoutBtn").addEventListener("click", () => {
-    try {
-      sessionStorage.removeItem(SESSION_KEY);
-      localStorage.removeItem(SESSION_KEY);
-    } catch (e) {}
+  $("logoutBtn").addEventListener("click", async () => {
+    await TelaDB.signOut();
     location.href = "login.html";
   });
 
@@ -3901,6 +3827,7 @@
   }
 
   render();
+});
 </script>
 </body>
 </html>
