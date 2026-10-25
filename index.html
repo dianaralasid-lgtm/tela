@@ -674,8 +674,7 @@
   .tree .bud { fill: var(--brown-500); }
   .tree .leaf { fill: #5fae82; stroke: #3f8f63; stroke-width: .6; }
   .tree .leaf.light { fill: #86c9a3; }
-  .tree .petal { fill: #f6b8cf; stroke: #e58fb0; stroke-width: .5; }
-  .tree .bloom-mid { fill: #f2c94c; }
+  .tree .leaf.dark { fill: #3f8f63; stroke: #2f7350; }
   .tree .grow { transform-box: fill-box; transform-origin: center; animation: grow .45s ease-out both; }
   .tree .leaf.grow { transform-origin: left center; }
   @keyframes grow { from { transform: scale(0); } }
@@ -3666,28 +3665,23 @@ TelaDB.start("student").then(() => {
 
   // ---------- Progress tree ----------
   // Every topic is a twig on the tree, and its boughs are the grades (or the subject, outside Maths).
-  // A twig is a bare bud while not started, grows leaves once in progress and flowers when confident.
+  // A twig is a bare bud while not started, grows leaves once in progress and bursts into full leaf when confident.
   const treeGroup = t => t.grade || t.subject;
   const TREE_W = 800, TREE_MID = 400, CROWN_R = 260, MAX_TWIGS = 12;
   const num = n => n.toFixed(1);
-  // The bud, leaves or flower at the end (x, y) of a twig pointing at angle a (radians).
+  // The bud, leaves or leafy bloom at the end (x, y) of a twig pointing at angle a (radians).
   function twigDecor(status, x, y, a, delay = 0) {
     if (status === "todo") return `<circle class="bud" cx="${num(x)}" cy="${num(y)}" r="2.6"/>`;
     const anim = `style="animation-delay:${delay}ms"`;
-    const leaf = (lx, ly, la, light) => `<g transform="translate(${num(lx)} ${num(ly)}) rotate(${num(la * 180 / Math.PI)})">` +
-      `<path class="leaf grow${light ? " light" : ""}" ${anim} d="M0 0Q5 -4.2 10 0Q5 4.2 0 0Z"/></g>`;
+    const leaf = (lx, ly, la, shade, size = 1) => `<g transform="translate(${num(lx)} ${num(ly)}) rotate(${num(la * 180 / Math.PI)})${size === 1 ? "" : ` scale(${size})`}">` +
+      `<path class="leaf grow${shade ? " " + shade : ""}" ${anim} d="M0 0Q5 -4.2 10 0Q5 4.2 0 0Z"/></g>`;
     const back = d => [x - Math.cos(a) * d, y - Math.sin(a) * d];
     const [mx, my] = back(9), [bx, by] = back(16);
-    let out = leaf(x, y, a, false) + leaf(mx, my, a - .9, true) + leaf(mx, my, a + .9, false);
-    if (status === "done") {
-      const petals = [0, 1, 2, 3, 4].map(i => {
-        const p = a + i * 2 * Math.PI / 5;
-        return `<circle class="petal" cx="${num(x + Math.cos(p) * 4.2)}" cy="${num(y + Math.sin(p) * 4.2)}" r="4"/>`;
-      }).join("");
-      out += leaf(bx, by, a - 1, false) + leaf(bx, by, a + 1, true) +
-        `<g class="grow" style="animation-delay:${delay + 150}ms">${petals}<circle class="bloom-mid" cx="${num(x)}" cy="${num(y)}" r="2.7"/></g>`;
-    }
-    return out;
+    if (status === "doing") return leaf(x, y, a, "") + leaf(mx, my, a - .9, "light") + leaf(mx, my, a + .9, "");
+    // Confident: the twig bursts into full leaf, with a big fan of leaves around its tip and more along it.
+    const shades = ["", "dark", "light"];
+    return leaf(bx, by, a - 1, "light") + leaf(bx, by, a + 1, "") + leaf(mx, my, a - 1.1, "dark", 1.15) + leaf(mx, my, a + 1.1, "light", 1.15) +
+      [-2.3, -1.5, -.75, 0, .75, 1.5, 2.3].map((d, i) => leaf(x, y, a + d, shades[i % 3], i === 3 ? 1.5 : 1.3)).join("");
   }
   // The topics in bough-sized bunches, lowest grade at the bottom. Each grade starts a new level of the tree
   // with a bough on the left, and is split evenly over as many boughs as it needs (a pair, when it has more than a few topics).
@@ -3742,7 +3736,7 @@ TelaDB.start("student").then(() => {
         const label = `${topic.title}: ${STATUS[topic.status].label}`;
         twigs += `<g class="twig" data-open="${esc(topic.id)}" tabindex="0" role="button" aria-label="${esc(label)}"><title>${esc(label)}</title>
           <circle class="twig-hit" cx="${num((px + ex) / 2)}" cy="${num((py + ey) / 2)}" r="14"/>
-          <path class="twig-stem" d="M${num(px)} ${num(py)}L${num(ex)} ${num(ey)}"/>${twigDecor(topic.status, ex, ey, a, n++ * 20)}</g>`;
+          <path class="twig-stem" d="M${num(px)} ${num(py)}L${num(ex)} ${num(ey)}"/>${twigDecor(topic.status, ex, ey, a, Math.min(n++ * 8, 1200))}</g>`;
       });
       const lx = num(T[0] + side * 34), anchor = side < 0 ? "end" : "start";
       if (b.label) labels += `<text class="bough-${b.label === b.name ? "label" : "count"}" x="${lx}" y="${num(T[1] + (b.sub ? -2 : 4))}" text-anchor="${anchor}">${esc(b.label)}</text>`;
@@ -3774,7 +3768,7 @@ TelaDB.start("student").then(() => {
         <ul class="tree-key">
           ${key("done", "Confident", s.done || 0)}${key("doing", "In progress", s.doing || 0)}${key("todo", "Not started", s.todo || 0)}
         </ul>
-        <p class="d-note">Every twig is one of your ${topics.length} topics. It grows leaves once you start practising and flowers when you're confident.
+        <p class="d-note">Every twig is one of your ${topics.length} topics. It sprouts a few leaves once you start practising and bursts into full leaf when you're confident.
           Click a twig to practise that topic. You've saved practice answers in ${practisedCount()} topic${practisedCount() === 1 ? "" : "s"}.</p>
       </div>
       <div class="d-section"><h3>Time active</h3>
