@@ -654,53 +654,40 @@
   .d-section { margin-bottom: 26px; }
   .d-section h3 { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
   .d-note { font-size: 13px; color: var(--muted); margin-top: 6px; }
-  /* Progress pop-up with circle charts */
+  /* Progress pop-up: a tree with a twig for every topic */
   .progress-modal {
     background: var(--white); border-radius: 18px; width: 100%; max-width: 720px; max-height: calc(100vh - 32px);
     display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0,0,0,.3); animation: pop .2s ease;
   }
-  .donut { display: block; flex: none; }
-  .donut circle { fill: none; }
-  .donut .c-track { stroke: #ece2d4; }
-  .donut .c-done { stroke: var(--green-600); }
-  .donut .c-doing { stroke: #e0a43a; }
-  .donut .c-pct { font-family: "Inter", sans-serif; font-size: 20px; font-weight: 700; fill: var(--ink); }
-  .donut .c-pct.big { font-size: 22px; fill: var(--green-800); }
-  .donut .c-sub { font-family: "Inter", sans-serif; font-size: 8px; fill: var(--muted); }
-  .progress-top { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
-  .progress-top > div { flex: 1; min-width: 220px; }
-  .donut-key { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
-  .donut-key li { display: grid; grid-template-columns: 14px 1fr auto 48px; align-items: center; gap: 10px; font-size: 15px; }
-  .donut-key i { width: 14px; height: 14px; border-radius: 4px; }
-  .donut-key i.c-done { background: var(--green-600); }
-  .donut-key i.c-doing { background: #e0a43a; }
-  .donut-key i.c-track { background: #ece2d4; }
-  .donut-key small { color: var(--muted); font-size: 13px; text-align: right; }
+  .tree-wrap { background: linear-gradient(var(--white), var(--brown-50)); border: 1px solid var(--line); border-radius: 14px; padding: 8px 8px 0; }
+  .tree { display: block; width: 100%; height: auto; }
+  .tree text { font-family: "Inter", sans-serif; }
+  .tree .wood { fill: var(--brown-700); }
+  .tree .ground { fill: var(--brown-200); }
+  .tree .bough-label { font-size: 13px; font-weight: 700; fill: var(--brown-800); }
+  .tree .bough-count { font-size: 12px; font-weight: 500; fill: var(--muted); }
+  .tree .twig { cursor: pointer; outline: none; }
+  .tree .twig-hit { fill: transparent; }
+  .tree .twig:hover .twig-hit, .tree .twig:focus-visible .twig-hit { fill: rgba(25,135,84,.12); stroke: var(--green-600); stroke-width: 1.5; }
+  .tree .twig-stem { stroke: var(--brown-700); stroke-width: 2.2; stroke-linecap: round; fill: none; }
+  .tree .bud { fill: var(--brown-500); }
+  .tree .leaf { fill: #5fae82; stroke: #3f8f63; stroke-width: .6; }
+  .tree .leaf.light { fill: #86c9a3; }
+  .tree .petal { fill: #f6b8cf; stroke: #e58fb0; stroke-width: .5; }
+  .tree .bloom-mid { fill: #f2c94c; }
+  .tree .grow { transform-box: fill-box; transform-origin: center; animation: grow .45s ease-out both; }
+  .tree .leaf.grow { transform-origin: left center; }
+  @keyframes grow { from { transform: scale(0); } }
+  @media (prefers-reduced-motion: reduce) { .tree .grow { animation: none; } }
+  .tree-key { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 12px; font-size: 14px; }
+  .tree-key li { display: flex; align-items: center; gap: 8px; }
+  .tree-key .tree { width: 30px; flex: none; }
+  .tree-key strong { font-variant-numeric: tabular-nums; }
+  .tree-key small { color: var(--muted); }
   .time-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
   .time-tile { background: var(--brown-50); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
   .time-tile strong { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
   .time-tile span { font-size: 12px; color: var(--muted); }
-  .donut-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 14px; }
-  .donut-cell {
-    display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
-    border: 1px solid var(--line); border-radius: 12px; padding: 12px 8px;
-  }
-  .donut-cell strong { font-size: 14px; margin-top: 4px; }
-  .donut-cell span { font-size: 12px; color: var(--muted); }
-  button.donut-cell { font: inherit; color: inherit; background: var(--white); cursor: pointer; }
-  button.donut-cell:hover { border-color: var(--green-600); background: var(--brown-50); }
-  button.donut-cell[aria-expanded="true"] { border-color: var(--green-600); background: var(--brown-50); box-shadow: 0 0 0 1px var(--green-600); }
-  .donut-cell .chev { display: inline-block; width: 8px; height: 8px; margin-left: 6px; border: solid currentColor;
-    border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; color: var(--muted); }
-  .donut-cell[aria-expanded="true"] .chev { transform: translateY(1px) rotate(-135deg); color: var(--green-700); }
-  .grade-drop { grid-column: 1 / -1; border: 1px solid var(--green-600); border-radius: 12px; background: var(--white);
-    box-shadow: 0 8px 24px rgba(16, 60, 40, .08); padding: 12px; animation: gradeDrop .15s ease-out; }
-  @keyframes gradeDrop { from { opacity: 0; transform: translateY(-4px); } }
-  .grade-drop-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0 2px 10px; }
-  .grade-drop-head strong { font-size: 14px; }
-  .grade-drop-head small { color: var(--muted); font-size: 12px; }
-  .grade-drop .d-list { max-height: 320px; overflow-y: auto; }
-  .grade-drop .d-list .status { flex: none; padding: 3px 10px; font-size: 11px; }
   .d-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
   .d-list button {
     width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left;
@@ -3676,60 +3663,97 @@ TelaDB.start("student").then(() => {
     return TelaDB.kvKeys().filter(k => k.startsWith(PRACTICE_PREFIX)).length;
   }
 
-  // A circle (donut) chart of a group of topics: confident, in progress and not started,
-  // with the percentage confident in the middle.
-  function donutSVG(list, size, label) {
-    const s = countBy(list, "status"), n = list.length, done = s.done || 0, doing = s.doing || 0;
-    const pct = n ? Math.round(done / n * 100) : 0, r = 42, w = size > 120 ? 14 : 12;
-    let start = 0, rings = "";
-    [[done, "c-done"], [doing, "c-doing"]].forEach(([count, cls]) => {
-      const len = n ? count / n * 100 : 0;
-      if (len > 0) rings += `<circle class="${cls}" cx="50" cy="50" r="${r}" pathLength="100" stroke-width="${w}"
-        stroke-dasharray="${len} ${100 - len}" stroke-dashoffset="${-start}"/>`;
-      start += len;
+  // ---------- Progress tree ----------
+  // Every topic is a twig on the tree, and its boughs are the grades (or the subject, outside Maths).
+  // A twig is a bare bud while not started, grows leaves once in progress and flowers when confident.
+  const treeGroup = t => t.grade || t.subject;
+  const TREE_W = 640, TREE_MID = 320, BOUGH_LEN = 190, BOUGH_RISE = 22 * Math.PI / 180, BOUGH_STEP = 64, MAX_TWIGS = 12;
+  const num = n => n.toFixed(1);
+  // The bud, leaves or flower at the end (x, y) of a twig pointing at angle a (radians).
+  function twigDecor(status, x, y, a, delay = 0) {
+    if (status === "todo") return `<circle class="bud" cx="${num(x)}" cy="${num(y)}" r="2.6"/>`;
+    const anim = `style="animation-delay:${delay}ms"`;
+    const leaf = (lx, ly, la, light) => `<g transform="translate(${num(lx)} ${num(ly)}) rotate(${num(la * 180 / Math.PI)})">` +
+      `<path class="leaf grow${light ? " light" : ""}" ${anim} d="M0 0Q5 -4.2 10 0Q5 4.2 0 0Z"/></g>`;
+    const back = d => [x - Math.cos(a) * d, y - Math.sin(a) * d];
+    const [mx, my] = back(9), [bx, by] = back(16);
+    let out = leaf(x, y, a, false) + leaf(mx, my, a - .9, true) + leaf(mx, my, a + .9, false);
+    if (status === "done") {
+      const petals = [0, 1, 2, 3, 4].map(i => {
+        const p = a + i * 2 * Math.PI / 5;
+        return `<circle class="petal" cx="${num(x + Math.cos(p) * 4.2)}" cy="${num(y + Math.sin(p) * 4.2)}" r="4"/>`;
+      }).join("");
+      out += leaf(bx, by, a - 1, false) + leaf(bx, by, a + 1, true) +
+        `<g class="grow" style="animation-delay:${delay + 150}ms">${petals}<circle class="bloom-mid" cx="${num(x)}" cy="${num(y)}" r="2.7"/></g>`;
+    }
+    return out;
+  }
+  // The topics in bough-sized bunches, lowest grade at the bottom. Each grade starts a new level of the tree
+  // with a bough on the left, and is split evenly over as many boughs as it needs (a pair, when it has more than a few topics).
+  function treeBoughs() {
+    const order = g => GRADES.indexOf(g) + 1 || 99;
+    const names = [...new Set(topics.map(treeGroup))].sort((a, b) => order(a) - order(b) || a.localeCompare(b));
+    const out = [];
+    let level = 0;
+    names.forEach(name => {
+      const list = topics.filter(t => treeGroup(t) === name), done = list.filter(t => t.status === "done").length;
+      let count = Math.ceil(list.length / MAX_TWIGS);
+      if (list.length > 6 && count % 2) count++;
+      const size = Math.ceil(list.length / count);
+      for (let i = 0, k = 0; i < list.length; i += size, k++) {
+        out.push({ name, list: list.slice(i, i + size), level: level + Math.floor(k / 2), side: k % 2 ? 1 : -1,
+          // The left bough names the grade and the right one says how much of it is in bloom; a lone bough says both.
+          label: k === 0 ? name : k === 1 ? `${done} of ${list.length} in bloom` : "",
+          sub: k === 0 && list.length <= size ? `${done} of ${list.length} in bloom` : "" });
+      }
+      level += Math.ceil(count / 2);
     });
-    return `<svg class="donut" viewBox="0 0 100 100" width="${size}" height="${size}" role="img"
-      aria-label="${esc(label)}: ${done} confident, ${doing} in progress, ${n - done - doing} not started">
-      <circle class="c-track" cx="50" cy="50" r="${r}" stroke-width="${w}"/>
-      <g transform="rotate(-90 50 50)">${rings}</g>
-      <text x="50" y="${size > 120 ? 52 : 55}" text-anchor="middle" class="c-pct${size > 120 ? " big" : ""}">${pct}%</text>
-      ${size > 120 ? `<text x="50" y="66" text-anchor="middle" class="c-sub">confident</text>` : ""}
-    </svg>`;
+    return out;
   }
-  // With openable set, each cell is a button that drops down the list of that group's topics.
-  function donutGrid(groups, openable) {
-    return `<div class="donut-grid">${groups.map(([name, list]) => {
-      const done = list.filter(t => t.status === "done").length;
-      const inner = `${donutSVG(list, 92, name)}<strong>${esc(name)}${openable ? `<i class="chev"></i>` : ""}</strong><span>${done} of ${list.length}</span>`;
-      return openable
-        ? `<button type="button" class="donut-cell" data-grade="${esc(name)}" aria-expanded="false" title="Show ${esc(name)} topics">${inner}</button>`
-        : `<div class="donut-cell">${inner}</div>`;
-    }).join("")}</div>`;
+  function treeSVG() {
+    const boughs = treeBoughs();
+    if (!boughs.length) return `<p class="d-note">No topics yet, so your tree hasn't sprouted.</p>`;
+    const rise = BOUGH_LEN * Math.sin(BOUGH_RISE), levels = boughs[boughs.length - 1].level + 1;
+    const H = Math.round(110 + (levels - 1) * BOUGH_STEP + rise + 60 + 30), base = H - 30;
+    const yOf = i => base - 110 - i * BOUGH_STEP, top = yOf(levels - 1) - 46;
+    let wood = "", twigs = "", labels = "", n = 0;
+    boughs.forEach(b => {
+      const side = b.side, y = yOf(b.level);
+      // A gently upward-curving bough, from the trunk out to its tip
+      const S = [TREE_MID + side * 4, y], T = [S[0] + side * BOUGH_LEN * Math.cos(BOUGH_RISE), y - rise];
+      const C = [(S[0] + T[0]) / 2, (S[1] + T[1]) / 2 - 12];
+      const at = t => [0, 1].map(k => (1 - t) ** 2 * S[k] + 2 * (1 - t) * t * C[k] + t * t * T[k]);
+      const dir = t => Math.atan2(2 * (1 - t) * (C[1] - S[1]) + 2 * t * (T[1] - C[1]), 2 * (1 - t) * (C[0] - S[0]) + 2 * t * (T[0] - C[0]));
+      const edge = s => Array.from({ length: 11 }, (_, k) => {
+        const t = k / 10, [x, yy] = at(t), a = dir(t) + s * Math.PI / 2, w = 4.6 - 3.3 * t;
+        return `${num(x + Math.cos(a) * w)} ${num(yy + Math.sin(a) * w)}`;
+      });
+      wood += `<path class="wood" d="M${edge(1).join("L")}L${edge(-1).reverse().join("L")}Z"/>`;
+      // One twig per topic, alternating above and below the bough, with the last at its tip
+      b.list.forEach((topic, k) => {
+        const last = k === b.list.length - 1, t = .28 + .72 * (k + 1) / b.list.length;
+        const [px, py] = at(t);
+        const a = dir(t) + side * (last ? -.3 : k % 2 ? .8 : -.95), len = last ? 20 : 22;
+        const ex = px + Math.cos(a) * len, ey = py + Math.sin(a) * len;
+        const label = `${topic.title}: ${STATUS[topic.status].label}`;
+        twigs += `<g class="twig" data-open="${esc(topic.id)}" tabindex="0" role="button" aria-label="${esc(label)}"><title>${esc(label)}</title>
+          <circle class="twig-hit" cx="${num((px + ex) / 2)}" cy="${num((py + ey) / 2)}" r="14"/>
+          <path class="twig-stem" d="M${num(px)} ${num(py)}L${num(ex)} ${num(ey)}"/>${twigDecor(topic.status, ex, ey, a, n++ * 20)}</g>`;
+      });
+      const lx = num(T[0] + side * 34), anchor = side < 0 ? "end" : "start";
+      if (b.label) labels += `<text class="bough-${b.label === b.name ? "label" : "count"}" x="${lx}" y="${num(T[1] + (b.sub ? -2 : 4))}" text-anchor="${anchor}">${esc(b.label)}</text>`;
+      if (b.sub) labels += `<text class="bough-count" x="${lx}" y="${num(T[1] + 13)}" text-anchor="${anchor}">${esc(b.sub)}</text>`;
+    });
+    const trunk = `<path class="wood" d="M${TREE_MID - 26} ${base}Q${TREE_MID - 11} ${base - 8} ${TREE_MID - 11} ${base - 44}` +
+      `L${TREE_MID - 4} ${top}Q${TREE_MID} ${top - 6} ${TREE_MID + 4} ${top}L${TREE_MID + 11} ${base - 44}Q${TREE_MID + 11} ${base - 8} ${TREE_MID + 26} ${base}Z"/>`;
+    const s = countBy(topics, "status");
+    return `<svg class="tree" viewBox="0 0 ${TREE_W} ${H}" role="group"
+      aria-label="Progress tree: ${s.done || 0} topics in bloom, ${s.doing || 0} growing leaves, ${s.todo || 0} still buds">
+      <ellipse class="ground" cx="${TREE_MID}" cy="${base + 6}" rx="250" ry="16"/>${trunk}${wood}${twigs}${labels}</svg>`;
   }
-  // The dropdown under a grade: every topic in it with its status; clicking one opens its practice.
-  function gradeDropHTML(grade) {
-    const list = topics.filter(t => t.grade === grade);
-    const done = list.filter(t => t.status === "done").length;
-    return `<div class="grade-drop" id="gradeDrop" role="region" aria-label="${esc(grade)} topics">
-      <div class="grade-drop-head"><strong>${esc(grade)} topics</strong><small>${done} of ${list.length} confident</small></div>
-      <ul class="d-list">${list.map(t => `<li><button type="button" data-open="${esc(t.id)}">
-        <span>${esc(t.title)}</span><span class="status ${t.status}">${STATUS[t.status].label}</span></button></li>`).join("")}</ul>
-    </div>`;
-  }
-  // Opens (or closes) a grade's dropdown, placing it straight after the last cell on that grade's row.
-  function toggleGradeDrop(cell) {
-    const wasOpen = cell.getAttribute("aria-expanded") === "true";
-    const old = $("gradeDrop");
-    if (old) old.remove();
-    cell.parentNode.querySelectorAll("[data-grade]").forEach(c => c.setAttribute("aria-expanded", "false"));
-    if (wasOpen) return;
-    const row = [...cell.parentNode.querySelectorAll("[data-grade]")].filter(c => c.offsetTop === cell.offsetTop);
-    row[row.length - 1].insertAdjacentHTML("afterend", gradeDropHTML(cell.dataset.grade));
-    cell.setAttribute("aria-expanded", "true");
-    const drop = $("gradeDrop"), box = $("progressBody");
-    const below = drop.getBoundingClientRect().bottom - box.getBoundingClientRect().bottom;
-    if (below > 0) box.scrollBy({ top: below + 16, behavior: "smooth" });
-  }
+  // A single twig in the key, showing what each status looks like.
+  const treeKeyIcon = status => `<svg class="tree" viewBox="-2 -13 34 24" aria-hidden="true">
+    <path class="twig-stem" d="M0 6L16 -2"/>${twigDecor(status, 16, -2, Math.atan2(-8, 16))}</svg>`;
   function topicButtons(list, empty) {
     if (!list.length) return `<p class="d-note">${empty}</p>`;
     return `<ul class="d-list">${list.map(t => `<li><button type="button" data-open="${esc(t.id)}">
@@ -3738,29 +3762,21 @@ TelaDB.start("student").then(() => {
 
   function renderProgress() {
     const s = countBy(topics, "status"), n = topics.length || 1;
-    const grades = GRADES.filter(g => topics.some(t => t.grade === g));
     const doing = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).slice(0, 6);
-    const key = (cls, name, count) => `<li><i class="${cls}"></i><span>${name}</span><strong>${count}</strong><small>${Math.round(count / n * 100)}%</small></li>`;
+    const key = (status, name, count) => `<li>${treeKeyIcon(status)}<span>${name}</span><strong>${count}</strong><small>${Math.round(count / n * 100)}%</small></li>`;
     return `
-      <div class="d-section progress-top">
-        ${donutSVG(topics, 190, "All topics")}
-        <div>
-          <ul class="donut-key">
-            ${key("c-done", "Confident", s.done || 0)}${key("c-doing", "In progress", s.doing || 0)}${key("c-track", "Not started", s.todo || 0)}
-          </ul>
-          <p class="d-note">${topics.length} topics in total. You've saved practice answers in ${practisedCount()} topic${practisedCount() === 1 ? "" : "s"}.</p>
-        </div>
+      <div class="d-section"><h3>Your tree</h3>
+        <div class="tree-wrap">${treeSVG()}</div>
+        <ul class="tree-key">
+          ${key("done", "Confident", s.done || 0)}${key("doing", "In progress", s.doing || 0)}${key("todo", "Not started", s.todo || 0)}
+        </ul>
+        <p class="d-note">Every twig is one of your ${topics.length} topics. It grows leaves once you start practising and flowers when you're confident.
+          Click a twig to practise that topic. You've saved practice answers in ${practisedCount()} topic${practisedCount() === 1 ? "" : "s"}.</p>
       </div>
       <div class="d-section"><h3>Time active</h3>
         ${TelaActivity.tilesHTML(TelaActivity.mine())}
         <p class="d-note">Counted while you're using tela. Weeks start on Monday.</p>
       </div>
-      <div class="d-section"><h3>By subject</h3>
-        ${donutGrid(allSubjects().map(sub => [sub, topics.filter(t => t.subject === sub)]))}
-      </div>
-      ${grades.length ? `<div class="d-section"><h3>Maths by grade</h3>
-        <p class="d-note">Click a grade to see its topics.</p>
-        ${donutGrid(grades.map(g => [g, topics.filter(t => t.grade === g)]), true)}</div>` : ""}
       <div class="d-section"><h3>Carry on with</h3>
         ${topicButtons(doing, "Nothing in progress yet. Open any topic tile to start practising.")}
       </div>`;
@@ -3850,10 +3866,15 @@ TelaDB.start("student").then(() => {
     document.querySelector('.side-btn[data-view="progress"]').classList.remove("active");
   }
   $("progressClose").addEventListener("click", closeProgress);
+  // Enter or Space on a focused twig opens its topic, like a click.
+  $("progressBody").addEventListener("keydown", e => {
+    const twig = e.target.closest(".twig");
+    if (!twig || (e.key !== "Enter" && e.key !== " ")) return;
+    e.preventDefault();
+    twig.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
   $("progressOverlay").addEventListener("click", e => {
     if (e.target === $("progressOverlay")) { closeProgress(); return; }
-    const grade = e.target.closest("[data-grade]");
-    if (grade) return toggleGradeDrop(grade);
     const open = e.target.closest("[data-open]");
     if (!open) return;
     const topic = topics.find(t => t.id === open.dataset.open);
