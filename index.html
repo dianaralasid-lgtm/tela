@@ -592,6 +592,21 @@
   .confirm-box h3 { font-size: 18px; letter-spacing: -.01em; }
   .confirm-box p { font-size: 14px; color: var(--muted); margin: 8px 0 20px; }
   .confirm-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+  .finish-box { max-width: 400px; text-align: center; }
+  .finish-ring { display: grid; place-items: center; margin: 4px auto 14px; }
+  .finish-ring svg { display: block; }
+  .finish-ring .ring-track { fill: none; stroke: var(--brown-100); }
+  .finish-ring .ring-fill { fill: none; stroke: var(--green-600); stroke-linecap: round; transition: stroke-dasharray .8s ease-out; }
+  .finish-ring .ring-pct { font: 700 26px "Inter", sans-serif; fill: var(--ink); }
+  .finish-ring .ring-sub { font: 500 10px "Inter", sans-serif; fill: var(--muted); }
+  .finish-box h3 { font-size: 20px; }
+  .finish-box p { margin: 6px 0 22px; }
+  .finish-box .new-best { display: inline-block; margin-top: 8px; background: #e8eef7; color: var(--navy); font-weight: 700; font-size: 13px; border-radius: 99px; padding: 3px 10px; }
+  .finish-actions { display: flex; flex-direction: column; gap: 8px; }
+  .finish-actions .btn { justify-content: center; padding: 12px 18px; }
+  .finish-review { margin-top: 12px; border: none; background: none; color: var(--muted); font-size: 13px; font-weight: 600; text-decoration: underline; }
+  .finish-review:hover { color: var(--ink); }
+  @media (prefers-reduced-motion: reduce) { .finish-ring .ring-fill { transition: none; } }
 
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
@@ -949,6 +964,20 @@
       <button type="button" class="btn btn-danger" id="saveDiscard">Don't save</button>
       <button type="button" class="btn btn-primary" id="saveConfirm">Save progress</button>
     </div>
+  </div>
+</div>
+
+<!-- Shown when every question in a set has been answered -->
+<div class="overlay confirm-overlay" id="finishOverlay">
+  <div class="confirm-box finish-box" role="dialog" aria-modal="true" aria-labelledby="finishTitle" aria-describedby="finishText">
+    <div class="finish-ring" id="finishRing"></div>
+    <h3 id="finishTitle"></h3>
+    <p id="finishText"></p>
+    <div class="finish-actions">
+      <button type="button" class="btn btn-primary" id="finishAgain">Try again</button>
+      <button type="button" class="btn btn-line" id="finishOther">Choose another topic</button>
+    </div>
+    <button type="button" class="finish-review" id="finishReview">Look over my answers</button>
   </div>
 </div>
 
@@ -1469,7 +1498,7 @@ TelaDB.start("student").then(() => {
 
   const practiceStoreKey = () => (practiceMarathon ? MARATHON_PREFIX : STORAGE_KEY + ".practice.") + practiceOpen.replace(/[^a-z0-9]+/g, "-");
   const MARATHON_PREFIX = STORAGE_KEY + ".marathon.";
-  // The best share of a set a student has got right on each topic, as a whole percentage, kept across attempts.
+  // The best share of a set a student has got right on each topic, as a whole percentage, over the attempts they finished.
   const BEST_PREFIX = STORAGE_KEY + ".best.";
   const bestKey = key => BEST_PREFIX + key.replace(/[^a-z0-9]+/g, "-");
   function bestScore(t) {
@@ -3295,8 +3324,12 @@ TelaDB.start("student").then(() => {
     syncPracticeStatus(score);
     if (result) {
       lockPart(partEl);
-      noteBestScore(score);
-      moveToNext(partEl);
+      // Finishing the set counts as an attempt: it can set a new best score, and the pop-up shows how it went.
+      if (score.answered === score.parts) {
+        const before = bestScore({ title: practiceOpen });
+        noteBestScore(score);
+        setTimeout(() => showFinish(score, before), 600);
+      } else moveToNext(partEl);
     }
   }
 
@@ -3603,6 +3636,10 @@ TelaDB.start("student").then(() => {
   $("practiceOverlay").addEventListener("click", e => { if (e.target === $("practiceOverlay")) closePractice(); });
   $("practiceNew").addEventListener("click", () => {
     if (Object.keys(practiceSaved).length && !confirm("Start a new attempt? Your answers here will be cleared, but your best score is kept.")) return;
+    newAttempt();
+  });
+  // A fresh attempt at the open topic: new questions when there are more than fit in a set, otherwise the same ones again.
+  function newAttempt() {
     const set = PRACTICE[practiceOpen];
     if (practiceMarathon) {
       practiceSaved = {};
@@ -3622,7 +3659,37 @@ TelaDB.start("student").then(() => {
     restartTopicTime();
     renderPractice();
     $("practiceBody").scrollTop = 0;
+  }
+
+  // ---------- Finished a set ----------
+  // A pop-up with the share answered correctly, then another go at the topic or back to the dashboard to pick another.
+  function showFinish({ parts, correct }, bestBefore) {
+    const pct = Math.round(correct / parts * 100), r = 46, len = 2 * Math.PI * r;
+    const title = pct === 100 ? "Perfect score!" : pct >= 70 ? "Great work!" : pct >= 40 ? "Good effort" : "Keep practising";
+    $("finishTitle").textContent = title;
+    $("finishText").innerHTML = `You got ${correct} of ${parts} right.` +
+      (bestBefore === null ? "" : pct > bestBefore ? `<br><span class="new-best">New best score!</span>` : ` Your best on this topic is ${bestBefore}%.`);
+    // The ring fills from empty up to the score
+    $("finishRing").innerHTML = `<svg width="132" height="132" viewBox="0 0 120 120" role="img" aria-label="${pct}% correct">
+      <circle class="ring-track" cx="60" cy="60" r="${r}" stroke-width="12"/>
+      <circle class="ring-fill" cx="60" cy="60" r="${r}" stroke-width="12" transform="rotate(-90 60 60)" stroke-dasharray="0 ${len}"/>
+      <text class="ring-pct" x="60" y="64" text-anchor="middle">${pct}%</text>
+      <text class="ring-sub" x="60" y="80" text-anchor="middle">correct</text></svg>`;
+    $("finishAgain").textContent = practiceMarathon || $("practiceNew").textContent === "Start again" ? "Try again" : "Try new questions";
+    $("finishOverlay").classList.add("open");
+    const fill = $("finishRing").querySelector(".ring-fill");
+    requestAnimationFrame(() => requestAnimationFrame(() => { if (pct) fill.setAttribute("stroke-dasharray", `${len * pct / 100} ${len}`); }));
+    $("finishAgain").focus();
+  }
+  const closeFinish = () => $("finishOverlay").classList.remove("open");
+  $("finishAgain").addEventListener("click", () => { closeFinish(); newAttempt(); });
+  $("finishOther").addEventListener("click", () => {
+    closeFinish();
+    hidePractice();
+    $("grid").scrollIntoView({ behavior: "smooth", block: "start" });
   });
+  $("finishReview").addEventListener("click", closeFinish);
+  $("finishOverlay").addEventListener("click", e => { if (e.target === $("finishOverlay")) closeFinish(); });
 
   // ---------- Sidebar: Progress, Tutor and Settings panels ----------
   const PRACTICE_PREFIX = STORAGE_KEY + ".practice.";
@@ -4077,6 +4144,7 @@ TelaDB.start("student").then(() => {
       if ($("progressOverlay").classList.contains("open")) { closeProgress(); return; }
       if (drawerView) { closeDrawer(); return; }
       if ($("saveOverlay").classList.contains("open")) { $("saveOverlay").classList.remove("open"); return; }
+      if ($("finishOverlay").classList.contains("open")) { closeFinish(); return; }
       closePractice();
     }
     if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
