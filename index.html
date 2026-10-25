@@ -664,8 +664,9 @@
   .tree text { font-family: "Inter", sans-serif; }
   .tree .wood { fill: var(--brown-700); }
   .tree .ground { fill: var(--brown-200); }
-  .tree .bough-label { font-size: 13px; font-weight: 700; fill: var(--brown-800); }
-  .tree .bough-count { font-size: 12px; font-weight: 500; fill: var(--muted); }
+  .tree .crown { fill: rgba(95, 174, 130, .1); }
+  .tree .bough-label { font-size: 15px; font-weight: 700; fill: var(--brown-800); }
+  .tree .bough-count { font-size: 14px; font-weight: 500; fill: var(--muted); }
   .tree .twig { cursor: pointer; outline: none; }
   .tree .twig-hit { fill: transparent; }
   .tree .twig:hover .twig-hit, .tree .twig:focus-visible .twig-hit { fill: rgba(25,135,84,.12); stroke: var(--green-600); stroke-width: 1.5; }
@@ -3667,7 +3668,7 @@ TelaDB.start("student").then(() => {
   // Every topic is a twig on the tree, and its boughs are the grades (or the subject, outside Maths).
   // A twig is a bare bud while not started, grows leaves once in progress and flowers when confident.
   const treeGroup = t => t.grade || t.subject;
-  const TREE_W = 640, TREE_MID = 320, BOUGH_LEN = 190, BOUGH_RISE = 22 * Math.PI / 180, BOUGH_STEP = 64, MAX_TWIGS = 12;
+  const TREE_W = 800, TREE_MID = 400, CROWN_R = 260, MAX_TWIGS = 12;
   const num = n => n.toFixed(1);
   // The bud, leaves or flower at the end (x, y) of a twig pointing at angle a (radians).
   function twigDecor(status, x, y, a, delay = 0) {
@@ -3713,14 +3714,17 @@ TelaDB.start("student").then(() => {
   function treeSVG() {
     const boughs = treeBoughs();
     if (!boughs.length) return `<p class="d-note">No topics yet, so your tree hasn't sprouted.</p>`;
-    const rise = BOUGH_LEN * Math.sin(BOUGH_RISE), levels = boughs[boughs.length - 1].level + 1;
-    const H = Math.round(110 + (levels - 1) * BOUGH_STEP + rise + 60 + 30), base = H - 30;
-    const yOf = i => base - 110 - i * BOUGH_STEP, top = yOf(levels - 1) - 46;
+    // The bough tips sit on a circle, so the crown is round: low boughs reach out and droop a little,
+    // high ones climb steeply, and the middle ones reach furthest.
+    const levels = boughs[boughs.length - 1].level + 1, R = CROWN_R, cy = R + 45;
+    const base = Math.round(cy + R * .75 + 80), H = base + 30;
+    const f = i => levels === 1 ? .5 : i / (levels - 1);   // 0 for the lowest level, 1 for the highest
+    const yOf = i => cy + R * (.75 - 1.35 * f(i)), top = yOf(levels - 1) - 30;
     let wood = "", twigs = "", labels = "", n = 0;
     boughs.forEach(b => {
-      const side = b.side, y = yOf(b.level);
-      // A gently upward-curving bough, from the trunk out to its tip
-      const S = [TREE_MID + side * 4, y], T = [S[0] + side * BOUGH_LEN * Math.cos(BOUGH_RISE), y - rise];
+      const side = b.side, y = yOf(b.level), tip = (150 - 130 * f(b.level)) * Math.PI / 180;   // angle from straight up
+      // A gently arching bough, from the trunk out to its tip on the crown's edge
+      const S = [TREE_MID + side * 4, y], T = [TREE_MID + side * R * Math.sin(tip), cy - R * Math.cos(tip)];
       const C = [(S[0] + T[0]) / 2, (S[1] + T[1]) / 2 - 12];
       const at = t => [0, 1].map(k => (1 - t) ** 2 * S[k] + 2 * (1 - t) * t * C[k] + t * t * T[k]);
       const dir = t => Math.atan2(2 * (1 - t) * (C[1] - S[1]) + 2 * t * (T[1] - C[1]), 2 * (1 - t) * (C[0] - S[0]) + 2 * t * (T[0] - C[0]));
@@ -3749,7 +3753,7 @@ TelaDB.start("student").then(() => {
     const s = countBy(topics, "status");
     return `<svg class="tree" viewBox="0 0 ${TREE_W} ${H}" role="group"
       aria-label="Progress tree: ${s.done || 0} topics in bloom, ${s.doing || 0} growing leaves, ${s.todo || 0} still buds">
-      <ellipse class="ground" cx="${TREE_MID}" cy="${base + 6}" rx="250" ry="16"/>${trunk}${wood}${twigs}${labels}</svg>`;
+      <circle class="crown" cx="${TREE_MID}" cy="${cy}" r="${R + 34}"/><ellipse class="ground" cx="${TREE_MID}" cy="${base + 6}" rx="280" ry="16"/>${trunk}${wood}${twigs}${labels}</svg>`;
   }
   // A single twig in the key, showing what each status looks like.
   const treeKeyIcon = status => `<svg class="tree" viewBox="-2 -13 34 24" aria-hidden="true">
