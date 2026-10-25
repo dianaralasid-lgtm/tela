@@ -116,7 +116,7 @@ create trigger on_auth_user_created after insert on auth.users for each row exec
 
 -- Admins (tutors with these usernames) can read every conversation.
 create function public.is_admin() returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from profiles where id = auth.uid() and role = 'tutor' and username in ('dayan'))
+  select exists (select 1 from profiles where id = auth.uid() and role = 'tutor' and username in ('dayan', 'ilham'))
 $$;
 create function public.is_tutor() returns boolean language sql stable security definer set search_path = public as $$
   select exists (select 1 from profiles where id = auth.uid() and role = 'tutor')

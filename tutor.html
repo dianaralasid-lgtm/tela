@@ -734,7 +734,7 @@ TelaDB.start("tutor").then(() => {
   // Admin tutors (by username) get an "All messages" item in the sidebar. They can read every conversation
   // between any student and any tutor, but can't send in them, and reading doesn't mark
   // anything as read for the student or tutor.
-  const ADMINS = ["dayan"];
+  const ADMINS = ["dayan", "ilham"];
   const isAdmin = ADMINS.includes(String(tutorUser).toLowerCase());
   $("adminBtn").hidden = !isAdmin;
   let panelMode = "messages", adminChat = null;   // adminChat: { student, tutor } when a conversation is open

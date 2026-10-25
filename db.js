@@ -36,7 +36,7 @@ const TelaDB = (() => {
     if (errorListeners.length) errorListeners.forEach(fn => fn(msg)); else alert(msg);
   }
   const isStudent = () => S.me && S.me.role === "student";
-  const isAdmin = () => S.me && S.me.role === "tutor" && ["dayan"].includes(S.me.username);
+  const isAdmin = () => S.me && S.me.role === "tutor" && ["dayan", "ilham"].includes(S.me.username);
 
   // Writes go to the server in the background. If one fails, undo puts the page's copy back and the page redraws.
   // While any are on their way, a reload from the server waits, so it never shows the page an older copy.
