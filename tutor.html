@@ -399,7 +399,7 @@
     <label class="field">Name<input id="accName" maxlength="40" autocomplete="off" placeholder="e.g. Keyara"></label>
     <label class="field">Username<input id="accUser" maxlength="20" autocomplete="off" autocapitalize="none" spellcheck="false">
       <small>3–20 characters: letters, numbers, dots, dashes or underscores.</small></label>
-    <label class="field">Password<input id="accPass" type="password" autocomplete="new-password"><small id="accPassHint">At least 6 characters.</small></label>
+    <label class="field">Password<input id="accPass" type="password" autocomplete="new-password"><small id="accPassHint">At least 8 characters, and not containing their username.</small></label>
     <label class="field">Confirm password<input id="accConfirm" type="password" autocomplete="new-password"></label>
     <div class="field" id="accTutorsField" role="group" aria-labelledby="accTutorsLabel">
       <span id="accTutorsLabel">Tutors <span class="opt">(optional)</span></span>
@@ -440,7 +440,7 @@
   window.QUESTION_BANK = { topics: {}, add(t) { const k = String(t && t.topic).trim().toLowerCase(); (this.topics[k] = this.topics[k] || []).push(t); } };
 </script>
 <script src="questions.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js" integrity="sha384-sLWJsCmP+Z4Qn+HgF7Hi64Djta4fZMu0fcgi3uUL3GFV/ubx2G86LPOuMf7+ZIyX" crossorigin="anonymous"></script>
 <script src="db.js"></script>
 <script src="activity.js"></script>
 <script src="catalog.js"></script>
@@ -1185,7 +1185,7 @@ TelaDB.start("tutor").then(() => {
       document.querySelectorAll("[name=accTutor]").forEach(box => { box.checked = (acc.tutors || []).includes(box.value); });
     }
     $("accTabs").hidden = !!editing;
-    $("accPassHint").textContent = editing ? "Leave blank to keep their password. A new one needs at least 6 characters." : "At least 6 characters.";
+    $("accPassHint").textContent = editing ? "Leave blank to keep their password. A new one needs at least 8 characters, and can't contain their username." : "At least 8 characters, and not containing their username.";
     $("accSubmit").textContent = editing ? "Save changes" : "Create account";
     $("accOverlay").classList.add("open");
     $("accName").focus();
@@ -1206,7 +1206,8 @@ TelaDB.start("tutor").then(() => {
     const password = $("accPass").value;
     if (!name) return accError("Enter their name.", "accName");
     if (!USERNAME_RE.test(username)) return accError("Usernames must be 3–20 characters: letters, numbers, dots, dashes or underscores.", "accUser");
-    if (password.length < 6 && (password || !accEdit)) return accError("The password needs at least 6 characters.", "accPass");
+    if (password.length < 8 && (password || !accEdit)) return accError("The password needs at least 8 characters.", "accPass");
+    if (password && password.toLowerCase().includes(username)) return accError("The password can't contain their username.", "accPass");
     if (password !== $("accConfirm").value) return accError("Those passwords don't match.", "accConfirm");
     const tutors = accRole === "student" ? [...document.querySelectorAll("[name=accTutor]:checked")].map(c => c.value) : [];
     if (accEdit) return saveAccountChanges(name, username, password, tutors);
