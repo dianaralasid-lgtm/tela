@@ -1615,11 +1615,14 @@
   // Definition questions from AQA GCSE Biology (8461) papers, 2019–2024, with what the mark scheme accepts.
   // Paper codes: 1F/1H = Paper 1 Foundation/Higher, 2F/2H = Paper 2. These go in a second block for each topic,
   // so they show under an "Exam style questions" heading.
-  //   paperDefine(question, paper, marks, mark scheme)   Write the definition; marked against the mark scheme.
+  //   paperDefine(question, paper, marks, points, notes) Write the definition; marked against the mark scheme.
+  //                                                       "points" are what earn the marks (shown as bullets if the
+  //                                                       student gets it wrong); "notes" say what else is allowed.
   //   paperTerm(description, paper, answers, exact)      Name the term; "/" separates accepted answers, and
   //                                                       exact: true means the spelling must be right.
-  const paperDefine = (question, paper, marks, scheme) =>
-    ({ question: `${question} [AQA ${paper}]`, type: "explain", marks, answer: "Mark scheme: " + scheme });
+  const paperDefine = (question, paper, marks, points, notes = "") =>
+    ({ question: `${question} [AQA ${paper}]`, type: "explain", marks, points, notes,
+       answer: "Mark scheme: " + points.join("; ") + (notes ? ". " + notes : "") });
   const paperTerm = (description, paper, answer, exact = false) =>
     ({ question: `Give the term for: ${description}. [AQA ${paper}]`, type: "word", marks: 1, answer, ...(exact ? { exact } : {}) });
   const paper = (title, questions) => QUESTION_BANK.add({ topic: title, type: "word", questions });
@@ -1627,7 +1630,8 @@
   // ---------- Paper 1 ----------
   paper("Diffusion: factors affecting rate", [
     paperDefine("What is meant by the term diffusion?", "1H 2020 Q02.1, 1F 2020 Q08.1", 2,
-      "Movement / spreading out of particles or molecules (1); from a higher to a lower concentration (1). Allow named substances; allow \"down the concentration gradient\". Ignore membranes/cells. Not \"along/across\" the gradient.")
+      ["Movement / spreading out of particles or molecules (1 mark)", "From a higher to a lower concentration (1 mark)"],
+      "Allow named substances, and \"down the concentration gradient\". Ignore membranes/cells. \"Along\" or \"across\" the gradient doesn't get the mark.")
   ]);
   paper("Osmosis: definition and examples", [
     paperTerm("the process by which water enters root hair cells (is absorbed into roots)", "1H 2020 Q02.4, 2H 2022 Q06.2", "osmosis/diffusion")
@@ -1647,19 +1651,22 @@
   ]);
   paper("Cells → tissues → organs → organ systems", [
     paperDefine("What is a tissue?", "1H 2023 Q01.1, 1F 2023 Q06.1", 1,
-      "A group of similar cells, or a group of cells with a similar/specific function. Ignore \"a group of cells\" with no qualifier."),
+      ["A group of similar cells, or a group of cells with a similar/specific function (1 mark)"],
+      "\"A group of cells\" on its own doesn't get the mark."),
     paperTerm("a group of tissues working together", "1F 2024 Q01.1, 1F 2021 Q03.6", "organ")
   ]);
   paper("Enzyme action: lock and key, temperature, pH", [
     paperDefine("What is an enzyme?", "1H 2019 Q08.1", 2,
-      "Any two: speeds up (catalyses) reactions in living organisms; specific to one substrate; is a protein. Allow \"biological catalyst\", \"lowers activation energy\", \"made of amino acids\".")
+      ["Speeds up (catalyses) reactions in living organisms", "Is specific to one substrate", "Is a protein"],
+      "Any two of these, 1 mark each. Allow \"biological catalyst\", \"lowers activation energy\" and \"made of amino acids\".")
   ]);
   paper("Required practical: effect of pH on enzyme activity", [
     paperTerm("a variable kept the same during an investigation", "1F 2023 Q01.5", "control variable/control variables/control")
   ]);
   paper("Heart structure and the circulatory system", [
     paperDefine("Define the term double circulatory system.", "1H 2019 Q07.1", 1,
-      "Blood is pumped to the lungs by one (right) side of the heart AND to the body by the other (left) side — both needed. Allow: blood passes through the heart twice per circuit of the body.")
+      ["Blood is pumped to the lungs by one (right) side of the heart", "AND to the body by the other (left) side"],
+      "Both are needed for the 1 mark. Also allowed: blood passes through the heart twice for each circuit of the body.")
   ]);
   paper("Blood: components and functions", [
     paperTerm("the liquid part of the blood", "1F 2020 Q06.5", "plasma"),
@@ -1694,7 +1701,8 @@
   ]);
   paper("Reflex arc: sensory, relay, motor neurones", [
     paperDefine("What is meant by the term reflex action?", "2H 2021 Q06.1", 2,
-      "A response / reaction (1); automatic, involuntary or not conscious (1). Ignore \"quick\", examples and references to the brain."),
+      ["A response / reaction (1 mark)", "That is automatic, involuntary or not conscious (1 mark)"],
+      "\"Quick\", examples and references to the brain don't earn marks."),
     { question: "Which statement describes a reflex action? [AQA 2F 2022]", type: "choice", answer: "It is automatic.",
       options: ["It is automatic.", "It is learned.", "It needs conscious thought.", "It is controlled by hormones."] }
   ]);
@@ -1706,7 +1714,7 @@
   ]);
   paper("Sexual vs asexual reproduction: advantages", [
     paperDefine("What is tissue culture?", "2H 2023 Q03.3, 2F 2023 Q09.3", 1,
-      "(A group of) cells are grown into a new organism. Ignore \"clones\".")
+      ["(A group of) cells are grown into a new organism (1 mark)"], "\"Clones\" on its own doesn't earn the mark.")
   ]);
   paper("Meiosis: stages and importance of variation", [
     paperTerm("the type of cell division that produces sperm cells (spelling counts)", "2H 2021 Q01.8, 2F 2021 Q08.8", "meiosis", true)
@@ -1715,16 +1723,18 @@
     paperTerm("one section of genetic material on a chromosome", "1F 2020 Q02.6", "gene")
   ]);
   paper("Genes, alleles: dominant and recessive", [
-    paperDefine("What is a recessive allele?", "2F 2022 Q01.1", 1, "An allele that is only expressed if two copies are present."),
+    paperDefine("What is a recessive allele?", "2F 2022 Q01.1", 1,
+      ["An allele that is only expressed if two copies are present (1 mark)"]),
     paperTerm("an allele that shows in the phenotype when only one copy is present", "2F 2022 Q01.6", "dominant/dominant allele")
   ]);
   paper("Mutations: causes and effects (basic)", [
     paperDefine("What is a mutation?", "2H 2022 Q07.1", 1,
-      "A change in DNA, the base sequence, a gene/allele, part of a chromosome, the number of chromosomes, or the genetic code. Ignore \"genetic information\".")
+      ["A change in DNA, the base sequence, a gene/allele, part of a chromosome, the number of chromosomes, or the genetic code (1 mark)"],
+      "\"Genetic information\" doesn't earn the mark.")
   ]);
   paper("Evidence for evolution: fossils, antibiotic resistance", [
     paperDefine("What is a fossil?", "2F 2021 Q01.2", 1,
-      "The remains of an organism from a long time ago. Allow animal/plant; allow thousands/millions of years ago.")
+      ["The remains of an organism from a long time ago (1 mark)"], "Allow animal/plant, and thousands/millions of years ago.")
   ]);
   paper("Ecosystems: habitats, populations, communities", [
     paperTerm("all the organisms living in the same habitat", "2H 2023 Q01.1, 2F 2023 Q07.1", "community/communities")
@@ -1733,6 +1743,7 @@
     paperTerm("a 1 m × 1 m square frame used for sampling", "2F 2023 Q02.1", "quadrat/quadrats")
   ]);
   paper("Biodiversity: importance and preservation", [
-    paperDefine("What does biodiversity in a river mean?", "2F 2021 Q05.3", 1, "The variety of species of organisms in the river.")
+    paperDefine("What does biodiversity in a river mean?", "2F 2021 Q05.3", 1,
+      ["The variety of species of organisms in the river (1 mark)"])
   ]);
 })();

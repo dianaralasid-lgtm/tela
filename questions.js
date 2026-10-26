@@ -52,6 +52,10 @@
                 accepted, and 7.70 counts the same as 7.7.
      "explain"  A written answer. The student sees your answer as a model
                 and marks themselves right or wrong.
+                If they mark it wrong, the points that earn marks are shown as
+                bullets: give them as  points: ["...", "..."]  (and any "allow"
+                notes as  notes: "..." ), or leave them out and the answer is
+                split into points (at each "(1)", or else sentence by sentence).
      "coordinates"  One or more points, e.g. "(3, 2)" or "(1, 4); (-2, 3)".
                 Points can be in any order.
      "plot"     Like "coordinates", but the student gets a grid they can

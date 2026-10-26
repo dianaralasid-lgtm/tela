@@ -582,6 +582,7 @@
   @media (max-width: 560px) { .match-row { grid-template-columns: 1fr; gap: 6px; } }
   .right-list { margin: 6px 0 0 20px; color: var(--ink); font-size: 14px; }
   .right-list li { margin: 2px 0; }
+  .mark-notes { margin-top: 6px; font-size: 13px; color: var(--muted); }
 
   .q-section {
     font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
@@ -1408,6 +1409,9 @@ TelaDB.start("student").then(() => {
           simplest: p.simplest === "square" ? "square" : p.simplest === true,
           // exact: true on a word answer means the spelling must be right (no allowance for slips).
           exact: p.exact === true,
+          // Written answers can list the points that earn marks, and notes such as what else is allowed.
+          points: Array.isArray(p.points) ? p.points.map(String) : null,
+          notes: p.notes ? String(p.notes) : "",
           // tolerance: how far off a number answer may be (e.g. 0.1 so π and 3.14 both count).
           tolerance: Number(p.tolerance) > 0 ? Number(p.tolerance) : 0,
           // Shading and pictogram questions keep their picture inside the part so it can be tapped.
@@ -3285,10 +3289,25 @@ TelaDB.start("student").then(() => {
     return spec.kind === "num" ? markNumber(saved.value, spec.answer, spec.tolerance) : markAnswer(saved.value, spec.answer);
   }
 
+  // The points that earn marks on a written answer: the question's own "points" list if it has one, otherwise
+  // the model answer split up (at each "(1)" in a mark scheme, or else into sentences).
+  function markPoints(spec) {
+    if (spec.points) return spec.points;
+    const text = spec.answer.replace(/^Mark scheme:\s*/i, "");
+    const parts = /\(1\)/.test(text) ? text.split(/(?<=\(1\))[;,.]?\s+/) : text.split(/(?<=[.!?])\s+(?=[A-Z(])/);
+    return parts.map(s => s.trim()).filter(Boolean);
+  }
+  function markPointsHTML(spec) {
+    return `<span class="right-answer">What gets the marks:</span><ul class="right-list">${markPoints(spec).map(p => `<li>${esc(p)}</li>`).join("")}</ul>` +
+      (spec.notes ? `<div class="mark-notes">${esc(spec.notes)}</div>` : "");
+  }
+
   function feedbackHTML(spec, result, saved) {
     if (spec.kind === "explain") {
       if (!saved) return "";
       const model = `<b>Model answer:</b> ${esc(spec.answer)}<br>`;
+      // Marked "Not quite": show what earns the marks, point by point.
+      if (result && !result.correct) return esc(result.message) + markPointsHTML(spec);
       return result
         ? model + esc(result.message)
         : model + `Did you get it right?
@@ -3367,8 +3386,8 @@ TelaDB.start("student").then(() => {
       if (item.sector) html += `<div class="graph-wrap">${sectorSVG(item.sector)}</div>`;
       if (item.circleFig) html += `<div class="graph-wrap">${circleFigSVG(item.circleFig)}</div>`;
       if (item.boxplot) html += `<div class="graph-wrap col-wrap">${boxPlotSVG(item.boxplot)}</div>`;
-      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs, exact }) => {
-        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs, exact, seed: id };
+      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs, exact, points, notes }) => {
+        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs, exact, points, notes, seed: id };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
         const value = esc(saved ? saved.value : "");
