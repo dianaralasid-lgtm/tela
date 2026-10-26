@@ -1611,139 +1611,137 @@
     order("Put the trophic levels in order, from the bottom of the pyramid to the top.", ["Producers", "Primary consumers", "Secondary consumers", "Tertiary consumers"])
   ]);
 
-  // ======================= PAST PAPER DEFINITIONS =======================
-  // Definition questions from AQA GCSE Biology (8461) papers, 2019–2024, with what the mark scheme accepts.
-  // Paper codes: 1F/1H = Paper 1 Foundation/Higher, 2F/2H = Paper 2. These go in a second block for each topic,
-  // so they show under an "Exam style questions" heading.
-  //   paperDefine(question, paper, marks, points, notes) Write the definition; marked against the mark scheme.
-  //                                                       "points" are what earn the marks (shown as bullets if the
-  //                                                       student gets it wrong); "notes" say what else is allowed.
-  //   paperTerm(description, paper, answers, exact)      Name the term; "/" separates accepted answers, and
-  //                                                       exact: true means the spelling must be right.
-  const paperDefine = (question, paper, marks, points, notes = "") =>
-    ({ question: `${question} [AQA ${paper}]`, type: "explain", marks, points, notes,
-       answer: "Mark scheme: " + points.join("; ") + (notes ? ". " + notes : "") });
-  const paperTerm = (description, paper, answer, exact = false) =>
-    ({ question: `Give the term for: ${description}. [AQA ${paper}]`, type: "word", marks: 1, answer, ...(exact ? { exact } : {}) });
-  const paper = (title, questions) => QUESTION_BANK.add({ topic: title, type: "word", questions });
+  // ======================= EXAM STYLE =======================
+  // Short definition and naming questions written in the style of GCSE exam questions (a context, then a
+  // question), marked the way an exam would mark them. These go in a second block for each topic, so they
+  // show under an "Exam style questions" heading.
+  //   examDefine(question, marks, points, notes)   Write the definition. "points" are what earn the marks (shown
+  //                                                 as bullets if the student gets it wrong); "notes" say what
+  //                                                 else counts, or what doesn't.
+  //   examTerm(question, answers, exact)           Name the term; "/" separates accepted answers, and
+  //                                                 exact: true means the spelling must be right.
+  const examDefine = (question, marks, points, notes = "") =>
+    ({ question, type: "explain", marks, points, notes, answer: points.join("; ") + (notes ? ". " + notes : "") });
+  const examTerm = (question, answer, exact = false) =>
+    ({ question, type: "word", marks: 1, answer, ...(exact ? { exact } : {}) });
+  const examStyle = (title, questions) => QUESTION_BANK.add({ topic: title, type: "word", questions });
 
   // ---------- Paper 1 ----------
-  paper("Diffusion: factors affecting rate", [
-    paperDefine("What is meant by the term diffusion?", "1H 2020 Q02.1, 1F 2020 Q08.1", 2,
-      ["Movement / spreading out of particles or molecules (1 mark)", "From a higher to a lower concentration (1 mark)"],
-      "Allow named substances, and \"down the concentration gradient\". Ignore membranes/cells. \"Along\" or \"across\" the gradient doesn't get the mark.")
+  examStyle("Diffusion: factors affecting rate", [
+    examDefine("A drop of food colouring is added to a beaker of water. The colour slowly spreads through the water. Explain what is meant by diffusion.", 2,
+      ["The (net) movement / spreading out of particles (1 mark)", "From an area of higher concentration to an area of lower concentration (1 mark)"],
+      "Naming the particles is fine, and so is \"down a concentration gradient\". \"Along\" or \"across\" a gradient doesn't get the mark.")
   ]);
-  paper("Osmosis: definition and examples", [
-    paperTerm("the process by which water enters root hair cells (is absorbed into roots)", "1H 2020 Q02.4, 2H 2022 Q06.2", "osmosis/diffusion")
+  examStyle("Osmosis: definition and examples", [
+    examTerm("Root hair cells take in water from the soil. Name the process by which water moves into these cells.", "osmosis")
   ]);
-  paper("Active transport: differences from diffusion", [
-    { question: "Complete the sentence: active transport moves substances against the concentration gradient and needs _____. [AQA 1F 2021]", type: "word", answer: "energy" },
-    paperTerm("the process that moves sugars against the concentration gradient", "1F 2024 Q01.8", "active transport")
+  examStyle("Active transport: differences from diffusion", [
+    { question: "Complete the sentence. Unlike diffusion, active transport needs _____ from respiration.", type: "word", answer: "energy" },
+    examTerm("Cells in the small intestine move glucose from a low concentration to a high concentration. Name this process.", "active transport")
   ]);
-  paper("Mitosis and the cell cycle", [
-    paperTerm("cell division that makes genetically identical body cells for growth and repair (spelling counts)", "1H 2020 Q03.4, 1F 2020 Q02.1", "mitosis", true)
+  examStyle("Mitosis and the cell cycle", [
+    examTerm("New skin cells are made to repair a cut. Name the type of cell division that makes them. (Your spelling must be correct.)", "mitosis", true)
   ]);
-  paper("Differentiation and specialised cells", [
-    paperTerm("the process by which stem cells form specialised cells", "1H 2022 Q04.5", "differentiation/differentiate")
+  examStyle("Differentiation and specialised cells", [
+    examTerm("A stem cell changes into a nerve cell. What is this process called?", "differentiation/differentiate")
   ]);
-  paper("Stem cells: types and uses (embryonic & adult)", [
-    paperTerm("the plant tissue that contains stem cells", "1H 2023 Q01.2", "meristem/meristems/meristem tissue")
+  examStyle("Stem cells: types and uses (embryonic & adult)", [
+    examTerm("Name the plant tissue, found at the tips of roots and shoots, that contains stem cells.", "meristem/meristems/meristem tissue")
   ]);
-  paper("Cells → tissues → organs → organ systems", [
-    paperDefine("What is a tissue?", "1H 2023 Q01.1, 1F 2023 Q06.1", 1,
-      ["A group of similar cells, or a group of cells with a similar/specific function (1 mark)"],
-      "\"A group of cells\" on its own doesn't get the mark."),
-    paperTerm("a group of tissues working together", "1F 2024 Q01.1, 1F 2021 Q03.6", "organ")
+  examStyle("Cells → tissues → organs → organ systems", [
+    examDefine("Muscle and xylem are both examples of tissues. What is meant by a tissue?", 1,
+      ["A group of cells with a similar structure and function (1 mark)"], "\"A group of cells\" on its own doesn't get the mark."),
+    examTerm("The stomach is made of several different tissues working together. What is a structure like this called?", "organ")
   ]);
-  paper("Enzyme action: lock and key, temperature, pH", [
-    paperDefine("What is an enzyme?", "1H 2019 Q08.1", 2,
-      ["Speeds up (catalyses) reactions in living organisms", "Is specific to one substrate", "Is a protein"],
-      "Any two of these, 1 mark each. Allow \"biological catalyst\", \"lowers activation energy\" and \"made of amino acids\".")
+  examStyle("Enzyme action: lock and key, temperature, pH", [
+    examDefine("Amylase is an enzyme found in saliva. Give two features of enzymes.", 2,
+      ["It is a biological catalyst: it speeds up reactions", "It is specific: it works on only one substrate", "It is made of protein"],
+      "Any two of these, 1 mark each.")
   ]);
-  paper("Required practical: effect of pH on enzyme activity", [
-    paperTerm("a variable kept the same during an investigation", "1F 2023 Q01.5", "control variable/control variables/control")
+  examStyle("Required practical: effect of pH on enzyme activity", [
+    examTerm("A student investigates the effect of pH on amylase. They keep the temperature the same throughout. What type of variable is temperature in this investigation?",
+      "control variable/control variables/control")
   ]);
-  paper("Heart structure and the circulatory system", [
-    paperDefine("Define the term double circulatory system.", "1H 2019 Q07.1", 1,
-      ["Blood is pumped to the lungs by one (right) side of the heart", "AND to the body by the other (left) side"],
-      "Both are needed for the 1 mark. Also allowed: blood passes through the heart twice for each circuit of the body.")
+  examStyle("Heart structure and the circulatory system", [
+    examDefine("Humans have a double circulatory system. Describe what this means.", 1,
+      ["One side (the right) pumps blood to the lungs", "AND the other side (the left) pumps blood to the rest of the body"],
+      "Both are needed for the 1 mark. Saying blood passes through the heart twice on each circuit of the body also counts.")
   ]);
-  paper("Blood: components and functions", [
-    paperTerm("the liquid part of the blood", "1F 2020 Q06.5", "plasma"),
-    paperTerm("the blood component that starts clotting", "1H 2019 Q05.3", "platelets/platelet/thrombocytes/thrombocyte")
+  examStyle("Blood: components and functions", [
+    examTerm("Name the yellow liquid part of the blood that carries the blood cells around the body.", "plasma"),
+    examTerm("After a cut, small cell fragments in the blood help it to clot. Name these fragments.", "platelets/platelet/thrombocytes/thrombocyte")
   ]);
-  paper("Plant tissues: leaf structure and transpiration", [
-    paperTerm("water taken in by roots, moved up the plant and lost from leaves (two words)", "1H 2021 Q06.4", "transpiration stream"),
-    paperTerm("the loss of water from the leaves", "1F 2024 Q01.3", "transpiration"),
-    paperTerm("the pores in the lower epidermis of a leaf", "1F 2024 Q01.6", "stomata/stoma"),
-    paperTerm("the cells that control the opening and closing of stomata", "1H 2022 Q05.1", "guard cells/guard cell")
+  examStyle("Plant tissues: leaf structure and transpiration", [
+    examTerm("Water moves into the roots, up through the xylem and out of the leaves. What is this flow of water called? (Two words.)", "transpiration stream"),
+    examTerm("Name the process by which plants lose water vapour from their leaves.", "transpiration"),
+    examTerm("Carbon dioxide enters a leaf through tiny pores on its lower surface. Name these pores.", "stomata/stoma"),
+    examTerm("Name the cells either side of each pore in a leaf that open and close it.", "guard cells/guard cell")
   ]);
-  paper("Pathogens: bacteria, viruses, fungi, protists", [
-    paperTerm("microorganisms that cause disease", "1F 2023 Q02.1, 1F 2021 Q02.1", "pathogens/pathogen")
+  examStyle("Pathogens: bacteria, viruses, fungi, protists", [
+    examTerm("Some bacteria, viruses, fungi and protists cause disease. What general name is given to these microorganisms?", "pathogens/pathogen")
   ]);
-  paper("Examples of communicable diseases", [
-    paperTerm("an organism that carries a pathogen from one person to another", "1H 2023 Q05.1, 1F 2023 Q04.1", "vector/vectors")
+  examStyle("Examples of communicable diseases", [
+    examTerm("Mosquitoes carry the malaria pathogen from one person to another. What name is given to an organism that spreads a pathogen like this?", "vector/vectors")
   ]);
-  paper("Plant disease: detection and defence", [
-    paperTerm("the type of plant defence where the plant makes poisons", "1F 2021 Q03.2", "chemical/chemical defence")
+  examStyle("Plant disease: detection and defence", [
+    examTerm("Foxgloves make poisons that stop animals eating them. What type of plant defence is this?", "chemical/chemical defence")
   ]);
-  paper("Drug development: clinical trials, double-blind", [
-    paperTerm("a tablet that does not contain the drug", "1F 2024 Q05.9, 1F 2020 Q05.9", "placebo")
+  examStyle("Drug development: clinical trials, double-blind", [
+    examTerm("In a drug trial, some volunteers are given a pill that looks the same but contains no drug. What is this pill called?", "placebo")
   ]);
-  paper("Aerobic respiration equation", [
-    paperTerm("the process in living organisms that uses oxygen", "2F 2022 Q04.3", "aerobic respiration"),
-    paperTerm("the process that releases energy from stored food", "2F 2022 Q06.4", "respiration/aerobic respiration/cellular respiration")
+  examStyle("Aerobic respiration equation", [
+    examTerm("Name the type of respiration that uses oxygen.", "aerobic respiration/aerobic"),
+    examTerm("Name the process in every living cell that transfers energy from glucose.", "respiration/aerobic respiration/cellular respiration")
   ]);
 
   // ---------- Paper 2 ----------
-  paper("Blood glucose control: insulin, diabetes", [
-    paperTerm("the insoluble storage substance made from glucose in animals", "2F 2021 Q02.4", "glycogen")
+  examStyle("Blood glucose control: insulin, diabetes", [
+    examTerm("After a meal, the liver stores excess glucose as an insoluble carbohydrate. Name this carbohydrate.", "glycogen")
   ]);
-  paper("Reflex arc: sensory, relay, motor neurones", [
-    paperDefine("What is meant by the term reflex action?", "2H 2021 Q06.1", 2,
-      ["A response / reaction (1 mark)", "That is automatic, involuntary or not conscious (1 mark)"],
-      "\"Quick\", examples and references to the brain don't earn marks."),
-    { question: "Which statement describes a reflex action? [AQA 2F 2022]", type: "choice", answer: "It is automatic.",
-      options: ["It is automatic.", "It is learned.", "It needs conscious thought.", "It is controlled by hormones."] }
+  examStyle("Reflex arc: sensory, relay, motor neurones", [
+    examDefine("A person touches a hot pan and pulls their hand away. Explain what is meant by a reflex action.", 2,
+      ["A response to a stimulus (1 mark)", "That is automatic: it doesn't involve conscious thought (1 mark)"],
+      "\"Fast\" on its own and examples don't earn marks."),
+    { question: "Which of these is true of every reflex action?", type: "choice", answer: "It happens automatically.",
+      options: ["It happens automatically.", "It has to be learned.", "It is controlled by a hormone.", "It is a conscious decision."] }
   ]);
-  paper("The eye: structure and function, accommodation", [
-    paperTerm("the eye adjusting its focus from a distant object to a near object", "2H 2023 Q02.1", "accommodation")
+  examStyle("The eye: structure and function, accommodation", [
+    examTerm("A student looks up from a book to a tree far away. Name the process by which the eye changes its focus.", "accommodation")
   ]);
-  paper("Plant hormones: auxin, gravitropism, phototropism", [
-    paperTerm("the type of response shown by a plant shoot growing towards light or away from gravity", "2F 2022 Q03.1", "tropism/tropisms")
+  examStyle("Plant hormones: auxin, gravitropism, phototropism", [
+    examTerm("A plant shoot grows towards a window. What general name is given to a plant's growth response to a stimulus like this?", "tropism/tropisms/phototropism")
   ]);
-  paper("Sexual vs asexual reproduction: advantages", [
-    paperDefine("What is tissue culture?", "2H 2023 Q03.3, 2F 2023 Q09.3", 1,
-      ["(A group of) cells are grown into a new organism (1 mark)"], "\"Clones\" on its own doesn't earn the mark.")
+  examStyle("Sexual vs asexual reproduction: advantages", [
+    examDefine("A garden centre grows hundreds of new plants from a few cells of one plant. What is meant by tissue culture?", 1,
+      ["Growing (a small group of) cells into a whole new organism (1 mark)"], "Just saying \"clones\" doesn't earn the mark.")
   ]);
-  paper("Meiosis: stages and importance of variation", [
-    paperTerm("the type of cell division that produces sperm cells (spelling counts)", "2H 2021 Q01.8, 2F 2021 Q08.8", "meiosis", true)
+  examStyle("Meiosis: stages and importance of variation", [
+    examTerm("Name the type of cell division that makes eggs and sperm. (Your spelling must be correct.)", "meiosis", true)
   ]);
-  paper("DNA structure and chromosome pairs (basic)", [
-    paperTerm("one section of genetic material on a chromosome", "1F 2020 Q02.6", "gene")
+  examStyle("DNA structure and chromosome pairs (basic)", [
+    examTerm("What is the name for a small section of DNA on a chromosome that codes for a protein?", "gene")
   ]);
-  paper("Genes, alleles: dominant and recessive", [
-    paperDefine("What is a recessive allele?", "2F 2022 Q01.1", 1,
-      ["An allele that is only expressed if two copies are present (1 mark)"]),
-    paperTerm("an allele that shows in the phenotype when only one copy is present", "2F 2022 Q01.6", "dominant/dominant allele")
+  examStyle("Genes, alleles: dominant and recessive", [
+    examDefine("The allele for blue eyes is recessive. What is meant by a recessive allele?", 1,
+      ["An allele that only shows (is expressed) when two copies are present (1 mark)"]),
+    examTerm("An allele shows in the phenotype even when only one copy is inherited. What is this type of allele called?", "dominant/dominant allele")
   ]);
-  paper("Mutations: causes and effects (basic)", [
-    paperDefine("What is a mutation?", "2H 2022 Q07.1", 1,
-      ["A change in DNA, the base sequence, a gene/allele, part of a chromosome, the number of chromosomes, or the genetic code (1 mark)"],
-      "\"Genetic information\" doesn't earn the mark.")
+  examStyle("Mutations: causes and effects (basic)", [
+    examDefine("A new variant of a virus appears because of a mutation. What is meant by a mutation?", 1,
+      ["A change in the DNA: in a gene, the base sequence or a chromosome (1 mark)"], "\"A change in genetic information\" is too vague.")
   ]);
-  paper("Evidence for evolution: fossils, antibiotic resistance", [
-    paperDefine("What is a fossil?", "2F 2021 Q01.2", 1,
-      ["The remains of an organism from a long time ago (1 mark)"], "Allow animal/plant, and thousands/millions of years ago.")
+  examStyle("Evidence for evolution: fossils, antibiotic resistance", [
+    examDefine("Scientists find the shape of an ancient fern in a rock. What is a fossil?", 1,
+      ["The remains (or traces) of an organism from millions of years ago (1 mark)"], "Saying \"thousands of years ago\" also counts.")
   ]);
-  paper("Ecosystems: habitats, populations, communities", [
-    paperTerm("all the organisms living in the same habitat", "2H 2023 Q01.1, 2F 2023 Q07.1", "community/communities")
+  examStyle("Ecosystems: habitats, populations, communities", [
+    examTerm("A pond contains populations of frogs, water snails, pondweed and algae. What name is given to all these populations living together?", "community/communities")
   ]);
-  paper("Required practical: sampling using quadrats and transects", [
-    paperTerm("a 1 m × 1 m square frame used for sampling", "2F 2023 Q02.1", "quadrat/quadrats")
+  examStyle("Required practical: sampling using quadrats and transects", [
+    examTerm("Name the square frame placed on the ground to count the plants inside it.", "quadrat/quadrats")
   ]);
-  paper("Biodiversity: importance and preservation", [
-    paperDefine("What does biodiversity in a river mean?", "2F 2021 Q05.3", 1,
-      ["The variety of species of organisms in the river (1 mark)"])
+  examStyle("Biodiversity: importance and preservation", [
+    examDefine("A survey finds many different species living in a hedgerow. What is meant by biodiversity?", 1,
+      ["The variety of different species in an area or ecosystem (1 mark)"])
   ]);
 })();
