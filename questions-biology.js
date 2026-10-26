@@ -1610,4 +1610,129 @@
     ] },
     order("Put the trophic levels in order, from the bottom of the pyramid to the top.", ["Producers", "Primary consumers", "Secondary consumers", "Tertiary consumers"])
   ]);
+
+  // ======================= PAST PAPER DEFINITIONS =======================
+  // Definition questions from AQA GCSE Biology (8461) papers, 2019–2024, with what the mark scheme accepts.
+  // Paper codes: 1F/1H = Paper 1 Foundation/Higher, 2F/2H = Paper 2. These go in a second block for each topic,
+  // so they show under an "Exam style questions" heading.
+  //   paperDefine(question, paper, marks, mark scheme)   Write the definition; marked against the mark scheme.
+  //   paperTerm(description, paper, answers, exact)      Name the term; "/" separates accepted answers, and
+  //                                                       exact: true means the spelling must be right.
+  const paperDefine = (question, paper, marks, scheme) =>
+    ({ question: `${question} [AQA ${paper}]`, type: "explain", marks, answer: "Mark scheme: " + scheme });
+  const paperTerm = (description, paper, answer, exact = false) =>
+    ({ question: `Give the term for: ${description}. [AQA ${paper}]`, type: "word", marks: 1, answer, ...(exact ? { exact } : {}) });
+  const paper = (title, questions) => QUESTION_BANK.add({ topic: title, type: "word", questions });
+
+  // ---------- Paper 1 ----------
+  paper("Diffusion: factors affecting rate", [
+    paperDefine("What is meant by the term diffusion?", "1H 2020 Q02.1, 1F 2020 Q08.1", 2,
+      "Movement / spreading out of particles or molecules (1); from a higher to a lower concentration (1). Allow named substances; allow \"down the concentration gradient\". Ignore membranes/cells. Not \"along/across\" the gradient.")
+  ]);
+  paper("Osmosis: definition and examples", [
+    paperTerm("the process by which water enters root hair cells (is absorbed into roots)", "1H 2020 Q02.4, 2H 2022 Q06.2", "osmosis/diffusion")
+  ]);
+  paper("Active transport: differences from diffusion", [
+    { question: "Complete the sentence: active transport moves substances against the concentration gradient and needs _____. [AQA 1F 2021]", type: "word", answer: "energy" },
+    paperTerm("the process that moves sugars against the concentration gradient", "1F 2024 Q01.8", "active transport")
+  ]);
+  paper("Mitosis and the cell cycle", [
+    paperTerm("cell division that makes genetically identical body cells for growth and repair (spelling counts)", "1H 2020 Q03.4, 1F 2020 Q02.1", "mitosis", true)
+  ]);
+  paper("Differentiation and specialised cells", [
+    paperTerm("the process by which stem cells form specialised cells", "1H 2022 Q04.5", "differentiation/differentiate")
+  ]);
+  paper("Stem cells: types and uses (embryonic & adult)", [
+    paperTerm("the plant tissue that contains stem cells", "1H 2023 Q01.2", "meristem/meristems/meristem tissue")
+  ]);
+  paper("Cells → tissues → organs → organ systems", [
+    paperDefine("What is a tissue?", "1H 2023 Q01.1, 1F 2023 Q06.1", 1,
+      "A group of similar cells, or a group of cells with a similar/specific function. Ignore \"a group of cells\" with no qualifier."),
+    paperTerm("a group of tissues working together", "1F 2024 Q01.1, 1F 2021 Q03.6", "organ")
+  ]);
+  paper("Enzyme action: lock and key, temperature, pH", [
+    paperDefine("What is an enzyme?", "1H 2019 Q08.1", 2,
+      "Any two: speeds up (catalyses) reactions in living organisms; specific to one substrate; is a protein. Allow \"biological catalyst\", \"lowers activation energy\", \"made of amino acids\".")
+  ]);
+  paper("Required practical: effect of pH on enzyme activity", [
+    paperTerm("a variable kept the same during an investigation", "1F 2023 Q01.5", "control variable/control variables/control")
+  ]);
+  paper("Heart structure and the circulatory system", [
+    paperDefine("Define the term double circulatory system.", "1H 2019 Q07.1", 1,
+      "Blood is pumped to the lungs by one (right) side of the heart AND to the body by the other (left) side — both needed. Allow: blood passes through the heart twice per circuit of the body.")
+  ]);
+  paper("Blood: components and functions", [
+    paperTerm("the liquid part of the blood", "1F 2020 Q06.5", "plasma"),
+    paperTerm("the blood component that starts clotting", "1H 2019 Q05.3", "platelets/platelet/thrombocytes/thrombocyte")
+  ]);
+  paper("Plant tissues: leaf structure and transpiration", [
+    paperTerm("water taken in by roots, moved up the plant and lost from leaves (two words)", "1H 2021 Q06.4", "transpiration stream"),
+    paperTerm("the loss of water from the leaves", "1F 2024 Q01.3", "transpiration"),
+    paperTerm("the pores in the lower epidermis of a leaf", "1F 2024 Q01.6", "stomata/stoma"),
+    paperTerm("the cells that control the opening and closing of stomata", "1H 2022 Q05.1", "guard cells/guard cell")
+  ]);
+  paper("Pathogens: bacteria, viruses, fungi, protists", [
+    paperTerm("microorganisms that cause disease", "1F 2023 Q02.1, 1F 2021 Q02.1", "pathogens/pathogen")
+  ]);
+  paper("Examples of communicable diseases", [
+    paperTerm("an organism that carries a pathogen from one person to another", "1H 2023 Q05.1, 1F 2023 Q04.1", "vector/vectors")
+  ]);
+  paper("Plant disease: detection and defence", [
+    paperTerm("the type of plant defence where the plant makes poisons", "1F 2021 Q03.2", "chemical/chemical defence")
+  ]);
+  paper("Drug development: clinical trials, double-blind", [
+    paperTerm("a tablet that does not contain the drug", "1F 2024 Q05.9, 1F 2020 Q05.9", "placebo")
+  ]);
+  paper("Aerobic respiration equation", [
+    paperTerm("the process in living organisms that uses oxygen", "2F 2022 Q04.3", "aerobic respiration"),
+    paperTerm("the process that releases energy from stored food", "2F 2022 Q06.4", "respiration/aerobic respiration/cellular respiration")
+  ]);
+
+  // ---------- Paper 2 ----------
+  paper("Blood glucose control: insulin, diabetes", [
+    paperTerm("the insoluble storage substance made from glucose in animals", "2F 2021 Q02.4", "glycogen")
+  ]);
+  paper("Reflex arc: sensory, relay, motor neurones", [
+    paperDefine("What is meant by the term reflex action?", "2H 2021 Q06.1", 2,
+      "A response / reaction (1); automatic, involuntary or not conscious (1). Ignore \"quick\", examples and references to the brain."),
+    { question: "Which statement describes a reflex action? [AQA 2F 2022]", type: "choice", answer: "It is automatic.",
+      options: ["It is automatic.", "It is learned.", "It needs conscious thought.", "It is controlled by hormones."] }
+  ]);
+  paper("The eye: structure and function, accommodation", [
+    paperTerm("the eye adjusting its focus from a distant object to a near object", "2H 2023 Q02.1", "accommodation")
+  ]);
+  paper("Plant hormones: auxin, gravitropism, phototropism", [
+    paperTerm("the type of response shown by a plant shoot growing towards light or away from gravity", "2F 2022 Q03.1", "tropism/tropisms")
+  ]);
+  paper("Sexual vs asexual reproduction: advantages", [
+    paperDefine("What is tissue culture?", "2H 2023 Q03.3, 2F 2023 Q09.3", 1,
+      "(A group of) cells are grown into a new organism. Ignore \"clones\".")
+  ]);
+  paper("Meiosis: stages and importance of variation", [
+    paperTerm("the type of cell division that produces sperm cells (spelling counts)", "2H 2021 Q01.8, 2F 2021 Q08.8", "meiosis", true)
+  ]);
+  paper("DNA structure and chromosome pairs (basic)", [
+    paperTerm("one section of genetic material on a chromosome", "1F 2020 Q02.6", "gene")
+  ]);
+  paper("Genes, alleles: dominant and recessive", [
+    paperDefine("What is a recessive allele?", "2F 2022 Q01.1", 1, "An allele that is only expressed if two copies are present."),
+    paperTerm("an allele that shows in the phenotype when only one copy is present", "2F 2022 Q01.6", "dominant/dominant allele")
+  ]);
+  paper("Mutations: causes and effects (basic)", [
+    paperDefine("What is a mutation?", "2H 2022 Q07.1", 1,
+      "A change in DNA, the base sequence, a gene/allele, part of a chromosome, the number of chromosomes, or the genetic code. Ignore \"genetic information\".")
+  ]);
+  paper("Evidence for evolution: fossils, antibiotic resistance", [
+    paperDefine("What is a fossil?", "2F 2021 Q01.2", 1,
+      "The remains of an organism from a long time ago. Allow animal/plant; allow thousands/millions of years ago.")
+  ]);
+  paper("Ecosystems: habitats, populations, communities", [
+    paperTerm("all the organisms living in the same habitat", "2H 2023 Q01.1, 2F 2023 Q07.1", "community/communities")
+  ]);
+  paper("Required practical: sampling using quadrats and transects", [
+    paperTerm("a 1 m × 1 m square frame used for sampling", "2F 2023 Q02.1", "quadrat/quadrats")
+  ]);
+  paper("Biodiversity: importance and preservation", [
+    paperDefine("What does biodiversity in a river mean?", "2F 2021 Q05.3", 1, "The variety of species of organisms in the river.")
+  ]);
 })();

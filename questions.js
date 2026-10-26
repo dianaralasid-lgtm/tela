@@ -92,6 +92,7 @@
                 Give other accepted answers with "/": answer: "mitochondria/mitochondrion".
                 Case, hyphens and a plural "s" don't matter, and a small
                 spelling slip in a longer word still counts.
+                Add  exact: true  when the spelling must be right (e.g. mitosis).
      "sequence" Put steps in order. List the steps in the RIGHT order in
                 "steps"; the app jumbles them and the student taps them in order.
                   { question: "Put the stages in order.", type: "sequence",

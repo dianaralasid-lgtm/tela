@@ -1406,6 +1406,8 @@ TelaDB.start("student").then(() => {
           labels: Array.isArray(p.labels) ? p.labels.map(String) : null,
           // simplest: true needs the simplest form; simplest: "square" needs completed-square form, a(x + p)² + q.
           simplest: p.simplest === "square" ? "square" : p.simplest === true,
+          // exact: true on a word answer means the spelling must be right (no allowance for slips).
+          exact: p.exact === true,
           // tolerance: how far off a number answer may be (e.g. 0.1 so π and 3.14 both count).
           tolerance: Number(p.tolerance) > 0 ? Number(p.tolerance) : 0,
           // Shading and pictogram questions keep their picture inside the part so it can be tapped.
@@ -3108,11 +3110,11 @@ TelaDB.start("student").then(() => {
     }
     return prev[b.length];
   }
-  function markWord(value, answer) {
+  function markWord(value, answer, exact) {
     const got = wordForm(value), options = String(answer).split("/").map(s => s.trim()).filter(Boolean);
     const plural = s => s.replace(/(es|s)$/, "");
     if (options.some(o => wordForm(o) === got || plural(wordForm(o)) === plural(got))) return { correct: true, message: "Correct!" };
-    const close = options.find(o => { const w = wordForm(o); return w.length >= 5 && editDistance(w, got) <= (w.length >= 10 ? 2 : 1); });
+    const close = !exact && options.find(o => { const w = wordForm(o); return w.length >= 5 && editDistance(w, got) <= (w.length >= 10 ? 2 : 1); });
     if (close) return { correct: true, message: `Correct! Watch the spelling: ${close}.` };
     return { correct: false, message: "Not quite." };
   }
@@ -3256,7 +3258,7 @@ TelaDB.start("student").then(() => {
     }
     if (spec.kind === "pictogram") return markPictogram(saved.value, spec.answer, spec.pictogram);
     if (spec.kind === "select") return markSelect(saved.value, spec.answer);
-    if (spec.kind === "word") return markWord(saved.value, spec.answer);
+    if (spec.kind === "word") return markWord(saved.value, spec.answer, spec.exact);
     if (spec.kind === "sequence") return markSequence(saved.value, spec.steps);
     if (spec.kind === "match") return markMatch(saved.value, spec.pairs);
     if (spec.kind === "drawbar") {
@@ -3365,8 +3367,8 @@ TelaDB.start("student").then(() => {
       if (item.sector) html += `<div class="graph-wrap">${sectorSVG(item.sector)}</div>`;
       if (item.circleFig) html += `<div class="graph-wrap">${circleFigSVG(item.circleFig)}</div>`;
       if (item.boxplot) html += `<div class="graph-wrap col-wrap">${boxPlotSVG(item.boxplot)}</div>`;
-      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs }) => {
-        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs, seed: id };
+      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs, exact }) => {
+        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs, exact, seed: id };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
         const value = esc(saved ? saved.value : "");
