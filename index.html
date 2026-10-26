@@ -1,6 +1,3 @@
-category: (a, b) => byCategory(a.category, b.category) || specIndex(a) - specIndex(b) || a.created - b.created,  // Within a category, Biology topics keep their place in the spec.
-  const BIO_INDEX = new Map(SAMPLE_TOPICS.Biology.map(([title], i) => [title, i]));
-  const specIndex = t => t.subject === "Biology" ? BIO_INDEX.get(t.title) ?? 999 : 0;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1098,6 +1095,9 @@ TelaDB.start("student").then(() => {
   const SPEC_ORDER = Object.values(BIOLOGY_BY_PAPER).flatMap(Object.keys);
   const specRank = c => SPEC_ORDER.indexOf(c) + 1 || 99;
   const byCategory = (a, b) => specRank(a) - specRank(b) || a.localeCompare(b);
+  // Within a category, Biology topics keep their place in the spec.
+  const BIO_INDEX = new Map(SAMPLE_TOPICS.Biology.map(([title], i) => [title, i]));
+  const specIndex = t => t.subject === "Biology" ? BIO_INDEX.get(t.title) ?? 999 : 0;
 
   function countBy(list, key) {
     return list.reduce((m, t) => (m[t[key]] = (m[t[key]] || 0) + 1, m), {});
@@ -1158,7 +1158,7 @@ TelaDB.start("student").then(() => {
       (!q || t.title.toLowerCase().includes(q) || t.category.toLowerCase().includes(q))
     );
     const by = {
-      category: (a, b) => byCategory(a.category, b.category) || a.created - b.created,
+      category: (a, b) => byCategory(a.category, b.category) || specIndex(a) - specIndex(b) || a.created - b.created,
       title:    (a, b) => a.title.localeCompare(b.title),
       status:   (a, b) => STATUS[a.status].rank - STATUS[b.status].rank || a.title.localeCompare(b.title),
       newest:   (a, b) => b.created - a.created
