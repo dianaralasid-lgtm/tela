@@ -4,6 +4,17 @@
    This file holds every practice question. Edit it to add, change or
    delete questions; the dashboard picks them up the next time it loads.
 
+   PRACTICE RULES (the same for every topic, in any subject, including new ones)
+     * One try at each question: a wrong answer is marked incorrect, locks,
+       and shows the right answer.
+     * Answers save as soon as they're checked, so students carry on later.
+     * Answering any question makes the tile "In progress"; getting a whole
+       set right makes it "Confident".
+     * Each tile shows the student's best score from finished sets.
+     * Finishing a set shows the score with Try again / Choose another topic.
+   Nothing extra is needed: any topic added here (or in another questions
+   file, like questions-biology.js) gets these automatically.
+
    HOW IT'S LAID OUT
    Each topic is one QUESTION_BANK.add({ ... }); block:
 
