@@ -291,7 +291,9 @@
 
   const TIP = "Fill in the blanks, write definitions, put processes in order and match terms to their meanings. " +
     "For definitions, compare your answer with the book's and mark yourself.";
-  const topic = (title, questions) => QUESTION_BANK.add({ topic: title, title, type: "word", questionsPerSet: 8, tip: TIP, questions });
+  // Each topic's block is kept so the exam-style questions further down can join its list.
+  const blocks = {};
+  const topic = (title, questions) => QUESTION_BANK.add(blocks[title] = { topic: title, title, type: "word", questionsPerSet: 8, tip: TIP, questions });
 
   // ---------- Diagrams ----------
   const ARROW = `<defs><marker id="bioArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#146c43"/></marker></defs>`;
@@ -1609,5 +1611,141 @@
       { question: "What percentage of the biomass in R is transferred to S?", type: "number", marks: 2, answer: "5" }
     ] },
     order("Put the trophic levels in order, from the bottom of the pyramid to the top.", ["Producers", "Primary consumers", "Secondary consumers", "Tertiary consumers"])
+  ]);
+
+  // ======================= EXAM STYLE =======================
+  // Short definition and naming questions written in the style of GCSE exam questions (a context, then a
+  // question), marked the way an exam would mark them. They join each topic's own list, with no separate heading.
+  //   examDefine(question, marks, points, notes)   Write the definition. "points" are what earn the marks (shown
+  //                                                 as bullets if the student gets it wrong); "notes" say what
+  //                                                 else counts, or what doesn't.
+  //   examTerm(question, answers, exact)           Name the term; "/" separates accepted answers, and
+  //                                                 exact: true means the spelling must be right.
+  const examDefine = (question, marks, points, notes = "") =>
+    ({ question, type: "explain", marks, points, notes, answer: points.join("; ") + (notes ? ". " + notes : "") });
+  const examTerm = (question, answer, exact = false) =>
+    ({ question, type: "word", marks: 1, answer, ...(exact ? { exact } : {}) });
+  const examStyle = (title, questions) => {
+    if (!blocks[title]) throw new Error(`no topic called "${title}"`);
+    blocks[title].questions.push(...questions);
+  };
+
+  // ---------- Paper 1 ----------
+  examStyle("Diffusion: factors affecting rate", [
+    examDefine("A drop of food colouring is added to a beaker of water. The colour slowly spreads through the water. Explain what is meant by diffusion.", 2,
+      ["The (net) movement / spreading out of particles (1 mark)", "From an area of higher concentration to an area of lower concentration (1 mark)"],
+      "Naming the particles is fine, and so is \"down a concentration gradient\". \"Along\" or \"across\" a gradient doesn't get the mark.")
+  ]);
+  examStyle("Osmosis: definition and examples", [
+    examTerm("Root hair cells take in water from the soil. Name the process by which water moves into these cells.", "osmosis")
+  ]);
+  examStyle("Active transport: differences from diffusion", [
+    { question: "Complete the sentence. Unlike diffusion, active transport needs _____ from respiration.", type: "word", answer: "energy" },
+    examTerm("Cells in the small intestine move glucose from a low concentration to a high concentration. Name this process.", "active transport")
+  ]);
+  examStyle("Mitosis and the cell cycle", [
+    examTerm("New skin cells are made to repair a cut. Name the type of cell division that makes them. (Your spelling must be correct.)", "mitosis", true)
+  ]);
+  examStyle("Differentiation and specialised cells", [
+    examTerm("A stem cell changes into a nerve cell. What is this process called?", "differentiation/differentiate")
+  ]);
+  examStyle("Stem cells: types and uses (embryonic & adult)", [
+    examTerm("Name the plant tissue, found at the tips of roots and shoots, that contains stem cells.", "meristem/meristems/meristem tissue")
+  ]);
+  examStyle("Cells → tissues → organs → organ systems", [
+    examDefine("Muscle and xylem are both examples of tissues. What is meant by a tissue?", 1,
+      ["A group of cells with a similar structure and function (1 mark)"], "\"A group of cells\" on its own doesn't get the mark."),
+    examTerm("The stomach is made of several different tissues working together. What is a structure like this called?", "organ")
+  ]);
+  examStyle("Enzyme action: lock and key, temperature, pH", [
+    examDefine("Amylase is an enzyme found in saliva. Give two features of enzymes.", 2,
+      ["It is a biological catalyst: it speeds up reactions", "It is specific: it works on only one substrate", "It is made of protein"],
+      "Any two of these, 1 mark each.")
+  ]);
+  examStyle("Required practical: effect of pH on enzyme activity", [
+    examTerm("A student investigates the effect of pH on amylase. They keep the temperature the same throughout. What type of variable is temperature in this investigation?",
+      "control variable/control variables/control")
+  ]);
+  examStyle("Heart structure and the circulatory system", [
+    examDefine("Humans have a double circulatory system. Describe what this means.", 1,
+      ["One side (the right) pumps blood to the lungs", "AND the other side (the left) pumps blood to the rest of the body"],
+      "Both are needed for the 1 mark. Saying blood passes through the heart twice on each circuit of the body also counts.")
+  ]);
+  examStyle("Blood: components and functions", [
+    examTerm("Name the yellow liquid part of the blood that carries the blood cells around the body.", "plasma"),
+    examTerm("After a cut, small cell fragments in the blood help it to clot. Name these fragments.", "platelets/platelet/thrombocytes/thrombocyte")
+  ]);
+  examStyle("Plant tissues: leaf structure and transpiration", [
+    examTerm("Water moves into the roots, up through the xylem and out of the leaves. What is this flow of water called? (Two words.)", "transpiration stream"),
+    examTerm("Name the process by which plants lose water vapour from their leaves.", "transpiration"),
+    examTerm("Carbon dioxide enters a leaf through tiny pores on its lower surface. Name these pores.", "stomata/stoma"),
+    examTerm("Name the cells either side of each pore in a leaf that open and close it.", "guard cells/guard cell")
+  ]);
+  examStyle("Pathogens: bacteria, viruses, fungi, protists", [
+    examTerm("Some bacteria, viruses, fungi and protists cause disease. What general name is given to these microorganisms?", "pathogens/pathogen")
+  ]);
+  examStyle("Examples of communicable diseases", [
+    examTerm("Mosquitoes carry the malaria pathogen from one person to another. What name is given to an organism that spreads a pathogen like this?", "vector/vectors")
+  ]);
+  examStyle("Plant disease: detection and defence", [
+    examTerm("Foxgloves make poisons that stop animals eating them. What type of plant defence is this?", "chemical/chemical defence")
+  ]);
+  examStyle("Drug development: clinical trials, double-blind", [
+    examTerm("In a drug trial, some volunteers are given a pill that looks the same but contains no drug. What is this pill called?", "placebo")
+  ]);
+  examStyle("Aerobic respiration equation", [
+    examTerm("Name the type of respiration that uses oxygen.", "aerobic respiration/aerobic"),
+    examTerm("Name the process in every living cell that transfers energy from glucose.", "respiration/aerobic respiration/cellular respiration")
+  ]);
+
+  // ---------- Paper 2 ----------
+  examStyle("Blood glucose control: insulin, diabetes", [
+    examTerm("After a meal, the liver stores excess glucose as an insoluble carbohydrate. Name this carbohydrate.", "glycogen")
+  ]);
+  examStyle("Reflex arc: sensory, relay, motor neurones", [
+    examDefine("A person touches a hot pan and pulls their hand away. Explain what is meant by a reflex action.", 2,
+      ["A response to a stimulus (1 mark)", "That is automatic: it doesn't involve conscious thought (1 mark)"],
+      "\"Fast\" on its own and examples don't earn marks."),
+    { question: "Which of these is true of every reflex action?", type: "choice", answer: "It happens automatically.",
+      options: ["It happens automatically.", "It has to be learned.", "It is controlled by a hormone.", "It is a conscious decision."] }
+  ]);
+  examStyle("The eye: structure and function, accommodation", [
+    examTerm("A student looks up from a book to a tree far away. Name the process by which the eye changes its focus.", "accommodation")
+  ]);
+  examStyle("Plant hormones: auxin, gravitropism, phototropism", [
+    examTerm("A plant shoot grows towards a window. What general name is given to a plant's growth response to a stimulus like this?", "tropism/tropisms/phototropism")
+  ]);
+  examStyle("Sexual vs asexual reproduction: advantages", [
+    examDefine("A garden centre grows hundreds of new plants from a few cells of one plant. What is meant by tissue culture?", 1,
+      ["Growing (a small group of) cells into a whole new organism (1 mark)"], "Just saying \"clones\" doesn't earn the mark.")
+  ]);
+  examStyle("Meiosis: stages and importance of variation", [
+    examTerm("Name the type of cell division that makes eggs and sperm. (Your spelling must be correct.)", "meiosis", true)
+  ]);
+  examStyle("DNA structure and chromosome pairs (basic)", [
+    examTerm("What is the name for a small section of DNA on a chromosome that codes for a protein?", "gene")
+  ]);
+  examStyle("Genes, alleles: dominant and recessive", [
+    examDefine("The allele for blue eyes is recessive. What is meant by a recessive allele?", 1,
+      ["An allele that only shows (is expressed) when two copies are present (1 mark)"]),
+    examTerm("An allele shows in the phenotype even when only one copy is inherited. What is this type of allele called?", "dominant/dominant allele")
+  ]);
+  examStyle("Mutations: causes and effects (basic)", [
+    examDefine("A new variant of a virus appears because of a mutation. What is meant by a mutation?", 1,
+      ["A change in the DNA: in a gene, the base sequence or a chromosome (1 mark)"], "\"A change in genetic information\" is too vague.")
+  ]);
+  examStyle("Evidence for evolution: fossils, antibiotic resistance", [
+    examDefine("Scientists find the shape of an ancient fern in a rock. What is a fossil?", 1,
+      ["The remains (or traces) of an organism from millions of years ago (1 mark)"], "Saying \"thousands of years ago\" also counts.")
+  ]);
+  examStyle("Ecosystems: habitats, populations, communities", [
+    examTerm("A pond contains populations of frogs, water snails, pondweed and algae. What name is given to all these populations living together?", "community/communities")
+  ]);
+  examStyle("Required practical: sampling using quadrats and transects", [
+    examTerm("Name the square frame placed on the ground to count the plants inside it.", "quadrat/quadrats")
+  ]);
+  examStyle("Biodiversity: importance and preservation", [
+    examDefine("A survey finds many different species living in a hedgerow. What is meant by biodiversity?", 1,
+      ["The variety of different species in an area or ecosystem (1 mark)"])
   ]);
 })();
