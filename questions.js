@@ -77,6 +77,20 @@
                 digit, shown as short division (e.g. "9.36 ÷ 3").
      "choice"   The student taps one of the "options"; the answer is the
                 right one.
+     "word"     A word or short phrase, e.g. for fill-in-the-blank questions.
+                Give other accepted answers with "/": answer: "mitochondria/mitochondrion".
+                Case, hyphens and a plural "s" don't matter, and a small
+                spelling slip in a longer word still counts.
+     "sequence" Put steps in order. List the steps in the RIGHT order in
+                "steps"; the app jumbles them and the student taps them in order.
+                  { question: "Put the stages in order.", type: "sequence",
+                    steps: ["First step", "Second step", "Third step"] }
+     "match"    Match descriptions to terms. "pairs" lists [term, description];
+                each description gets a drop-down of the terms. Two
+                descriptions can share a term (e.g. "Biotic").
+                  { question: "Match each word to its meaning.", type: "match",
+                    pairs: [["xylem", "Carries water"], ["phloem", "Carries sugars"]] }
+     (The Biology questions are in questions-biology.js, which uses these.)
 
    MORE TYPES
      "fraction"  A fraction such as "3/8". Equivalent fractions count

@@ -562,6 +562,26 @@
   .choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
   .choice-btn { min-width: 64px; font-size: 18px; }
   .choice-btn.selected { background: var(--green-700); border-color: var(--green-700); color: var(--white); }
+  /* Put-in-order steps (sentences, so they stack) and matching */
+  .seq-widget, .match-widget { margin-bottom: 12px; }
+  .seq-pool, .seq-answer { display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: 12px; margin: 0 0 12px; }
+  .seq-pool { background: var(--brown-50); }
+  .seq-answer { background: var(--white); border: 2px dashed var(--line); padding-left: 34px; }
+  .seq-answer li::marker { font-weight: 700; color: var(--muted); }
+  .seq-tile { width: 100%; text-align: left; border: 1.5px solid var(--green-600); background: var(--white); color: var(--ink);
+    border-radius: 10px; padding: 8px 12px; font-size: 14px; font-weight: 500; line-height: 1.4; transition: background .15s; }
+  .seq-tile:hover { background: var(--green-100); }
+  .seq-tile.placed { background: var(--green-700); border-color: var(--green-700); color: var(--white); }
+  .seq-slot { height: 38px; border: 1.5px dashed var(--line); border-radius: 10px; }
+  .seq-hint { font-weight: 500; }
+  .match-row { display: grid; grid-template-columns: 1fr minmax(150px, 220px); gap: 10px; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .match-row:last-child { border-bottom: none; }
+  .match-pick { font: inherit; font-size: 14px; padding: 7px 8px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--white); color: var(--ink); }
+  .match-pick:focus { outline: none; border-color: var(--green-600); }
+  @media (max-width: 560px) { .match-row { grid-template-columns: 1fr; gap: 6px; } }
+  .right-list { margin: 6px 0 0 20px; color: var(--ink); font-size: 14px; }
+  .right-list li { margin: 2px 0; }
 
   .q-section {
     font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
@@ -1005,6 +1025,7 @@
   });
 </script>
 <script src="questions.js"></script>
+<script src="questions-biology.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js" integrity="sha384-sLWJsCmP+Z4Qn+HgF7Hi64Djta4fZMu0fcgi3uUL3GFV/ubx2G86LPOuMf7+ZIyX" crossorigin="anonymous"></script>
 <script src="db.js"></script>
 <script src="activity.js"></script>
@@ -1313,7 +1334,8 @@ TelaDB.start("student").then(() => {
     order: "order", choice: "choice", time: "time", clock: "clock", drawangle: "drawangle", column: "column",
     fraction: "fraction", shade: "shade", tally: "tally", pictogram: "pictogram", select: "select", drawbar: "drawbar",
     interval: "interval", ratio: "ratio", primes: "primes", factorise: "factorise", bearing: "bearing", filltree: "filltree",
-    stdform: "stdform", solutions: "solutions", expression: "expression"
+    stdform: "stdform", solutions: "solutions", expression: "expression",
+    word: "word", sequence: "sequence", match: "match"
   };
   const ANGLE_NAMES = ["acute", "right", "obtuse", "straight", "reflex"];
   // For comparing tile and option labels: ignores spaces, case and the type of minus sign.
@@ -1357,12 +1379,18 @@ TelaDB.start("student").then(() => {
         const layout = kind === "column" ? columnLayout(p.sum) : null;
         // Fill-in factor trees carry their answers in the tree itself ("?2" is a blank whose answer is 2).
         const trees = kind === "filltree" && Array.isArray(p.trees) ? p.trees : null;
+        // Put-in-order steps are listed in their right order; match questions list [term, description] pairs.
+        const steps = kind === "sequence" && Array.isArray(p.steps) ? p.steps.map(String) : null;
+        const pairs = kind === "match" && Array.isArray(p.pairs) ? p.pairs.map(([a, b]) => [String(a), String(b)]) : null;
         return {
           label: grouped ? String.fromCharCode(97 + pi) : "",
           text: String(p.question || ""),
           marks: Number(p.marks) || 1,
-          answer: String(p.answer ?? (layout ? layout.ans : trees ? treeBlanks(trees).join(", ") : "")),
+          answer: String(p.answer ?? (layout ? layout.ans : trees ? treeBlanks(trees).join(", ")
+            : steps ? steps.join(" → ") : pairs ? pairs.map(([a, b]) => `${a}: ${b}`).join("; ") : "")),
           trees,
+          steps,
+          pairs,
           kind,
           layout,
           plot,
@@ -1407,6 +1435,8 @@ TelaDB.start("student").then(() => {
         (p.kind === "solutions" && !readSolutions(p.answer)) ||
         (p.kind === "expression" && !expressionFn(String(p.answer).split("=").pop())) ||
         (p.kind === "pictogram" && !(Number(p.pictogram.key) > 0)) ||
+        (p.kind === "sequence" && !(p.steps && p.steps.length > 1)) ||
+        (p.kind === "match" && !(p.pairs && p.pairs.length > 1)) ||
         (p.kind === "select" && (!p.options || !answerList(p.answer).every(a => p.options.some(o => normText(o) === normText(a))))));
       if (!parts.length || unreadable) { bankProblems.push(`"${t.topic}" question ${i + 1} was skipped: check its question and answer`); return; }
       let id = hashText([q.text || "", ...parts.map(p => p.text)].join("|"));
@@ -3065,6 +3095,86 @@ TelaDB.start("student").then(() => {
     return { correct: false, message: "Not quite. Try again." };
   }
 
+  // ---------- Words, put-in-order steps and matching (used by the Biology questions) ----------
+  // A word answer: any of the answers separated by "/" counts. Case, hyphens and punctuation don't matter,
+  // nor does a plural "s"; a small spelling slip in a longer word still counts, with the right spelling shown.
+  const wordForm = s => String(s ?? "").toLowerCase().replace(/[−–—-]/g, " ").replace(/[^a-z0-9₀-₉²³ ]/g, "").replace(/\s+/g, " ").trim();
+  function editDistance(a, b) {
+    let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) {
+      const row = [i];
+      for (let j = 1; j <= b.length; j++) row[j] = Math.min(prev[j] + 1, row[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = row;
+    }
+    return prev[b.length];
+  }
+  function markWord(value, answer) {
+    const got = wordForm(value), options = String(answer).split("/").map(s => s.trim()).filter(Boolean);
+    const plural = s => s.replace(/(es|s)$/, "");
+    if (options.some(o => wordForm(o) === got || plural(wordForm(o)) === plural(got))) return { correct: true, message: "Correct!" };
+    const close = options.find(o => { const w = wordForm(o); return w.length >= 5 && editDistance(w, got) <= (w.length >= 10 ? 2 : 1); });
+    if (close) return { correct: true, message: `Correct! Watch the spelling: ${close}.` };
+    return { correct: false, message: "Not quite." };
+  }
+
+  // The same jumbled order every time a question is shown, worked out from its id.
+  function seededOrder(n, seed) {
+    let h = parseInt(hashText(seed), 36) || 1;
+    const rand = () => (h = (h * 1103515245 + 12345) % 2147483648) / 2147483648;
+    const order = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    // Never hand the student the right order (or the right pairing) to start with.
+    if (order.every((v, i) => v === i)) order.push(order.shift());
+    return order;
+  }
+
+  // Put in order: steps are tapped from the jumbled list into a numbered list; the answer box holds the step numbers.
+  const placedSteps = value => (value ? value.split(",").filter(v => v !== "").map(Number) : []);
+  function sequenceWidgetHTML(spec, value) {
+    const placed = placedSteps(value);
+    const pool = seededOrder(spec.steps.length, spec.seed).filter(i => !placed.includes(i));
+    return `<div class="seq-widget">
+      <div class="order-caption">Tap the steps in order</div>
+      <div class="seq-pool">${pool.map(i => `<button type="button" class="seq-tile" data-step="${i}">${esc(spec.steps[i])}</button>`).join("") || `<span class="order-empty">All placed</span>`}</div>
+      <div class="order-caption">Your order <span class="seq-hint">(tap a step to send it back)</span></div>
+      <ol class="seq-answer">${placed.map((i, k) => `<li><button type="button" class="seq-tile placed" data-placed="${k}">${esc(spec.steps[i])}</button></li>`).join("")}${
+        `<li class="seq-slot"></li>`.repeat(spec.steps.length - placed.length)}</ol>
+    </div>`;
+  }
+  function sequenceClick(part, btn) {
+    const input = part.querySelector("input.answer-value");
+    const placed = placedSteps(input.value);
+    if (btn.dataset.step !== undefined) placed.push(Number(btn.dataset.step));
+    else placed.splice(Number(btn.dataset.placed), 1);
+    input.value = placed.join(",");
+    part.querySelector(".seq-widget").outerHTML = sequenceWidgetHTML(practiceSpecs[part.dataset.id], input.value);
+    clearResult(part);
+  }
+  function markSequence(value, steps) {
+    const placed = placedSteps(value), right = placed.filter((s, i) => s === i).length;
+    return right === steps.length ? { correct: true, message: "Correct!" }
+      : { correct: false, message: `${right} of ${steps.length} steps were in the right place.` };
+  }
+
+  // Matching: each description gets a term picked from a list. Two descriptions can share a term (e.g. "Biotic").
+  // The answer box holds the chosen term's place in the alphabetical list, for each pair in pair order.
+  const matchChoices = (value, n) => { const v = (value || "").split(","); return Array.from({ length: n }, (_, i) => v[i] ?? ""); };
+  const matchTerms = pairs => [...new Set(pairs.map(([t]) => t))].sort((a, b) => a.localeCompare(b));
+  function matchWidgetHTML(spec, value) {
+    const chosen = matchChoices(value, spec.pairs.length), terms = matchTerms(spec.pairs);
+    return `<div class="match-widget">${seededOrder(spec.pairs.length, spec.seed).map(i => `
+      <label class="match-row"><span class="match-def">${esc(spec.pairs[i][1])}</span>
+        <select class="match-pick" data-pair="${i}"><option value="">Choose a term…</option>${
+          terms.map((t, j) => `<option value="${j}"${chosen[i] === String(j) ? " selected" : ""}>${esc(t)}</option>`).join("")}</select></label>`).join("")}
+    </div>`;
+  }
+  function markMatch(value, pairs) {
+    const terms = matchTerms(pairs);
+    const chosen = matchChoices(value, pairs.length), right = chosen.filter((c, i) => c !== "" && terms[c] === pairs[i][0]).length;
+    return right === pairs.length ? { correct: true, message: "Correct!" }
+      : { correct: false, message: `${right} of ${pairs.length} matched correctly.` };
+  }
+
   // Changing a tapped answer (grid, scale, tiles or options) clears the old result until it's checked again.
   function clearResult(part) {
     part.classList.remove("correct", "incorrect");
@@ -3146,6 +3256,9 @@ TelaDB.start("student").then(() => {
     }
     if (spec.kind === "pictogram") return markPictogram(saved.value, spec.answer, spec.pictogram);
     if (spec.kind === "select") return markSelect(saved.value, spec.answer);
+    if (spec.kind === "word") return markWord(saved.value, spec.answer);
+    if (spec.kind === "sequence") return markSequence(saved.value, spec.steps);
+    if (spec.kind === "match") return markMatch(saved.value, spec.pairs);
     if (spec.kind === "drawbar") {
       return Number(saved.value) === readNumber(spec.answer) ? { correct: true, message: "Correct!" }
         : { correct: false, message: `Your bar reaches ${Number(saved.value)}. Try again.` };
@@ -3184,6 +3297,9 @@ TelaDB.start("student").then(() => {
     if (result.correct || result.unreadable) return esc(result.message);
     // Wrong answers are final, so the correct answer is shown straight away.
     const message = result.message.replace(/\s*(Tap a number in your order to move it back, then try again|Try again|Keep going)\.?$/i, "");
+    if (spec.kind === "sequence") return `${esc(message)}<span class="right-answer">The right order:</span><ol class="right-list">${spec.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>`;
+    if (spec.kind === "match") return `${esc(message)}<span class="right-answer">The right matches:</span><ul class="right-list">${spec.pairs.map(([t, d]) => `<li><b>${esc(t)}</b>: ${esc(d)}</li>`).join("")}</ul>`;
+    if (spec.kind === "word") return `${esc(message)} <span class="right-answer">Answer: <b>${esc(spec.answer.split("/")[0].trim())}</b></span>`;
     return `${esc(message)} <span class="right-answer">Answer: <b>${esc(spec.answer)}</b></span>`;
   }
 
@@ -3194,7 +3310,7 @@ TelaDB.start("student").then(() => {
   }
   function lockPart(partEl) {
     partEl.classList.add("locked");
-    partEl.querySelectorAll("input, textarea, button").forEach(el => { el.disabled = true; });
+    partEl.querySelectorAll("input, textarea, button, select").forEach(el => { el.disabled = true; });
   }
 
   function renderPractice() {
@@ -3249,14 +3365,14 @@ TelaDB.start("student").then(() => {
       if (item.sector) html += `<div class="graph-wrap">${sectorSVG(item.sector)}</div>`;
       if (item.circleFig) html += `<div class="graph-wrap">${circleFigSVG(item.circleFig)}</div>`;
       if (item.boxplot) html += `<div class="graph-wrap col-wrap">${boxPlotSVG(item.boxplot)}</div>`;
-      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees }) => {
-        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees };
+      item.parts.forEach(({ id, label, text, marks, answer, kind, graph, plot, scale, mark, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs }) => {
+        const spec = practiceSpecs[id] = { answer, kind, items, options, labels, layout, simplest, shape, pictogram, bars, tolerance, trees, steps, pairs, seed: id };
         const saved = practiceSaved[id];
         const result = markPart(spec, saved);
         const value = esc(saved ? saved.value : "");
         const aria = `aria-label="Answer to question ${n}${label}"`;
         // Plot, mark, order and choice questions are answered by tapping only; the hidden box just holds the answer.
-        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column", "shade", "tally", "pictogram", "select", "drawbar", "bearing", "filltree"].includes(kind)
+        const field = plot || mark || ["order", "choice", "clock", "drawangle", "column", "shade", "tally", "pictogram", "select", "drawbar", "bearing", "filltree", "sequence", "match"].includes(kind)
           ? `<input type="hidden" class="answer-value" value="${value}">`
           : kind === "explain"
           ? `<textarea rows="3" placeholder="Write your explanation" ${aria}>${value}</textarea>`
@@ -3275,6 +3391,8 @@ TelaDB.start("student").then(() => {
             ${kind === "tally" ? tallyWidgetHTML(saved ? Number(saved.value) || 0 : 0) : ""}
             ${kind === "pictogram" ? `<div class="graph-wrap in-part picto-wrap">${pictogramHTML(pictogram, pictoBuild(saved ? saved.value : ""))}</div>` : ""}
             ${kind === "select" ? selectHTML(spec, saved ? saved.value : "") : ""}
+            ${kind === "sequence" ? sequenceWidgetHTML(spec, saved ? saved.value : "") : ""}
+            ${kind === "match" ? matchWidgetHTML(spec, saved ? saved.value : "") : ""}
             ${kind === "drawbar" ? `<div class="graph-wrap in-part bars-wrap">${barsSVG(bars, bars.ask, saved ? Number(saved.value) : null)}</div>` : ""}
             ${kind === "bearing" ? `<div class="graph-wrap in-part">${compassSVG({}, true, saved ? Number(saved.value) : null)}</div>` : ""}
             ${kind === "filltree" ? `<div class="graph-wrap in-part col-wrap">${fillTreeSVG(trees, saved ? saved.value : "", new Set(result && result.wrong || []))}</div>` : ""}
@@ -3385,6 +3503,14 @@ TelaDB.start("student").then(() => {
     }
     if (spec.kind === "order" && placedTiles(value).length < spec.items.length) {
       partEl.querySelector(".feedback").textContent = "Put all the numbers into your order first.";
+      return;
+    }
+    if (spec.kind === "sequence" && placedSteps(value).length < spec.steps.length) {
+      partEl.querySelector(".feedback").textContent = "Put all the steps into your order first.";
+      return;
+    }
+    if (spec.kind === "match" && matchChoices(value, spec.pairs.length).some(c => c === "")) {
+      partEl.querySelector(".feedback").textContent = "Choose a term for every description first.";
       return;
     }
     if (!value && field.type === "hidden") {
@@ -3519,6 +3645,7 @@ TelaDB.start("student").then(() => {
     const plotGraph = e.target.closest("svg.graph.plot");
     const markScale = e.target.closest("svg.scale.mark");
     const orderTile = e.target.closest(".order-tile");
+    const seqTile = e.target.closest(".seq-tile");
     const choiceBtn = e.target.closest(".choice-btn");
     const shadePart = e.target.closest("svg.shape-fig.set .frac-part");
     const tallyBtn = e.target.closest(".tally-btn"), pictoBtn = e.target.closest(".picto-btn");
@@ -3534,6 +3661,7 @@ TelaDB.start("student").then(() => {
     else if (plotGraph) plotClick(part, plotGraph, e);
     else if (markScale) scaleClick(part, markScale, e);
     else if (orderTile) orderClick(part, orderTile);
+    else if (seqTile) sequenceClick(part, seqTile);
     else if (shadePart) {
       shadePart.classList.toggle("on");
       answerBox.value = [...part.querySelectorAll(".frac-part.on")].map(p => p.dataset.i).join(",");
@@ -3628,6 +3756,16 @@ TelaDB.start("student").then(() => {
   });
   // Column method boxes: keep the answer in step, and move to the next column after each digit
   // (leftwards for + − ×, rightwards for short division).
+  // Matching: keep the hidden answer in step with the picked terms (one per pair, in pair order).
+  $("practiceBody").addEventListener("change", e => {
+    const pick = e.target.closest(".match-pick");
+    if (!pick) return;
+    const part = pick.closest(".part");
+    const chosen = Array(practiceSpecs[part.dataset.id].pairs.length).fill("");
+    part.querySelectorAll(".match-pick").forEach(s => { chosen[s.dataset.pair] = s.value; });
+    part.querySelector("input.answer-value").value = chosen.join(",");
+    clearResult(part);
+  });
   // Factor tree boxes: keep the hidden answer in step (box values in order, separated by |).
   $("practiceBody").addEventListener("input", e => {
     const box = e.target.closest(".tree-in");
