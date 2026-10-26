@@ -395,7 +395,7 @@
 
   topic("Microscopy: magnification and resolution", [
     define("resolving power"), nameIt("resolving power"),
-    fill("magnification = size of [image] ÷ size of real object"),
+    fill("Magnification = size of [image] ÷ size of real object"),
     fill("An electron microscope has a much higher [resolution/resolving power] than a light microscope, so it shows more detail."),
     fill("Electron microscopes can show sub-cellular structures such as [ribosomes/ribosome/mitochondria] in detail."),
     { question: "An image of a cell is 20 mm long. The real cell is 0.1 mm long. Work out the magnification.", type: "number", marks: 2, answer: "200" },
@@ -420,7 +420,7 @@
     order("Put the steps for looking at onion cells under a light microscope in order.", [
       "Peel a thin layer of onion epidermis and place it on a slide",
       "Add a drop of iodine solution to stain the cells",
-      "Lower a coverslip on carefully to avoid air bubbles",
+      "Carefully lower a coverslip onto the slide, avoiding air bubbles",
       "Clip the slide onto the stage and select the lowest-power objective lens",
       "Use the coarse focusing wheel, then the fine focusing wheel, to focus",
       "Switch to a higher-power objective lens and refocus with the fine focusing wheel"
@@ -428,7 +428,7 @@
     fill("Start with the [lowest/low]-power objective lens so it is easier to find the cells."),
     fill("A stain such as [iodine] makes the cell structures easier to see."),
     fill("A thin layer of cells is used so that [light] can pass through it."),
-    fill("total magnification = eyepiece lens magnification × [objective] lens magnification"),
+    fill("Total magnification = eyepiece lens magnification × [objective] lens magnification"),
     { question: "The eyepiece lens is ×10 and the objective lens is ×40. What is the total magnification?", type: "number", answer: "400" },
     match([["Coarse focus", "Moves the stage a lot to get the image roughly in focus"], ["Fine focus", "Makes small adjustments to sharpen the image"],
       ["Coverslip", "Holds the specimen flat and stops it drying out"], ["Stain", "Makes parts of the cell show up more clearly"]],
@@ -579,7 +579,7 @@
     fill("When all the starch has gone, the iodine stays [orange/orange-brown/brown]."),
     fill("A [buffer] solution keeps the pH of the mixture constant."),
     fill("The temperature is kept constant using a [water bath]."),
-    fill("At a very high or low pH the enzyme's active site changes shape and it is [denatured]."),
+    fill("At a very high or low pH, the enzyme's active site changes shape and it is [denatured]."),
     { question: "Starch is all broken down after 50 seconds. Rate = 1000 ÷ time. What is the rate?", type: "number", answer: "20" }
   ]);
 
@@ -694,7 +694,7 @@
     fill("Pathogens may be bacteria, viruses, protists or [fungi/fungus]."),
     fill("Pathogens can spread by direct contact, by water or by [air]."),
     match([["Virus", "Reproduces inside cells, damaging them"], ["Bacterium", "Single-celled prokaryote that may release toxins"],
-      ["Fungus", "Can grow thread-like hyphae; e.g. rose black spot"], ["Protist", "Single-celled eukaryote, e.g. the cause of malaria"]],
+      ["Fungus", "Can grow thread-like hyphae, e.g. rose black spot"], ["Protist", "Single-celled eukaryote, e.g. the cause of malaria"]],
       "Match each type of pathogen to its description.")
   ]);
 
@@ -724,7 +724,7 @@
 
   topic("The immune response: white blood cells, antibodies", [
     define("white blood cells"), nameIt("white blood cells"),
-    match([["Phagocytosis", "White blood cells engulf and digest pathogens"], ["Antibodies", "Specific to the antigens on a pathogen; target it for destruction"],
+    match([["Phagocytosis", "White blood cells engulf and digest pathogens"], ["Antibodies", "Are specific to the antigens on a pathogen and target it for destruction"],
       ["Antitoxins", "Neutralise the toxins released by bacteria"]], "Match each defence to how white blood cells use it."),
     fill("White blood cells engulf and digest pathogens by [phagocytosis]."),
     fill("[Antibodies/antibody] are specific to the antigens on a pathogen."),
@@ -741,7 +741,7 @@
       "If the live pathogen enters later, antibodies are made faster and in larger amounts",
       "The person does not become ill"
     ]),
-    fill("A vaccine contains [dead/inactive] or inactive forms of a pathogen."),
+    fill("A vaccine contains [dead] or inactive forms of a pathogen."),
     fill("After vaccination, [memory] cells remain in the blood."),
     fill("If a large proportion of people are vaccinated, the spread of the pathogen is reduced. This is called [herd immunity]."),
     fill("The secondary response to a pathogen is [faster/quicker] and produces more antibodies.")
@@ -750,7 +750,7 @@
   topic("Antibiotics: how they work and resistance", [
     define("Penicillium"), nameIt("Penicillium"),
     fill("Antibiotics kill infective [bacteria/bacterium] inside the body."),
-    fill("Antibiotics cannot kill [viruses/virus] because they live inside cells."),
+    fill("Antibiotics cannot kill [viruses/virus], which live and reproduce inside cells."),
     fill("Penicillin was discovered by Alexander [Fleming]."),
     fill("Painkillers treat the [symptoms/symptom] of a disease but do not kill the pathogen."),
     fill("Overusing antibiotics has led to [resistant] strains of bacteria such as MRSA."),
@@ -761,7 +761,7 @@
       "The population of resistant bacteria grows"
     ]),
     match([["Antibiotic", "Kills bacteria inside the body"], ["Painkiller", "Relieves symptoms but does not kill pathogens"],
-      ["Penicillium", "The mould penicillin comes from"], ["Resistant bacteria", "Are not killed by an antibiotic"]], "Match each word to its description.")
+      ["Penicillium", "The mould penicillin comes from"], ["Resistant bacteria", "Bacteria that are not killed by an antibiotic"]], "Match each word to its description.")
   ]);
 
   topic("Drug development: clinical trials, double-blind", [
@@ -776,7 +776,7 @@
     match(["clinical trials", "placebo", "preclinical testing"]),
     fill("New drugs are tested for toxicity, efficacy and [dose]."),
     fill("In a [double-blind/double blind] trial, neither the patients nor the doctors know who has the drug."),
-    fill("Results are checked by other scientists, called [peer] review."),
+    fill("Checking of results by other scientists is called [peer] review."),
     fill("Digitalis comes from foxgloves and aspirin comes from [willow] trees.")
   ]);
 
@@ -793,7 +793,7 @@
     fill("Monoclonal antibodies are used in [pregnancy] tests."),
     fill("Monoclonal antibodies can carry drugs straight to [cancer] cells."),
     match([["Pregnancy tests", "Detect the hormone HCG in urine"], ["Diagnosis", "Find pathogens or measure hormone levels in blood"],
-      ["Research", "Locate specific molecules in cells by binding to them with a fluorescent dye"], ["Treating cancer", "Carry a drug or toxin to cancer cells"]],
+      ["Research", "Carry a fluorescent dye to specific molecules in cells, showing where they are"], ["Treating cancer", "Carry a drug or toxin to cancer cells"]],
       "Match each use of monoclonal antibodies to how it works.")
   ]);
 
@@ -816,7 +816,7 @@
     fill("Photosynthesis is an [endothermic] reaction: energy is transferred from the environment."),
     fill("Light energy is absorbed by the green pigment [chlorophyll]."),
     fill("Photosynthesis takes place in the [chloroplasts/chloroplast]."),
-    match([["Starch", "Insoluble glucose store"], ["Cellulose", "Strengthens cell walls"], ["Amino acids", "Made from glucose and nitrate ions, for proteins"], ["Lipids", "Fat or oil for storage"]],
+    match([["Starch", "Insoluble glucose store"], ["Cellulose", "Strengthens cell walls"], ["Amino acids", "Made from glucose and nitrate ions, then used to build proteins"], ["Lipids", "Fat or oil for storage"]],
       "Match each use of glucose in a plant to its description."),
     order("Put these steps of photosynthesis in order.", [
       "Chlorophyll absorbs light energy",
@@ -917,7 +917,7 @@
     ]),
     fill("Blood carries lactic acid to the [liver]."),
     fill("In the liver, lactic acid is converted back into [glucose]."),
-    fill("After exercise you keep breathing hard to take in [oxygen] to repay the debt."),
+    fill("After exercise, you keep breathing hard to take in [oxygen] to repay the debt."),
     fill("The oxygen debt is the extra oxygen needed to react with the accumulated [lactic acid].")
   ]);
 
@@ -966,7 +966,7 @@
       "Person A holds a ruler vertically above person B's open hand, with 0 cm level with B's thumb",
       "Person A drops the ruler without warning",
       "Person B catches the ruler as quickly as possible",
-      "Read the distance fallen from where B's thumb is",
+      "Read the distance the ruler fell, level with the top of B's thumb",
       "Repeat several times and work out a mean, then convert distance to time using a table"
     ]),
     fill("The shorter the distance the ruler falls, the [faster/quicker/shorter] the reaction time."),
@@ -983,7 +983,7 @@
     fill("The [cerebellum] coordinates muscular activity and balance."),
     fill("The [medulla] controls unconscious activities such as heart rate and breathing."),
     fill("Brain damage can be studied using [MRI/CT/fMRI] scans."),
-    fill("The brain is hard to treat because damaged nerve tissue does not [repair] easily and it is easy to damage other areas.")
+    fill("The brain is hard to treat because damaged nerve tissue does not [repair] easily and treatment can easily damage other areas.")
   ]);
 
   topic("The eye: structure and function, accommodation", [
@@ -1003,8 +1003,8 @@
     ]),
     match([["Retina", "Contains light receptor cells"], ["Cornea", "Transparent outer layer that refracts light"], ["Iris", "Controls how much light enters the pupil"],
       ["Optic nerve", "Carries impulses to the brain"]], "Match each part of the eye to its function."),
-    fill("Short sightedness is called [myopia]."),
-    fill("Long sightedness is called [hyperopia]."),
+    fill("Short-sightedness is called [myopia]."),
+    fill("Long-sightedness is called [hyperopia]."),
     fill("Myopia and hyperopia can be corrected with glasses, contact lenses or [laser] surgery.")
   ]);
 
@@ -1053,7 +1053,7 @@
     fill("Type 1 diabetes is treated with [insulin] injections."),
     fill("Type 2 diabetes is first treated with a carbohydrate-controlled diet and [exercise]."),
     fill("[Obesity] is a risk factor for type 2 diabetes."),
-    fill("In type 1 diabetes the [pancreas] fails to produce enough insulin.")
+    fill("In type 1 diabetes, the [pancreas] fails to produce enough insulin.")
   ]);
 
   topic("Glucagon and insulin: negative feedback", [
@@ -1136,13 +1136,13 @@
 
   topic("Contraception: hormonal and non-hormonal", [
     define("contraception"), nameIt("contraception"),
-    match([["Oral contraceptive (the pill)", "Hormones that stop FSH, so no eggs mature"], ["Condom", "A barrier that stops sperm reaching the egg"],
+    match([["Oral contraceptive (the pill)", "Contains hormones that stop FSH being released, so no eggs mature"], ["Condom", "A barrier that stops sperm reaching the egg"],
       ["Spermicidal agent", "Kills or disables sperm"], ["Sterilisation", "Surgical method that is permanent"]], "Match each method to how it works."),
     fill("Oral contraceptives contain hormones that stop [FSH] being released, so no eggs mature."),
     fill("Condoms and diaphragms are [barrier] methods."),
     fill("An intrauterine device (IUD) stops an embryo [implanting] in the uterus."),
     fill("Condoms also protect against [sexually transmitted diseases/sexually transmitted disease/STDs/STD/STIs]."),
-    match([["Hormonal", "Contraceptive implant"], ["Barrier", "Diaphragm"], ["Surgical", "Sterilisation"], ["Non-hormonal, no device", "Abstaining around ovulation"]],
+    match([["Hormonal", "Contraceptive implant"], ["Barrier", "Diaphragm"], ["Surgical", "Sterilisation"], ["Natural method", "Avoiding sex around the time of ovulation"]],
       "Match each type of contraception to an example.")
   ]);
 
@@ -1157,7 +1157,7 @@
     fill("Fertility drugs contain FSH and [LH] to stimulate ovulation."),
     fill("IVF stands for [in vitro fertilisation/in vitro fertilization]."),
     fill("IVF can lead to multiple [births/pregnancies/birth]."),
-    fill("At the early stage of IVF, embryos are a ball of [cells/cell]."),
+    fill("In IVF, the early embryos are a tiny ball of [cells/cell]."),
     match([["FSH and LH", "Make eggs mature"], ["Collecting eggs", "Removes eggs from the mother's ovaries"], ["Lab fertilisation", "Eggs mixed with sperm"], ["Implantation", "Embryos placed in the uterus"]],
       "Match each part of IVF to what happens.")
   ]);
@@ -1173,8 +1173,8 @@
     ]),
     fill("In roots, auxin collects on the [lower/bottom] side and slows growth, so the root bends downwards."),
     fill("[Gibberellins/Gibberellin] are important in starting seed germination."),
-    fill("Plants produce the gas [ethene] to control ripening of fruit."),
-    fill("Auxins are used as weed [killers/killer] and rooting powders.")
+    fill("Plants produce the gas [ethene] to control the ripening of fruit."),
+    fill("Auxins are used as [weedkillers/weed killers/weedkiller] and rooting powders.")
   ]);
 
   // ---------- 4.6 Inheritance, Variation and Evolution ----------
@@ -1185,7 +1185,7 @@
     fill("Asexual reproduction produces offspring that are genetically [identical] to the parent."),
     fill("Asexual reproduction involves only [mitosis]; gametes are made by meiosis."),
     fill("Sexual reproduction produces [variation] in the offspring."),
-    match([["Sexual reproduction", "Produces variation, so a species can survive changes"], ["Asexual reproduction", "Only one parent is needed, so it's faster"]],
+    match([["Sexual reproduction", "Produces variation, so a species can survive changes in the environment"], ["Asexual reproduction", "Only one parent is needed, so it's faster"]],
       "Match each type of reproduction to an advantage.")
   ]);
 
@@ -1276,7 +1276,7 @@
     { question: "Cystic fibrosis is recessive (f). Two carrier parents (Ff) have a child. What is the probability the child has cystic fibrosis? Give a fraction.", type: "fraction", marks: 2, answer: "1/4" },
     { question: "Two carriers (Ff) have a child. What is the probability the child is a carrier? Give a fraction.", type: "fraction", marks: 2, answer: "1/2" },
     { question: "Polydactyly is dominant (D). A parent Dd has children with a parent dd. What percentage of children are expected to have polydactyly?", type: "number", marks: 2, answer: "50" },
-    { question: "Two parents Tt × Tt. Give the expected ratio of TT : Tt : tt.", type: "ratio", marks: 2, answer: "1:2:1" },
+    { question: "Two parents are both Tt. Give the expected ratio of TT : Tt : tt.", type: "ratio", marks: 2, answer: "1:2:1" },
     { question: "Out of 200 offspring of a Bb × Bb cross, how many are expected to be bb?", type: "number", marks: 2, answer: "50" },
     order("Put the steps of building a genetic cross in order.", [
       "Choose letters for the alleles (capital for dominant)",
@@ -1299,7 +1299,7 @@
 
   topic("Sex determination: X and Y chromosomes", [
     define("sex chromosomes"), nameIt("sex chromosomes"),
-    fill("Human body cells have [23] pairs of chromosomes; one pair are the sex chromosomes."),
+    fill("Human body cells have [23] pairs of chromosomes; one of these pairs is the sex chromosomes."),
     fill("Females have two [X] chromosomes."),
     fill("Males have one X and one [Y] chromosome."),
     { question: "What is the probability that a baby will be a boy? Give a fraction.", type: "fraction", answer: "1/2" },
@@ -1353,8 +1353,8 @@
       "Layers of rock build up over millions of years",
       "The fossil is exposed by erosion and found"
     ]),
-    match([["From hard parts", "Bones and shells replaced by minerals"], ["From traces", "Footprints, burrows and root pathways"],
-      ["From no decay", "Bodies kept in amber, ice or peat where decay can't happen"]], "Match each type of fossil to how it forms.")
+    match([["Mineralised fossil", "Bones and shells slowly replaced by minerals"], ["Trace fossil", "Footprints, burrows and root pathways"],
+      ["Preserved remains", "Whole organisms kept in amber, ice or peat, where decay can't happen"]], "Match each type of fossil to how it forms.")
   ]);
 
   topic("Selective breeding: process and examples", [
@@ -1416,7 +1416,7 @@
       "Match each word to its meaning."),
     order("Put these in order, from smallest to largest.", ["Individual", "Population", "Community", "Ecosystem"]),
     fill("A [stable] community is one where all the species and environmental factors are in balance."),
-    fill("Organisms compete for resources, and depend on each other for food, shelter and [pollination] (interdependence).")
+    fill("Organisms depend on each other for food, shelter and [pollination]; this is called interdependence.")
   ]);
 
   topic("Abiotic factors: temperature, light, pH, moisture", [
@@ -1558,14 +1558,14 @@
     fill("Breeding programmes help to protect [endangered] species."),
     fill("Protecting rare [habitats/habitat] helps maintain biodiversity."),
     fill("Reintroducing field margins and [hedgerows/hedgerow] increases biodiversity on farms."),
-    match([["Breeding programmes", "Help endangered species"], ["Hedgerows", "Habitats for many species on farmland"], ["Recycling", "Reduces waste sent to landfill"], ["Reducing deforestation", "Protects habitats and reduces CO₂"]],
-      "Match each programme to how it helps.")
+    match([["Breeding programmes", "Help endangered species to increase their numbers"], ["Hedgerows", "Habitats for many species on farmland"], ["Recycling", "Reduces waste sent to landfill"], ["Reducing deforestation", "Protects habitats and reduces CO₂"]],
+      "Match each action to how it helps biodiversity.")
   ]);
 
   topic("Human impact: deforestation, global warming, land use", [
     fill("Removing large areas of forest is called [deforestation]."),
     fill("Burning forests releases [carbon dioxide/CO2] into the air."),
-    fill("Destroying peat bogs to make [compost] releases carbon dioxide."),
+    fill("Digging up peat bogs to make [compost] releases carbon dioxide."),
     fill("Rising levels of carbon dioxide and [methane] cause global warming."),
     order("Put the steps of how deforestation contributes to global warming in order.", [
       "Trees are cut down and burned",
@@ -1573,7 +1573,7 @@
       "Fewer trees are left to remove carbon dioxide by photosynthesis",
       "Carbon dioxide levels in the air rise, increasing the greenhouse effect"
     ]),
-    match([["Deforestation", "To grow crops for biofuels or raise cattle"], ["Global warming", "Can change species distribution and raise sea levels"], ["Land use", "Building, farming and quarrying reduce space for other animals"]],
+    match([["Deforestation", "Clearing forests to grow crops for biofuels or to raise cattle"], ["Global warming", "Can change species distribution and raise sea levels"], ["Land use", "Building, farming and quarrying leave less land for other animals and plants"]],
       "Match each human impact to its description.")
   ]);
 
@@ -1593,8 +1593,8 @@
     fill("Only about [10]% of the biomass at each trophic level is transferred to the next."),
     fill("Producers transfer only about 1% of the [incident energy] that reaches them."),
     fill("Biomass is lost through respiration, excretion and [egestion/faeces/urine]."),
-    { question: "A producer level has 2000 kg of biomass and the primary consumers have 200 kg. What percentage is transferred?", type: "number", marks: 2, answer: "10" },
-    fill("Level 1 is producers, level 2 is primary consumers, level 3 is [secondary] consumers.")
+    { question: "The producers have 2000 kg of biomass and the primary consumers have 200 kg. What percentage of the biomass is transferred?", type: "number", marks: 2, answer: "10" },
+    fill("Level 1 is the producers, level 2 the primary consumers and level 3 the [secondary] consumers.")
   ]);
 
   topic("Pyramids of biomass", [
