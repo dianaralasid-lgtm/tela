@@ -214,5 +214,5 @@ SAMPLE_TOPICS.Biology = Object.entries(BIOLOGY_BY_PAPER).flatMap(([paper, topics
 // Subjects switched off for now: they don't show anywhere in the app (dashboard, filters, homework picker,
 // tutor progress), but their topics, questions and everyone's saved progress are kept.
 // Take a subject out of this list to bring it back.
-const HIDDEN_SUBJECTS = ["Physics", "Chemistry", "Biology"];
+const HIDDEN_SUBJECTS = ["Physics", "Chemistry"];
 const isShownSubject = subject => !HIDDEN_SUBJECTS.includes(subject);
