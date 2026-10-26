@@ -242,7 +242,7 @@
    the questions are combined into one list. The title, tip and
    questionsPerSet come from the first block; each block's questions are
    marked using that block's own "type". Sections from the second and later
-   blocks are shown as "Exam style: ..." so their letters don't clash.
+   blocks lose their "Section A:" letters so they don't clash.
 
    ALWAYS INCLUDE: add  always: true  to a question to put it in every set
    instead of leaving it to the random pick. It still appears in its place

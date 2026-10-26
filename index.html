@@ -1362,9 +1362,8 @@ TelaDB.start("student").then(() => {
     blocks.forEach((t, blockIndex) => {
     if (!key || !Array.isArray(t.questions)) { bankProblems.push("a topic is missing its name or its questions list"); return; }
     const topicKind = KIND_FOR_TYPE[t.type] || "expr";
-    // Later blocks' questions go under "Exam style" headings so their section letters don't clash with the first block's.
-    const sectionFor = q => blockIndex === 0 ? q.section || ""
-      : "Exam style" + (q.section ? ": " + String(q.section).replace(/^Section [A-Z]:\s*/i, "") : " questions");
+    // Later blocks' sections lose their "Section A:" letters so they don't clash with the first block's.
+    const sectionFor = q => blockIndex === 0 ? q.section || "" : String(q.section || "").replace(/^Section [A-Z]:\s*/i, "");
     t.questions.forEach((q, i) => {
       // A question that can't be read is skipped rather than stopping the whole dashboard.
       try { addQuestion(q, i); }
