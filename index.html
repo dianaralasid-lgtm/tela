@@ -1138,13 +1138,17 @@ TelaDB.start("student").then(() => {
       COMING_SOON.filter(s => !subjects.includes(s))
         .map(s => `<span class="chip-soon" title="${esc(s)} is coming soon">${esc(s)}<small>Soon</small></span>`).join("");
 
-    // Grades within the selected subject (hidden when none of those topics have a grade)
+    // Grades within the selected subject (hidden when none of those topics have a grade). Biology keeps its
+    // exam paper ("Paper 1", "Paper 2") where Maths keeps its grade, so for Biology this filters by paper.
     const inScope = topics.filter(t => state.subject === "All" || t.subject === state.subject);
-    const grades = GRADES.filter(g => inScope.some(t => t.grade === g));
+    const grades = [...GRADES.filter(g => inScope.some(t => t.grade === g)),
+      ...uniq(inScope.map(t => t.grade).filter(g => g && !GRADES.includes(g)))];
     if (state.grade !== "All" && !grades.includes(state.grade)) state.grade = "All";
+    const byPaper = grades.length > 0 && grades.every(g => /^Paper /.test(g));
+    $("gradeGroup").querySelector(".filter-label").textContent = byPaper ? "Paper" : "Grade";
     const gradeCounts = countBy(inScope, "grade");
     $("gradeChips").innerHTML =
-      chipHTML("All", "All grades", state.grade === "All", null, "small") +
+      chipHTML("All", byPaper ? "Both papers" : "All grades", state.grade === "All", null, "small") +
       grades.map(g => chipHTML(g, g, state.grade === g, gradeCounts[g], "small")).join("");
     $("gradeGroup").style.display = grades.length ? "" : "none";
 
