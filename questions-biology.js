@@ -1971,4 +1971,925 @@
       { question: "Why were the quadrats placed at random?", type: "choice", options: ["To avoid bias", "To save time", "To find more daisies"], answer: "To avoid bias" }
     ] }
   ]);
+
+  // ======================= EXPLAIN AND DESCRIBE =======================
+  // Written questions that ask students to explain or describe. Each lists the points that earn marks: they're
+  // shown as bullets if the student marks themselves wrong.
+  //   ex(question, marks, ...points)
+  const ex = (question, marks, ...points) => ({ question, type: "explain", marks, points, answer: points.join(" ") });
+  const addTo = (title, questions) => {
+    if (!blocks[title]) throw new Error(`no topic called "${title}"`);
+    blocks[title].questions.push(...questions);
+  };
+
+  // ---------- 4.1 Cell Biology ----------
+  addTo("Prokaryotic vs eukaryotic cells", [
+    ex("Describe two differences between a bacterial cell and an animal cell.", 2,
+      "A bacterial cell has no nucleus; its DNA is a single loop free in the cytoplasm.", "A bacterial cell has a cell wall (and may have plasmids); an animal cell has no cell wall."),
+    ex("Describe how the genetic material is arranged in a prokaryotic cell.", 2,
+      "The DNA is a single loop that is free in the cytoplasm, not in a nucleus.", "There may also be small rings of DNA called plasmids."),
+    ex("Explain why bacteria are described as prokaryotic.", 1, "Their genetic material is not enclosed in a nucleus."),
+    ex("Describe how the size of a bacterial cell compares with an animal cell.", 2,
+      "Bacterial cells are much smaller.", "Bacteria are about 1–10 µm long; animal cells are usually about 10–100 µm."),
+    ex("Describe two features that plant cells and bacterial cells have in common.", 2,
+      "Both have a cell wall.", "Both have a cell membrane, cytoplasm and ribosomes.")
+  ]);
+  addTo("Animal and plant cell structures and functions", [
+    ex("Explain why a root hair cell has no chloroplasts.", 2, "Root hair cells are underground, so they get no light.", "They can't photosynthesise, so they don't need chloroplasts."),
+    ex("Describe the function of the cell membrane and the cell wall.", 2,
+      "The cell membrane controls which substances move in and out of the cell.", "The cell wall strengthens and supports the cell."),
+    ex("Explain why muscle cells contain many mitochondria.", 2,
+      "Mitochondria are where aerobic respiration happens.", "Muscle cells need a lot of energy for contraction.")
+  ]);
+  addTo("Differentiation and specialised cells", [
+    ex("Explain what is meant by a specialised cell.", 1, "A cell that has differentiated to have a structure suited to a particular function."),
+    ex("Describe how a sperm cell is adapted to its function.", 3,
+      "It has a tail to swim to the egg.", "It has many mitochondria to release energy for swimming.", "Its head (acrosome) contains enzymes to digest through the egg's outer layer."),
+    ex("Describe how a root hair cell is adapted to absorb water and mineral ions.", 2,
+      "It has a long hair that gives a large surface area.", "It has many mitochondria to release energy for active transport of mineral ions."),
+    ex("Describe how nerve cells are adapted to carry impulses.", 2,
+      "They are long, so they can carry impulses over long distances.", "They have branched endings to connect with many other cells."),
+    ex("Describe how xylem cells are adapted to carry water.", 2,
+      "They are hollow tubes with no end walls, so water flows freely.", "Their walls are strengthened with lignin to support the plant."),
+    ex("Explain the difference in when animal and plant cells differentiate.", 2,
+      "Most animal cells differentiate at an early stage and then lose the ability.", "Many plant cells keep the ability to differentiate throughout life."),
+    ex("Describe how a muscle cell is adapted to its function.", 2,
+      "It contains protein fibres that can contract.", "It has many mitochondria to release the energy needed for contraction.")
+  ]);
+  addTo("Microscopy: magnification and resolution", [
+    ex("Describe the difference between magnification and resolution.", 2,
+      "Magnification is how many times bigger the image is than the real object.", "Resolution is the ability to tell apart two points that are close together (the amount of detail)."),
+    ex("Explain why electron microscopes have increased our understanding of cells.", 2,
+      "They have a much higher magnification and resolution than light microscopes.", "So sub-cellular structures such as ribosomes and mitochondria can be seen in detail."),
+    ex("Describe one advantage and one disadvantage of a light microscope compared with an electron microscope.", 2,
+      "Advantage: it is cheaper and portable, and can be used to look at living cells.", "Disadvantage: it has lower magnification and resolution, so less detail can be seen."),
+    ex("Describe how to calculate the real size of a cell from an image.", 2, "Measure the size of the image.", "Divide the image size by the magnification."),
+    ex("Explain why ribosomes cannot be seen with a light microscope.", 2, "Ribosomes are very small.", "A light microscope's resolution is too low to show them."),
+    ex("Explain why units should be the same when working out magnification.", 1, "Image size and real size must be in the same units, otherwise the answer will be wrong by a factor of 1000 or more."),
+    ex("Describe how the development of microscopes changed what we know about cells.", 2,
+      "Light microscopes first showed cells and nuclei.", "Electron microscopes later showed the detail of sub-cellular structures."),
+    ex("Explain why scientists use a scale bar on a micrograph.", 1, "It shows the real size, so the size of structures can be worked out even if the image is enlarged.")
+  ]);
+  addTo("Microscopy calculations using standard form", [
+    ex("Explain why standard form is useful for cell sizes.", 2, "Cell sizes are very small numbers with many zeros.", "Standard form makes them quicker to write and easier to compare."),
+    ex("Describe how to convert a length in mm to µm.", 1, "Multiply by 1000."),
+    ex("Describe how to convert a length in µm to mm.", 1, "Divide by 1000."),
+    ex("Explain how to rearrange the magnification equation to find the image size.", 1, "Image size = magnification × real size."),
+    ex("Describe how to write 0.000 45 m in standard form.", 2, "Move the decimal point so there is one non-zero digit in front: 4.5.", "Count the places moved (4) and write it as 4.5 × 10⁻⁴ m."),
+    ex("Explain what a negative power of ten means in standard form.", 1, "The number is less than 1: the decimal point moves that many places to the left."),
+    ex("Describe how to compare the sizes of two cells given in standard form.", 2, "First compare the powers of ten: the bigger power is the bigger number.", "If the powers are the same, compare the numbers in front."),
+    ex("Explain why a student's magnification answer of 0.002 is likely to be wrong.", 2, "A magnification should be greater than 1, as the image is bigger than the real object.", "They have probably divided the wrong way round or mixed up units.")
+  ]);
+  addTo("Required practical: using a microscope to observe cells", [
+    ex("Explain why the specimen is stained.", 1, "To make the cell structures, such as the nucleus, easier to see."),
+    ex("Explain why the lowest-power objective lens is used first.", 2, "It gives the widest field of view.", "So it is easier to find the cells before zooming in."),
+    ex("Describe how to prepare a slide of onion cells.", 3,
+      "Peel a thin layer of onion epidermis with tweezers and place it on a slide with a drop of water.", "Add a drop of iodine solution to stain it.", "Lower a coverslip on at an angle to avoid air bubbles."),
+    ex("Explain why the coverslip is lowered on at an angle.", 1, "To stop air bubbles being trapped, which could hide the cells."),
+    ex("Explain why a thin layer of tissue is used.", 1, "So light can pass through it and single cells can be seen."),
+    ex("Describe how to focus the microscope on the cells.", 2, "Use the coarse focusing wheel to bring the stage close and focus roughly.", "Then use the fine focusing wheel to make the image sharp."),
+    ex("Describe how to make a good biological drawing of cells seen under the microscope.", 3,
+      "Use a sharp pencil and draw clear, unbroken lines with no shading.", "Draw the structures in proportion and label them with straight lines.", "Include a title and the magnification."),
+    ex("Explain why a cheek cell is stained with methylene blue rather than iodine.", 1, "Methylene blue stains the nucleus of animal cells clearly (iodine is used for starch in plant cells)."),
+    ex("Explain how to calculate the total magnification.", 1, "Multiply the eyepiece lens magnification by the objective lens magnification.")
+  ]);
+  addTo("Mitosis and the cell cycle", [
+    ex("Describe what happens during the cell cycle.", 3,
+      "The cell grows and copies its sub-cellular structures, such as mitochondria and ribosomes.", "The DNA replicates to form two copies of each chromosome.",
+      "Mitosis separates the chromosomes, then the cytoplasm and membrane divide to form two identical cells."),
+    ex("Explain why the DNA must be copied before a cell divides.", 1, "So each new cell gets a full, identical set of chromosomes."),
+    ex("Explain why mitosis is important for multicellular organisms.", 2, "It produces new cells for growth and repair.", "The new cells are genetically identical to the parent cell."),
+    ex("Describe what happens to the chromosomes during mitosis.", 2, "The chromosomes line up in the middle of the cell.", "One set is pulled to each end of the cell, and a new nucleus forms around each set."),
+    ex("Explain how uncontrolled cell division can cause cancer.", 2, "Changes in cells mean the cell cycle is no longer controlled.", "The cells divide uncontrollably, forming a tumour."),
+    ex("Describe how bacteria reproduce.", 2, "They reproduce by binary fission.", "The DNA loop is copied, then the cell splits into two identical cells.")
+  ]);
+  addTo("Stem cells: types and uses (embryonic & adult)", [
+    ex("Describe one difference between embryonic stem cells and adult stem cells.", 1,
+      "Embryonic stem cells can form almost any type of cell; adult stem cells can only form a limited number of cell types."),
+    ex("Explain how stem cells could be used to treat diabetes.", 2, "Stem cells could be made to differentiate into insulin-producing cells.", "These cells are put into the patient so they can make their own insulin."),
+    ex("Describe two concerns about using embryonic stem cells.", 2,
+      "Ethical or religious objections, because an embryo is destroyed.", "Risk of transferring viral infection, or the cells could divide uncontrollably and cause cancer."),
+    ex("Explain why therapeutic cloning reduces the risk of rejection.", 2,
+      "The embryo is made with the patient's own genetic material.", "So the stem cells are genetically identical to the patient and are not rejected by the immune system."),
+    ex("Describe how plant stem cells can be used.", 2, "Meristem tissue can be used to produce clones of plants quickly and cheaply.", "This can save rare species or produce crops with useful features, e.g. disease resistance."),
+    ex("Explain why bone marrow transplants can treat some blood disorders.", 2, "Bone marrow contains adult stem cells.", "They can differentiate into new blood cells.")
+  ]);
+  addTo("Diffusion: factors affecting rate", [
+    ex("Explain why oxygen diffuses into a red blood cell in the lungs.", 2, "There is a higher concentration of oxygen in the alveoli than in the blood.", "So oxygen moves down its concentration gradient into the blood."),
+    ex("Explain how temperature affects the rate of diffusion.", 2, "At a higher temperature particles have more kinetic energy and move faster.", "So diffusion is faster."),
+    ex("Explain how a steeper concentration gradient affects diffusion.", 1, "A bigger difference in concentration makes diffusion faster."),
+    ex("Explain why single-celled organisms don't need a special exchange surface.", 2, "They have a large surface area to volume ratio.", "So diffusion across the cell membrane is enough to meet their needs."),
+    ex("Explain why large multicellular organisms need exchange surfaces and transport systems.", 2,
+      "They have a small surface area to volume ratio, and diffusion distances are long.", "Diffusion alone would be too slow to supply all their cells."),
+    ex("Describe how the small intestine is adapted for efficient absorption.", 3,
+      "It has millions of villi that give a large surface area.", "Villi have a wall one cell thick, giving a short diffusion distance.", "Villi have a good blood supply, keeping the concentration gradient steep."),
+    ex("Describe how fish gills are adapted for gas exchange.", 2, "Gill filaments and lamellae give a large surface area.", "They have thin walls and a good blood supply."),
+    ex("Explain what is meant by diffusion being passive.", 1, "It needs no energy from respiration.")
+  ]);
+  addTo("Osmosis: definition and examples", [
+    ex("Explain what happens to an animal cell placed in pure water.", 2, "Water moves into the cell by osmosis.", "The cell swells and may burst, because it has no cell wall."),
+    ex("Explain why a plant cell does not burst when placed in pure water.", 2, "Water enters the cell by osmosis and the cell becomes turgid.", "The strong cell wall stops it bursting."),
+    ex("Explain why plants wilt when they lose too much water.", 2, "Cells lose water by osmosis and lose turgor.", "So the cells become flaccid and no longer support the plant.")
+  ]);
+  addTo("Required practical: osmosis in plant tissue", [
+    ex("Explain why percentage change in mass is calculated, not just change in mass.", 2, "The cylinders may have different starting masses.", "Percentage change lets the results be compared fairly."),
+    ex("Explain why a potato cylinder gains mass in pure water.", 2, "The water is more dilute than the potato cells.", "So water moves into the cells by osmosis."),
+    ex("Explain why a potato cylinder loses mass in a concentrated sugar solution.", 2, "The solution is more concentrated than the potato cells.", "So water moves out of the cells by osmosis."),
+    ex("Describe how to use the results to find the concentration of the potato cells.", 2,
+      "Plot a graph of percentage change in mass against concentration.", "Read the concentration where the line crosses 0% change."),
+    ex("Name two variables that should be controlled, and explain why.", 2, "The size (length/diameter) of the cylinders and the time left in the solution.", "So that only the concentration affects the change in mass."),
+    ex("Explain why the cylinders are blotted dry before weighing.", 1, "To remove surface water, which would add to the mass and make results inaccurate."),
+    ex("Describe how to make the results more reliable.", 1, "Repeat each concentration and calculate a mean."),
+    ex("Explain why all the cylinders should come from the same potato.", 1, "Different potatoes may have different concentrations inside their cells."),
+    ex("Describe a hazard in this practical and how to reduce the risk.", 2, "The knife or cork borer is sharp and can cut you.", "Cut on a tile, away from your body.")
+  ]);
+  addTo("Active transport: differences from diffusion", [
+    ex("Describe two differences between active transport and diffusion.", 2,
+      "Active transport moves substances against the concentration gradient; diffusion moves them down it.", "Active transport needs energy from respiration; diffusion does not."),
+    ex("Explain why root hair cells need active transport.", 2, "The concentration of mineral ions in the soil is usually lower than in the root cells.", "So ions must be moved against the concentration gradient."),
+    ex("Explain why root hair cells have many mitochondria.", 2, "Active transport needs energy.", "Mitochondria release energy by aerobic respiration."),
+    ex("Explain why waterlogged soil can reduce mineral uptake.", 2, "Waterlogged soil has little oxygen, so root cells can't respire aerobically.", "Less energy is released for active transport."),
+    ex("Describe how active transport is used in the small intestine.", 2, "Glucose is absorbed from the gut into the blood.", "Even when the concentration in the gut is lower than in the blood."),
+    ex("Explain why active transport stops if a cell is given a poison that stops respiration.", 1, "No energy is released, and active transport needs energy.")
+  ]);
+
+  // ---------- 4.2 Organisation ----------
+  addTo("Cells → tissues → organs → organ systems", [
+    ex("Describe the levels of organisation in a multicellular organism.", 3,
+      "Cells are grouped into tissues, groups of cells with a similar structure and function.", "Tissues are grouped into organs, which carry out specific functions.", "Organs work together in organ systems, which form the organism."),
+    ex("Explain why the stomach is described as an organ.", 1, "It is made of several different tissues working together, e.g. muscle, glandular and epithelial tissue."),
+    ex("Describe the function of three tissues in the stomach.", 3,
+      "Muscular tissue churns the contents.", "Glandular tissue makes digestive juices.", "Epithelial tissue covers the inside and outside of the stomach."),
+    ex("Explain why the digestive system is an organ system.", 1, "It is made of several organs working together to digest and absorb food."),
+    ex("Describe the levels of organisation in a plant, with an example of each.", 2, "Cells (e.g. palisade cells) form tissues (e.g. xylem).", "Tissues form organs (e.g. the leaf), which form organ systems (e.g. the transport system).")
+  ]);
+  addTo("Digestive system: organs and enzymes", [
+    ex("Describe the role of bile in digestion.", 2, "Bile neutralises stomach acid, giving alkaline conditions for enzymes in the small intestine.", "It emulsifies fats into small droplets, increasing the surface area for lipase."),
+    ex("Explain why food must be digested.", 2, "Food molecules are large and insoluble.", "They must be broken into small soluble molecules that can be absorbed into the blood."),
+    ex("Describe what happens to protein in the digestive system.", 3,
+      "Proteases break proteins into amino acids.", "Protease is made in the stomach, pancreas and small intestine.", "Amino acids are absorbed into the blood in the small intestine.")
+  ]);
+  addTo("Enzyme action: lock and key, temperature, pH", [
+    ex("Explain why an enzyme only works on one substrate.", 2, "The active site has a specific shape.", "Only the substrate with a complementary shape fits into it."),
+    ex("Explain how increasing the temperature affects the rate of an enzyme reaction up to the optimum.", 2,
+      "Molecules move faster and collide more often.", "So more enzyme–substrate complexes form and the rate increases."),
+    ex("Explain why enzyme activity falls at a pH far from the optimum.", 2, "The shape of the active site changes; the enzyme is denatured.", "The substrate no longer fits, so the reaction can't be catalysed.")
+  ]);
+  addTo("Required practical: food tests (Benedict's, Biuret, iodine)", [
+    ex("Describe how to test a food for starch.", 2, "Add a few drops of iodine solution to the food sample.", "It turns from orange-brown to blue-black if starch is present."),
+    ex("Describe how to test a food for protein.", 2, "Add Biuret reagent to the food solution.", "It turns from blue to purple if protein is present."),
+    ex("Describe how to test a food for lipids.", 2, "Mix the food with ethanol, then add the mixture to water and shake.", "A cloudy white emulsion shows lipids are present."),
+    ex("Explain why the Benedict's test is heated.", 1, "The reaction only happens at a high temperature (about 75 °C in a water bath)."),
+    ex("Explain why a water bath is used to heat the Benedict's test, not a Bunsen burner.", 2, "It heats the tube gently and evenly.", "A Bunsen burner could make the solution spit out of the tube; ethanol may be nearby and is flammable."),
+    ex("Describe how to prepare a food sample for testing.", 2, "Grind the food with distilled water using a pestle and mortar.", "Filter the mixture to get a solution."),
+    ex("Explain how the colour of a Benedict's test shows how much sugar is present.", 2, "Green shows a small amount, yellow more, orange more again.", "Brick red shows the most reducing sugar."),
+    ex("Describe one safety precaution when using Biuret reagent.", 1, "Wear eye protection, as it contains an irritant (corrosive) chemical."),
+    ex("Explain why a control tube with distilled water is used.", 1, "To show what a negative result looks like, so the colour change can be compared.")
+  ]);
+  addTo("Required practical: effect of pH on enzyme activity", [
+    ex("Explain why a buffer solution is used.", 1, "To keep the pH of the mixture constant at a known value."),
+    ex("Explain why the iodine stays orange-brown at the end point.", 2, "All the starch has been broken down by amylase.", "Iodine only turns blue-black if starch is present."),
+    ex("Explain why the solutions are put in a water bath before mixing.", 2, "So they are at the same temperature before the reaction starts.", "Temperature affects enzyme activity, so it must be controlled."),
+    ex("Explain why the rate is slow at a very low pH.", 2, "The pH changes the shape of the active site; the enzyme is denatured.", "Starch no longer fits, so less is broken down."),
+    ex("Describe how to calculate the rate of reaction from the time taken.", 1, "Rate = 1000 ÷ time (or 1 ÷ time)."),
+    ex("Describe how to improve the accuracy of this practical.", 2, "Test more often, e.g. every 10 seconds instead of every 30.", "Use a colorimeter instead of judging the colour by eye."),
+    ex("Name two control variables and explain why they must be controlled.", 2, "Temperature and the volumes/concentrations of amylase and starch.", "So only the pH affects the rate."),
+    ex("Describe what the results show if the reaction is fastest at pH 6.", 1, "The optimum pH of amylase is about pH 6.")
+  ]);
+  addTo("Heart structure and the circulatory system", [
+    ex("Explain why the left ventricle has a thicker wall than the right ventricle.", 2, "The left ventricle pumps blood around the whole body.", "The right ventricle only pumps blood to the nearby lungs, at a lower pressure."),
+    ex("Describe the advantage of a double circulatory system.", 2, "Blood returns to the heart after the lungs, so it can be pumped to the body at high pressure.", "This delivers oxygen to the body cells quickly."),
+    ex("Describe how the alveoli are adapted for gas exchange.", 3, "They give a very large surface area.", "Their walls are thin, one cell thick, for a short diffusion distance.", "They have a good blood supply and are ventilated, keeping the concentration gradients steep.")
+  ]);
+  addTo("Blood vessels: arteries, veins, capillaries", [
+    ex("Explain how arteries are adapted to their function.", 2, "Arteries carry blood at high pressure.", "They have thick, muscular, elastic walls to withstand the pressure."),
+    ex("Explain how veins are adapted to their function.", 2, "Veins carry blood at low pressure.", "They have a large lumen and valves to stop the blood flowing backwards."),
+    ex("Explain how capillaries are adapted for exchange.", 2, "Their walls are only one cell thick, giving a short diffusion distance.", "There are many of them, close to every cell, giving a large surface area."),
+    ex("Describe the path of blood through the vessels from the heart to an organ and back.", 3,
+      "Blood leaves the heart in arteries.", "It passes through capillaries in the organ, where substances are exchanged.", "It returns to the heart in veins."),
+    ex("Explain why veins need valves but arteries don't.", 2, "Blood in veins is at low pressure, so it could flow backwards.", "Blood in arteries is at high pressure from the heart, so it keeps moving forwards."),
+    ex("Describe how to calculate the rate of blood flow.", 1, "Rate of blood flow = volume of blood ÷ number of minutes.")
+  ]);
+  addTo("Blood: components and functions", [
+    ex("Explain how red blood cells are adapted to carry oxygen.", 3, "They contain haemoglobin, which binds to oxygen.", "They have no nucleus, giving more room for haemoglobin.", "Their biconcave shape gives a large surface area for oxygen to diffuse."),
+    ex("Describe how white blood cells protect the body.", 3, "Some engulf and digest pathogens (phagocytosis).", "Some make antibodies against pathogens.", "Some make antitoxins to neutralise toxins."),
+    ex("Describe the role of plasma.", 2, "It carries the blood cells around the body.", "It carries dissolved substances such as glucose, carbon dioxide, urea and hormones.")
+  ]);
+  addTo("Coronary heart disease and treatments", [
+    ex("Explain how coronary heart disease can cause a heart attack.", 3,
+      "Fatty material builds up in the coronary arteries, narrowing them.", "Less blood flows to the heart muscle, so it gets less oxygen.", "The heart muscle can't respire, so it is damaged or dies."),
+    ex("Describe how a stent treats coronary heart disease.", 2, "A metal mesh is inserted into the narrowed coronary artery.", "It holds the artery open so blood can flow to the heart muscle."),
+    ex("Give one advantage and one disadvantage of using statins.", 2, "Advantage: they lower blood cholesterol, slowing the build-up of fatty material.", "Disadvantage: they must be taken long-term and can have side effects, e.g. liver problems."),
+    ex("Give one advantage and one disadvantage of a heart transplant.", 2, "Advantage: it can replace a heart that is failing completely.", "Disadvantage: there may be no donor, it needs major surgery, and the heart could be rejected."),
+    ex("Describe how faulty heart valves affect the heart.", 2, "The valve may not open fully, or may leak.", "So blood flows backwards and the heart pumps less efficiently.")
+  ]);
+  addTo("Health: communicable vs non-communicable disease", [
+    ex("Describe the difference between communicable and non-communicable diseases.", 2,
+      "Communicable diseases are caused by pathogens and can spread between people.", "Non-communicable diseases are not caused by pathogens and can't be passed on."),
+    ex("Explain what a risk factor is.", 1, "Something linked to an increased chance of getting a disease."),
+    ex("Describe how one disease can make a person more likely to get another.", 2, "A defect in the immune system makes a person more likely to get infectious diseases.", "For example, HIV weakens the immune system so other infections take hold."),
+    ex("Describe the effects of smoking on health.", 2, "It increases the risk of lung disease and lung cancer.", "It increases the risk of cardiovascular disease."),
+    ex("Explain why non-communicable diseases have a high human and financial cost.", 2,
+      "People can suffer and die, which affects families.", "Treatment is expensive for the NHS, and people may be unable to work."),
+    ex("Explain why a correlation between a risk factor and a disease doesn't prove one causes the other.", 2, "Another factor may cause both.", "A causal link needs a mechanism that explains how the risk factor causes the disease.")
+  ]);
+  addTo("Cancer: benign vs malignant tumours", [
+    ex("Describe the difference between benign and malignant tumours.", 2, "Benign tumours stay in one place, usually within a membrane, and don't invade other tissues.",
+      "Malignant tumours invade nearby tissues and spread in the blood to form secondary tumours."),
+    ex("Explain how a tumour forms.", 2, "Changes in cells lead to uncontrolled growth and division.", "The cells form a mass of abnormal cells."),
+    ex("Describe two lifestyle risk factors for cancer.", 2, "Smoking (lung, mouth and throat cancers).", "Obesity, UV exposure or alcohol (e.g. skin cancer from UV)."),
+    ex("Explain why malignant tumours are more dangerous than benign tumours.", 2, "Malignant tumour cells spread to other parts of the body in the blood.", "They form secondary tumours, so the cancer is harder to treat."),
+    ex("Describe how some cancers are linked to genetics.", 1, "Some people inherit faulty genes, e.g. BRCA, that increase their risk of certain cancers.")
+  ]);
+  addTo("Plant tissues: leaf structure and transpiration", [
+    ex("Explain why the rate of transpiration increases on a windy day.", 2, "Wind moves water vapour away from the leaf surface.", "This keeps the concentration gradient steep, so water vapour diffuses out faster."),
+    ex("Explain why the rate of transpiration is lower when the air is humid.", 2, "Humid air already contains lots of water vapour.", "So the concentration gradient between the leaf and the air is smaller."),
+    ex("Describe how xylem and phloem differ.", 2, "Xylem carries water and mineral ions up from the roots; its cells are dead and strengthened by lignin.",
+      "Phloem carries dissolved sugars both ways; its cells are living, with pores in the end walls.")
+  ]);
+
+  // ---------- 4.3 Infection and response ----------
+  addTo("Pathogens: bacteria, viruses, fungi, protists", [
+    ex("Describe how bacteria make us feel ill.", 2, "Bacteria reproduce rapidly inside the body.", "They may produce toxins that damage tissues."),
+    ex("Describe how viruses make us feel ill.", 2, "Viruses live and reproduce inside cells.", "This causes cell damage when the cells burst."),
+    ex("Describe three ways pathogens can be spread.", 3, "By direct contact (e.g. touching).", "By water (e.g. dirty drinking water).", "By air (e.g. droplets from coughs and sneezes)."),
+    ex("Describe two ways the spread of disease can be reduced.", 2, "Good hygiene, e.g. washing hands.", "Isolating infected people, destroying or controlling vectors, or vaccination."),
+    ex("Explain why antibiotics can't be used to treat viral diseases.", 2, "Antibiotics kill bacteria.", "Viruses live inside cells, so antibiotics can't kill them without damaging the cells.")
+  ]);
+  addTo("Examples of communicable diseases", [
+    ex("Describe the symptoms of measles and how it is spread.", 2, "Fever and a red skin rash.", "It is spread by inhaling droplets from sneezes and coughs."),
+    ex("Describe how HIV is spread and how it affects the body.", 3, "It is spread by sexual contact or exchange of body fluids, e.g. blood when drug users share needles.",
+      "The virus attacks the body's immune cells.", "Late-stage HIV (AIDS) means the immune system is so damaged it can't deal with other infections."),
+    ex("Describe how tobacco mosaic virus (TMV) affects a plant.", 2, "It causes a mosaic pattern of discoloration on the leaves.", "This reduces photosynthesis, so the plant's growth is affected."),
+    ex("Describe the symptoms of Salmonella food poisoning and how it is controlled in the UK.", 3, "Fever, abdominal cramps, vomiting and diarrhoea, caused by toxins.",
+      "It is spread by eating undercooked or contaminated food.", "Poultry in the UK are vaccinated against Salmonella."),
+    ex("Describe how gonorrhoea is spread and how its spread can be controlled.", 3, "It is a bacterial STD spread by sexual contact.", "It is treated with antibiotics (though many strains are now resistant).", "Its spread is controlled by using condoms."),
+    ex("Describe how rose black spot affects a plant and how it is treated.", 3, "Purple or black spots develop on the leaves, which often turn yellow and drop early.",
+      "This reduces photosynthesis, so the plant grows less well.", "It is treated with fungicides and by removing and destroying affected leaves."),
+    ex("Describe how the spread of malaria can be controlled.", 2, "Stop mosquitoes breeding, e.g. by draining standing water.", "Use mosquito nets and insecticides to avoid being bitten.")
+  ]);
+  addTo("Human defence systems: non-specific (skin, mucus, stomach acid)", [
+    ex("Describe how the skin protects the body against pathogens.", 2, "It acts as a physical barrier.", "It produces antimicrobial secretions, and healthy skin bacteria compete with pathogens."),
+    ex("Describe how the nose stops pathogens getting into the lungs.", 1, "Hairs and mucus trap particles that may contain pathogens."),
+    ex("Explain how the trachea and bronchi protect the body against pathogens.", 2, "They make mucus, which traps pathogens.", "Cilia move the mucus up to the throat, where it is swallowed."),
+    ex("Explain how the stomach protects the body against pathogens.", 2, "The stomach makes hydrochloric acid.", "The acid kills most pathogens that are swallowed."),
+    ex("Explain why smoking increases the risk of chest infections.", 2, "Chemicals in smoke damage the cilia.", "So mucus and trapped pathogens build up in the airways."),
+    ex("Explain why these defences are described as non-specific.", 1, "They work against all pathogens, not just one type."),
+    ex("Explain why a cut in the skin increases the risk of infection.", 1, "It breaks the physical barrier, so pathogens can get into the body."),
+    ex("Describe the role of platelets in defending the body.", 2, "Platelets help the blood to clot at a wound.", "The clot seals the wound, stopping pathogens getting in."),
+    ex("Describe the difference between non-specific defences and the immune system.", 2, "Non-specific defences stop pathogens getting into the body.", "The immune system destroys pathogens that do get in."),
+    ex("Explain how tears help protect the eyes.", 1, "Tears contain enzymes (lysozyme) that kill bacteria.")
+  ]);
+  addTo("The immune response: white blood cells, antibodies", [
+    ex("Describe three ways white blood cells defend the body.", 3, "Phagocytosis: engulfing and digesting pathogens.", "Producing antibodies.", "Producing antitoxins."),
+    ex("Explain why antibodies are specific.", 2, "Each antibody has a shape that is complementary to one antigen.", "So it only binds to one type of pathogen."),
+    ex("Explain why you usually only catch a disease such as chickenpox once.", 3, "After the first infection, memory cells stay in the blood.",
+      "If the same pathogen enters again, they produce the right antibodies very quickly.", "The pathogen is destroyed before it can make you ill."),
+    ex("Describe what an antigen is.", 1, "A protein on the surface of a cell or pathogen that the immune system recognises."),
+    ex("Describe how phagocytes destroy pathogens.", 2, "They engulf the pathogen.", "They digest it using enzymes."),
+    ex("Describe the role of antitoxins.", 1, "They bind to and neutralise the toxins produced by bacteria."),
+    ex("Explain why it takes a few days to recover from a new infection.", 2, "White blood cells take time to make the right antibodies the first time.", "Meanwhile the pathogen reproduces and causes symptoms."),
+    ex("Explain how antibodies help destroy pathogens.", 2, "Antibodies bind to antigens on the pathogen.", "This clumps pathogens together or marks them, so phagocytes can destroy them more easily."),
+    ex("Explain why the number of white blood cells increases during an infection.", 1, "More white blood cells are made to fight the pathogen.")
+  ]);
+  addTo("Vaccination and herd immunity", [
+    ex("Describe how vaccination prevents illness.", 3, "A small amount of dead or inactive pathogen is injected.", "White blood cells produce antibodies and memory cells.",
+      "If the real pathogen enters, antibodies are made quickly and the person doesn't become ill."),
+    ex("Explain how herd immunity protects people who can't be vaccinated.", 2, "If a large proportion of the population is immune, the pathogen can't spread easily.", "So unvaccinated people are less likely to meet someone who is infected."),
+    ex("Explain why the vaccine for a disease may need to change from year to year.", 2, "The pathogen mutates, changing its antigens.", "Antibodies from the old vaccine no longer fit, e.g. for flu."),
+    ex("Give one advantage and one disadvantage of vaccination.", 2, "Advantage: it can control or wipe out a disease, e.g. smallpox.", "Disadvantage: some people get mild side effects such as a sore arm or fever."),
+    ex("Explain why a vaccine uses a dead or inactive form of the pathogen.", 1, "So it triggers an immune response without causing the disease."),
+    ex("Explain why booster doses of some vaccines are given.", 2, "The number of antibodies and memory cells can fall over time.", "A booster triggers a stronger secondary response, giving longer-lasting immunity."),
+    ex("Explain why a vaccine for measles doesn't protect you against chickenpox.", 2, "Antibodies are specific to one antigen.", "The chickenpox virus has different antigens."),
+    ex("Explain why a large proportion of the population needs to be vaccinated.", 1, "To give herd immunity, so the pathogen can't spread."),
+    ex("Describe how the number of antibodies changes after a second exposure, compared with the first.", 2, "They are produced faster.", "Many more antibodies are produced.")
+  ]);
+  addTo("Antibiotics: how they work and resistance", [
+    ex("Explain why antibiotics should not be prescribed for colds.", 2, "Colds are caused by viruses, which antibiotics don't kill.", "Unnecessary use increases the risk of antibiotic resistance."),
+    ex("Explain why patients should finish their course of antibiotics.", 2, "To make sure all the bacteria are killed.", "So no bacteria survive to mutate and form resistant strains."),
+    ex("Describe how a strain of antibiotic-resistant bacteria develops.", 3, "A mutation makes some bacteria resistant to an antibiotic.",
+      "The antibiotic kills the non-resistant bacteria, but the resistant ones survive and reproduce.", "The resistant strain spreads because there is no competition."),
+    ex("Explain why antibiotic resistance is a problem.", 2, "Infections caused by resistant bacteria, e.g. MRSA, are hard to treat.", "New antibiotics take a long time to develop."),
+    ex("Describe the difference between antibiotics and painkillers.", 2, "Antibiotics kill bacteria inside the body.", "Painkillers only treat the symptoms; they don't kill pathogens."),
+    ex("Describe two ways to reduce the development of antibiotic resistance.", 2, "Doctors should only prescribe antibiotics when really needed.", "Restrict their use in farming, and patients should finish the course."),
+    ex("Explain why specific antibiotics are used for specific bacteria.", 1, "Different antibiotics kill different types of bacteria, so using the right one is more effective.")
+  ]);
+  addTo("Drug development: clinical trials, double-blind", [
+    ex("Describe the three things new drugs are tested for.", 3, "Toxicity: whether it is harmful.", "Efficacy: whether it works.", "Dose: the best amount to give."),
+    ex("Describe the stages of developing a new drug.", 3, "Preclinical testing on cells, tissues and live animals.", "Clinical trials on healthy volunteers with low doses, to test for side effects.",
+      "Then trials on patients to find the optimum dose and whether it works."),
+    ex("Explain why very low doses are used at the start of a clinical trial.", 1, "In case the drug has harmful side effects."),
+    ex("Explain why the results of drug trials are peer reviewed before publishing.", 2, "Other scientists check the results.", "This helps prevent false claims and checks the methods are valid."),
+    ex("Describe where these drugs were first found: digitalis, aspirin and penicillin.", 3, "Digitalis comes from foxgloves.", "Aspirin comes from willow.", "Penicillin was discovered by Alexander Fleming from the Penicillium mould.")
+  ]);
+  addTo("Monoclonal antibodies: production and uses", [
+    ex("Describe how monoclonal antibodies are produced.", 4, "A mouse is injected with an antigen so its lymphocytes make the antibody.", "The lymphocytes are combined with tumour cells to make hybridoma cells.",
+      "A single hybridoma cell is cloned.", "The clones produce lots of identical antibodies, which are collected and purified."),
+    ex("Explain why lymphocytes are combined with tumour cells.", 2, "Lymphocytes make antibodies but don't divide.", "Tumour cells divide rapidly, so the hybridoma cell both divides and makes antibodies."),
+    ex("Describe how monoclonal antibodies are used in pregnancy tests.", 2, "They bind to the hormone HCG, found in the urine of pregnant women.", "This causes a coloured line to appear on the test strip."),
+    ex("Explain how monoclonal antibodies can be used to treat cancer.", 2, "They are made to bind to antigens on cancer cells.", "They can carry a drug or radioactive substance to the cancer cells, so other cells aren't harmed."),
+    ex("Explain why monoclonal antibodies are specific.", 1, "They are all identical, so they bind only to one specific antigen."),
+    ex("Give one disadvantage of using monoclonal antibodies.", 1, "They can cause more side effects than expected, e.g. fever or low blood pressure."),
+    ex("Describe two uses of monoclonal antibodies in the lab or hospital.", 2, "Measuring levels of hormones or chemicals in the blood, or detecting pathogens.", "Locating or identifying specific molecules in cells by binding to them with a fluorescent dye."),
+    ex("Explain why monoclonal antibodies are not as widely used as scientists first hoped.", 1, "They caused more side effects than expected.")
+  ]);
+  addTo("Plant disease: detection and defence", [
+    ex("Describe three signs that a plant may have a disease.", 3, "Stunted growth.", "Spots or areas of decay on leaves.", "Discoloration, growths, malformed stems or leaves, or visible pests."),
+    ex("Describe how plants can be tested to identify a disease.", 2, "Use a gardening manual or website, or take infected plants to a lab.", "Use testing kits that contain monoclonal antibodies."),
+    ex("Describe the physical defences plants have against pathogens.", 3, "A cellulose cell wall.", "A tough waxy cuticle on the leaves.", "A layer of dead cells on the stem (bark), which falls off."),
+    ex("Describe the mechanical defences plants have against animals.", 2, "Thorns and hairs deter animals.", "Leaves that droop or curl when touched, or mimicry to trick animals."),
+    ex("Explain how a lack of nitrate ions affects a plant.", 2, "Nitrates are needed to make proteins.", "So the plant has stunted growth."),
+    ex("Explain how a lack of magnesium ions affects a plant.", 2, "Magnesium is needed to make chlorophyll.", "So the leaves turn yellow (chlorosis) and photosynthesis is reduced.")
+  ]);
+
+  // ---------- 4.4 Bioenergetics ----------
+  addTo("Photosynthesis equation (word and symbol)", [
+    ex("Explain why photosynthesis is described as endothermic.", 1, "Energy is transferred from the environment (as light) to the chloroplasts."),
+    ex("Describe how a plant uses the glucose it makes.", 3, "For respiration.", "Converted into starch for storage, or cellulose to strengthen the cell wall.",
+      "To make fats or oils for storage, and amino acids (with nitrates) to make proteins."),
+    ex("Explain why plants store glucose as starch.", 2, "Starch is insoluble.", "So it doesn't affect the water balance of cells by osmosis."),
+    ex("Describe where the reactants for photosynthesis come from.", 2, "Carbon dioxide diffuses in from the air through the stomata.", "Water is absorbed from the soil by the roots and carried in the xylem."),
+    ex("Explain why the leaves of a plant left in the dark contain no starch.", 2, "There is no light, so no photosynthesis takes place.", "The stored starch has been used up in respiration.")
+  ]);
+  addTo("Adaptations of the leaf for photosynthesis", [
+    ex("Explain why palisade cells are near the top of the leaf.", 2, "They contain lots of chloroplasts.", "Being near the top means they absorb the most light."),
+    ex("Explain how the spongy mesophyll is adapted for gas exchange.", 2, "It has air spaces between the cells.", "These let gases diffuse quickly to and from the cells."),
+    ex("Explain why leaves are broad and flat.", 1, "This gives a large surface area to absorb light."),
+    ex("Explain why leaves are thin.", 1, "It gives a short diffusion distance for carbon dioxide to reach the cells."),
+    ex("Explain why leaves have veins.", 2, "Xylem in the veins brings water to the leaf cells for photosynthesis.", "Phloem carries the sugars made away to the rest of the plant.")
+  ]);
+  addTo("Limiting factors: light, CO₂, temperature", [
+    ex("Explain what is meant by a limiting factor.", 1, "The factor in shortest supply that stops the rate of photosynthesis increasing."),
+    ex("Explain why increasing the light intensity increases the rate of photosynthesis, up to a point.", 2, "Light provides the energy for photosynthesis.", "Beyond a point, another factor such as CO₂ or temperature becomes limiting."),
+    ex("Explain why the rate of photosynthesis falls at high temperatures.", 2, "Photosynthesis is controlled by enzymes.", "At high temperatures the enzymes are denatured."),
+    ex("Explain how carbon dioxide concentration affects the rate of photosynthesis.", 2, "CO₂ is a reactant, so more CO₂ increases the rate.", "Until another factor such as light or temperature becomes limiting."),
+    ex("Explain why the rate of photosynthesis is low on a cold, sunny winter day.", 2, "Temperature is the limiting factor.", "Enzymes work slowly at low temperatures."),
+    ex("Explain why a plant in a dim room grows slowly even when watered well.", 2, "Light intensity is the limiting factor.", "So the plant makes less glucose for growth."),
+    ex("Describe how the amount of chlorophyll can be a limiting factor.", 2, "Chlorophyll absorbs the light for photosynthesis.", "Disease or a lack of magnesium reduces chlorophyll, so less light is absorbed."),
+    ex("Explain why the rate of photosynthesis levels off on a graph of rate against light intensity.", 1, "Something else, such as CO₂ concentration or temperature, has become the limiting factor.")
+  ]);
+  addTo("Limiting factors in depth: interactions, the inverse square law and greenhouse costs", [
+    ex("Explain what the inverse square law means for light intensity.", 2, "Light intensity is inversely proportional to the square of the distance.", "So doubling the distance gives one quarter of the light intensity."),
+    ex("Explain why farmers add paraffin heaters to greenhouses.", 2, "The heaters raise the temperature, so enzymes work faster.", "Burning paraffin also releases CO₂, increasing photosynthesis."),
+    ex("Explain why a farmer may not increase the CO₂ concentration in a greenhouse beyond a certain level.", 2, "Above a certain level CO₂ is no longer limiting, so the rate doesn't increase.", "The extra cost wouldn't be covered by the increase in yield."),
+    ex("Describe how to interpret a graph with two lines for rate of photosynthesis at different CO₂ concentrations.", 2,
+      "Where the lines are the same, light intensity is the limiting factor.", "Where the higher CO₂ line rises above, CO₂ was limiting the lower line."),
+    ex("Explain why greenhouse owners use artificial lighting.", 2, "It allows photosynthesis to continue at night and on dull days.", "So crops grow faster and give a higher yield."),
+    ex("Explain how a farmer decides on the best conditions in a greenhouse.", 2, "The conditions must give the fastest rate of photosynthesis.", "While still making a profit, balancing the extra cost with the extra yield."),
+    ex("Calculate the change in light intensity when a lamp is moved from 10 cm to 20 cm away, and explain your answer.", 2, "The distance doubles.", "So light intensity falls to 1/2² = 1/4 of the original."),
+    ex("Explain why a raised temperature only increases the rate of photosynthesis if light and CO₂ are not limiting.", 2,
+      "The rate is set by whichever factor is in shortest supply.", "If light or CO₂ is limiting, warming won't increase the rate."),
+    ex("Explain why plants in greenhouses are less likely to get pests.", 1, "The enclosed space keeps out many pests, and pesticides or biological control can be used easily.")
+  ]);
+  addTo("Required practical: investigating the rate of photosynthesis", [
+    ex("Describe how to investigate the effect of light intensity on the rate of photosynthesis using pondweed.", 4,
+      "Place pondweed in a test tube of water with sodium hydrogencarbonate.", "Place a lamp at a set distance from the tube.",
+      "Count the oxygen bubbles produced in one minute (or collect the gas in a syringe).", "Repeat at different distances, keeping everything else the same."),
+    ex("Explain why sodium hydrogencarbonate is added to the water.", 1, "It supplies carbon dioxide, so CO₂ is not a limiting factor."),
+    ex("Explain why the number of bubbles is used to measure the rate.", 1, "The bubbles are oxygen, which is produced by photosynthesis."),
+    ex("Explain why the pondweed is left for a few minutes before counting the bubbles.", 1, "To let it adjust to the new light intensity."),
+    ex("Explain why a beaker of water or a heat shield is placed between the lamp and the pondweed.", 2, "The lamp gives off heat as well as light.", "This keeps the temperature constant so only light intensity changes."),
+    ex("Explain why counting bubbles may not be accurate.", 2, "Bubbles can be different sizes.", "Some may be missed if they come quickly; collecting gas in a syringe is more accurate."),
+    ex("Name two control variables in this investigation.", 2, "Temperature.", "Carbon dioxide concentration, the type of pondweed or the length of pondweed."),
+    ex("Describe what the results would show as the lamp is moved further away.", 2, "Fewer bubbles are produced.", "Because the light intensity is lower, so the rate of photosynthesis is lower."),
+    ex("Explain why the room should be darkened during this experiment.", 1, "So the only light reaching the pondweed comes from the lamp."),
+    ex("Describe how to make the results more reliable.", 1, "Repeat each distance several times and calculate a mean.")
+  ]);
+  addTo("Aerobic respiration equation", [
+    ex("Explain why respiration is described as exothermic.", 1, "It transfers energy to the environment."),
+    ex("Describe three ways organisms use the energy from respiration.", 3, "To build larger molecules from smaller ones.", "For movement (muscle contraction).", "To keep warm."),
+    ex("Explain why aerobic respiration releases more energy than anaerobic respiration.", 2, "Glucose is completely oxidised in aerobic respiration.", "In anaerobic respiration the glucose is only partly broken down."),
+    ex("Describe where aerobic respiration takes place.", 1, "Mainly in the mitochondria.")
+  ]);
+  addTo("Anaerobic respiration: fermentation, muscle fatigue", [
+    ex("Explain why muscles respire anaerobically during vigorous exercise.", 2, "Muscles need more energy than aerobic respiration can supply.", "Not enough oxygen reaches them."),
+    ex("Describe anaerobic respiration in yeast.", 2, "Glucose is broken down into ethanol and carbon dioxide.", "This is called fermentation."),
+    ex("Explain why fermentation is useful in making bread.", 2, "Yeast produces carbon dioxide.", "The gas makes the dough rise."),
+    ex("Explain why fermentation is useful in making beer and wine.", 1, "Yeast produces ethanol (alcohol)."),
+    ex("Explain why muscles become fatigued during long periods of vigorous activity.", 2, "Lactic acid builds up in the muscles.", "This stops them contracting efficiently."),
+    ex("Describe the difference between anaerobic respiration in muscles and in plants or yeast.", 2, "In muscles, glucose is broken down into lactic acid.", "In plants and yeast, glucose is broken down into ethanol and carbon dioxide."),
+    ex("Explain why anaerobic respiration can only be used for a short time in muscles.", 2, "It releases much less energy than aerobic respiration.", "Lactic acid builds up, causing fatigue."),
+    ex("Describe a test to show that yeast produces carbon dioxide.", 2, "Bubble the gas through limewater.", "Limewater turns cloudy (milky) if carbon dioxide is present.")
+  ]);
+  addTo("Exercise: effects on breathing rate and heart rate", [
+    ex("Explain why heart rate increases during exercise.", 3, "Muscles respire more, so they need more oxygen and glucose.", "The heart pumps faster to deliver more blood to the muscles.", "This also removes carbon dioxide faster."),
+    ex("Explain why breathing rate and breath volume increase during exercise.", 2, "More oxygen is taken into the blood.", "More carbon dioxide is removed from the body."),
+    ex("Describe how to investigate the effect of exercise on heart rate.", 3, "Measure your resting pulse rate for one minute.", "Exercise for a set time, e.g. 2 minutes of step-ups.", "Measure the pulse rate straight away and repeat at intervals until it returns to normal."),
+    ex("Explain why a fitter person's heart rate returns to normal more quickly after exercise.", 2, "Their heart pumps more blood with each beat.", "So oxygen debt is repaid more quickly."),
+    ex("Explain why breathing rate stays high for a while after exercise has stopped.", 2, "The body needs extra oxygen to repay the oxygen debt.", "It is used to break down lactic acid."),
+    ex("Explain why muscles get hotter during exercise.", 2, "Muscles respire faster.", "Respiration releases energy, some of it as heat."),
+    ex("Explain why measuring the pulse is a measure of heart rate.", 1, "Each pulse is caused by one heartbeat pushing blood through an artery."),
+    ex("Describe how the body supplies muscles with more glucose during exercise.", 2, "Glycogen stored in the muscles and liver is converted to glucose.", "Faster blood flow carries more glucose to the muscles.")
+  ]);
+  addTo("Oxygen debt: lactic acid converted back to glucose in the liver", [
+    ex("Explain what is meant by oxygen debt.", 1, "The amount of extra oxygen needed after exercise to react with the lactic acid built up in the muscles."),
+    ex("Describe how lactic acid is removed from the body after exercise.", 3, "Blood carries the lactic acid from the muscles to the liver.", "In the liver it is converted back into glucose.", "This needs oxygen."),
+    ex("Explain why you keep breathing heavily after exercise.", 2, "You need extra oxygen to repay the oxygen debt.", "This oxygen is used to break down lactic acid."),
+    ex("Explain why the heart rate stays high after exercise.", 2, "To carry lactic acid to the liver quickly.", "And to supply oxygen to remove it."),
+    ex("Explain why an athlete who sprints builds up a larger oxygen debt than one who jogs.", 2, "Sprinting needs energy faster than aerobic respiration can provide.", "So more anaerobic respiration happens and more lactic acid is made."),
+    ex("Describe the role of the liver after vigorous exercise.", 1, "It converts lactic acid back into glucose."),
+    ex("Explain why training can reduce the size of the oxygen debt.", 2, "Training makes the heart and lungs more efficient.", "So more oxygen reaches the muscles and less anaerobic respiration is needed."),
+    ex("Explain why lactic acid causes problems if it builds up in muscles.", 1, "It causes muscle fatigue, so muscles stop contracting efficiently."),
+    ex("Describe what happens to the glucose made from lactic acid in the liver.", 1, "It can be used for respiration or stored as glycogen.")
+  ]);
+
+  // ---------- 4.5 Homeostasis and response ----------
+  addTo("Homeostasis: definition and importance", [
+    ex("Explain why homeostasis is important.", 2, "It keeps internal conditions at optimal levels.", "So cells and enzymes work properly."),
+    ex("Describe three conditions controlled by homeostasis in the human body.", 3, "Blood glucose concentration.", "Body temperature.", "Water levels."),
+    ex("Describe the parts of an automatic control system.", 3, "Receptors detect stimuli.", "Coordination centres (brain, spinal cord, pancreas) process the information.", "Effectors (muscles or glands) bring about responses."),
+    ex("Explain why body temperature must stay close to 37 °C.", 2, "This is the optimum temperature for the body's enzymes.", "Too high and enzymes denature; too low and reactions are too slow."),
+    ex("Describe the difference between nervous and hormonal control.", 2, "Nervous control is fast and short-lasting, using electrical impulses.", "Hormonal control is slower and longer-lasting, using chemicals in the blood.")
+  ]);
+  addTo("The nervous system: CNS, neurones, synapses", [
+    ex("Describe how information passes along the nervous system from a receptor to an effector.", 3, "A receptor detects a stimulus and sends impulses along sensory neurones.", "The CNS coordinates a response.", "Impulses travel along motor neurones to the effector."),
+    ex("Describe how a nerve impulse crosses a synapse.", 3, "The impulse arrives at the end of the neurone.", "A chemical (neurotransmitter) is released and diffuses across the gap.", "It binds to the next neurone and starts a new impulse."),
+    ex("Explain what the CNS is made of.", 1, "The brain and spinal cord."),
+    ex("Describe two ways effectors can respond.", 2, "Muscles contract.", "Glands release hormones."),
+    ex("Explain why damage to the spinal cord can cause paralysis.", 2, "Impulses can't pass between the brain and the body below the damage.", "So muscles there receive no impulses.")
+  ]);
+  addTo("Reflex arc: sensory, relay, motor neurones", [
+    ex("Explain why reflexes are important.", 2, "They are fast and automatic.", "So they protect the body from harm, e.g. pulling your hand from a hot object."),
+    ex("Describe the path of a reflex arc after touching a hot object.", 4, "Receptors in the skin detect the heat.", "Impulses travel along a sensory neurone to the spinal cord.",
+      "A relay neurone passes the impulse to a motor neurone.", "The motor neurone carries the impulse to a muscle, which contracts."),
+    ex("Explain why reflex actions are faster than voluntary actions.", 2, "The impulse doesn't go to the conscious part of the brain.", "So fewer synapses are involved and no decision is made."),
+    ex("Describe two examples of reflex actions.", 2, "Pupils getting smaller in bright light.", "Pulling away from a hot object, blinking, or the knee-jerk reflex."),
+    ex("Explain why the synapse slows the impulse down.", 1, "The chemical has to diffuse across the gap, which is slower than an electrical impulse."),
+    ex("Explain why the pupil reflex is important.", 1, "It protects the retina from damage by bright light.")
+  ]);
+  addTo("Required practical: measuring reaction time", [
+    ex("Describe how to measure reaction time using a ruler.", 4, "One person holds a ruler vertically with the 0 cm mark between the other's finger and thumb.",
+      "The ruler is dropped without warning.", "The catcher catches it as quickly as possible and the distance is read.", "Repeat several times and convert the distance to a time using a table."),
+    ex("Explain why the ruler is dropped without warning.", 1, "So the catcher reacts to the ruler falling rather than predicting when it will fall."),
+    ex("Explain why the test is repeated several times.", 2, "Results vary from one go to the next.", "A mean is more reliable and anomalies can be spotted."),
+    ex("Explain why the same hand should be used each time.", 1, "Your dominant hand may react faster, so using the same hand keeps the test fair."),
+    ex("Describe how caffeine might affect reaction time and why.", 2, "Caffeine reduces (speeds up) reaction time.", "It is a stimulant that increases the activity of the nervous system."),
+    ex("Name two control variables in a reaction time investigation.", 2, "The starting height of the ruler.", "The hand used, the person dropping it, and time between tests."),
+    ex("Explain why a computer test is more accurate than the ruler drop test.", 2, "It measures time directly, to the nearest millisecond.", "There is no human error in reading the ruler."),
+    ex("Explain why reaction times may get shorter with practice.", 1, "The person learns what to expect and gets better at the task."),
+    ex("Explain why the catcher should rest their arm on a table.", 1, "To keep the position of the hand the same each time."),
+    ex("Describe a hazard in the caffeine investigation and how to reduce it.", 2, "Too much caffeine can be harmful, and some people are sensitive to it.", "Use only small amounts and don't test people with health conditions.")
+  ]);
+  addTo("The brain: regions and functions", [
+    ex("Describe the function of the cerebral cortex.", 1, "It is responsible for consciousness, intelligence, memory and language."),
+    ex("Describe the function of the cerebellum.", 1, "It coordinates muscle activity and balance."),
+    ex("Describe the function of the medulla.", 1, "It controls unconscious activities such as heart rate and breathing."),
+    ex("Explain why it is difficult to treat brain damage.", 3, "The brain is complex and delicate.", "It is hard to reach without damaging other tissue.", "We don't fully understand how it works."),
+    ex("Describe two ways scientists have mapped the regions of the brain.", 2, "Studying patients with brain damage.", "Electrically stimulating parts of the brain, or using MRI scans."),
+    ex("Explain why MRI scans are useful to study the brain.", 2, "They show which parts of the brain are active.", "They don't involve cutting into the brain."),
+    ex("Explain why a person with damage to the medulla might need a ventilator.", 2, "The medulla controls breathing.", "So the person may not be able to breathe without help.")
+  ]);
+  addTo("The eye: structure and function, accommodation", [
+    ex("Describe how the eye focuses on a near object.", 3, "The ciliary muscles contract.", "The suspensory ligaments loosen.", "The lens becomes thicker and refracts light more strongly."),
+    ex("Describe how the eye focuses on a distant object.", 3, "The ciliary muscles relax.", "The suspensory ligaments are pulled tight.", "The lens is pulled thin and refracts light less."),
+    ex("Explain how the iris responds to bright light.", 2, "The circular muscles contract and the radial muscles relax.", "The pupil gets smaller, letting less light in.")
+  ]);
+  addTo("Thermoregulation: vasodilation, sweating, shivering", [
+    ex("Explain how sweating cools the body.", 2, "Sweat is released onto the skin.", "When it evaporates it transfers energy from the skin to the environment."),
+    ex("Explain how vasodilation helps cool the body.", 2, "Blood vessels near the skin surface widen.", "More blood flows near the surface, so more heat is transferred to the environment."),
+    ex("Explain how the body responds when it is too cold.", 3, "Blood vessels near the skin constrict (vasoconstriction), reducing heat loss.", "Sweating stops.", "Muscles contract rapidly (shivering), releasing heat from respiration."),
+    ex("Describe the role of the thermoregulatory centre.", 2, "It is in the brain and contains receptors sensitive to blood temperature.", "It receives impulses from skin receptors and coordinates the response."),
+    ex("Explain why shivering warms the body.", 2, "Muscles contract rapidly.", "This needs respiration, which releases energy as heat.")
+  ]);
+  addTo("Hormones: endocrine glands and target organs", [
+    ex("Describe how hormones travel to their target organs.", 2, "Hormones are secreted by glands directly into the bloodstream.", "The blood carries them to the target organ."),
+    ex("Describe the role of the pituitary gland.", 2, "It is a master gland in the brain.", "It releases hormones that make other glands release hormones."),
+    ex("Describe the role of adrenaline.", 3, "It is made by the adrenal glands in times of fear or stress.", "It increases heart rate.", "It boosts the delivery of oxygen and glucose to the brain and muscles, preparing the body for fight or flight."),
+    ex("Describe the role of thyroxine.", 2, "It is made by the thyroid gland.", "It controls the basal metabolic rate, which is important for growth and development."),
+    ex("Explain why hormones affect only certain organs.", 1, "Only the target organs have receptors for that hormone.")
+  ]);
+  addTo("Blood glucose control: insulin, diabetes", [
+    ex("Describe how the body responds when blood glucose concentration is too high.", 3, "The pancreas detects the rise and releases insulin.", "Insulin causes glucose to move from the blood into cells.", "In the liver and muscles, excess glucose is converted to glycogen for storage."),
+    ex("Explain why blood glucose concentration rises after a meal.", 1, "Carbohydrates are digested into glucose, which is absorbed into the blood."),
+    ex("Explain why blood glucose concentration falls during exercise.", 2, "Muscles respire faster.", "They take up more glucose from the blood."),
+    ex("Describe the role of the pancreas in blood glucose control.", 2, "It monitors the blood glucose concentration.", "It releases insulin when glucose is high and glucagon when it is low."),
+    ex("Explain why people with diabetes must monitor their blood glucose.", 2, "Their body can't control blood glucose properly.", "Very high or low levels can be dangerous, so they adjust their insulin, diet or exercise."),
+    ex("Explain why glucose is stored as glycogen and not left in the blood.", 2, "High blood glucose can damage cells by osmosis.", "Glycogen is insoluble and can be broken down when glucose is needed."),
+    ex("Describe how a person with type 1 diabetes can control their blood glucose.", 2, "Insulin injections, usually at mealtimes.", "Watching their diet and exercise."),
+    ex("Explain why insulin is injected and not taken as a tablet.", 2, "Insulin is a protein.", "It would be digested by enzymes in the stomach.")
+  ]);
+  addTo("Type 1 vs Type 2 diabetes: causes and treatments", [
+    ex("Describe the cause of type 1 diabetes.", 1, "The pancreas produces too little or no insulin."),
+    ex("Describe the cause of type 2 diabetes.", 1, "Body cells no longer respond to insulin."),
+    ex("Describe how type 2 diabetes is treated.", 2, "A carbohydrate-controlled diet.", "An exercise regime, and sometimes medication."),
+    ex("Explain why obesity is a risk factor for type 2 diabetes.", 2, "Being obese is linked with cells becoming less sensitive to insulin.", "So blood glucose isn't controlled."),
+    ex("Describe two differences between type 1 and type 2 diabetes.", 2, "Type 1: no insulin is made; type 2: cells don't respond to insulin.", "Type 1 is treated with insulin injections; type 2 mainly with diet and exercise."),
+    ex("Explain why type 1 diabetes usually develops in childhood.", 1, "It is often caused by the immune system destroying insulin-making cells in the pancreas, which happens early in life."),
+    ex("Explain why type 2 diabetes cases are increasing in the UK.", 2, "More people are overweight or obese.", "Diets are high in sugar and people exercise less.")
+  ]);
+  addTo("Glucagon and insulin: negative feedback", [
+    ex("Describe how the body responds when blood glucose concentration is too low.", 3, "The pancreas releases glucagon.", "Glucagon causes glycogen in the liver to be converted into glucose.", "The glucose is released into the blood."),
+    ex("Explain what is meant by negative feedback.", 2, "A change from the normal level is detected.", "The body responds to reverse the change and return to normal."),
+    ex("Explain how insulin and glucagon work together in negative feedback.", 3, "If glucose rises, insulin is released and glucose is stored as glycogen.", "If glucose falls, glucagon is released and glycogen is broken down.",
+      "So glucose levels stay within a narrow range."),
+    ex("Describe the difference between glucose, glycogen and glucagon.", 3, "Glucose is a sugar used in respiration.", "Glycogen is a storage carbohydrate in the liver and muscles.", "Glucagon is a hormone that raises blood glucose."),
+    ex("Explain why blood glucose levels rise and fall throughout the day.", 2, "They rise after meals.", "They fall during exercise or between meals, and hormones bring them back."),
+    ex("Explain why glucagon is released during exercise.", 2, "Muscles use glucose faster, so blood glucose falls.", "Glucagon raises it by converting glycogen to glucose."),
+    ex("Explain why the liver is important in controlling blood glucose.", 2, "It stores excess glucose as glycogen.", "It converts glycogen back to glucose when needed."),
+    ex("Explain why insulin and glucagon are described as having opposite effects.", 1, "Insulin lowers blood glucose; glucagon raises it."),
+    ex("Describe what happens to blood glucose if the pancreas stops making glucagon.", 2, "Blood glucose can't be raised when it falls.", "Levels could drop dangerously low, e.g. during exercise or between meals."),
+    ex("Explain why the pancreas is both the receptor and coordination centre in glucose control.", 1, "It detects blood glucose levels and releases the hormones in response.")
+  ]);
+  addTo("Osmoregulation: kidneys and water balance", [
+    ex("Explain why the water level in the body must be controlled.", 2, "If body cells lose or gain too much water by osmosis they don't work properly.", "Animal cells can shrink or burst."),
+    ex("Describe how the kidneys produce urine.", 3, "The blood is filtered.", "All the glucose, some ions and the water needed are selectively reabsorbed.", "Urea, excess ions and excess water leave in the urine."),
+    ex("Describe three ways water leaves the body.", 3, "From the lungs during exhalation.", "Through the skin in sweat.", "Through the kidneys in urine."),
+    ex("Explain why urine is more concentrated on a hot day.", 2, "More water is lost in sweat.", "The kidneys reabsorb more water, so less water is lost in urine."),
+    ex("Explain why glucose is not normally found in urine.", 1, "All the glucose is reabsorbed back into the blood.")
+  ]);
+  addTo("Osmoregulation in depth: urea formation and ADH", [
+    ex("Describe how urea is made.", 2, "Excess amino acids are deaminated in the liver to form ammonia.", "Ammonia is toxic, so it is immediately converted to urea for safe excretion."),
+    ex("Describe how ADH controls water levels when the blood is too concentrated.", 3, "The brain detects that the blood is too concentrated.", "The pituitary gland releases more ADH into the blood.",
+      "ADH makes the kidney tubules more permeable, so more water is reabsorbed."),
+    ex("Explain how a kidney dialysis machine works.", 3, "Blood flows between partially permeable membranes surrounded by dialysis fluid.", "The fluid has the same concentration of useful substances as normal blood, so these aren't lost.",
+      "Urea and excess ions diffuse out of the blood into the fluid."),
+    ex("Give one advantage and one disadvantage of a kidney transplant compared with dialysis.", 2, "Advantage: the patient is free from regular dialysis sessions and diet restrictions.", "Disadvantage: there's a shortage of donors and the kidney could be rejected."),
+    ex("Explain why kidney transplant patients take drugs that suppress the immune system.", 2, "The donor kidney has different antigens.", "So the immune system could attack and reject it."),
+    ex("Explain why ADH release is reduced after drinking lots of water.", 2, "The blood becomes too dilute.", "Less ADH means less water is reabsorbed, so more dilute urine is made."),
+    ex("Explain why ammonia is converted into urea.", 1, "Ammonia is toxic, while urea is less toxic and can be safely excreted.")
+  ]);
+  addTo("Hormones in reproduction: FSH, LH, oestrogen and progesterone", [
+    ex("Describe the roles of FSH and LH in the menstrual cycle.", 2, "FSH causes an egg to mature in the ovary.", "LH stimulates the release of the egg (ovulation)."),
+    ex("Describe the role of oestrogen and progesterone.", 2, "Oestrogen causes the lining of the uterus to build up.", "Progesterone maintains the uterus lining."),
+    ex("Describe the role of testosterone.", 2, "Testosterone is made by the testes.", "It stimulates sperm production."),
+    ex("Explain why the uterus lining breaks down at the end of the cycle.", 2, "Progesterone levels fall if the egg isn't fertilised.", "Without progesterone the lining isn't maintained."),
+    ex("Describe the role of oestrogen at puberty.", 1, "Oestrogen is the main female reproductive hormone, made in the ovary, causing secondary sexual characteristics.")
+  ]);
+  addTo("How hormones interact to control the menstrual cycle", [
+    ex("Explain how FSH and oestrogen interact.", 2, "FSH stimulates the ovaries to make oestrogen.", "Oestrogen inhibits FSH and stimulates LH release."),
+    ex("Explain why only one egg usually matures each cycle.", 2, "Oestrogen made by the developing follicle inhibits FSH.", "So no more eggs are stimulated to mature."),
+    ex("Describe what triggers ovulation.", 2, "High levels of oestrogen stimulate the pituitary to release LH.", "A surge of LH causes the egg to be released."),
+    ex("Explain how progesterone affects FSH and LH.", 2, "Progesterone inhibits both FSH and LH.", "This stops more eggs maturing while the uterus lining is maintained."),
+    ex("Describe what happens to hormone levels if the egg is fertilised.", 2, "Progesterone levels stay high.", "So the uterus lining is maintained for the embryo."),
+    ex("Explain why the menstrual cycle is described as being controlled by negative feedback.", 2, "Hormones made by the ovaries inhibit hormones from the pituitary.", "This keeps the cycle regular and repeating."),
+    ex("Describe where FSH, LH, oestrogen and progesterone are made.", 2, "FSH and LH are made in the pituitary gland.", "Oestrogen and progesterone are made in the ovaries."),
+    ex("Describe the changes in the uterus lining during the menstrual cycle.", 3, "Days 1–4: the lining breaks down (menstruation).", "Days 4–14: oestrogen causes the lining to build up.", "Days 14–28: progesterone maintains the lining."),
+    ex("Explain why the hormone levels in the cycle repeat roughly every 28 days.", 2, "When progesterone falls, FSH is no longer inhibited.", "So FSH rises again and a new cycle begins."),
+    ex("Explain how a contraceptive pill containing oestrogen can prevent pregnancy.", 2, "High oestrogen levels inhibit FSH.", "So no eggs mature.")
+  ]);
+  addTo("Contraception: hormonal and non-hormonal", [
+    ex("Describe how barrier methods of contraception work.", 2, "Condoms and diaphragms stop the sperm reaching an egg.", "Condoms also protect against sexually transmitted infections."),
+    ex("Describe how the progesterone-only pill prevents pregnancy.", 2, "It thickens the mucus at the cervix.", "This stops sperm reaching the egg."),
+    ex("Give one advantage and one disadvantage of the contraceptive pill.", 2, "Advantage: it is over 99% effective if taken correctly.", "Disadvantage: it can have side effects, it must be taken daily, and it doesn't protect against STIs."),
+    ex("Describe how spermicidal agents work.", 1, "They kill or disable sperm."),
+    ex("Describe how an intrauterine device (IUD) works.", 2, "It is placed in the uterus.", "It prevents an embryo implanting, and some release hormones."),
+    ex("Explain why some people prefer non-hormonal contraception.", 2, "Hormonal methods can have side effects, e.g. mood changes.", "Some people have religious or personal reasons."),
+    ex("Describe how surgical methods of contraception work.", 2, "In women, the oviducts are cut or tied.", "In men, the sperm ducts are cut (vasectomy)."),
+    ex("Describe how abstaining during the fertile time prevents pregnancy.", 2, "Intercourse is avoided around the time an egg may be in the oviduct.", "So sperm can't meet the egg.")
+  ]);
+  addTo("Fertility treatments: IVF, fertility drugs", [
+    ex("Describe how IVF is carried out.", 4, "The woman is given FSH and LH to stimulate several eggs to mature.", "The eggs are collected and fertilised by sperm in the lab.",
+      "The fertilised eggs develop into embryos.", "One or two embryos are put into the woman's uterus."),
+    ex("Explain how fertility drugs can help a woman become pregnant.", 2, "They contain FSH and LH.", "These stimulate the ovaries to mature and release eggs."),
+    ex("Give two disadvantages of IVF.", 2, "It is emotionally and physically stressful, and the success rate is low.", "It can lead to multiple births, which is a risk to the mother and babies."),
+    ex("Explain why multiple births can be a problem.", 2, "They increase the risk for the mother.", "The babies are more likely to be premature or have a low birth weight."),
+    ex("Explain why FSH is given at the start of IVF treatment.", 2, "FSH makes eggs mature.", "So several eggs can be collected."),
+    ex("Describe one ethical issue linked with IVF.", 1, "Unused embryos may be destroyed, which some people think is wrong."),
+    ex("Explain why only one or two embryos are usually put into the uterus.", 1, "To reduce the chance of multiple births."),
+    ex("Describe how scientists have improved IVF.", 1, "Better microscopes and micro-tools allow sperm to be injected into eggs, and better techniques for growing embryos."),
+    ex("Explain why IVF is expensive.", 1, "It needs specialist staff, lab equipment and drugs, and may need several attempts."),
+    ex("Explain why a couple might need IVF.", 1, "The woman's oviducts may be blocked, or the man may produce few sperm.")
+  ]);
+  addTo("Plant hormones: auxin, gravitropism, phototropism", [
+    ex("Explain how a shoot grows towards light.", 3, "Auxin moves to the shaded side of the shoot.", "Auxin makes cells on the shaded side elongate more.", "So the shoot bends towards the light."),
+    ex("Explain how a root grows downwards.", 3, "Auxin collects on the lower side of the root.", "In roots, auxin inhibits cell elongation.", "So the upper side grows faster and the root bends downwards."),
+    ex("Describe two uses of gibberellins.", 2, "To end seed dormancy and make seeds germinate.", "To promote flowering and increase fruit size."),
+    ex("Describe two uses of auxins in agriculture.", 2, "As weed killers.", "As rooting powders, or for promoting growth in tissue culture.")
+  ]);
+
+  // ---------- 4.6 Inheritance, variation and evolution ----------
+  addTo("Sexual vs asexual reproduction: advantages", [
+    ex("Describe one advantage and one disadvantage of sexual reproduction.", 2, "Advantage: it produces variation, so a species may survive environmental change.", "Disadvantage: it takes more time and energy to find a mate."),
+    ex("Describe one advantage and one disadvantage of asexual reproduction.", 2, "Advantage: only one parent is needed, and it is faster.", "Disadvantage: there is no variation, so a disease could wipe out the whole population."),
+    ex("Explain why sexual reproduction produces variation.", 2, "Genetic information from two parents is mixed.", "Gametes are made by meiosis, so each one is different.")
+  ]);
+  addTo("Meiosis: stages and importance of variation", [
+    ex("Describe what happens during meiosis.", 3, "Copies of the genetic information are made.", "The cell divides twice to form four gametes.", "Each gamete has a single set of chromosomes and is genetically different."),
+    ex("Explain why gametes need half the number of chromosomes.", 2, "At fertilisation two gametes join.", "So the normal number of chromosomes is restored."),
+    ex("Describe two differences between mitosis and meiosis.", 2, "Mitosis makes two cells; meiosis makes four.", "Mitosis makes identical cells; meiosis makes genetically different cells with half the chromosomes."),
+    ex("Explain why meiosis is important for variation.", 2, "Each gamete gets a different mix of chromosomes.", "So offspring are genetically different from each other and their parents."),
+    ex("Describe what happens to the fertilised egg after fertilisation.", 2, "It divides by mitosis.", "As the embryo develops, cells differentiate."),
+    ex("Describe where meiosis happens in humans.", 1, "In the reproductive organs: the ovaries and testes."),
+    ex("Explain why each human body cell has 46 chromosomes but a sperm cell has 23.", 2, "Sperm are made by meiosis, which halves the number.", "Body cells are made by mitosis, which keeps all 46.")
+  ]);
+  addTo("DNA structure and chromosome pairs (basic)", [
+    ex("Describe the structure of DNA.", 2, "DNA is a polymer made of two strands.", "The strands are twisted to form a double helix."),
+    ex("Describe the relationship between DNA, genes and chromosomes.", 3, "DNA is found in chromosomes in the nucleus.", "A gene is a small section of DNA on a chromosome.", "Each gene codes for a particular sequence of amino acids to make a protein."),
+    ex("Explain what is meant by the genome.", 1, "The entire genetic material of an organism."),
+    ex("Explain why studying the human genome is important.", 3, "To find genes linked to different diseases.", "To understand and treat inherited disorders.", "To trace human migration patterns from the past."),
+    ex("Explain why chromosomes are found in pairs.", 1, "One chromosome of each pair comes from each parent."),
+    ex("Describe how many chromosomes are found in human body cells.", 1, "46 chromosomes, in 23 pairs."),
+    ex("Explain why DNA is described as a polymer.", 1, "It is made of many repeating units (nucleotides) joined together.")
+  ]);
+  addTo("DNA structure in detail (nucleotides) and protein synthesis", [
+    ex("Describe the structure of a nucleotide.", 2, "A sugar and a phosphate group.", "One of four bases: A, C, G or T."),
+    ex("Describe how bases pair in DNA.", 2, "A always pairs with T.", "C always pairs with G."),
+    ex("Describe how a protein is made from the code in DNA.", 4, "A copy (template) of the gene is made and moves out of the nucleus.", "It attaches to a ribosome.",
+      "Carrier molecules bring specific amino acids in the order set by the base sequence.", "The amino acids join to form a protein, which folds into a unique shape."),
+    ex("Explain how the base sequence determines the protein made.", 2, "Each sequence of three bases codes for one amino acid.", "The order of bases decides the order of amino acids in the protein."),
+    ex("Describe three types of protein and their functions.", 3, "Enzymes, which catalyse reactions.", "Hormones, which carry messages.", "Structural proteins, e.g. collagen, which give strength."),
+    ex("Explain why the shape of a protein is important.", 2, "The shape lets the protein do its job.", "For example, an enzyme's active site must fit its substrate.")
+  ]);
+  addTo("How mutations affect the protein made", [
+    ex("Explain how a mutation can change the activity of an enzyme.", 3, "A mutation changes the base sequence.", "This changes the sequence of amino acids, so the protein folds differently.", "The active site changes shape and the substrate may no longer fit."),
+    ex("Explain why most mutations have no effect on the phenotype.", 2, "Many mutations don't change the amino acid coded for.", "Or they occur in non-coding DNA."),
+    ex("Explain how a change in non-coding DNA can affect the phenotype.", 2, "Non-coding DNA can switch genes on and off.", "So a mutation can change whether a gene is expressed."),
+    ex("Describe three types of mutation.", 3, "Insertion: an extra base is added.", "Deletion: a base is removed.", "Substitution: one base is swapped for another."),
+    ex("Explain why an insertion or deletion usually has a bigger effect than a substitution.", 2, "It shifts how every following group of three bases is read.", "So many amino acids after it change."),
+    ex("Explain how a mutation could cause a structural protein to stop working.", 2, "The amino acid sequence changes.", "So the protein loses its shape and strength."),
+    ex("Explain why a mutation in a body cell is not passed on to children.", 1, "Only mutations in gametes are inherited."),
+    ex("Explain how a substitution may have no effect on the protein.", 1, "The new triplet may still code for the same amino acid.")
+  ]);
+  addTo("Genes, alleles: dominant and recessive", [
+    ex("Explain the difference between genotype and phenotype.", 2, "Genotype is the combination of alleles an organism has.", "Phenotype is the characteristic that shows."),
+    ex("Explain the difference between homozygous and heterozygous.", 2, "Homozygous means both alleles are the same.", "Heterozygous means the two alleles are different."),
+    ex("Explain why two brown-eyed parents can have a blue-eyed child.", 3, "Both parents are heterozygous, carrying a recessive blue allele.", "The child inherits a recessive allele from each parent.", "So the child is homozygous recessive and has blue eyes.")
+  ]);
+  addTo("Punnett squares and probability of inheritance", [
+    ex("Describe how to use a Punnett square to predict the offspring of a cross.", 3, "Write the alleles of one parent's gametes along the top and the other's down the side.",
+      "Fill in each box with the combination of alleles.", "Count the boxes to work out the ratio or probability."),
+    ex("Explain why the actual numbers of offspring may not match the predicted ratio.", 2, "Fertilisation is random.", "With small numbers of offspring, chance has a big effect."),
+    ex("Explain the probability of a child having cystic fibrosis if both parents are carriers.", 2, "Each parent passes on the recessive allele with a probability of 1/2.", "So the chance of the child getting two recessive alleles is 1/4 (25%)."),
+    ex("Explain why a heterozygous parent can pass on either allele.", 1, "The alleles separate into different gametes during meiosis."),
+    ex("Explain why each child has the same probability, however many children a couple already has.", 1, "Each fertilisation is a separate random event."),
+    ex("Describe how to write a ratio from a Punnett square.", 2, "Count how many boxes have each phenotype.", "Write them as a ratio, e.g. 3 : 1."),
+    ex("Explain why a cross between a homozygous dominant and a homozygous recessive parent gives all one phenotype.", 2, "Every offspring inherits one dominant allele.", "So they are all heterozygous and show the dominant phenotype.")
+  ]);
+  addTo("Constructing Punnett squares from scratch", [
+    ex("Describe the first step when constructing a Punnett square.", 1, "Choose letters for the alleles: a capital for dominant and lower case for recessive."),
+    ex("Explain why the gametes of a heterozygous parent are written as two separate alleles.", 1, "Each gamete only carries one allele of each gene."),
+    ex("Explain how to find the genotype of an unknown parent with the dominant phenotype.", 3, "Cross it with a homozygous recessive individual.", "If any offspring show the recessive phenotype, the parent is heterozygous.", "If all show the dominant phenotype, it is probably homozygous dominant."),
+    ex("Describe how to work out the percentage of offspring with a phenotype.", 2, "Count the boxes with that phenotype out of four.", "Multiply the fraction by 100, e.g. 1/4 = 25%."),
+    ex("Explain why the same letter is used for both alleles of one gene.", 1, "They are different versions of the same gene."),
+    ex("Explain why a cross between two heterozygous parents gives a 3 : 1 ratio.", 2, "Three of the four boxes contain at least one dominant allele.", "Only one box is homozygous recessive."),
+    ex("Explain why a cross between a heterozygous and a homozygous recessive parent gives a 1 : 1 ratio.", 2, "Half the gametes from the heterozygous parent carry the dominant allele.", "So half the offspring are heterozygous and half homozygous recessive."),
+    ex("Describe what each box in a Punnett square represents.", 1, "A possible genotype of the offspring, each with an equal chance."),
+    ex("Explain why you should write a key when constructing a Punnett square.", 1, "So it is clear which letter stands for which allele."),
+    ex("Describe how to set out a full genetic cross answer.", 3, "Give the parents' phenotypes and genotypes.", "Show the gametes and the Punnett square.", "State the offspring genotypes, phenotypes and ratio.")
+  ]);
+  addTo("Inherited disorders: cystic fibrosis, polydactyly", [
+    ex("Explain why a person can be a carrier of cystic fibrosis.", 2, "Cystic fibrosis is caused by a recessive allele.", "A carrier has one recessive allele and one dominant allele, so doesn't have the disorder."),
+    ex("Explain why polydactyly can be inherited from just one parent.", 2, "It is caused by a dominant allele.", "Only one copy is needed for it to show."),
+    ex("Describe the symptoms of cystic fibrosis.", 2, "It is a disorder of cell membranes.", "Thick, sticky mucus builds up in the lungs and digestive system."),
+    ex("Describe two concerns about embryo screening.", 2, "It is expensive and can give false results.", "Some people think it is wrong to destroy embryos, and it may lead to 'designer babies'."),
+    ex("Describe one argument for embryo screening.", 1, "It can stop children being born with serious disorders that cause suffering."),
+    ex("Explain why gene therapy might one day treat cystic fibrosis.", 2, "A healthy allele could be put into the patient's cells.", "So the cells could make the working protein.")
+  ]);
+  addTo("Sex determination: X and Y chromosomes", [
+    ex("Explain how sex is determined in humans.", 2, "Females have two X chromosomes (XX).", "Males have one X and one Y chromosome (XY)."),
+    ex("Explain why there is a 50% chance of a baby being a boy.", 3, "All eggs carry an X chromosome.", "Half the sperm carry X and half carry Y.", "So the chance of a sperm with Y fertilising the egg is 1/2."),
+    ex("Explain why the father's sperm determines the sex of the baby.", 2, "The mother can only pass on an X chromosome.", "The father can pass on either X or Y."),
+    ex("Describe how many pairs of chromosomes in a human cell control sex.", 1, "One of the 23 pairs."),
+    ex("Explain why a family with three girls still has a 50% chance of having a boy next.", 1, "Each fertilisation is independent, so previous births don't affect the next one."),
+    ex("Explain why gametes contain only one sex chromosome.", 1, "Gametes are made by meiosis, so they contain one chromosome from each pair."),
+    ex("Describe how to show sex inheritance using a Punnett square.", 2, "Put the mother's gametes (X, X) on one side and the father's (X, Y) on the other.", "Two boxes are XX and two are XY, giving a 1 : 1 ratio.")
+  ]);
+  addTo("Variation: genetic, environmental, combination", [
+    ex("Describe the three causes of variation.", 3, "Genetic: the genes inherited.", "Environmental: the conditions in which the organism develops.", "A combination of genes and the environment."),
+    ex("Give one example of a characteristic caused only by genes.", 1, "Blood group, eye colour or an inherited disorder."),
+    ex("Give one example of a characteristic caused only by the environment.", 1, "Scars, tattoos, a language spoken or dyed hair."),
+    ex("Explain why identical twins can have different body masses.", 2, "Identical twins have the same genes.", "So the difference is due to the environment, e.g. diet or exercise."),
+    ex("Explain why height is a combination of genetic and environmental factors.", 2, "Genes set the range of height a person may reach.", "Diet and health affect how tall they actually grow."),
+    ex("Explain why there is usually extensive genetic variation within a population.", 2, "Sexual reproduction mixes the alleles of two parents.", "Mutations add new variants."),
+    ex("Explain why studying identical twins helps scientists understand variation.", 2, "Identical twins have the same genes.", "So any differences between them must be caused by the environment."),
+    ex("Explain why plants of the same species can grow to different heights.", 2, "They may have different alleles.", "They may also get different amounts of light, water or minerals."),
+    ex("Describe how mutations affect variation.", 2, "Mutations make new variants of genes.", "Most have no effect, but rarely they change the phenotype."),
+    ex("Explain why variation is important for natural selection.", 1, "Without variation, no individuals would be better adapted to survive.")
+  ]);
+  addTo("Mutations: causes and effects (basic)", [
+    ex("Describe two things that increase the rate of mutation.", 2, "Ionising radiation, e.g. X-rays or UV light.", "Certain chemicals, e.g. in tobacco smoke."),
+    ex("Explain how a mutation could lead to a new phenotype.", 2, "Most mutations have no effect.", "A rare mutation may change the protein made, giving a new phenotype."),
+    ex("Explain how a mutation could help an organism survive.", 2, "The new phenotype may be better suited to the environment.", "So the organism survives and passes on the mutation."),
+    ex("Explain how a mutation can cause cancer.", 2, "A mutation in a gene controlling cell division.", "The cell divides uncontrollably, forming a tumour."),
+    ex("Explain why mutations happen.", 1, "They happen randomly when DNA is copied, and continuously."),
+    ex("Explain why X-ray workers wear lead aprons or stand behind screens.", 2, "X-rays are ionising radiation.", "This can damage DNA and cause mutations."),
+    ex("Explain why mutations in bacteria can be a problem.", 2, "A mutation may make bacteria resistant to antibiotics.", "The resistant bacteria survive and spread.")
+  ]);
+  addTo("Natural selection and evolution", [
+    ex("Describe Darwin's theory of evolution by natural selection.", 4, "Individuals in a species show variation.", "Those best suited to the environment are more likely to survive and breed.",
+      "They pass on the genes for these characteristics to their offspring.", "Over many generations this leads to evolution."),
+    ex("Explain why some people did not accept Darwin's theory at first.", 3, "It challenged the idea that God made all living things.", "There wasn't enough evidence at the time.", "The mechanism of inheritance and variation wasn't known then."),
+    ex("Explain how a new species can form.", 2, "Two populations become so different in phenotype.", "That they can no longer interbreed to produce fertile offspring."),
+    ex("Describe Lamarck's theory and why it was rejected.", 2, "Lamarck thought changes during an organism's life were passed on.", "Experiments showed acquired characteristics are not inherited."),
+    ex("Explain how a population of rabbits could evolve thicker fur in a colder climate.", 3, "Some rabbits have alleles for thicker fur.", "These rabbits are more likely to survive the cold and breed.", "Over many generations the allele becomes more common."),
+    ex("Explain why evolution usually takes a very long time.", 1, "Changes happen gradually, over many generations."),
+    ex("Describe the work of Alfred Russel Wallace.", 2, "He independently proposed the theory of evolution by natural selection.", "He studied warning colouration in animals and speciation.")
+  ]);
+  addTo("Selective breeding: process and examples", [
+    ex("Describe how selective breeding is carried out.", 3, "Choose parents with the desired characteristic.", "Breed them together.", "Choose the best offspring and breed them; repeat over many generations."),
+    ex("Give three examples of characteristics chosen in selective breeding.", 3, "Disease resistance in food crops.", "Animals that produce more meat or milk.", "Domestic dogs with a gentle nature, or large or unusual flowers."),
+    ex("Explain why selective breeding can lead to inbreeding.", 2, "Closely related animals or plants are bred together.", "This reduces variation."),
+    ex("Explain why inbreeding is a problem.", 2, "Some breeds are prone to disease or inherited defects.", "With little variation, a new disease could affect them all."),
+    ex("Describe how selective breeding is different from genetic engineering.", 2, "Selective breeding chooses parents with features and breeds them over many generations.", "Genetic engineering moves genes directly between organisms."),
+    ex("Explain why selective breeding takes a long time.", 1, "It needs many generations of breeding to get the desired result."),
+    ex("Explain how selective breeding could produce a wheat variety resistant to a disease.", 3, "Choose wheat plants that are least affected by the disease.", "Cross them and grow the seeds.", "Keep selecting the most resistant offspring over many generations."),
+    ex("Explain why farmers use selective breeding.", 1, "To get plants or animals with useful characteristics, e.g. higher yield."),
+    ex("Explain why selective breeding has existed for thousands of years.", 1, "People have always kept the best plants and animals to breed from, since farming began.")
+  ]);
+  addTo("Genetic engineering: what it is, GM crops, insulin", [
+    ex("Describe how genetic engineering is used to produce human insulin.", 3, "The human insulin gene is cut out.", "It is inserted into a bacterium's plasmid.", "The bacteria multiply and make insulin, which is collected."),
+    ex("Describe two benefits of GM crops.", 2, "Resistance to insect pests or herbicides.", "Bigger, better fruits, giving bigger yields."),
+    ex("Describe two concerns about GM crops.", 2, "Effects on wild flowers and insects.", "The long-term effects on human health of eating GM crops aren't fully known."),
+    ex("Explain why GM crops that resist insects can increase yield.", 2, "Fewer crops are damaged by insects.", "So more crop is harvested."),
+    ex("Explain why using bacteria to make insulin is better than using animal insulin.", 2, "It is identical to human insulin, so fewer reactions.", "Large amounts can be made quickly and cheaply."),
+    ex("Describe how gene therapy may be used in medicine.", 2, "Healthy genes are inserted into the cells of a patient.", "To overcome inherited disorders."),
+    ex("Explain why there is concern that genes from GM crops could spread.", 2, "Pollen from GM crops could spread to wild plants.", "Weeds could become herbicide resistant."),
+    ex("Explain what is meant by genetic engineering.", 1, "Changing the genome of an organism by adding a gene from another organism.")
+  ]);
+  addTo("The steps of genetic engineering (enzymes, vectors)", [
+    ex("Describe the main steps of genetic engineering.", 4, "Enzymes isolate (cut out) the required gene.", "The gene is inserted into a vector, such as a plasmid or virus.",
+      "The vector inserts the gene into the required cells.", "The cells with the gene are allowed to grow and reproduce."),
+    ex("Explain why restriction enzymes are used.", 1, "To cut out the required gene at specific places in the DNA."),
+    ex("Explain why ligase enzymes are used.", 1, "To join the gene into the vector DNA."),
+    ex("Describe what a vector is.", 1, "Something used to carry the gene into the cell, e.g. a plasmid or a virus."),
+    ex("Explain why the same restriction enzyme is used to cut the gene and the plasmid.", 2, "It produces matching sticky ends.", "So the gene and the plasmid fit together."),
+    ex("Explain why genes are put into plants or animals at an early stage of development.", 2, "The gene is copied into every new cell as the organism grows.", "So all its cells have the desired characteristic."),
+    ex("Explain why plasmids are useful vectors.", 2, "Plasmids are small loops of DNA in bacteria.", "They are easy to cut open and are copied when bacteria divide."),
+    ex("Describe how scientists check which bacteria have taken up the new gene.", 2, "A marker gene, e.g. for antibiotic resistance, is added with the gene.", "Only bacteria with the plasmid grow on a plate with the antibiotic."),
+    ex("Explain how a virus can be used as a vector.", 2, "Viruses naturally insert their DNA into cells.", "So the required gene can be carried into the cell by the virus."),
+    ex("Explain why bacteria are used to produce human proteins.", 2, "Bacteria reproduce very quickly.", "So large amounts of the protein can be made.")
+  ]);
+  addTo("Evidence for evolution: fossils, antibiotic resistance", [
+    ex("Describe three ways fossils can form.", 3, "Parts of organisms that haven't decayed because conditions were wrong for decay.",
+      "Hard parts replaced by minerals as they decay.", "Preserved traces such as footprints, burrows and root traces."),
+    ex("Explain why there are gaps in the fossil record.", 3, "Many early forms of life were soft-bodied, so left few traces.", "Many fossils have been destroyed by geological activity.", "Many fossils have not yet been found."),
+    ex("Explain how fossils provide evidence for evolution.", 2, "Fossils from different rock layers show how organisms changed over time.", "Older rocks contain simpler organisms."),
+    ex("Explain how the development of antibiotic resistance supports evolution.", 2, "It shows natural selection happening quickly.", "Bacteria reproduce rapidly, so the change can be seen."),
+    ex("Describe the factors that can lead to extinction.", 3, "New predators or diseases.", "Changes to the environment over geological time.", "New competitors, or catastrophic events such as volcanic eruptions."),
+    ex("Explain why scientists can't be certain how life began on Earth.", 2, "Early life forms were soft-bodied.", "So there are very few fossils from that time."),
+    ex("Explain why fossils found in deeper layers of rock are older.", 1, "Rock layers are laid down on top of each other over time.")
+  ]);
+  addTo("Classification: kingdoms, phylogenetic trees", [
+    ex("Describe the Linnaean system of classification.", 2, "Organisms are classified into kingdom, phylum, class, order, family, genus and species.", "Based on their structure and characteristics."),
+    ex("Explain why the three-domain system was introduced.", 2, "New evidence from chemical analysis.", "Showed that some organisms (archaea) are very different from bacteria."),
+    ex("Describe the three domains.", 3, "Archaea: primitive bacteria, often in extreme environments.", "Bacteria: true bacteria.", "Eukaryota: protists, fungi, plants and animals."),
+    ex("Explain how the binomial system names organisms.", 2, "Each organism is named by its genus and species.", "For example, Homo sapiens."),
+    ex("Explain why classification systems have changed over time.", 2, "Better microscopes revealed internal structures.", "Biochemical processes and DNA analysis gave new evidence.")
+  ]);
+
+  // ---------- 4.7 Ecology ----------
+  addTo("Ecosystems: habitats, populations, communities", [
+    ex("Explain what is meant by an ecosystem.", 1, "The interaction of a community of living organisms with the non-living parts of their environment."),
+    ex("Describe what organisms need to survive.", 3, "Plants need light, carbon dioxide, water, space and mineral ions.", "Animals need space, food, water and mates.", "Organisms compete for these resources."),
+    ex("Explain what is meant by interdependence.", 2, "Species in a community depend on each other.", "For food, shelter, pollination and seed dispersal."),
+    ex("Explain what is meant by a stable community.", 2, "All species and environmental factors are in balance.", "So population sizes remain fairly constant."),
+    ex("Explain why removing one species can affect the whole community.", 2, "Other species depend on it for food or shelter.", "So their populations change, affecting others in turn."),
+    ex("Describe the difference between a population and a community.", 2, "A population is all the organisms of one species in a habitat.", "A community is the populations of different species in a habitat."),
+    ex("Describe an example of a stable community.", 1, "Tropical rainforests, oak woodlands or coral reefs.")
+  ]);
+  addTo("Abiotic factors: temperature, light, pH, moisture", [
+    ex("Describe five abiotic factors that can affect a community.", 3, "Light intensity and temperature.", "Moisture levels and soil pH and mineral content.", "Wind intensity and direction, carbon dioxide levels for plants, oxygen levels for aquatic animals."),
+    ex("Explain how light intensity affects the distribution of plants in a woodland.", 2, "Plants need light for photosynthesis.", "Fewer plants grow in shaded areas under trees."),
+    ex("Explain how a low oxygen level affects animals in water.", 2, "Animals in water need dissolved oxygen for respiration.", "Few animals can survive where oxygen is low."),
+    ex("Explain how soil pH can affect which plants grow there.", 2, "Each plant species has an optimum pH.", "Enzymes may not work well and minerals may not be absorbed at other pH values."),
+    ex("Explain how wind affects plants.", 2, "Strong winds increase transpiration.", "So plants in windy places need adaptations to reduce water loss."),
+    ex("Explain why temperature affects the distribution of organisms.", 2, "Temperature affects the rate of enzyme reactions.", "So organisms only survive where it is suitable for them."),
+    ex("Explain why moisture level affects the organisms found in an area.", 2, "Organisms need water to survive.", "Plants in dry areas need adaptations to reduce water loss."),
+    ex("Describe how to measure an abiotic factor in a habitat.", 2, "Use a light meter, thermometer, pH probe or moisture meter.", "Take readings at several points and calculate a mean."),
+    ex("Explain why the concentration of carbon dioxide affects plants.", 1, "Plants need carbon dioxide for photosynthesis."),
+    ex("Explain the difference between abiotic and biotic factors.", 2, "Abiotic factors are non-living parts of the environment.", "Biotic factors are living factors.")
+  ]);
+  addTo("Biotic factors: predation, competition, disease", [
+    ex("Describe four biotic factors that can affect a community.", 4, "Availability of food.", "New predators arriving.", "New pathogens.", "One species outcompeting another."),
+    ex("Explain how a new predator could affect a community.", 2, "It reduces the population of its prey.", "This affects other species that eat or compete with that prey."),
+    ex("Explain how the arrival of grey squirrels affected red squirrels in the UK.", 2, "Grey squirrels outcompeted red squirrels for food and shelter.", "They also carried a disease that kills red squirrels."),
+    ex("Explain why plants compete with each other.", 2, "For light, space, water and mineral ions.", "These are needed for growth and survival."),
+    ex("Explain why animals compete with each other.", 2, "For food, mates and territory.", "These are needed to survive and reproduce."),
+    ex("Explain how a new pathogen could affect a population.", 2, "Many individuals may die from the disease.", "The population size falls."),
+    ex("Explain why competition between species can cause one species to disappear from an area.", 2, "One species is better at getting resources.", "The other can't get enough to survive and reproduce."),
+    ex("Describe how a lack of food can affect a population.", 2, "Animals may starve or fail to breed.", "So the population decreases."),
+    ex("Explain why the number of organisms of a species in an area may change from year to year.", 2, "Biotic factors such as food, predators and disease change.", "Abiotic factors such as temperature also change.")
+  ]);
+  addTo("Adaptations: structural, behavioural, functional", [
+    ex("Describe the three types of adaptation, with an example of each.", 3, "Structural: e.g. thick fur in polar bears.", "Behavioural: e.g. migration.", "Functional: e.g. making less urine to save water in desert animals."),
+    ex("Explain how a camel is adapted to live in the desert.", 3, "It stores fat in its hump, reducing heat loss elsewhere.", "It produces little urine.", "It has large, flat feet to walk on sand."),
+    ex("Explain how a polar bear is adapted to the cold.", 3, "Thick fur and a thick layer of fat for insulation.", "A small surface area to volume ratio reduces heat loss.", "White fur for camouflage."),
+    ex("Explain how a cactus is adapted to dry conditions.", 3, "Leaves are spines, reducing water loss.", "A thick stem stores water.", "Long or shallow, spreading roots to absorb water."),
+    ex("Explain what is meant by an extremophile.", 1, "An organism that lives in extreme conditions, e.g. high temperature, pressure or salt."),
+    ex("Explain why animals in hot climates often have large ears.", 2, "Large ears give a large surface area.", "So more heat is lost to the environment."),
+    ex("Explain why organisms are adapted to their environment.", 1, "So they can survive in the conditions where they normally live."),
+    ex("Describe a behavioural adaptation of an animal living in a hot desert.", 1, "Staying in burrows during the day and being active at night.")
+  ]);
+  addTo("Food chains and food webs", [
+    ex("Explain why food chains always start with a producer.", 2, "Producers make their own food by photosynthesis.", "They transfer energy from the Sun into biomass."),
+    ex("Explain how a fall in the number of rabbits could affect a food web.", 2, "Foxes that eat rabbits have less food, so their numbers fall.", "Grass that rabbits eat may increase."),
+    ex("Describe the difference between a food chain and a food web.", 2, "A food chain shows one feeding relationship sequence.", "A food web shows many interlinked food chains."),
+    ex("Explain why food webs are more stable than single food chains.", 2, "Animals in a food web have more than one food source.", "If one food source declines, they can eat another."),
+    ex("Explain why most food chains have fewer than five trophic levels.", 2, "Energy is lost at each trophic level.", "Not enough energy is left to support more levels.")
+  ]);
+  addTo("Predator-prey relationships and population cycles", [
+    ex("Explain why the number of predators rises after the number of prey rises.", 2, "There is more food for the predators.", "So more predators survive and breed."),
+    ex("Explain why the number of prey falls after the number of predators rises.", 2, "More predators eat more prey.", "So more prey are killed."),
+    ex("Explain why the predator population peak comes after the prey peak.", 2, "Predators take time to breed.", "So their population only rises after there is plenty of food."),
+    ex("Explain why the predator population falls after the prey population falls.", 2, "There is less food for the predators.", "So some starve or can't breed."),
+    ex("Describe the shape of a predator–prey graph.", 2, "Both populations go up and down in cycles.", "The predator cycle lags behind the prey cycle."),
+    ex("Explain why the prey population is usually larger than the predator population.", 2, "Energy is lost at each trophic level.", "So there is less biomass at the predator level."),
+    ex("Describe what happens to the populations in a stable community.", 1, "Predator and prey numbers rise and fall in cycles."),
+    ex("Explain how a disease in the prey could affect the predators.", 2, "Prey numbers fall.", "So predators have less food and their numbers fall."),
+    ex("Explain why predator and prey numbers are rarely exactly the same each cycle.", 2, "Other factors also affect numbers.", "Such as disease, weather and food for the prey."),
+    ex("Explain how hunting predators could affect a prey population.", 2, "Fewer prey are eaten, so prey numbers rise.", "The prey may then eat more plants or run out of food.")
+  ]);
+  addTo("Required practical: sampling using quadrats and transects", [
+    ex("Explain why the quadrats are placed randomly.", 1, "To avoid bias, so the sample represents the whole area."),
+    ex("Describe how to estimate the population of a plant in a field using quadrats.", 3, "Place quadrats randomly and count the plants in each.", "Calculate the mean number per quadrat.", "Multiply by the number of quadrats that would fit into the field."),
+    ex("Describe how to use a transect to see how plant distribution changes across an area.", 3, "Lay out a tape measure across the area.", "Place quadrats at regular intervals along it.", "Count the plants in each quadrat and measure abiotic factors.")
+  ]);
+  addTo("Carbon cycle", [
+    ex("Describe how carbon is removed from the atmosphere.", 2, "Plants absorb carbon dioxide during photosynthesis.", "It becomes part of the carbon compounds in the plant."),
+    ex("Describe three ways carbon dioxide is returned to the atmosphere.", 3, "Respiration by plants and animals.", "Decay by microorganisms (decomposers).", "Combustion of fuels."),
+    ex("Explain the role of decomposers in the carbon cycle.", 2, "Decomposers break down dead organisms and waste.", "They release carbon dioxide into the air by respiration."),
+    ex("Explain how carbon moves from plants to animals.", 2, "Animals eat plants.", "Carbon compounds in the plants become part of the animals."),
+    ex("Explain why burning fossil fuels increases carbon dioxide in the atmosphere.", 2, "Fossil fuels contain carbon that has been locked away for millions of years.", "Combustion releases it as carbon dioxide."),
+    ex("Explain why cutting down forests affects the carbon cycle.", 2, "Fewer trees take in carbon dioxide by photosynthesis.", "If the trees are burned, more carbon dioxide is released."),
+    ex("Explain why the carbon cycle is important.", 1, "It returns carbon to the atmosphere so it can be used again by plants."),
+    ex("Describe how carbon gets locked into fossil fuels.", 2, "Dead organisms are buried before they decay.", "Over millions of years, heat and pressure turn them into fossil fuels."),
+    ex("Explain why the carbon dioxide level in the air stayed fairly constant for thousands of years.", 2, "The carbon dioxide released by respiration and decay.", "Was balanced by the carbon dioxide absorbed by photosynthesis.")
+  ]);
+  addTo("Water cycle", [
+    ex("Describe the water cycle.", 4, "Water evaporates from the sea and land.", "Water vapour rises, cools and condenses to form clouds.",
+      "It falls as precipitation (rain, snow).", "Water runs into rivers and the sea, or soaks into the ground, and the cycle repeats."),
+    ex("Explain how plants are involved in the water cycle.", 2, "Plants take up water from the soil.", "They release water vapour by transpiration."),
+    ex("Explain how animals are involved in the water cycle.", 2, "Animals take in water by drinking and eating.", "They lose water in urine, sweat and breath."),
+    ex("Explain why the water cycle is important for living organisms.", 2, "It provides fresh water for plants and animals on land.", "Water is needed for life processes."),
+    ex("Explain how energy from the Sun drives the water cycle.", 2, "The Sun heats water, causing evaporation.", "And drives transpiration from plants."),
+    ex("Explain why rain water is fresh water even though it comes from the sea.", 1, "Only water evaporates; the salt is left behind."),
+    ex("Describe what happens to water that falls on land.", 2, "It runs into streams and rivers or soaks into the ground.", "It is taken up by plants or flows back to the sea."),
+    ex("Explain how deforestation can affect the water cycle.", 2, "Fewer trees means less transpiration.", "So less water vapour enters the air, and less rain may fall."),
+    ex("Explain why water vapour forms clouds.", 1, "As it rises it cools and condenses into tiny droplets."),
+    ex("Explain why the water cycle is described as a cycle.", 1, "Water is constantly recycled between the land, sea and atmosphere.")
+  ]);
+  addTo("Nitrogen cycle: decomposers, nitrifying bacteria", [
+    ex("Explain why plants need nitrates.", 2, "Nitrates are needed to make proteins.", "Proteins are needed for growth."),
+    ex("Describe the role of decomposers in the nitrogen cycle.", 2, "They break down proteins in dead organisms and waste.", "This releases ammonia (ammonium compounds) into the soil."),
+    ex("Describe the role of nitrifying bacteria.", 1, "They convert ammonium compounds into nitrates."),
+    ex("Describe the role of nitrogen-fixing bacteria.", 2, "They convert nitrogen gas from the air into nitrogen compounds.", "Some live in root nodules of legumes such as peas."),
+    ex("Explain why farmers add fertilisers or manure to fields.", 2, "Crops take nitrates from the soil and are removed when harvested.", "Fertiliser replaces the nitrates, so crops grow well."),
+    ex("Describe the role of denitrifying bacteria.", 1, "They convert nitrates in the soil back into nitrogen gas."),
+    ex("Explain why waterlogged soils are low in nitrates.", 2, "Denitrifying bacteria thrive in waterlogged soil with little oxygen.", "Nitrifying bacteria need oxygen, so fewer nitrates are made."),
+    ex("Explain how nitrogen moves from plants to animals.", 2, "Animals eat plants.", "They digest the plant protein and use the amino acids to make their own proteins.")
+  ]);
+  addTo("How environmental change affects where species are found", [
+    ex("Describe three environmental changes that can affect the distribution of species.", 3, "Changes in the availability of water.", "Changes in temperature.", "Changes in the composition of atmospheric gases."),
+    ex("Explain how global warming could affect the distribution of species.", 2, "Some species may move further north (or to higher ground) as it gets warmer.", "Species that can't move may die out."),
+    ex("Explain why some bird species are migrating at different times than before.", 2, "Changes in temperature affect when food is available.", "So birds migrate earlier or later."),
+    ex("Explain how a drought could affect where species are found.", 2, "Some species need lots of water.", "They die or move to areas with more water."),
+    ex("Describe the difference between seasonal and geographic changes.", 2, "Seasonal changes happen each year, e.g. temperature.", "Geographic changes vary from place to place, e.g. soil type."),
+    ex("Explain how human activity can cause environmental change.", 2, "Burning fossil fuels changes the gases in the atmosphere.", "Building and farming changes habitats."),
+    ex("Explain why a species of insect might start to be found further north in the UK.", 2, "The climate is getting warmer.", "So more northern areas now have suitable temperatures."),
+    ex("Explain why marine species may change their distribution.", 2, "Sea temperatures are changing.", "So their food and suitable conditions move."),
+    ex("Explain why species that need very specific conditions are most affected by environmental change.", 1, "They can't adapt or move easily if their conditions change.")
+  ]);
+  addTo("Biodiversity: importance and preservation", [
+    ex("Explain why high biodiversity is important.", 2, "It makes ecosystems more stable.", "Species depend less on any one species for food, shelter and maintaining the environment."),
+    ex("Describe four ways to protect biodiversity.", 4, "Breeding programmes for endangered species.", "Protecting and regenerating rare habitats.", "Reintroducing field margins and hedgerows.", "Reducing deforestation and recycling to reduce landfill."),
+    ex("Explain how human population growth affects biodiversity.", 2, "More resources are used and more waste is produced.", "This destroys habitats and reduces biodiversity."),
+    ex("Explain why hedgerows increase biodiversity on farms.", 2, "They provide habitats and food.", "For many species of plants, insects and birds."),
+    ex("Explain why breeding programmes help endangered species.", 2, "Animals are bred in captivity.", "Then released into the wild to increase population numbers."),
+    ex("Explain why protecting rare habitats helps biodiversity.", 1, "It protects the species that live there."),
+    ex("Describe one conflict when trying to protect biodiversity.", 2, "Protecting land may stop it being used for farming or building.", "Which affects people's jobs and food supplies."),
+    ex("Explain why we depend on biodiversity.", 2, "Many species provide food, medicines and materials.", "Healthy ecosystems clean water and air.")
+  ]);
+  addTo("Human impact: deforestation, global warming, land use", [
+    ex("Describe two reasons for large-scale deforestation in tropical areas.", 2, "To provide land for cattle and rice fields.", "To grow crops for biofuels."),
+    ex("Explain how deforestation contributes to global warming.", 3, "Fewer trees take in carbon dioxide by photosynthesis.", "Burning trees releases carbon dioxide.", "Microorganisms decay the remaining wood, releasing carbon dioxide."),
+    ex("Describe three biological consequences of global warming.", 3, "Loss of habitat as low-lying areas flood.", "Changes in the distribution of species.", "Changes in migration patterns and reduced biodiversity."),
+    ex("Explain why destroying peat bogs is a problem.", 2, "Peat is burned or decayed, releasing carbon dioxide.", "It destroys the habitat of many species."),
+    ex("Describe four ways humans reduce the land available for other animals and plants.", 4, "Building.", "Quarrying.", "Farming.", "Dumping waste."),
+    ex("Explain why using peat-free compost helps the environment.", 2, "Peat bogs are left intact.", "So the carbon stored in peat isn't released."),
+    ex("Explain how pollution can reduce biodiversity.", 2, "Pollution kills plants and animals.", "In water, on land, and in the air, e.g. from smoke and acidic gases."),
+    ex("Explain why deforestation reduces biodiversity.", 2, "Forests contain many species.", "Destroying them removes the habitats of these species."),
+    ex("Explain how sewage and fertiliser pollution affect rivers.", 2, "They cause algae to grow quickly, blocking light.", "Plants die and are decomposed by bacteria, using up oxygen, so fish die."),
+    ex("Explain why the growth in the human population increases waste.", 1, "More people use more resources, so more waste is produced.")
+  ]);
+  addTo("Pollution indicators: lichen, invertebrates", [
+    ex("Explain why lichens are used as indicators of air pollution.", 2, "Lichens are sensitive to sulfur dioxide.", "So few lichens grow where the air is polluted."),
+    ex("Explain why the presence of stonefly nymphs suggests clean water.", 2, "Stonefly nymphs need a high oxygen concentration.", "Polluted water has low oxygen."),
+    ex("Explain why bloodworms and sludgeworms are found in polluted water.", 2, "They can survive in water with low oxygen.", "Other animals can't, so they have less competition."),
+    ex("Explain what is meant by an indicator species.", 1, "A species whose presence or absence shows the level of pollution."),
+    ex("Give one advantage and one disadvantage of using indicator species instead of electronic meters.", 2, "Advantage: cheap and show long-term pollution.", "Disadvantage: less precise; they don't give exact levels of pollutants."),
+    ex("Describe how to use lichens to compare air pollution in two areas.", 2, "Count the number or types of lichens on trees or walls in each area.", "More lichens shows cleaner air."),
+    ex("Explain why sulfur dioxide levels are higher in cities.", 1, "Burning fossil fuels in cars and industry releases sulfur dioxide."),
+    ex("Explain why black spot fungus on roses can indicate clean air.", 2, "Black spot is killed by sulfur dioxide.", "So it is more common where the air is clean."),
+    ex("Explain how sewage reduces the oxygen in a river.", 2, "Bacteria decompose the sewage.", "They use up oxygen in the water for respiration."),
+    ex("Describe how to sample invertebrates in a stream.", 2, "Use a net to disturb the stream bed and catch animals (kick sampling).", "Identify and count the animals in a tray.")
+  ]);
+  addTo("Trophic levels and energy transfer", [
+    ex("Explain why only about 10% of the biomass is transferred to the next trophic level.", 3, "Not all the organism is eaten, e.g. bones and roots.", "Some ingested material is egested as faeces.", "Much is used in respiration, and lost as waste such as urine."),
+    ex("Describe the trophic levels in a food chain.", 3, "Level 1: producers.", "Level 2: primary consumers (herbivores).", "Level 3 and above: secondary and tertiary consumers (carnivores)."),
+    ex("Describe how to calculate the efficiency of biomass transfer.", 1, "Efficiency = biomass transferred to the next level ÷ biomass available at the previous level × 100."),
+    ex("Explain why there are usually fewer animals at the top of a food chain.", 2, "Biomass is lost at each trophic level.", "So there is less biomass available at higher levels."),
+    ex("Explain why animals that eat meat have a more efficient transfer than herbivores.", 2, "Meat is easier to digest than plants.", "So less is lost as faeces."),
+    ex("Explain the role of decomposers in a food chain.", 2, "They break down dead plants and animals.", "They release mineral ions back into the soil.")
+  ]);
+  addTo("Pyramids of biomass", [
+    ex("Explain why a pyramid of biomass is always pyramid-shaped.", 2, "Biomass is lost at each trophic level.", "So each level has less biomass than the one below."),
+    ex("Describe how to draw a pyramid of biomass.", 2, "Draw a bar for each trophic level, with producers at the bottom.", "The width of each bar is proportional to the biomass."),
+    ex("Explain why a pyramid of biomass is more useful than a pyramid of numbers.", 2, "A single large tree can feed many insects, so a pyramid of numbers may not be a pyramid.", "Biomass shows the actual mass at each level."),
+    ex("Explain why biomass is measured as dry mass.", 2, "The amount of water in organisms varies.", "So dry mass gives a fairer comparison."),
+    ex("Give one disadvantage of measuring dry biomass.", 1, "The organisms have to be killed."),
+    ex("Explain why the producer level has the largest biomass.", 2, "Producers capture energy from the Sun.", "They support all the other levels."),
+    ex("Explain how the efficiency of food production can be improved.", 2, "Reduce the number of stages in the food chain.", "Keep animals warm and limit movement so less energy is lost."),
+    ex("Explain why eating plants rather than meat could feed more people.", 2, "Energy is lost at each trophic level.", "Eating plants removes a stage, so more biomass is available."),
+    ex("Calculate the efficiency of transfer if 1000 kg of grass supports 100 kg of rabbits, and explain your answer.", 2, "Efficiency = 100 ÷ 1000 × 100 = 10%.", "90% of the biomass is lost at that step.")
+  ]);
 })();
