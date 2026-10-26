@@ -729,6 +729,23 @@
   .tree .leaf.grow { transform-origin: left center; }
   @keyframes grow { from { transform: scale(0); } }
   @media (prefers-reduced-motion: reduce) { .tree .grow { animation: none; } }
+  /* The trees scroll sideways, one subject per slide */
+  .tree-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .tree-nav .icon-btn:disabled { opacity: .35; cursor: default; }
+  .tree-tabs { display: flex; gap: 6px; flex: 1; justify-content: center; overflow-x: auto; scrollbar-width: none; }
+  .tree-strip { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: thin; padding-bottom: 6px; }
+  .tree-slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; }
+  .tree-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; }
+  .tree-title small { font-size: 13px; font-weight: 500; color: var(--muted); margin-left: 6px; }
+  /* Each subject's tree has its own leaves */
+  .tree-slide { --leaf: #5fae82; --leaf-line: #3f8f63; --leaf-light: #86c9a3; --leaf-dark: #3f8f63; --leaf-dark-line: #2f7350; --crown: rgba(95, 174, 130, .1); }
+  .tree-biology { --leaf: #ec8fb4; --leaf-line: #c9608c; --leaf-light: #f6bfd5; --leaf-dark: #d0638f; --leaf-dark-line: #a8476f; --crown: rgba(236, 143, 180, .12); }
+  .tree-chemistry { --leaf: #e9a24b; --leaf-line: #c07a26; --leaf-light: #f3c98a; --leaf-dark: #c9712c; --leaf-dark-line: #9c531b; --crown: rgba(233, 162, 75, .12); }
+  .tree-physics { --leaf: #6aa6d8; --leaf-line: #3f7fb5; --leaf-light: #a3cbeb; --leaf-dark: #3f7fb5; --leaf-dark-line: #2c5f8a; --crown: rgba(106, 166, 216, .12); }
+  .tree-slide .tree .crown { fill: var(--crown); }
+  .tree-slide .tree .leaf { fill: var(--leaf); stroke: var(--leaf-line); }
+  .tree-slide .tree .leaf.light { fill: var(--leaf-light); }
+  .tree-slide .tree .leaf.dark { fill: var(--leaf-dark); stroke: var(--leaf-dark-line); }
   .tree-key { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 12px; font-size: 14px; }
   .tree-key li { display: flex; align-items: center; gap: 8px; }
   .tree-key .tree { width: 30px; flex: none; }
@@ -3979,9 +3996,20 @@ TelaDB.start("student").then(() => {
   }
 
   // ---------- Progress tree ----------
-  // Every topic is a twig on the tree, and its boughs are the grades (or the subject, outside Maths).
+  // Each subject has its own tree, and the trees sit side by side in a strip that scrolls sideways.
+  // Every topic is a twig, and the boughs are the grades in Maths and the spec topics (categories) elsewhere.
   // A twig is a bare bud while not started, grows leaves once in progress and bursts into full leaf when confident.
-  const treeGroup = t => t.grade || t.subject;
+  const treeGroup = t => t.subject === "Maths" ? t.grade || t.category : t.category || t.subject;
+  const treeSubjects = () => SUBJECTS.filter(s => topics.some(t => t.subject === s));
+  // Bough labels are wrapped onto short lines, so long category names fit beside the crown.
+  function labelLines(text, max = 14) {
+    const lines = [];
+    String(text).split(" ").forEach(w => {
+      if (lines.length && (lines[lines.length - 1] + " " + w).length <= max) lines[lines.length - 1] += " " + w;
+      else lines.push(w);
+    });
+    return lines;
+  }
   const TREE_W = 800, TREE_MID = 400, CROWN_R = 260, MAX_TWIGS = 12;
   const num = n => n.toFixed(1);
   // The bud, leaves or leafy bloom at the end (x, y) of a twig pointing at angle a (radians).
@@ -4000,9 +4028,9 @@ TelaDB.start("student").then(() => {
   }
   // The topics in bough-sized bunches, lowest grade at the bottom. Each grade starts a new level of the tree
   // with a bough on the left, and is split evenly over as many boughs as it needs (a pair, when it has more than a few topics).
-  function treeBoughs() {
+  function treeBoughs(topics) {
     const order = g => GRADES.indexOf(g) + 1 || 99;
-    const names = [...new Set(topics.map(treeGroup))].sort((a, b) => order(a) - order(b) || a.localeCompare(b));
+    const names = [...new Set(topics.map(treeGroup))].sort((a, b) => order(a) - order(b) || byCategory(a, b));
     const out = [];
     let level = 0;
     names.forEach(name => {
@@ -4020,8 +4048,8 @@ TelaDB.start("student").then(() => {
     });
     return out;
   }
-  function treeSVG() {
-    const boughs = treeBoughs();
+  function treeSVG(topics, subject) {
+    const boughs = treeBoughs(topics);
     if (!boughs.length) return `<p class="d-note">No topics yet, so your tree hasn't sprouted.</p>`;
     // The bough tips sit on a circle, so the crown is round: low boughs reach out and droop a little,
     // high ones climb steeply, and the middle ones reach furthest.
@@ -4054,14 +4082,17 @@ TelaDB.start("student").then(() => {
           <path class="twig-stem" d="M${num(px)} ${num(py)}L${num(ex)} ${num(ey)}"/>${twigDecor(topic.status, ex, ey, a, Math.min(n++ * 8, 1200))}</g>`;
       });
       const lx = num(T[0] + side * 34), anchor = side < 0 ? "end" : "start";
-      if (b.label) labels += `<text class="bough-${b.label === b.name ? "label" : "count"}" x="${lx}" y="${num(T[1] + (b.sub ? -2 : 4))}" text-anchor="${anchor}">${esc(b.label)}</text>`;
-      if (b.sub) labels += `<text class="bough-count" x="${lx}" y="${num(T[1] + 13)}" text-anchor="${anchor}">${esc(b.sub)}</text>`;
+      const lines = b.label === b.name ? labelLines(b.label) : b.label ? [b.label] : [];
+      let ly = T[1] + 4 - (lines.length + (b.sub ? 1 : 0) - 1) * 8.5;
+      if (lines.length) labels += `<text class="bough-${b.label === b.name ? "label" : "count"}" text-anchor="${anchor}">${lines.map(l =>
+        `<tspan x="${lx}" y="${num((ly += 17) - 17)}">${esc(l)}</tspan>`).join("")}</text>`;
+      if (b.sub) labels += `<text class="bough-count" x="${lx}" y="${num(ly - 4)}" text-anchor="${anchor}">${esc(b.sub)}</text>`;
     });
     const trunk = `<path class="wood" d="M${TREE_MID - 26} ${base}Q${TREE_MID - 11} ${base - 8} ${TREE_MID - 11} ${base - 44}` +
       `L${TREE_MID - 4} ${top}Q${TREE_MID} ${top - 6} ${TREE_MID + 4} ${top}L${TREE_MID + 11} ${base - 44}Q${TREE_MID + 11} ${base - 8} ${TREE_MID + 26} ${base}Z"/>`;
     const s = countBy(topics, "status");
     return `<svg class="tree" viewBox="0 0 ${TREE_W} ${H}" role="group"
-      aria-label="Progress tree: ${s.done || 0} topics in bloom, ${s.doing || 0} growing leaves, ${s.todo || 0} still buds">
+      aria-label="${esc(subject)} tree: ${s.done || 0} topics in bloom, ${s.doing || 0} growing leaves, ${s.todo || 0} still buds">
       <circle class="crown" cx="${TREE_MID}" cy="${cy}" r="${R + 34}"/><ellipse class="ground" cx="${TREE_MID}" cy="${base + 6}" rx="280" ry="16"/>${trunk}${wood}${twigs}${labels}</svg>`;
   }
   // A single twig in the key, showing what each status looks like.
@@ -4073,17 +4104,32 @@ TelaDB.start("student").then(() => {
       <span>${esc(t.title)}</span><small>${esc(t.grade || t.subject)}</small></button></li>`).join("")}</ul>`;
   }
 
-  function renderProgress() {
-    const s = countBy(topics, "status"), n = topics.length || 1;
-    const doing = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).slice(0, 6);
+  // One slide of the tree strip: a subject's tree and its key.
+  function treeSlideHTML(subject) {
+    const list = topics.filter(t => t.subject === subject), s = countBy(list, "status"), n = list.length || 1;
     const key = (status, name, count) => `<li>${treeKeyIcon(status)}<span>${name}</span><strong>${count}</strong><small>${Math.round(count / n * 100)}%</small></li>`;
+    return `<section class="tree-slide tree-${subject.toLowerCase().replace(/[^a-z]+/g, "-")}" aria-label="${esc(subject)} tree">
+      <h4 class="tree-title">${esc(subject)} <small>${list.length} topic${list.length === 1 ? "" : "s"}</small></h4>
+      <div class="tree-wrap">${treeSVG(list, subject)}<div class="tree-tip" hidden></div></div>
+      <ul class="tree-key">
+        ${key("done", "Confident", s.done || 0)}${key("doing", "In progress", s.doing || 0)}${key("todo", "Not started", s.todo || 0)}
+      </ul></section>`;
+  }
+  function renderProgress() {
+    const doing = topics.filter(t => t.status === "doing" && PRACTICE[practiceKey(t)]).slice(0, 6);
+    const subjects = treeSubjects();
+    const arrow = (step, d) => `<button type="button" class="icon-btn" data-tree-step="${step}" aria-label="${step < 0 ? "Previous" : "Next"} tree">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg></button>`;
+    const nav = subjects.length > 1 ? `<div class="tree-nav">${arrow(-1, "M15 6l-6 6 6 6")}
+        <div class="tree-tabs" role="tablist">${subjects.map((s, i) =>
+          `<button type="button" class="chip${i ? "" : " active"}" role="tab" aria-selected="${!i}" data-tree-go="${i}">${esc(s)}</button>`).join("")}</div>
+        ${arrow(1, "M9 6l6 6-6 6")}</div>` : "";
     return `
-      <div class="d-section"><h3>Your tree</h3>
-        <div class="tree-wrap">${treeSVG()}<div class="tree-tip" hidden></div></div>
-        <ul class="tree-key">
-          ${key("done", "Confident", s.done || 0)}${key("doing", "In progress", s.doing || 0)}${key("todo", "Not started", s.todo || 0)}
-        </ul>
-        <p class="d-note">Every twig is one of your ${topics.length} topics. It sprouts a few leaves once you start practising and bursts into full leaf when you're confident.
+      <div class="d-section"><h3>Your trees</h3>
+        ${subjects.length ? `${nav}<div class="tree-strip" id="treeStrip">${subjects.map(treeSlideHTML).join("")}</div>`
+          : `<p class="d-note">No topics yet, so your trees haven't sprouted.</p>`}
+        <p class="d-note">Each subject grows its own tree${subjects.length > 1 ? ": scroll sideways or use the arrows to see the others" : ""}. Every twig is one topic.
+          It sprouts a few leaves once you start practising and bursts into full leaf when you're confident.
           Click a twig to practise that topic. You've saved practice answers in ${practisedCount()} topic${practisedCount() === 1 ? "" : "s"}.</p>
       </div>
       <div class="d-section"><h3>Time active</h3>
@@ -4170,9 +4216,14 @@ TelaDB.start("student").then(() => {
     closeDrawer();
     $("progressBody").innerHTML = renderProgress();
     $("progressBody").scrollTop = 0;
+    const strip = $("treeStrip");
+    if (strip) strip.addEventListener("scroll", () => { hideTreeTip(); markTreeTab(); }, { passive: true });
     $("progressOverlay").classList.add("open");
     document.querySelector('.side-btn[data-view="progress"]').classList.add("active");
     $("progressClose").focus();
+    // Start on the subject picked on the dashboard, if it has a tree
+    const start = treeSubjects().indexOf(state.subject);
+    showTree(Math.max(start, 0), "instant");
   }
   function closeProgress() {
     $("progressOverlay").classList.remove("open");
@@ -4192,9 +4243,37 @@ TelaDB.start("student").then(() => {
     tip.style.top = `${box.top - outer.top}px`;
   }
   function hideTreeTip() {
-    const tip = $("progressBody").querySelector(".tree-tip");
-    if (tip) tip.hidden = true;
+    $("progressBody").querySelectorAll(".tree-tip").forEach(tip => tip.hidden = true);
   }
+  // The tree strip: which subject's tree is showing, and moving to another one.
+  function treeIndex() {
+    const strip = $("treeStrip");
+    return strip ? Math.round(strip.scrollLeft / (strip.clientWidth || 1)) : 0;
+  }
+  function showTree(i, behavior = "smooth") {
+    const strip = $("treeStrip");
+    if (!strip) return;
+    i = Math.max(0, Math.min(i, strip.children.length - 1));
+    strip.scrollTo({ left: i * strip.clientWidth, behavior });
+    markTreeTab(i);
+  }
+  function markTreeTab(i = treeIndex()) {
+    const last = $("treeStrip") ? $("treeStrip").children.length - 1 : 0;
+    $("progressBody").querySelectorAll("[data-tree-go]").forEach(b => {
+      const on = +b.dataset.treeGo === i;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on);
+    });
+    $("progressBody").querySelectorAll("[data-tree-step]").forEach(b => {
+      const to = i + +b.dataset.treeStep;
+      b.disabled = to < 0 || to > last;
+    });
+  }
+  $("progressBody").addEventListener("click", e => {
+    const go = e.target.closest("[data-tree-go]"), step = e.target.closest("[data-tree-step]");
+    if (go) showTree(+go.dataset.treeGo);
+    else if (step) showTree(treeIndex() + +step.dataset.treeStep);
+  });
   ["mouseover", "focusin"].forEach(type => $("progressBody").addEventListener(type, e => {
     const twig = e.target.closest(".twig");
     if (twig) showTreeTip(twig);
