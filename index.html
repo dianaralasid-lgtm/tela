@@ -165,6 +165,10 @@
   }
 
   .filter-group { margin-top: 16px; }
+  .subject-filters { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .4s ease, opacity .3s ease; }
+  .subject-filters.open { grid-template-rows: 1fr; opacity: 1; }
+  .sf-inner { overflow: hidden; min-height: 0; }
+  @media (prefers-reduced-motion: reduce) { .subject-filters { transition: none; } }
   .filter-label {
     font-size: 12px; font-weight: 600; text-transform: uppercase;
     letter-spacing: .06em; color: var(--muted); margin-bottom: 8px;
@@ -901,6 +905,8 @@
         <div class="filter-label">Subject</div>
         <div class="chips" id="subjectChips"></div>
       </div>
+      <!-- The rest of the filters slide open once a subject is picked, with that subject's grades and categories -->
+      <div class="subject-filters" id="subjectFilters"><div class="sf-inner">
       <div class="filter-group" id="gradeGroup">
         <div class="filter-label">Grade</div>
         <div class="chips" id="gradeChips"></div>
@@ -913,6 +919,7 @@
         <div class="filter-label">Status</div>
         <div class="chips" id="statusChips"></div>
       </div>
+      </div></div>
     </div>
 
     <div class="results-row">
@@ -1102,7 +1109,6 @@ TelaDB.start("student").then(() => {
     const subjects = allSubjects();
     if (state.subject !== "All" && !subjects.includes(state.subject)) state.subject = "All";
     $("subjectChips").innerHTML =
-      chipHTML("All", "All subjects", state.subject === "All") +
       subjects.map(s => chipHTML(s, s, state.subject === s)).join("") +
       COMING_SOON.filter(s => !subjects.includes(s))
         .map(s => `<span class="chip-soon" title="${esc(s)} is coming soon">${esc(s)}<small>Soon</small></span>`).join("");
@@ -1128,6 +1134,10 @@ TelaDB.start("student").then(() => {
     $("categoryGroup").style.display = cats.length ? "" : "none";
 
     // Status
+    const open = state.subject !== "All";
+    $("subjectFilters").classList.toggle("open", open);
+    $("subjectFilters").inert = !open;
+
     $("statusChips").innerHTML =
       chipHTML("All", "Any", state.status === "All", null, "small") +
       Object.entries(STATUS).map(([k, v]) => chipHTML(k, v.label, state.status === k, null, "small")).join("");
@@ -4209,8 +4219,12 @@ TelaDB.start("student").then(() => {
     $(containerId).addEventListener("click", e => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
-      state[key] = chip.dataset.value;
-      if (key === "subject") state.grade = state.category = "All";
+      // Clicking the chosen subject again unpicks it, folding its filters away.
+      if (key === "subject") {
+        state.subject = state.subject === chip.dataset.value ? "All" : chip.dataset.value;
+        state.grade = state.category = "All";
+        if (state.subject === "All") state.status = "All";
+      } else state[key] = chip.dataset.value;
       render();
     });
   }
