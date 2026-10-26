@@ -372,7 +372,7 @@
     fill("The permanent vacuole is filled with [cell sap/sap]."),
     match(["nucleus", "mitochondria", "ribosomes", "cell membrane"]),
     match(["cell wall", "chloroplasts", "permanent vacuole", "cytoplasm"]),
-    { text: "The diagram shows a plant cell.", diagram: PLANT_CELL, parts: [
+    { text: "The diagram shows a plant cell.", diagram: PLANT_CELL, always: true, parts: [
       { question: "Name part A.", type: "word", answer: "cell wall" },
       { question: "Name part B.", type: "word", answer: "nucleus" },
       { question: "Name part C.", type: "word", answer: "permanent vacuole/vacuole" },
@@ -600,7 +600,7 @@
     fill("The wall of the left ventricle is thicker because it pumps blood around the whole [body]."),
     fill("In the alveoli, oxygen diffuses into the blood and [carbon dioxide] diffuses out."),
     fill("The heart's natural resting rate is controlled by a group of cells in the right atrium that act as a [pacemaker]."),
-    { text: "The diagram shows the four chambers of the heart.", diagram: HEART, parts: [
+    { text: "The diagram shows the four chambers of the heart.", diagram: HEART, always: true, parts: [
       { question: "Name chamber W.", type: "word", answer: "right atrium" },
       { question: "Name chamber Z.", type: "word", answer: "left ventricle" },
       { question: "Which chamber, W, X, Y or Z, pumps blood to the lungs?", type: "choice", options: ["W", "X", "Y", "Z"], answer: "Y" },
@@ -956,7 +956,7 @@
     fill("Reflexes are rapid and [automatic] and do not involve conscious thought."),
     fill("In a reflex arc, the relay neurone is in the [CNS/spinal cord/central nervous system]."),
     match(["sensory neurone", "motor neurones", "reflexes", "effectors"]),
-    { text: "The diagram shows the pathway of a reflex action.", diagram: REFLEX, parts: [
+    { text: "The diagram shows the pathway of a reflex action.", diagram: REFLEX, always: true, parts: [
       { question: "Name neurone P.", type: "word", answer: "sensory neurone/sensory" },
       { question: "Name neurone Q.", type: "word", answer: "motor neurone/motor" },
       { question: "Give an example of an effector.", type: "word", answer: "muscle/gland/muscles/glands" }
@@ -1505,7 +1505,7 @@
     ]),
     fill("Burning fossil fuels and wood, called [combustion], releases CO₂."),
     fill("Plants take carbon dioxide out of the air by [photosynthesis]."),
-    { text: "The diagram shows part of the carbon cycle.", diagram: CARBON, parts: [
+    { text: "The diagram shows part of the carbon cycle.", diagram: CARBON, always: true, parts: [
       { question: "Name process A.", type: "word", answer: "photosynthesis" },
       { question: "Name process B.", type: "word", answer: "respiration" },
       { question: "Name process D.", type: "word", answer: "combustion/burning" },
@@ -1604,7 +1604,7 @@
     fill("A pyramid of biomass shows the [biomass] at each trophic level."),
     fill("The bottom bar of a pyramid of biomass is always the [producers/producer]."),
     fill("Each bar is smaller than the one below because biomass is [lost] at each level."),
-    { text: "The diagram shows a pyramid of biomass.", diagram: PYRAMID, parts: [
+    { text: "The diagram shows a pyramid of biomass.", diagram: PYRAMID, always: true, parts: [
       { question: "Which trophic level is bar P?", type: "word", answer: "producers/producer" },
       { question: "Which bar shows the secondary consumers?", type: "choice", options: ["P", "Q", "R", "S"], answer: "R" },
       { question: "What percentage of the biomass in P is transferred to Q?", type: "number", marks: 2, answer: "10" },
@@ -1747,5 +1747,228 @@
   examStyle("Biodiversity: importance and preservation", [
     examDefine("A survey finds many different species living in a hedgerow. What is meant by biodiversity?", 1,
       ["The variety of different species in an area or ecosystem (1 mark)"])
+  ]);
+
+  // ======================= MORE DIAGRAMS =======================
+  // Diagram, graph and table questions for more topics. One diagram question per topic has always: true, so
+  // every set has a diagram to read.
+  const withDiagrams = (title, questions) => {
+    if (!blocks[title]) throw new Error(`no topic called "${title}"`);
+    blocks[title].questions.push(...questions);
+  };
+  const label = (x1, y1, x2, y2, letter, tx, ty) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><text x="${tx}" y="${ty}">${letter}</text>`;
+  const axes = (xLabel, yLabel) => `<line x1="40" y1="20" x2="40" y2="170"/><line x1="40" y1="170" x2="340" y2="170"/>
+    <text x="190" y="203" text-anchor="middle" style="font-weight:500;font-size:12px">${xLabel}</text>
+    <text x="14" y="95" text-anchor="middle" transform="rotate(-90 14 95)" style="font-weight:500;font-size:12px">${yLabel}</text>`;
+
+  const ANIMAL_CELL = `<svg viewBox="0 0 290 200" width="290" role="img" aria-label="An animal cell with four parts labelled A to D">
+    <ellipse cx="120" cy="100" rx="100" ry="80" fill="#f2f8f5" stroke="#146c43" stroke-width="2.5"/>
+    <circle cx="110" cy="92" r="28" fill="#e8d8c4" stroke="#7a5230" stroke-width="2"/>
+    <ellipse cx="62" cy="62" rx="15" ry="7" fill="#f4c7a1" stroke="#b5651d" stroke-width="1.5"/>
+    <ellipse cx="172" cy="142" rx="15" ry="7" fill="#f4c7a1" stroke="#b5651d" stroke-width="1.5"/>
+    <ellipse cx="168" cy="58" rx="15" ry="7" fill="#f4c7a1" stroke="#b5651d" stroke-width="1.5"/>
+    <circle cx="70" cy="125" r="2.5" fill="#555"/><circle cx="85" cy="140" r="2.5" fill="#555"/><circle cx="150" cy="105" r="2.5" fill="#555"/><circle cx="60" cy="95" r="2.5" fill="#555"/>
+    ${label(132, 82, 245, 40, "A", 252, 45)}${label(82, 150, 245, 92, "B", 252, 97)}${label(218, 112, 245, 140, "C", 252, 145)}${label(186, 144, 245, 182, "D", 252, 187)}
+  </svg>`;
+  const BACTERIUM = `<svg viewBox="0 0 360 180" width="360" role="img" aria-label="A bacterial cell with four parts labelled P to S">
+    <rect x="40" y="45" width="220" height="90" rx="45"/>
+    <rect x="49" y="54" width="202" height="72" rx="36" style="fill:#fbfdfb;stroke-width:1.5"/>
+    <path d="M100 90 C110 62 140 115 160 85 S205 70 192 98 S130 116 100 90Z" fill="none" stroke="#7a5230" stroke-width="2"/>
+    <circle cx="222" cy="75" r="7" fill="none" stroke="#b5651d" stroke-width="2"/><circle cx="78" cy="108" r="7" fill="none" stroke="#b5651d" stroke-width="2"/>
+    <path d="M260 90 q10 -12 20 0 t20 0 t20 0 t20 0" fill="none" stroke="#146c43" stroke-width="2"/>
+    ${label(158, 84, 158, 24, "P", 153, 18)}${label(224, 68, 236, 24, "Q", 232, 18)}${label(62, 128, 44, 158, "R", 38, 174)}${label(320, 92, 320, 158, "S", 315, 174)}
+  </svg>`;
+  const LOCK_KEY = `<svg viewBox="0 0 340 160" width="340" role="img" aria-label="An enzyme with its active site labelled X, and a substrate labelled Y">
+    <path d="M20 40 H120 V72 H152 V40 H200 Q220 40 220 60 V120 Q220 140 200 140 H40 Q20 140 20 120 Z" fill="#dceefb" stroke="#4a7fb5" stroke-width="2"/>
+    <text x="70" y="110" style="font-weight:500">Enzyme</text>
+    <path d="M262 40 h30 v30 h-30 z" fill="#f4c7a1" stroke="#b5651d" stroke-width="2"/>
+    ${label(146, 58, 178, 16, "X", 183, 20)}${label(277, 72, 277, 112, "Y", 272, 128)}
+  </svg>`;
+  const OSMOSIS = `<svg viewBox="0 0 320 200" width="320" role="img" aria-label="A beaker split by membrane M into side A, with a dilute sugar solution, and side B, with a concentrated sugar solution">
+    <path d="M32 62 H288 V168 H32 Z" fill="#dceefb" stroke="none"/>
+    <path d="M30 30 V170 H290 V30" fill="none" stroke="#146c43" stroke-width="2.5"/>
+    <line x1="160" y1="56" x2="160" y2="170" style="stroke:#7a5230;stroke-width:3;stroke-dasharray:6 5"/>
+    <circle cx="80" cy="110" r="5" fill="#b5651d"/><circle cx="120" cy="140" r="5" fill="#b5651d"/>
+    ${[[190, 90], [215, 120], [240, 85], [265, 140], [200, 150], [250, 110], [228, 150], [272, 95]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#b5651d"/>`).join("")}
+    <text x="90" y="52">A</text><text x="222" y="52">B</text><text x="154" y="48">M</text>
+    <circle cx="44" cy="188" r="5" fill="#b5651d"/><text x="54" y="193" style="font-weight:500;font-size:12px">= sugar molecule</text>
+  </svg>`;
+  const LEAF = `<svg viewBox="0 0 330 205" width="330" role="img" aria-label="A cross-section of a leaf with four parts labelled A to D">
+    <rect x="20" y="20" width="250" height="18" style="fill:#fff;stroke-width:1.5"/>
+    ${Array.from({ length: 12 }, (_, i) => `<rect x="${22 + i * 20.5}" y="40" width="18" height="52" rx="6" style="stroke-width:1.5"/>
+      <circle cx="${31 + i * 20.5}" cy="55" r="3" fill="#5fb37a"/><circle cx="${31 + i * 20.5}" cy="75" r="3" fill="#5fb37a"/>`).join("")}
+    ${[[40, 112], [75, 130], [110, 108], [145, 135], [180, 112], [215, 132], [250, 110], [55, 148], [125, 148], [235, 148]].map(([x, y]) =>
+      `<circle cx="${x}" cy="${y}" r="13" fill="#e7f3ec" stroke="#146c43" stroke-width="1.5"/>`).join("")}
+    <rect x="20" y="162" width="118" height="18" style="fill:#fff;stroke-width:1.5"/><rect x="162" y="162" width="108" height="18" style="fill:#fff;stroke-width:1.5"/>
+    <ellipse cx="142" cy="171" rx="6" ry="10" fill="#5fb37a" stroke="#146c43" stroke-width="1.5"/><ellipse cx="158" cy="171" rx="6" ry="10" fill="#5fb37a" stroke="#146c43" stroke-width="1.5"/>
+    ${label(270, 29, 292, 29, "A", 298, 34)}${label(262, 66, 292, 66, "B", 298, 71)}${label(263, 112, 292, 120, "C", 298, 125)}${label(160, 181, 292, 192, "D", 298, 197)}
+  </svg>`;
+  const EYE = `<svg viewBox="0 0 360 210" width="360" role="img" aria-label="A cross-section of the eye with four parts labelled A to D">
+    <circle cx="170" cy="100" r="80" fill="#fbfdfb" stroke="#146c43" stroke-width="2.5"/>
+    <path d="M214 33 A80 80 0 0 1 214 167" fill="none" stroke="#b5651d" stroke-width="6"/>
+    <path d="M100 58 Q66 100 100 142" fill="none" stroke="#4a7fb5" stroke-width="3"/>
+    <ellipse cx="120" cy="100" rx="11" ry="28" fill="#dceefb" stroke="#4a7fb5" stroke-width="2"/>
+    <path d="M247 88 H315 M247 112 H315" fill="none" stroke="#7a5230" stroke-width="2.5"/>
+    ${label(78, 100, 40, 100, "A", 24, 105)}${label(120, 128, 120, 186, "B", 115, 202)}${label(238, 60, 300, 30, "C", 306, 35)}${label(300, 112, 326, 140, "D", 330, 152)}
+  </svg>`;
+  const food = (x, y, name) => `<rect x="${x}" y="${y}" width="90" height="34" rx="8"/><text x="${x + 45}" y="${y + 22}" text-anchor="middle" style="font-size:13px">${name}</text>`;
+  const FOOD_WEB = `<svg viewBox="0 0 370 220" width="370" role="img" aria-label="A food web: grass is eaten by rabbits and mice; oak leaves by caterpillars; rabbits and mice by foxes; mice and blue tits by owls; caterpillars by blue tits">${ARROW}
+    ${food(40, 176, "Grass")}${food(230, 176, "Oak leaves")}
+    ${food(0, 98, "Rabbit")}${food(120, 98, "Mouse")}${food(240, 98, "Caterpillar")}
+    ${food(40, 20, "Fox")}${food(160, 20, "Owl")}${food(275, 20, "Blue tit")}
+    ${arrow(80, 176, 50, 134)}${arrow(90, 176, 160, 134)}${arrow(275, 176, 283, 134)}
+    ${arrow(45, 98, 75, 56)}${arrow(150, 98, 110, 56)}${arrow(170, 98, 200, 56)}${arrow(290, 98, 315, 56)}${arrow(275, 37, 252, 37)}
+  </svg>`;
+  const vessel = (cx, outer, inner, name, rx = 1) => `<ellipse cx="${cx}" cy="70" rx="${outer * rx}" ry="${outer}" fill="#f2c9c4" stroke="#a33a3a" stroke-width="2"/>
+    <ellipse cx="${cx}" cy="70" rx="${inner * rx}" ry="${inner}" fill="#fff" stroke="#a33a3a" stroke-width="1.5"/><text x="${cx - 5}" y="140">${name}</text>`;
+  const VESSELS = `<svg viewBox="0 0 320 150" width="320" role="img" aria-label="Cross-sections of three blood vessels, P, Q and R">
+    ${vessel(60, 42, 13, "P")}${vessel(170, 40, 31, "Q", 1.25)}${vessel(270, 10, 6, "R")}
+  </svg>`;
+  const TEMP_GRAPH = `<svg viewBox="0 0 350 212" width="350" role="img" aria-label="A graph of the rate of an enzyme reaction against temperature, rising to a peak at 40 °C then falling to zero at about 60 °C">
+    ${axes("Temperature (°C)", "Rate of reaction")}
+    ${[0, 20, 40, 60].map((t, i) => `<line x1="${40 + i * 75}" y1="170" x2="${40 + i * 75}" y2="175"/><text x="${40 + i * 75}" y="186" text-anchor="middle" style="font-weight:500;font-size:11px">${t}</text>`).join("")}
+    <path d="M40 160 C100 150 160 40 190 40 C215 40 235 120 265 170" fill="none" stroke="#146c43" stroke-width="3"/>
+  </svg>`;
+  const LIGHT_GRAPH = `<svg viewBox="0 0 350 212" width="350" role="img" aria-label="A graph of the rate of photosynthesis against light intensity: the rate rises at point X, then levels off at point Y">
+    ${axes("Light intensity", "Rate of photosynthesis")}
+    <path d="M40 170 C100 80 160 62 220 62 L330 62" fill="none" stroke="#146c43" stroke-width="3"/>
+    <circle cx="85" cy="115" r="5" fill="#34598f"/><text x="66" y="108">X</text>
+    <circle cx="280" cy="62" r="5" fill="#34598f"/><text x="275" y="50">Y</text>
+  </svg>`;
+  const PRED_PREY = `<svg viewBox="0 0 350 230" width="350" role="img" aria-label="A graph of two populations over time, A and B, rising and falling in cycles; B's peaks come after A's">
+    ${axes("Time", "Number of organisms")}
+    <path d="M40 120 C60 60 100 60 120 120 S180 165 200 120 S260 60 280 120 S330 165 340 135" fill="none" stroke="#146c43" stroke-width="3"/>
+    <path d="M40 160 C70 165 100 120 140 112 S190 150 220 160 S260 112 300 112 S335 150 340 155" fill="none" stroke="#b5651d" stroke-width="3" stroke-dasharray="8 5"/>
+    <line x1="60" y1="220" x2="85" y2="220" style="stroke:#146c43;stroke-width:3"/><text x="90" y="225" style="font-size:12px">A</text>
+    <line x1="130" y1="220" x2="155" y2="220" style="stroke:#b5651d;stroke-width:3;stroke-dasharray:8 5"/><text x="160" y="225" style="font-size:12px">B</text>
+  </svg>`;
+
+  // ---------- Paper 1 ----------
+  withDiagrams("Prokaryotic vs eukaryotic cells", [
+    { text: "The diagram shows a bacterial cell.", diagram: BACTERIUM, always: true, parts: [
+      { question: "Part P is the cell's main genetic material. What form does it take?", type: "word", answer: "loop/DNA loop/a loop of DNA/single loop/circular DNA" },
+      { question: "Name the small ring of DNA labelled Q.", type: "word", answer: "plasmid/plasmids" },
+      { question: "Name part S, which the bacterium uses to move.", type: "word", answer: "flagellum/flagella/tail" },
+      { question: "Which structure, found in animal and plant cells, does this cell NOT have?", type: "choice", options: ["Nucleus", "Cell membrane", "Cytoplasm", "Ribosomes"], answer: "Nucleus" }
+    ] }
+  ]);
+  withDiagrams("Animal and plant cell structures and functions", [
+    { text: "The diagram shows an animal cell.", diagram: ANIMAL_CELL, parts: [
+      { question: "Name part A, which contains the genetic material.", type: "word", answer: "nucleus" },
+      { question: "Name part B, where most chemical reactions take place.", type: "word", answer: "cytoplasm" },
+      { question: "Name part C, which controls what enters and leaves the cell.", type: "word", answer: "cell membrane/membrane" },
+      { question: "Name part D, where aerobic respiration happens.", type: "word", answer: "mitochondrion/mitochondria" }
+    ] }
+  ]);
+  withDiagrams("Osmosis: definition and examples", [
+    { text: "The beaker is split in two by membrane M. Side A has a dilute sugar solution and side B a concentrated sugar solution. Water can pass through M, but sugar can't.",
+      diagram: OSMOSIS, always: true, parts: [
+      { question: "Which way will water move overall?", type: "choice", options: ["From A to B", "From B to A", "No overall movement"], answer: "From A to B" },
+      { question: "Name the type of membrane M.", type: "word", answer: "partially permeable/partially permeable membrane/semi-permeable/selectively permeable" },
+      { question: "Name the process by which the water moves.", type: "word", answer: "osmosis" },
+      { question: "What will happen to the level of the liquid on side B?", type: "choice", options: ["It will rise", "It will fall", "It will stay the same"], answer: "It will rise" }
+    ] }
+  ]);
+  withDiagrams("Enzyme action: lock and key, temperature, pH", [
+    { text: "The diagram shows the lock and key model of enzyme action.", diagram: LOCK_KEY, always: true, parts: [
+      { question: "Name part X of the enzyme.", type: "word", answer: "active site" },
+      { question: "Name the molecule Y that fits into it.", type: "word", answer: "substrate" },
+      { question: "At a very high temperature, X changes shape. What is the enzyme then said to be?", type: "word", answer: "denatured" }
+    ] },
+    { text: "The graph shows how temperature affects the rate of a reaction controlled by an enzyme.", diagram: TEMP_GRAPH, parts: [
+      { question: "What is the optimum temperature for this enzyme, in °C?", type: "number", answer: "40", tolerance: 2 },
+      { question: "Above the optimum, the rate falls quickly. What has happened to the enzyme?", type: "word", answer: "denatured/it is denatured/it has denatured" }
+    ] }
+  ]);
+  withDiagrams("Blood vessels: arteries, veins, capillaries", [
+    { text: "The diagram shows cross-sections of three blood vessels, P, Q and R (not to scale).", diagram: VESSELS, always: true, parts: [
+      { question: "Which vessel is an artery?", type: "choice", options: ["P", "Q", "R"], answer: "P" },
+      { question: "Which vessel is a capillary?", type: "choice", options: ["P", "Q", "R"], answer: "R" },
+      { question: "Arteries have thick, muscular walls. Blood in arteries is at high _____.", type: "word", answer: "pressure" }
+    ] }
+  ]);
+  withDiagrams("Plant tissues: leaf structure and transpiration", [
+    { text: "The diagram shows a cross-section through a leaf.", diagram: LEAF, always: true, parts: [
+      { question: "Name layer B, where most photosynthesis happens.", type: "word", answer: "palisade mesophyll/palisade/palisade layer" },
+      { question: "Name layer C, which has air spaces for gas exchange.", type: "word", answer: "spongy mesophyll/spongy/spongy layer" },
+      { question: "Name the cells labelled D.", type: "word", answer: "guard cells/guard cell" },
+      { question: "Name the gap between the two D cells, which lets gases in and out.", type: "word", answer: "stoma/stomata/pore" }
+    ] }
+  ]);
+  withDiagrams("Adaptations of the leaf for photosynthesis", [
+    { text: "The diagram shows a cross-section through a leaf.", diagram: LEAF, always: true, parts: [
+      { question: "Name layer B.", type: "word", answer: "palisade mesophyll/palisade/palisade layer" },
+      { question: "Why do the cells in layer B contain many chloroplasts?", type: "choice", answer: "To absorb more light for photosynthesis",
+        options: ["To absorb more light for photosynthesis", "To store water", "To let gases diffuse", "To make the leaf stronger"] },
+      { question: "Layer A is transparent. Why does this help photosynthesis?", type: "choice", answer: "It lets light through to the cells below",
+        options: ["It lets light through to the cells below", "It absorbs carbon dioxide", "It makes glucose", "It stops water entering"] }
+    ] }
+  ]);
+  withDiagrams("Limiting factors: light, CO₂, temperature", [
+    { text: "The graph shows how light intensity affects the rate of photosynthesis.", diagram: LIGHT_GRAPH, always: true, parts: [
+      { question: "What is limiting the rate of photosynthesis at point X?", type: "choice", options: ["Light intensity", "Carbon dioxide concentration", "Temperature"], answer: "Light intensity" },
+      { question: "Name one factor that could be limiting the rate at point Y.", type: "word",
+        answer: "carbon dioxide/carbon dioxide concentration/CO2/CO2 concentration/temperature/chlorophyll" },
+      { question: "What happens to the rate between X and Y as light intensity increases?", type: "choice",
+        options: ["It increases, then stays the same", "It keeps increasing", "It decreases"], answer: "It increases, then stays the same" }
+    ] }
+  ]);
+
+  // ---------- Paper 2 ----------
+  withDiagrams("The eye: structure and function, accommodation", [
+    { text: "The diagram shows a cross-section of the eye.", diagram: EYE, always: true, parts: [
+      { question: "Name part A, the clear outer layer at the front.", type: "word", answer: "cornea" },
+      { question: "Name part B, which focuses light.", type: "word", answer: "lens" },
+      { question: "Name part C, which contains light-sensitive receptor cells.", type: "word", answer: "retina" },
+      { question: "Name part D, which carries impulses to the brain.", type: "word", answer: "optic nerve" }
+    ] }
+  ]);
+  withDiagrams("DNA structure in detail (nucleotides) and protein synthesis", [
+    { text: "The table shows the bases on one strand of a section of DNA.", table: { headings: ["Strand 1", "A", "T", "T", "G", "C"], rows: [["Strand 2", "?", "?", "?", "?", "?"]] },
+      always: true, parts: [
+      { question: "Write the bases on strand 2, in order.", type: "word", answer: "TAACG/T A A C G" },
+      { question: "How many amino acids could a sequence of 12 bases code for?", type: "number", answer: "4" }
+    ] }
+  ]);
+  withDiagrams("Punnett squares and probability of inheritance", [
+    { text: "Brown eyes (B) are dominant to blue eyes (b). The Punnett square shows a cross between two parents who are both Bb.",
+      table: { headings: ["", "B", "b"], rows: [["B", "BB", "Bb"], ["b", "Bb", "bb"]] }, always: true, parts: [
+      { question: "What fraction of the offspring are expected to have blue eyes?", type: "fraction", answer: "1/4" },
+      { question: "What percentage of the offspring are expected to have brown eyes?", type: "number", answer: "75" },
+      { question: "What is the expected ratio of brown eyes to blue eyes?", type: "ratio", answer: "3:1" }
+    ] }
+  ]);
+  withDiagrams("Sex determination: X and Y chromosomes", [
+    { text: "The Punnett square shows how sex is inherited.", table: { headings: ["", "X", "X"], rows: [["X", "XX", "XX"], ["Y", "XY", "XY"]] }, always: true, parts: [
+      { question: "Which parent's gametes are shown down the left side (X and Y)?", type: "choice", options: ["Father", "Mother"], answer: "Father" },
+      { question: "What percentage of the offspring are expected to be male?", type: "number", answer: "50" },
+      { question: "What is the ratio of female to male offspring?", type: "ratio", answer: "1:1" }
+    ] }
+  ]);
+
+  // ---------- Ecology ----------
+  withDiagrams("Food chains and food webs", [
+    { text: "The diagram shows a woodland food web.", diagram: FOOD_WEB, always: true, parts: [
+      { question: "Name a producer in this food web.", type: "word", answer: "grass/oak leaves/oak/oak tree" },
+      { question: "Name a primary consumer that is eaten by the owl.", type: "word", answer: "mouse/mice" },
+      { question: "What does the owl eat that is a secondary consumer?", type: "word", answer: "blue tit/blue tits" },
+      { question: "A disease kills most of the foxes. What will most likely happen to the number of rabbits?", type: "choice",
+        options: ["It will increase", "It will decrease", "It will stay the same"], answer: "It will increase" }
+    ] }
+  ]);
+  withDiagrams("Predator-prey relationships and population cycles", [
+    { text: "The graph shows the populations of a predator and its prey over time.", diagram: PRED_PREY, always: true, parts: [
+      { question: "Which line shows the predator?", type: "choice", options: ["A", "B"], answer: "B" },
+      { question: "Why do the predator's peaks come after the prey's?", type: "choice", answer: "Predator numbers rise only once there is more prey to eat",
+        options: ["Predator numbers rise only once there is more prey to eat", "Predators reproduce faster than prey", "Prey eat the predators"] }
+    ] }
+  ]);
+  withDiagrams("Required practical: sampling using quadrats and transects", [
+    { text: "A student placed five 1 m² quadrats at random in a 200 m² field and counted the daisies in each.",
+      table: { headings: ["Quadrat", "1", "2", "3", "4", "5"], rows: [["Number of daisies", "3", "7", "4", "6", "5"]] }, always: true, parts: [
+      { question: "Work out the mean number of daisies per quadrat.", type: "number", answer: "5" },
+      { question: "Estimate the number of daisies in the whole field.", type: "number", marks: 2, answer: "1000" },
+      { question: "Why were the quadrats placed at random?", type: "choice", options: ["To avoid bias", "To save time", "To find more daisies"], answer: "To avoid bias" }
+    ] }
   ]);
 })();
