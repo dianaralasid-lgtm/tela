@@ -108,108 +108,84 @@ const tierForGrade = grade => {
 SAMPLE_TOPICS.Maths = Object.entries(MATHS_BY_GRADE).flatMap(([grade, entries]) =>
   entries.map(entry => [entry.slice(2), MATHS_AREAS[entry[0]], tierForGrade(grade), "", "todo", grade]));
 
-// GCSE Biology (AQA 8461) topics, by paper and then by topic. "both" is for Foundation and Higher tier students,
-// "higher" is the extra Higher tier content. A "★ " at the start marks a required practical.
+// GCSE Biology (AQA 8461) topics, by paper and then by topic, each list in the order the spec teaches it
+// (4.1 Cell Biology to 4.7 Ecology). "H: " at the start marks extra Higher tier content, and "★ " a required practical.
 const BIOLOGY_BY_PAPER = {
   "Paper 1": {
-    "Cell Biology": {
-      both: [
-        "Animal and plant cell structures and functions", "Prokaryotic vs eukaryotic cells",
-        "Microscopy: magnification and resolution", "Diffusion: factors affecting rate", "Osmosis: definition and examples",
-        "Active transport: differences from diffusion", "Mitosis and the cell cycle",
-        "Stem cells: types and uses (embryonic & adult)", "Differentiation and specialised cells",
-        "★ Using a microscope to observe cells", "★ Osmosis in plant tissue"
-      ],
-      higher: ["Microscopy calculations using standard form"]
-    },
-    "Organisation": {
-      both: [
-        "Cells → tissues → organs → organ systems", "Digestive system: organs and enzymes",
-        "Enzyme action: lock and key, temperature, pH", "Blood: components and functions",
-        "Heart structure and the circulatory system", "Blood vessels: arteries, veins, capillaries",
-        "Coronary heart disease and treatments", "Health: communicable vs non-communicable disease",
-        "Cancer: benign vs malignant tumours", "Plant tissues: leaf structure and transpiration",
-        "★ Food tests (Benedict's, Biuret, iodine)", "★ Effect of pH on enzyme activity"
-      ],
-      higher: []
-    },
-    "Infection and Response": {
-      both: [
-        "Pathogens: bacteria, viruses, fungi, protists", "Examples of communicable diseases",
-        "Human defence systems: non-specific (skin, mucus, stomach acid)", "The immune response: white blood cells, antibodies",
-        "Vaccination and herd immunity", "Antibiotics: how they work and resistance",
-        "Drug development: clinical trials, double-blind", "Plant disease: detection and defence"
-      ],
-      higher: ["Monoclonal antibodies: production and uses"]
-    },
-    "Bioenergetics": {
-      both: [
-        "Photosynthesis equation (word and symbol)", "Limiting factors: light, CO₂, temperature",
-        "Adaptations of the leaf for photosynthesis", "Aerobic respiration equation",
-        "Anaerobic respiration: fermentation, muscle fatigue", "Exercise: effects on breathing rate and heart rate",
-        "★ Investigating the rate of photosynthesis"
-      ],
-      higher: [
-        "Limiting factors in depth: interactions, the inverse square law and greenhouse costs",
-        "Oxygen debt: lactic acid converted back to glucose in the liver"
-      ]
-    }
+    "Cell Biology": [
+      "Prokaryotic vs eukaryotic cells", "Animal and plant cell structures and functions",
+      "Differentiation and specialised cells", "Microscopy: magnification and resolution",
+      "H: Microscopy calculations using standard form", "★ Using a microscope to observe cells",
+      "Mitosis and the cell cycle", "Stem cells: types and uses (embryonic & adult)",
+      "Diffusion: factors affecting rate", "Osmosis: definition and examples", "★ Osmosis in plant tissue",
+      "Active transport: differences from diffusion"
+    ],
+    "Organisation": [
+      "Cells → tissues → organs → organ systems", "Digestive system: organs and enzymes",
+      "Enzyme action: lock and key, temperature, pH", "★ Food tests (Benedict's, Biuret, iodine)",
+      "★ Effect of pH on enzyme activity", "Heart structure and the circulatory system",
+      "Blood vessels: arteries, veins, capillaries", "Blood: components and functions",
+      "Coronary heart disease and treatments", "Health: communicable vs non-communicable disease",
+      "Cancer: benign vs malignant tumours", "Plant tissues: leaf structure and transpiration"
+    ],
+    "Infection and Response": [
+      "Pathogens: bacteria, viruses, fungi, protists", "Examples of communicable diseases",
+      "Human defence systems: non-specific (skin, mucus, stomach acid)", "The immune response: white blood cells, antibodies",
+      "Vaccination and herd immunity", "Antibiotics: how they work and resistance",
+      "Drug development: clinical trials, double-blind", "H: Monoclonal antibodies: production and uses",
+      "Plant disease: detection and defence"
+    ],
+    "Bioenergetics": [
+      "Photosynthesis equation (word and symbol)", "Adaptations of the leaf for photosynthesis",
+      "Limiting factors: light, CO₂, temperature",
+      "H: Limiting factors in depth: interactions, the inverse square law and greenhouse costs",
+      "★ Investigating the rate of photosynthesis", "Aerobic respiration equation",
+      "Anaerobic respiration: fermentation, muscle fatigue", "Exercise: effects on breathing rate and heart rate",
+      "H: Oxygen debt: lactic acid converted back to glucose in the liver"
+    ]
   },
   "Paper 2": {
-    "Homeostasis and Response": {
-      both: [
-        "Homeostasis: definition and importance", "The nervous system: CNS, neurones, synapses",
-        "Reflex arc: sensory, relay, motor neurones", "The brain: regions and functions",
-        "The eye: structure and function, accommodation", "Thermoregulation: vasodilation, sweating, shivering",
-        "Hormones: endocrine glands and target organs", "Blood glucose control: insulin, diabetes",
-        "Type 1 vs Type 2 diabetes: causes and treatments",
-        "Hormones in reproduction: FSH, LH, oestrogen and progesterone", "Contraception: hormonal and non-hormonal",
-        "Osmoregulation: kidneys and water balance", "Plant hormones: auxin, gravitropism, phototropism",
-        "★ Measuring reaction time"
-      ],
-      higher: [
-        "Glucagon and insulin: negative feedback", "How hormones interact to control the menstrual cycle",
-        "Fertility treatments: IVF, fertility drugs", "Osmoregulation in depth: urea formation and ADH"
-      ]
-    },
-    "Inheritance, Variation and Evolution": {
-      both: [
-        "Sexual vs asexual reproduction: advantages", "Meiosis: stages and importance of variation",
-        "DNA structure and chromosome pairs (basic)", "Genes, alleles: dominant and recessive",
-        "Punnett squares and probability of inheritance", "Inherited disorders: cystic fibrosis, polydactyly",
-        "Sex determination: X and Y chromosomes", "Mutations: causes and effects (basic)",
-        "Variation: genetic, environmental, combination", "Natural selection and evolution",
-        "Evidence for evolution: fossils, antibiotic resistance", "Selective breeding: process and examples",
-        "Genetic engineering: what it is, GM crops, insulin", "Classification: kingdoms, phylogenetic trees"
-      ],
-      higher: [
-        "DNA structure in detail (nucleotides) and protein synthesis", "How mutations affect the protein made",
-        "Constructing Punnett squares from scratch", "The steps of genetic engineering (enzymes, vectors)"
-      ]
-    },
-    "Ecology": {
-      both: [
-        "Ecosystems: habitats, populations, communities", "Food chains and food webs",
-        "Abiotic factors: temperature, light, pH, moisture", "Biotic factors: predation, competition, disease",
-        "Adaptations: structural, behavioural, functional", "Predator-prey relationships and population cycles",
-        "Trophic levels and energy transfer", "Pyramids of biomass", "Carbon cycle", "Water cycle",
-        "Nitrogen cycle: decomposers, nitrifying bacteria", "Human impact: deforestation, global warming, land use",
-        "Biodiversity: importance and preservation", "Pollution indicators: lichen, invertebrates",
-        "★ Sampling using quadrats and transects"
-      ],
-      higher: ["How environmental change affects where species are found"]
-    }
+    "Homeostasis and Response": [
+      "Homeostasis: definition and importance", "The nervous system: CNS, neurones, synapses",
+      "Reflex arc: sensory, relay, motor neurones", "★ Measuring reaction time",
+      "The brain: regions and functions", "The eye: structure and function, accommodation",
+      "Thermoregulation: vasodilation, sweating, shivering", "Hormones: endocrine glands and target organs",
+      "Blood glucose control: insulin, diabetes", "Type 1 vs Type 2 diabetes: causes and treatments",
+      "H: Glucagon and insulin: negative feedback", "Osmoregulation: kidneys and water balance",
+      "H: Osmoregulation in depth: urea formation and ADH",
+      "Hormones in reproduction: FSH, LH, oestrogen and progesterone",
+      "H: How hormones interact to control the menstrual cycle", "Contraception: hormonal and non-hormonal",
+      "H: Fertility treatments: IVF, fertility drugs", "Plant hormones: auxin, gravitropism, phototropism"
+    ],
+    "Inheritance, Variation and Evolution": [
+      "Sexual vs asexual reproduction: advantages", "Meiosis: stages and importance of variation",
+      "DNA structure and chromosome pairs (basic)", "H: DNA structure in detail (nucleotides) and protein synthesis",
+      "H: How mutations affect the protein made", "Genes, alleles: dominant and recessive",
+      "Punnett squares and probability of inheritance", "H: Constructing Punnett squares from scratch",
+      "Inherited disorders: cystic fibrosis, polydactyly", "Sex determination: X and Y chromosomes",
+      "Variation: genetic, environmental, combination", "Mutations: causes and effects (basic)",
+      "Natural selection and evolution", "Selective breeding: process and examples",
+      "Genetic engineering: what it is, GM crops, insulin", "H: The steps of genetic engineering (enzymes, vectors)",
+      "Evidence for evolution: fossils, antibiotic resistance", "Classification: kingdoms, phylogenetic trees"
+    ],
+    "Ecology": [
+      "Ecosystems: habitats, populations, communities", "Abiotic factors: temperature, light, pH, moisture",
+      "Biotic factors: predation, competition, disease", "Adaptations: structural, behavioural, functional",
+      "Food chains and food webs", "Predator-prey relationships and population cycles",
+      "★ Sampling using quadrats and transects", "Carbon cycle", "Water cycle",
+      "Nitrogen cycle: decomposers, nitrifying bacteria", "H: How environmental change affects where species are found",
+      "Biodiversity: importance and preservation", "Human impact: deforestation, global warming, land use",
+      "Pollution indicators: lichen, invertebrates", "Trophic levels and energy transfer", "Pyramids of biomass"
+    ]
   }
 };
 // The paper goes where Maths keeps its grade, so tiles read "Biology · Paper 1". Required practicals get a title
 // that says so; Higher tier extras get the "Higher" tier.
 SAMPLE_TOPICS.Biology = Object.entries(BIOLOGY_BY_PAPER).flatMap(([paper, topicsIn]) =>
-  Object.entries(topicsIn).flatMap(([category, { both, higher }]) => [
-    ...both.map(item => item.startsWith("★ ")
-      ? ["Required practical: " + item[2].toLowerCase() + item.slice(3), category, "Both", "Required practical", "todo", paper]
-      : [item, category, "Both", "", "todo", paper]),
-    ...higher.map(item => [item, category, "Higher", "Higher tier only", "todo", paper])
-  ]));
+  Object.entries(topicsIn).flatMap(([category, items]) => items.map(item =>
+    item.startsWith("H: ") ? [item.slice(3), category, "Higher", "Higher tier only", "todo", paper]
+    : item.startsWith("★ ") ? ["Required practical: " + item[2].toLowerCase() + item.slice(3), category, "Both", "Required practical", "todo", paper]
+    : [item, category, "Both", "", "todo", paper])));
 
 // Subjects switched off for now: they don't show anywhere in the app (dashboard, filters, homework picker,
 // tutor progress), but their topics, questions and everyone's saved progress are kept.

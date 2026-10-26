@@ -1,3 +1,6 @@
+category: (a, b) => byCategory(a.category, b.category) || specIndex(a) - specIndex(b) || a.created - b.created,  // Within a category, Biology topics keep their place in the spec.
+  const BIO_INDEX = new Map(SAMPLE_TOPICS.Biology.map(([title], i) => [title, i]));
+  const specIndex = t => t.subject === "Biology" ? BIO_INDEX.get(t.title) ?? 999 : 0;
 <!DOCTYPE html>
 <html lang="en">
 <head>
