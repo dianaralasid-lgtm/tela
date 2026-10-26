@@ -1084,6 +1084,10 @@ TelaDB.start("student").then(() => {
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const uniq = arr => [...new Set(arr)].sort((a, b) => a.localeCompare(b));
+  // Biology categories go in AQA spec order (4.1 Cell Biology to 4.7 Ecology); any others go alphabetically after them.
+  const SPEC_ORDER = Object.values(BIOLOGY_BY_PAPER).flatMap(Object.keys);
+  const specRank = c => SPEC_ORDER.indexOf(c) + 1 || 99;
+  const byCategory = (a, b) => specRank(a) - specRank(b) || a.localeCompare(b);
 
   function countBy(list, key) {
     return list.reduce((m, t) => (m[t[key]] = (m[t[key]] || 0) + 1, m), {});
@@ -1115,7 +1119,7 @@ TelaDB.start("student").then(() => {
 
     // Categories within the selected subject and grade
     const inSubject = inScope.filter(t => state.grade === "All" || t.grade === state.grade);
-    const cats = uniq(inSubject.map(t => t.category));
+    const cats = [...new Set(inSubject.map(t => t.category))].sort(byCategory);
     if (state.category !== "All" && !cats.includes(state.category)) state.category = "All";
     const catCounts = countBy(inSubject, "category");
     $("categoryChips").innerHTML =
@@ -1141,7 +1145,7 @@ TelaDB.start("student").then(() => {
       (!q || t.title.toLowerCase().includes(q) || t.category.toLowerCase().includes(q))
     );
     const by = {
-      category: (a, b) => a.category.localeCompare(b.category) || a.created - b.created,
+      category: (a, b) => byCategory(a.category, b.category) || a.created - b.created,
       title:    (a, b) => a.title.localeCompare(b.title),
       status:   (a, b) => STATUS[a.status].rank - STATUS[b.status].rank || a.title.localeCompare(b.title),
       newest:   (a, b) => b.created - a.created
